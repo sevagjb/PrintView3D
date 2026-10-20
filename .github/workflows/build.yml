@@ -97,42 +97,46 @@ jobs:
         timeout-minutes: 15
         shell: pwsh
         run: |
-          $dir = "$env:LOCALAPPDATA\Programs\PrintView3D"
-          $p = Start-Process .\PrintView3D-Setup.exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/TASKS=fileassoc,thumbnails','/LOG=install.log' -PassThru -Wait
-          if ($p.ExitCode -ne 0) { Get-Content install.log; throw "Install failed ($($p.ExitCode))" }
-          if (-not (Test-Path "$dir\PrintView3D.exe")) { throw "PrintView3D.exe not installed" }
-          $ver = (Get-Item "$dir\PrintView3D.exe").VersionInfo.ProductVersion
-          Write-Host "Installed version: $ver"
-          if (-not (Test-Path "HKCU:\Software\Classes\Applications\PrintView3D.exe")) { throw "Open-with registration missing" }
-          $lnk = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\PrintView3D.lnk"
-          if (-not (Test-Path $lnk)) { throw "Start menu shortcut missing" }
-          if (-not (Test-Path "HKCU:\Software\Classes\SystemFileAssociations\.3mf\ShellEx\{e357fccd-a995-4576-b01f-234630154e96}")) { throw "Thumbnail provider not registered" }
-          # What File Explorer gets: ask the Windows shell itself for thumbnails.
-          & packaging\windows\thumbnails\out\test_thumbs.exe shell examples\demo_plate.3mf examples\demo_bracket.FCStd examples\demo_vase.gcode examples\demo_vase.stl
-          if ($LASTEXITCODE -ne 0) { Write-Warning "Shell thumbnail test failed (see above)"; $global:shellthumb = 1 }
-          $un = Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall" | Where-Object { $_.PSChildName -like '*f46ac51f*' }
-          if (-not $un) { throw "Not listed in Apps & features" }
-          # Update the way PrintView3D does it from Settings -> Updates: the new version must start by itself.
-          # Not "-Wait": that also waits for programs the installer starts, i.e. the restarted PrintView3D.
-          $p = Start-Process .\PrintView3D-Setup.exe -ArgumentList '/SILENT','/SUPPRESSMSGBOXES','/NORESTART','/UPDATE=1' -PassThru
-          if (-not $p.WaitForExit(300000)) { $p.Kill(); throw "Update install did not finish" }
-          if ($p.ExitCode -ne 0) { throw "Update install failed ($($p.ExitCode))" }
-          $started = $null
-          for ($i = 0; $i -lt 30 -and -not $started; $i++) { Start-Sleep -Seconds 1; $started = Get-Process PrintView3D -ErrorAction SilentlyContinue }
-          if (-not $started) { throw "The updated program did not start again after the update" }
-          $started | Stop-Process -Force
-          Start-Sleep -Seconds 2
-          Write-Host "Update mode OK (program restarted after update)"
-          $p = Start-Process "$dir\unins000.exe" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -PassThru -Wait
-          # The uninstaller hands over to a copy of itself; wait until it is done.
-          for ($i = 0; $i -lt 60 -and (Test-Path "$dir\PrintView3D.exe"); $i++) { Start-Sleep -Seconds 1 }
-          Start-Sleep -Seconds 2
-          if (Test-Path "$dir\PrintView3D.exe") { throw "Uninstall left the program behind" }
-          if (Test-Path "HKCU:\Software\Classes\Applications\PrintView3D.exe") { throw "Uninstall left the registration behind" }
-          if (Test-Path $lnk) { throw "Uninstall left the shortcut behind" }
-          if (Test-Path "HKCU:\Software\Classes\CLSID\{64535B54-55A8-4412-919A-88F46D3E3B86}") { throw "Uninstall left the thumbnail provider behind" }
-          if ($global:shellthumb) { throw "Shell thumbnail test failed" }
-          Write-Host "Installer test OK"
+          try {
+            $dir = "$env:LOCALAPPDATA\Programs\PrintView3D"
+            $p = Start-Process .\PrintView3D-Setup.exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/TASKS=fileassoc,thumbnails','/LOG=install.log' -PassThru -Wait
+            if ($p.ExitCode -ne 0) { Get-Content install.log; throw "Install failed ($($p.ExitCode))" }
+            if (-not (Test-Path "$dir\PrintView3D.exe")) { throw "PrintView3D.exe not installed" }
+            $ver = (Get-Item "$dir\PrintView3D.exe").VersionInfo.ProductVersion
+            Write-Host "Installed version: $ver"
+            if (-not (Test-Path "HKCU:\Software\Classes\Applications\PrintView3D.exe")) { throw "Open-with registration missing" }
+            $lnk = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\PrintView3D.lnk"
+            if (-not (Test-Path $lnk)) { throw "Start menu shortcut missing" }
+            if (-not (Test-Path "HKCU:\Software\Classes\SystemFileAssociations\.3mf\ShellEx\{e357fccd-a995-4576-b01f-234630154e96}")) { throw "Thumbnail provider not registered" }
+            # What File Explorer gets: ask the Windows shell itself for thumbnails.
+            $out = & packaging\windows\thumbnails\out\test_thumbs.exe shell examples\demo_plate.3mf examples\demo_bracket.FCStd examples\demo_vase.gcode examples\demo_vase.stl 2>&1 | Out-String
+            Write-Output $out
+            Write-Output ("::notice title=Shell thumbnails::" + ($out -replace "`r?`n", " | "))
+            if ($LASTEXITCODE -ne 0) { $global:shellthumb = 1 }
+            $un = Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall" | Where-Object { $_.PSChildName -like '*f46ac51f*' }
+            if (-not $un) { throw "Not listed in Apps & features" }
+            # Update the way PrintView3D does it from Settings -> Updates: the new version must start by itself.
+            # Not "-Wait": that also waits for programs the installer starts, i.e. the restarted PrintView3D.
+            $p = Start-Process .\PrintView3D-Setup.exe -ArgumentList '/SILENT','/SUPPRESSMSGBOXES','/NORESTART','/UPDATE=1' -PassThru
+            if (-not $p.WaitForExit(300000)) { $p.Kill(); throw "Update install did not finish" }
+            if ($p.ExitCode -ne 0) { throw "Update install failed ($($p.ExitCode))" }
+            $started = $null
+            for ($i = 0; $i -lt 30 -and -not $started; $i++) { Start-Sleep -Seconds 1; $started = Get-Process PrintView3D -ErrorAction SilentlyContinue }
+            if (-not $started) { throw "The updated program did not start again after the update" }
+            $started | Stop-Process -Force
+            Start-Sleep -Seconds 2
+            Write-Host "Update mode OK (program restarted after update)"
+            $p = Start-Process "$dir\unins000.exe" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -PassThru -Wait
+            # The uninstaller hands over to a copy of itself; wait until it is done.
+            for ($i = 0; $i -lt 60 -and (Test-Path "$dir\PrintView3D.exe"); $i++) { Start-Sleep -Seconds 1 }
+            Start-Sleep -Seconds 2
+            if (Test-Path "$dir\PrintView3D.exe") { throw "Uninstall left the program behind" }
+            if (Test-Path "HKCU:\Software\Classes\Applications\PrintView3D.exe") { throw "Uninstall left the registration behind" }
+            if (Test-Path $lnk) { throw "Uninstall left the shortcut behind" }
+            if (Test-Path "HKCU:\Software\Classes\CLSID\{64535B54-55A8-4412-919A-88F46D3E3B86}") { throw "Uninstall left the thumbnail provider behind" }
+            if ($global:shellthumb) { throw "Shell thumbnail test failed" }
+            Write-Host "Installer test OK"
+          } catch { Write-Output "::error title=Installer test::$($_.Exception.Message)"; throw }
 
       - uses: actions/upload-artifact@v7
         with:
