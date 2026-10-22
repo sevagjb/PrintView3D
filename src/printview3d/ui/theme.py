@@ -160,7 +160,11 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     """Style the whole application. Returns the theme used."""
     global _setting, _current
     _setting = choice if choice in THEME_NAMES else "auto"
+    hints = QGuiApplication.styleHints()
+    if _setting == "auto" and hasattr(hints, "unsetColorScheme"):
+        hints.unsetColorScheme()            # back to the system's own dark/light before asking it
     _current = resolve(_setting)
+    _tell_qt_light_or_dark(hints)
     t = THEMES[_current]
     app.setStyle("Fusion")
     pal = QPalette()
@@ -235,6 +239,19 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QLabel#versionBadge:hover {{ background: {t['button_hover']}; }}
     """ + (_mica_css(t, _current) if mica else ""))
     return _current
+
+
+def _tell_qt_light_or_dark(hints) -> None:
+    """Tell Qt (6.8+) whether our theme is light or dark. On Windows Qt then draws the title bar
+    and the Mica/Acrylic backdrop in the same variant. Without this, Qt follows Windows' own dark
+    mode and overrides ours: with Windows in dark mode, our light theme kept a dark title bar
+    and a dark backdrop behind dark text (seen on Sevag's PC in 0.15.2 and 0.16.0)."""
+    if _setting == "auto" or not hasattr(hints, "setColorScheme"):
+        return
+    try:
+        hints.setColorScheme(Qt.ColorScheme.Light if _current == "light" else Qt.ColorScheme.Dark)
+    except Exception:  # noqa: BLE001 - a platform without this keeps the system's choice
+        pass
 
 
 def _mica_css(t: dict, name: str) -> str:

@@ -143,6 +143,8 @@ class MainWindow(QMainWindow):
         if self.mica:
             from .. import win_mica
             win_mica.set_dark(int(self.winId()), theme.is_dark())
+            # Once more after Qt has finished its own update of the window, so ours is the last word.
+            QTimer.singleShot(200, lambda: self.mica and win_mica.set_dark(int(self.winId()), theme.is_dark()))
         self.scene.set_colors(theme.colors())
         self._update_theme_button()
         self.refresh_update_badge()

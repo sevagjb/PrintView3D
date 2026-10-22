@@ -100,6 +100,18 @@ def apply(hwnd: int, dark: bool, kind: str = "mica") -> bool:
         return False
 
 
+def dark_mode(hwnd: int) -> int:
+    """1 when Windows draws the window's title bar and backdrop dark, 0 light, -1 unknown (CI)."""
+    try:
+        import ctypes
+        v = ctypes.c_int(-1)
+        ok = ctypes.windll.dwmapi.DwmGetWindowAttribute(
+            ctypes.c_void_p(hwnd), ctypes.c_uint(DWMWA_USE_IMMERSIVE_DARK_MODE), ctypes.byref(v), ctypes.sizeof(v)) == 0
+        return v.value if ok else -1
+    except Exception:  # noqa: BLE001
+        return -1
+
+
 def backdrop(hwnd: int) -> int:
     """The backdrop type Windows reports for the window (for the CI self-test); -1 if unknown."""
     try:

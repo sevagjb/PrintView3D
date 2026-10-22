@@ -86,10 +86,10 @@ jobs:
           [W]::SystemParametersInfo(20, 0, $wall, 3) | Out-Null
           $exe = "dist\PrintView3D\PrintView3D.exe"
           # 1) Does Windows accept Mica for our window?
-          $p = Start-Process $exe -ArgumentList '--mica', '--mica-selftest' -PassThru
+          $p = Start-Process $exe -ArgumentList '--backdrop', 'acrylic', '--theme', 'dark', '--mica-selftest' -PassThru
           if (-not $p.WaitForExit(90000)) { $p.Kill() }
           $json = if (Test-Path mica-selftest.json) { Get-Content mica-selftest.json -Raw } else { "no result" }
-          Write-Output "::notice title=Mica self-test::$json  (backdrop 2 = Mica; Windows build $([Environment]::OSVersion.Version.Build))"
+          Write-Output "::notice title=Mica self-test::$json  (backdrop 3 = Acrylic; dark_mode 1 = dark, 0 = light; Windows build $([Environment]::OSVersion.Version.Build))"
           # 2) What it looks like: a real screenshot of the desktop with PrintView3D open.
           $p = Start-Process $exe -ArgumentList '--mica', 'examples\demo_plate.3mf' -PassThru
           Start-Sleep -Seconds 20

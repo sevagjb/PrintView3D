@@ -7,6 +7,9 @@
 - **Readable on any wallpaper**: with Mica or Acrylic the toolbar, side panel and status bar get a
   frosted layer in the theme's colour, strongest in the light theme, and the grey labels and box
   headings are a little darker there.
+- **The title bar follows the theme** (Windows): PrintView3D now tells Qt whether its theme is light
+  or dark. Before, Qt followed Windows' own dark mode and overrode ours, so with Windows in dark mode
+  the light theme kept a dark title bar, and with transparency on a dark backdrop behind dark text.
 - With transparency on, switching to the light theme (or back to dark) could leave the switching to the light theme (or back to dark) could leave the
   title bar and the Mica backdrop dark until the window was clicked away or resized, so the side
   panel showed dark text on a dark background. The window now redraws its frame and backdrop at once.

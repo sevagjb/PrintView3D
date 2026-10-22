@@ -167,12 +167,31 @@ def main(argv: list[str] | None = None) -> int:
         win.prepare_mica()
     win.show()
     mica_ok = win.enable_mica(kind) if use_mica else False
-    if args.mica_selftest:                      # CI: did Windows accept Mica?
+    if args.mica_selftest:                      # CI: did Windows accept Mica, and follow a live switch?
         import json
-        app.processEvents()
+        import time
+
+        def settle(seconds=1.0):
+            end = time.monotonic() + seconds
+            while time.monotonic() < end:
+                app.processEvents()
+                time.sleep(0.02)
+
+        hwnd = int(win.winId())
+        settle()
+        result = {"supported": win_mica.supported(), "applied": mica_ok,
+                  "backdrop": win_mica.backdrop(hwnd) if use_mica else None,
+                  "start": {"theme": theme.current(), "dark_mode": win_mica.dark_mode(hwnd)}}
+        # What a user does with Ctrl+T: switch between light and dark while the window is open.
+        for name in (("light", "dark") if theme.is_dark() else ("dark", "light")):
+            win.apply_theme(name)
+            settle()
+            result[f"after_{name}"] = {"dark_mode": win_mica.dark_mode(hwnd),
+                                       "qt_scheme": str(app.styleHints().colorScheme()).split(".")[-1]}
+        result["follows_theme"] = (result["after_light"]["dark_mode"] == 0
+                                   and result["after_dark"]["dark_mode"] == 1)
         with open("mica-selftest.json", "w", encoding="utf-8") as f:
-            json.dump({"supported": win_mica.supported(), "applied": mica_ok,
-                       "backdrop": win_mica.backdrop(int(win.winId())) if use_mica else None}, f)
+            json.dump(result, f)
         win.close()
         return 0
     if sys.platform == "win32":
