@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.21.2
+- **The first start shows PrintView3D itself**, with no questions on top of it. *Check for updates?*
+  is asked on the second start and the GitHub star message comes on the third, once. Nothing changes
+  for people updating from an older version.
+- **Linux: light theme when the desktop has no dark setting.** With *Automatic* (the default for new
+  installs), PrintView3D now also reads the GNOME, GTK and KDE settings when Qt can't tell; if none
+  of them says dark, it starts light. Windows and macOS are unchanged.
+- **Linux: the AppImage can update itself** with [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate)
+  and similar tools: it carries update information, and every release has a
+  `PrintView3D-x86_64.AppImage.zsync` next to the AppImage, so only the changed parts are downloaded.
+
 ## 0.21.1
 - **New language: Română (Romanian)**, choose it in **Settings → Language**. Translated and reviewed
   by a native speaker. Thanks to [@munteancd](https://github.com/munteancd)!

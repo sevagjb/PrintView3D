@@ -409,7 +409,8 @@ There are three ways to pick a theme:
 The themes:
 
 - **Automatic** follows the dark/light setting of Windows or your Linux desktop (and switches
-  along when that changes).
+  along when that changes). On Linux it reads the GNOME, GTK or KDE setting; if the desktop
+  doesn't say dark anywhere, PrintView3D starts light.
 - **Dark**, **Gray**, **Graphite** (a warm, dark brownish tone that is soft on the eyes) or
   **Light**, with teal buttons.
 - **Ember Light**: warm cream with a bright orange and a lagoon teal. The slicer button, OK and the
@@ -449,8 +450,8 @@ keep the normal look.
 ### Updates
 
 **Settings → Updates** shows your version and has **Check for updates now**. You can also switch on
-**Check for updates automatically (once a day)**; PrintView3D asks once whether you want this, and
-you can change it there at any time.
+**Check for updates automatically (once a day)**; PrintView3D asks once whether you want this (on
+the second start: the first start shows only the program), and you can change it there at any time.
 
 When a new version exists, the version in the bottom-right corner shows a **red dot** (`● v0.10.0 →
 0.11.0`), and so does *Updates* in Settings. Click it to see **What's new**, then:
@@ -459,7 +460,11 @@ When a new version exists, the version in the bottom-right corner shows a **red 
   checks its SHA-256 fingerprint against the one GitHub publishes, installs it (no questions, your
   settings are kept) and starts the new version.
 - **Linux (AppImage) and the portable Windows zip: Download update** opens the release page;
-  download the new file and replace the old one.
+  download the new file and replace the old one. The AppImage can also be updated with
+  [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) or other tools that read
+  AppImage update information: they download only the changed parts, using the
+  `PrintView3D-x86_64.AppImage.zsync` file published with every release. PrintView3D itself never
+  starts such a tool.
 - **Skip this version** hides that version; the next one is shown again.
 
 After an update, the first start shows **What's new** for the version you now have, once, however

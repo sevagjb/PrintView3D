@@ -251,6 +251,13 @@ jobs:
       - name: Build (tests + AppImage)
         run: ./build_linux.sh
 
+      - name: Check the AppImage update information
+        run: |
+          test -s dist/PrintView3D-x86_64.AppImage.zsync
+          info=$(dist/PrintView3D-x86_64.AppImage --appimage-updateinformation)
+          echo "Update information: $info"
+          [[ "$info" == gh-releases-zsync\|* ]]
+
       - name: Smoke test (render a sample to an image)
         continue-on-error: true
         timeout-minutes: 3
@@ -262,7 +269,9 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: PrintView3D-linux
-          path: dist/PrintView3D-x86_64.AppImage
+          path: |
+            dist/PrintView3D-x86_64.AppImage
+            dist/PrintView3D-x86_64.AppImage.zsync
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
@@ -497,6 +506,7 @@ jobs:
             PrintView3D-Setup.exe
             PrintView3D-windows.zip
             PrintView3D-x86_64.AppImage
+            PrintView3D-x86_64.AppImage.zsync
             PrintView3D-macOS-AppleSilicon.dmg
             PrintView3D-macOS-Intel.dmg
 

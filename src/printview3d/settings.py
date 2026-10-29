@@ -29,6 +29,7 @@ DEFAULTS = {
     "new_window": False,         # Settings -> Files: True = every file in its own window
     "export_mode": "dialog",    # Settings -> Files: what a click on Export STL does (EXPORT_MODES)
     "star_prompt_shown": False, # the one-time "star us on GitHub" message (new installs only)
+    "start_count": 0,           # how often the main window started (first start: no questions)
     "last_run_version": "",     # version of the last start; "" = new install ("What's new" after updates)
     "recent_files": [],
     "show_travel": False,
@@ -67,6 +68,9 @@ class Settings:
                 # The GitHub star message is for new installs; people updating
                 # from an older version never see it.
                 stored.setdefault("star_prompt_shown", True)
+                # Settings from before 0.21.2 belong to people who have started PrintView3D
+                # before: nothing about their start changes.
+                stored.setdefault("start_count", 2)
                 # Versions before 0.18 didn't record themselves. Treat them as 0.17, so people
                 # updating see what's new in 0.18 rather than the whole history.
                 stored.setdefault("last_run_version", "0.17.0")

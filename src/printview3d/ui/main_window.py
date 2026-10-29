@@ -1905,10 +1905,19 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(2500, self._first_update_step)
 
     def _first_update_step(self):
-        self._maybe_ask_for_star()                          # new installs, once
+        # The very first start opens straight to the main window, with no questions on top of
+        # it: people see the program before being asked anything (and catalogue screenshots
+        # such as AppImageHub's, taken on a fresh system, show the real window). The update
+        # question comes on the second start, the star message on the third.
+        starts = int(self.settings.get("start_count", 0) or 0) + 1
+        self.settings.set("start_count", starts)
         previous = up.just_updated(self.settings)           # updated since the last start?
         if previous:
             update_ui.show_updated(self, previous)
+        if starts < 2:
+            return
+        if starts >= 3:
+            self._maybe_ask_for_star()                      # new installs, once
         if self.settings.get("update_check") is None:       # ask once
             box = QMessageBox(self)
             box.setIcon(QMessageBox.Question)
@@ -1924,7 +1933,7 @@ class MainWindow(QMainWindow):
         self._maybe_check_updates()
 
     def _maybe_ask_for_star(self):
-        """New installs, first start only: invite people to star the project on GitHub.
+        """New installs, third start: invite people to star the project on GitHub.
 
         Shown once, whatever is clicked. Nothing is sent anywhere; the button only opens the
         project page in the browser. Settings → About keeps the link for later.

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "printview3d"
-version = "0.21.1"
+version = "0.21.2"
 description = "Lightweight viewer for STL, 3MF, G-code and FreeCAD files with one-click hand-off to your slicer; FreeCAD files go to the slicer as a model directly"
 readme = "README.md"
 license = { text = "MIT" }
