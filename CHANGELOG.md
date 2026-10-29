@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.21.1
+- **New language: Română (Romanian)**, choose it in **Settings → Language**. Translated and reviewed
+  by a native speaker. Thanks to [@munteancd](https://github.com/munteancd)!
+
 ## 0.21.0
 - **Home button**: the house icon next to *Open* (also in the menu, `Ctrl+W`) closes the file and
   goes back to the start page with your recent files. The memory the file used is given back.

@@ -10,6 +10,7 @@
 | Deutsch | Compleet, moet nog nagekeken worden door een moedertaalspreker |
 | Français | Compleet, moet nog nagekeken worden door een moedertaalspreker |
 | Español | Compleet, moet nog nagekeken worden door een moedertaalspreker |
+| Română (Roemeens) | Compleet, nagekeken door een moedertaalspreker |
 
 **Spreek je een van deze talen? Of wil je PrintView3D in jouw taal?** Je hulp is heel welkom: één fout woord
 opmerken helpt al. Vertalingen worden hier op GitHub gemaakt: pas het bestand voor jouw taal aan in
