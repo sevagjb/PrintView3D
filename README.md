@@ -50,7 +50,7 @@ without exporting an STL first.
 | **ZIP files** | Open a downloaded model package (Printables, Thingiverse, …) directly. Only the 3D files are used; pictures, documents and links are skipped. Pick a model from the list, or **show all** side by side; send one model or all of them to your slicer. [Details](#zip-files). |
 | **Open in your slicer** | One click (or `Ctrl+P`) opens the current file in your slicer. Installed slicers are found automatically. |
 | **Default app** | Optional: make PrintView3D open `.stl`, `.3mf` and `.gcode` files when you double-click them. Fully reversible. |
-| **Your language** | English, العربية (Arabic, right-to-left), Nederlands, Deutsch, Français and Español; switch any time in Settings, no restart needed. [Help translate](#translations). |
+| **Your language** | English, العربية (Arabic, right-to-left), Nederlands, Deutsch, Français, Español and Română; switch any time in Settings, no restart needed. [Help translate](#translations). |
 | **Themes** | Automatic (follows your system), Dark, Gray, Graphite (warm, easy on the eyes), Light, Ember Light or Ember Dark (warm orange and teal), for the window and the 3D view. Pick one from picture cards in Settings, the palette icon or `Ctrl+T`. Toolpath colours stay the same in every theme. |
 | **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
@@ -658,6 +658,7 @@ PrintView3D.exe --unregister                       remove file associations
 | Deutsch | Complete, needs review by a native speaker |
 | Français | Complete, needs review by a native speaker |
 | Español | Complete, needs review by a native speaker |
+| Română (Romanian) | Complete, reviewed by a native speaker |
 
 **Speak one of these languages? Or want PrintView3D in yours?** Your help is very welcome:
 spotting one wrong word already helps. Translations are made right here on GitHub: change the

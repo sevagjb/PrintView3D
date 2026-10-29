@@ -33,7 +33,7 @@ def app():
 
 
 @pytest.mark.parametrize("code,word", [("ar", "الإعدادات"), ("nl", "Instellingen"), ("de", "Einstellungen"),
-                                       ("fr", "Paramètres"), ("es", "Ajustes")])
+                                       ("fr", "Paramètres"), ("es", "Ajustes"), ("ro", "Setări")])
 def test_language_loads(app, code, word):
     from printview3d import i18n
     assert i18n.apply_language(app, code) == code

@@ -36,6 +36,7 @@ LANGUAGES: dict[str, str] = {
     "de": "Deutsch",
     "fr": "Français",
     "es": "Español",
+    "ro": "Română",
 }
 RIGHT_TO_LEFT = {"ar", "he", "fa", "ur"}
 # Measurements are shown with Western digits in these languages (as slicers do).

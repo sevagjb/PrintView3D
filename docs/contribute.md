@@ -10,6 +10,7 @@
 | Deutsch | Complete, needs review by a native speaker |
 | Français | Complete, needs review by a native speaker |
 | Español | Complete, needs review by a native speaker |
+| Română (Romanian) | Complete, reviewed by a native speaker |
 
 **Speak one of these languages? Or want PrintView3D in yours?** Your help is very welcome:
 spotting one wrong word already helps. Translations are made right here on GitHub: change the
