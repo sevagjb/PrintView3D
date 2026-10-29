@@ -9,9 +9,9 @@ into the next release. No other website or account is needed, only a free GitHub
 | العربية Arabic | [`printview3d_ar.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_ar.ts) |
 | Deutsch | [`printview3d_de.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_de.ts) |
 | Español | [`printview3d_es.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_es.ts) |
-| Română | [`printview3d_ro.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_ro.ts) |
 | Français | [`printview3d_fr.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_fr.ts) |
 | Nederlands | [`printview3d_nl.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_nl.ts) |
+| Română | [`printview3d_ro.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_ro.ts) |
 
 ## Fix a word or a sentence (in the browser, about 5 minutes)
 
