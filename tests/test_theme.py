@@ -265,3 +265,50 @@ def test_theme_card_ok_saves(app, tmp_path):
     d._save()
     assert s.get("theme") == "ember_dark"
     theme.apply_theme(app, "dark")
+
+
+# --- 0.21.2: Linux without a colour-scheme answer from Qt starts light ------------------------
+
+def _no_gsettings(_key):
+    return ""
+
+
+def test_linux_nothing_known_is_light(tmp_path):
+    assert theme._linux_prefers_dark(env={}, home=str(tmp_path), run=_no_gsettings) is False
+
+
+def test_linux_gnome_prefer_dark(tmp_path):
+    run = {"color-scheme": "prefer-dark"}.get
+    assert theme._linux_prefers_dark(env={}, home=str(tmp_path), run=lambda k: run(k, "")) is True
+
+
+def test_linux_gnome_default_is_light_even_with_dark_named_gtk_theme_unset(tmp_path):
+    run = {"color-scheme": "default", "gtk-theme": "Adwaita"}.get
+    assert theme._linux_prefers_dark(env={}, home=str(tmp_path), run=lambda k: run(k, "")) is False
+
+
+def test_linux_gtk_theme_variable(tmp_path):
+    assert theme._linux_prefers_dark(env={"GTK_THEME": "Adwaita:dark"}, home=str(tmp_path),
+                                     run=_no_gsettings) is True
+
+
+def test_linux_kde_breeze_dark(tmp_path):
+    (tmp_path / ".config").mkdir()
+    (tmp_path / ".config" / "kdeglobals").write_text("[General]\nColorScheme=BreezeDark\n")
+    assert theme._linux_prefers_dark(env={}, home=str(tmp_path), run=_no_gsettings) is True
+
+
+def test_linux_gtk3_prefer_dark(tmp_path):
+    d = tmp_path / ".config" / "gtk-3.0"
+    d.mkdir(parents=True)
+    (d / "settings.ini").write_text("[Settings]\ngtk-application-prefer-dark-theme=1\n")
+    assert theme._linux_prefers_dark(env={}, home=str(tmp_path), run=_no_gsettings) is True
+
+
+def test_unknown_scheme_on_windows_and_macos_stays_dark(app, monkeypatch):
+    from PySide6.QtCore import Qt
+    hints = app.styleHints()
+    monkeypatch.setattr(type(hints), "colorScheme", lambda self: Qt.ColorScheme.Unknown)
+    for platform in ("win32", "darwin"):
+        monkeypatch.setattr(theme.sys, "platform", platform)
+        assert theme.system_theme() == "dark"

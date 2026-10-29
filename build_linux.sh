@@ -76,9 +76,21 @@ cp packaging/linux/printview3d.desktop "$APPDIR/printview3d.desktop"
 cp src/printview3d/resources/icon.png "$APPDIR/printview3d.png"
 cp src/printview3d/resources/icon.png "$APPDIR/.DirIcon"
 OUT="dist/PrintView3D-$ARCH.AppImage"
+# Update information, so AppImageUpdate and similar tools can update the AppImage from the newest
+# GitHub release. appimagetool also writes PrintView3D-$ARCH.AppImage.zsync (into the current
+# folder); it is published next to the AppImage. A fork can point it elsewhere:
+# UPDATE_INFO="gh-releases-zsync|user|repo|latest|PrintView3D-*$ARCH.AppImage.zsync" ./build_linux.sh
+UPDATE_INFO="${UPDATE_INFO:-gh-releases-zsync|sevagjb|PrintView3D|latest|PrintView3D-$ARCH.AppImage.zsync}"
+ZSYNC="PrintView3D-$ARCH.AppImage.zsync"
+rm -f "$ZSYNC" "dist/$ZSYNC"
 # APPIMAGE_EXTRACT_AND_RUN: works on machines without FUSE (containers, CI)
-APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$ARCH" "$TOOL" --no-appstream "$APPDIR" "$OUT"
+APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$ARCH" "$TOOL" --no-appstream -u "$UPDATE_INFO" "$APPDIR" "$OUT"
 chmod +x "$OUT"
+if [[ -f "$ZSYNC" ]]; then
+    mv "$ZSYNC" "dist/$ZSYNC"
+else
+    echo "[WARNING] No $ZSYNC was made; the AppImage still works, but cannot update itself."
+fi
 
 echo
 echo "============================================================"

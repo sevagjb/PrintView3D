@@ -15,6 +15,9 @@ window recolours the 3D view (MainWindow.apply_theme).
 from __future__ import annotations
 
 import math
+import os
+import subprocess
+import sys
 
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import (QColor, QGuiApplication, QIcon, QLinearGradient, QPainter, QPainterPath, QPalette,
@@ -164,7 +167,58 @@ def system_theme() -> str:
             return "dark"
     except AttributeError:          # Qt older than 6.5
         pass
-    return "dark"                   # unknown: keep the classic look
+    if sys.platform.startswith("linux"):
+        # Qt couldn't tell (desktops without a colour-scheme portal, bare X servers). Ask the
+        # desktop's own settings; if nothing says dark, use light, as Linux desktops do.
+        return "dark" if _linux_prefers_dark() else "light"
+    return "dark"                   # unknown on Windows/macOS: keep the classic look
+
+
+def _linux_prefers_dark(env=None, home=None, run=None) -> bool:
+    """True if the Linux desktop is set to a dark style (GNOME, GTK, KDE settings)."""
+    env = os.environ if env is None else env
+    home = home or os.path.expanduser("~")
+    gtk_theme = env.get("GTK_THEME", "").lower()
+    if gtk_theme:
+        return "dark" in gtk_theme
+    if run is None:
+        run = _run_gsettings
+    scheme = run("color-scheme")                    # GNOME 42+: 'prefer-dark', 'prefer-light', 'default'
+    if scheme:
+        if "dark" in scheme:
+            return True
+        if "light" in scheme:
+            return False
+    name = run("gtk-theme")                         # e.g. 'Adwaita-dark'
+    if name and "dark" in name.lower():
+        return True
+    config = env.get("XDG_CONFIG_HOME") or os.path.join(home, ".config")
+    for path, keys in ((os.path.join(config, "gtk-3.0", "settings.ini"),
+                        ("gtk-application-prefer-dark-theme", "gtk-theme-name")),
+                       (os.path.join(config, "kdeglobals"), ("colorscheme", "lookandfeelpackage"))):
+        try:
+            with open(path, encoding="utf-8", errors="replace") as f:
+                for line in f:
+                    key, _, value = line.partition("=")
+                    key, value = key.strip().lower(), value.strip().lower()
+                    if key == "gtk-application-prefer-dark-theme" and value in ("1", "true"):
+                        return True
+                    if key in keys and key != "gtk-application-prefer-dark-theme" and "dark" in value:
+                        return True
+        except OSError:
+            pass
+    return False
+
+
+def _run_gsettings(key: str) -> str:
+    """One GNOME interface setting, or "" (no gsettings, no GNOME, or too slow)."""
+    try:
+        from ..slicer import clean_environment     # the system's own libraries, not our bundle's
+        out = subprocess.run(["gsettings", "get", "org.gnome.desktop.interface", key],
+                             capture_output=True, text=True, timeout=2, env=clean_environment())
+        return out.stdout.strip().strip("'") if out.returncode == 0 else ""
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return ""
 
 
 def resolve(setting: str) -> str:
