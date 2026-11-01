@@ -186,8 +186,8 @@ class TurntableControls:
                 pass
         if pv_iren is not None and hasattr(type(pv_iren), "style"):
             pv_iren.style = self.style                 # pyvista sets it on the interactor too
-        if self.iren.GetInteractorStyle() is not self.style:
-            self.iren.SetInteractorStyle(self.style)
+        else:
+            self.iren.SetInteractorStyle(self.style)   # no pyvista interactor (tests)
 
     # ------------------------------------------------------------ rendering
     def request_render(self):
