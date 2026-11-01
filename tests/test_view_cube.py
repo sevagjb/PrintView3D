@@ -292,3 +292,28 @@ def test_drag_down_from_top_tilts_out_of_it(app):
         _camera_ok(plotter)
     finally:
         plotter.close()
+
+
+def test_toolbar_hides_the_cube_views_while_the_cube_is_on(app, tmp_path, monkeypatch):
+    """Top, Front and Right are on the cube; their buttons come back when it is switched off,
+    and the keys 2/3/4 keep working either way."""
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    from printview3d.settings import Settings
+    from printview3d.ui.main_window import MainWindow
+    win = MainWindow(Settings(str(tmp_path / "settings.json")))
+    try:
+        views = {view: act for act, _, view in win.view_actions}
+        assert win.view_cube.visible
+        assert views[None].isVisible() and views["iso"].isVisible() and win.act_bed.isVisible()
+        assert not any(views[v].isVisible() for v in ("top", "front", "right"))
+        fired = []
+        views["front"].triggered.connect(lambda: fired.append("front"))
+        views["front"].trigger()                       # what the "3" key does
+        assert fired == ["front"]
+        win.set_view_cube_visible(False)
+        assert all(views[v].isVisible() for v in ("top", "front", "right"))
+        win.set_view_cube_visible(True)
+        assert not views["top"].isVisible()
+    finally:
+        win.close()
+        win.deleteLater()

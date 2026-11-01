@@ -240,7 +240,7 @@ menu or applications menu, without a file, always opens a new window.
 | **Left-drag** | Rotate. Press *on the model* to rotate around that exact point; press on empty space to rotate around the model's centre. The plate always stays level. |
 | **Right-drag** (or middle-drag, or Shift + left-drag) | Move (pan) |
 | **Mouse wheel** | Zoom towards the mouse pointer |
-| **View cube** (top-right corner) | Click a face to jump to that view (Top, Front, Right, Back, Left or Bottom). Drag the cube to rotate, or drag the ring under it to turn without tilting. Hide it in Settings → Viewer. |
+| **View cube** (top-right corner) | Click a face to jump to that view (Top, Front, Right, Back, Left or Bottom). Drag the cube to rotate, or drag the ring under it to turn without tilting. Because Top, Front and Right are on the cube, the toolbar keeps only Fit, Iso and Plate; hide the cube in Settings → Viewer and those three buttons come back. The keys `2` `3` `4` work either way. |
 
 Looking from underneath? The plate gets out of the way so you can see the bottom of the part.
 
@@ -425,7 +425,7 @@ The styles:
   on the eyes at night.
 - **Ember**: orange and teal. By day warm cream: the slicer button, OK and the chosen
   Settings page are orange; the toolbar tiles, sliders and focus are teal; Export STL and the view
-  buttons (Fit, Iso, Top, Front, Right, Plate) are filled with a deep teal with white text; text is
+  buttons (Fit, Iso, Plate) are filled with a deep teal with white text; text is
   a soft slate grey instead of black, and the 3D view a deeper sand colour, so white and yellow
   toolpaths stay visible. At night the same orange and teal on deep lagoon greens, with a teal-lit
   build plate.

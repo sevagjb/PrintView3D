@@ -597,6 +597,7 @@ class MainWindow(QMainWindow):
         self.view_cube.set_visible(bool(self.settings.get("show_view_cube", True)))
         self.controls.cube = self.view_cube
         self.controls.on_cube_view = self.set_view
+        self._update_view_buttons()
         # The 3D view, or (FreeCAD file without FreeCAD) a large preview picture.
         self.view_stack = QStackedWidget()
         self.view_stack.addWidget(self.plotter.interactor)
@@ -1656,7 +1657,20 @@ class MainWindow(QMainWindow):
 
     def set_view_cube_visible(self, on: bool):
         self.view_cube.set_visible(on)
+        self._update_view_buttons()
         self.plotter.render()
+
+    # Views the cube offers: their toolbar buttons only show while the cube is switched off.
+    CUBE_VIEWS = ("top", "front", "right")
+
+    def _update_view_buttons(self):
+        """With the view cube on, the toolbar keeps Fit, Iso and Plate; Top, Front and Right are on
+        the cube. Switch the cube off (Settings -> Viewer) and their buttons come back. The keys
+        2, 3 and 4 work either way."""
+        cube_on = self.view_cube.visible
+        for act, _, view in self.view_actions:
+            if view in self.CUBE_VIEWS:
+                act.setVisible(not cube_on)
 
     # ============================================================ actions
     def set_view(self, view: Optional[str]):
