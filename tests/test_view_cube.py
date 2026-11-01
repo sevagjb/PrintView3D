@@ -217,3 +217,78 @@ def test_press_beside_the_cube_is_a_normal_orbit(app):
         assert views == []
     finally:
         plotter.close()
+
+
+# --- Top / Bottom view, then drag (the model used to disappear) ------------------------------
+
+def _scene_with_model(app):
+    pv = pytest.importorskip("pyvista")
+    from types import SimpleNamespace
+
+    from printview3d.ui.camera_controls import TurntableControls
+    from printview3d.ui.scene import Scene
+    plotter = pv.Plotter(off_screen=True, window_size=(400, 300))
+    scene = Scene(plotter)
+    plotter.add_mesh(pv.Cube(center=(5, 5, 5), x_length=10, y_length=10, z_length=10), color="#ff0000",
+                     lighting=False)
+    scene.focus_bounds = (0, 10, 0, 10, 0, 10)
+    fake = SimpleNamespace(iren=SimpleNamespace(interactor=_FakeIren()), renderer=plotter.renderer)
+    c = TurntableControls(fake, scene)
+    c.pivot = np.array([5.0, 5.0, 5.0])
+    return plotter, scene, c
+
+
+def _camera_ok(plotter):
+    cam = plotter.camera
+    up = np.array(cam.up)
+    fwd = np.array(cam.focal_point) - np.array(cam.position)
+    fwd /= np.linalg.norm(fwd)
+    assert np.all(np.isfinite(up)) and abs(np.linalg.norm(up) - 1) < 1e-6, up
+    assert abs(np.dot(up, fwd)) < 1e-6                     # up is never along the viewing direction
+
+
+def _model_visible(plotter) -> bool:
+    plotter.render()
+    img = plotter.screenshot(return_img=True)
+    red = (img[..., 0] > 200) & (img[..., 1] < 60) & (img[..., 2] < 60)
+    return red.sum() > 500
+
+
+@pytest.mark.parametrize("view", ["top", "bottom"])
+@pytest.mark.parametrize("dx,dy", [(20, 0), (-35, 0), (20, 6), (0, 10), (0, -10), (3, -40)])
+def test_drag_from_top_and_bottom_keeps_the_model(app, view, dx, dy):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view(view)
+        assert _model_visible(plotter)
+        for _ in range(5):                                  # a drag is many small moves
+            c._orbit(dx / 5, dy / 5)
+            _camera_ok(plotter)
+        assert _model_visible(plotter), (view, dx, dy)
+    finally:
+        plotter.close()
+
+
+def test_ring_turn_in_top_view_spins_the_picture(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("top")
+        before_pos, before_up = np.array(plotter.camera.position), np.array(plotter.camera.up)
+        c._orbit(40, 0)                                    # ring: turn only
+        assert np.allclose(before_pos, plotter.camera.position)   # still straight above
+        assert not np.allclose(before_up, plotter.camera.up)      # but the picture turned
+        _camera_ok(plotter)
+    finally:
+        plotter.close()
+
+
+def test_drag_down_from_top_tilts_out_of_it(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("top")
+        c._orbit(0, 30)
+        fwd = np.array(plotter.camera.focal_point) - np.array(plotter.camera.position)
+        assert fwd[2] / np.linalg.norm(fwd) > -0.999         # no longer straight down
+        _camera_ok(plotter)
+    finally:
+        plotter.close()

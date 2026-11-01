@@ -204,17 +204,27 @@ class TurntableControls:
             self.request_render()
 
     def _orbit(self, dx, dy):
-        """Turntable orbit around self.pivot, keeping world Z up."""
+        """Turntable orbit around self.pivot, keeping world Z up.
+
+        Looking straight down (Top view) or up (Bottom view) is a special case: the viewing
+        direction is then the Z axis itself, so "Z is up" means nothing there and the tilt axis
+        cross(forward, Z) is zero. Earlier versions still forced view-up to Z; VTK then had no
+        usable up direction (it became 0, 0, 0) and the model disappeared until a view button was
+        pressed. Now the camera's own up direction (the top of the screen) is turned along, and
+        is used for the tilt axis and as view-up whenever the camera looks straight down or up.
+        """
         cam = self.renderer.GetActiveCamera()
         pos = np.array(cam.GetPosition())
         foc = np.array(cam.GetFocalPoint())
+        up = np.array(cam.GetViewUp())
         piv = self.pivot if self.pivot is not None else foc
 
-        # 1) spin around the vertical axis through the pivot
+        # 1) spin around the vertical axis through the pivot (the screen's up turns along)
         z = np.array([0.0, 0.0, 1.0])
         yaw = -math.radians(dx * ROTATE_DEG_PER_PX)
         pos = piv + _rotate(pos - piv, z, yaw)
         foc = piv + _rotate(foc - piv, z, yaw)
+        up = _rotate(up, z, yaw)
 
         # 2) tilt around the camera's horizontal axis through the pivot,
         #    limited so the camera never flips over the top or bottom
@@ -225,18 +235,27 @@ class TurntableControls:
         fwd /= dist
         pitch_now = math.degrees(math.asin(max(-1.0, min(1.0, fwd[2]))))
         pitch_delta = dy * ROTATE_DEG_PER_PX           # drag up = look from lower down
-        pitch_new = max(-MAX_PITCH, min(MAX_PITCH, pitch_now + pitch_delta))
+        # Already beyond the limit (Top/Bottom view looks exactly down/up): only tilt back.
+        lo, hi = min(-MAX_PITCH, pitch_now), max(MAX_PITCH, pitch_now)
+        pitch_new = max(lo, min(hi, pitch_now + pitch_delta))
         tilt = math.radians(pitch_new - pitch_now)
         right = np.cross(fwd, z)
+        if float(np.linalg.norm(right)) < 1e-6:        # straight down/up: use the screen's sideways
+            right = np.cross(fwd, up)
         n = float(np.linalg.norm(right))
         if n > 1e-9 and tilt != 0.0:
             right /= n
             pos = piv + _rotate(pos - piv, right, tilt)
             foc = piv + _rotate(foc - piv, right, tilt)
+            up = _rotate(up, right, tilt)
 
         cam.SetPosition(*pos)
         cam.SetFocalPoint(*foc)
-        cam.SetViewUp(0, 0, 1)
+        fwd = (foc - pos) / max(float(np.linalg.norm(foc - pos)), 1e-9)
+        if abs(fwd[2]) > 0.9999:
+            cam.SetViewUp(*up)                         # straight down/up: keep the screen's up
+        else:
+            cam.SetViewUp(0, 0, 1)
         cam.OrthogonalizeViewUp()
 
     def _pan(self, dx, dy):
