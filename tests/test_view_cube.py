@@ -386,8 +386,8 @@ def test_drag_down_from_top_tilts_out_of_it(app):
 
 
 def test_toolbar_hides_the_cube_views_while_the_cube_is_on(app, tmp_path, monkeypatch):
-    """Top, Front and Right are on the cube; their buttons come back when it is switched off,
-    and the keys 2/3/4 keep working either way."""
+    """Iso (the cube's Home icon), Top, Front and Right are on the cube; their buttons come back
+    when it is switched off, and the keys 1/2/3/4 keep working either way. Fit stays."""
     _need_3d_view()
     monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
     from printview3d.settings import Settings
@@ -396,14 +396,16 @@ def test_toolbar_hides_the_cube_views_while_the_cube_is_on(app, tmp_path, monkey
     try:
         views = {view: act for act, _, view in win.view_actions}
         assert win.view_cube.visible
-        assert views[None].isVisible() and views["iso"].isVisible() and win.act_bed.isVisible()
-        assert not any(views[v].isVisible() for v in ("top", "front", "right"))
+        assert views[None].isVisible() and win.act_bed.isVisible()       # Fit and Plate stay
+        assert not any(views[v].isVisible() for v in ("iso", "top", "front", "right"))
         fired = []
         views["front"].triggered.connect(lambda: fired.append("front"))
+        views["iso"].triggered.connect(lambda: fired.append("iso"))
         views["front"].trigger()                       # what the "3" key does
-        assert fired == ["front"]
+        views["iso"].trigger()                         # what the "1" key does
+        assert fired == ["front", "iso"]
         win.set_view_cube_visible(False)
-        assert all(views[v].isVisible() for v in ("top", "front", "right"))
+        assert all(views[v].isVisible() for v in ("iso", "top", "front", "right"))
         win.set_view_cube_visible(True)
         assert not views["top"].isVisible()
     finally:

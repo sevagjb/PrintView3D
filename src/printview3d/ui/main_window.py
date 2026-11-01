@@ -1676,12 +1676,13 @@ class MainWindow(QMainWindow):
         self.plotter.render()
 
     # Views the cube offers: their toolbar buttons only show while the cube is switched off.
-    CUBE_VIEWS = ("top", "front", "right")
+    # Iso is the cube's Home icon.
+    CUBE_VIEWS = ("iso", "top", "front", "right")
 
     def _update_view_buttons(self):
-        """With the view cube on, the toolbar keeps Fit, Iso and Plate; Top, Front and Right are on
-        the cube. Switch the cube off (Settings -> Viewer) and their buttons come back. The keys
-        2, 3 and 4 work either way."""
+        """With the view cube on, the toolbar keeps Fit and Plate: Top, Front and Right are on the
+        cube, and its Home icon is the Iso view. Switch the cube off (Settings -> Viewer) and their
+        buttons come back. The keys 1, 2, 3 and 4 work either way."""
         cube_on = self.view_cube.visible
         for act, _, view in self.view_actions:
             if view in self.CUBE_VIEWS:
