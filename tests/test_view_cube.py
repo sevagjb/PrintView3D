@@ -10,7 +10,9 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
 from printview3d.ui import theme  # noqa: E402
-from printview3d.ui.view_cube import FACES, cube_colors, face_image, ray_hit  # noqa: E402
+from printview3d.ui.camera_controls import azimuth_elevation, next_stop, view_frame  # noqa: E402
+from printview3d.ui.view_cube import (ARROWS, FACES, arrow_triangle, contrast, control_at,  # noqa: E402
+                                      cube_colors, face_image, ray_hit)
 
 
 @pytest.fixture(scope="module")
@@ -74,8 +76,41 @@ def test_cube_colours_in_every_theme(name):
 
 def test_ember_light_cube_matches_the_teal_buttons():
     c = cube_colors(theme.THEMES["ember"])
-    assert c["hover"] == theme.THEMES["ember"]["view_bg"] == "#14736a"
-    assert c["hover_text"] == "#ffffff"
+    assert c["edge"] == theme.THEMES["ember"]["view_bg"] == "#14736a"
+
+
+@pytest.mark.parametrize("name", list(theme.THEMES))
+def test_hover_is_the_primary_colour_with_readable_text(name):
+    """One rule for every theme: the part under the mouse in the theme's primary colour (amber in
+    Ember, teal elsewhere), with white or dark text - whichever reads better (at least 4.5:1)."""
+    t = theme.THEMES[name]
+    c = cube_colors(t)
+    assert c["hover"] == t["primary"]
+    assert contrast(c["hover"], c["hover_text"]) >= 4.5, (name, c)
+
+
+def test_ember_hover_is_amber():
+    for name in ("ember", "ember_dark"):
+        assert cube_colors(theme.THEMES[name])["hover"] == "#ef791b"
+
+
+def test_see_through_face(app):
+    img = face_image("TOP", "#ffffff", "#14736a", "#14736a", alpha=0.55)
+    assert abs(int(img[60, 60, 3]) - 140) <= 2           # the face: 55 % see-through
+    assert img[128, 2, 3] == 255                          # the border stays solid
+    assert img[..., 3].max() == 255                       # and so does the text
+
+
+def test_arrows_and_home_are_found():
+    for name in ARROWS:
+        tip, b1, b2 = arrow_triangle(name)
+        cx, cy = (tip[0] + b1[0] + b2[0]) / 3, (tip[1] + b1[1] + b2[1]) / 3
+        assert control_at(cx, cy) == name
+    assert control_at(0.0875, 0.8375) == "home"
+    assert control_at(0.5, 0.5) is None                   # the cube itself
+    assert control_at(0.95, 0.05) is None                 # an empty corner
+    # The arrows stay outside the cube: the up arrow is above the top of the square's middle.
+    assert arrow_triangle("arrow_up")[0][1] > 0.95
 
 
 def test_face_picture(app):
@@ -117,6 +152,36 @@ def test_click_in_the_corner_finds_the_face(app):
         assert cube.hit((x0 + x1) / 2, (y0 + y1) / 2) == "top"
         cube.set_visible(False)
         assert cube.hit((x0 + x1) / 2, (y0 + y1) / 2) is None           # hidden: never in the way
+    finally:
+        plotter.close()
+
+
+def test_click_on_the_arrows_and_home(app):
+    plotter, cube = _offscreen_cube(app)
+    try:
+        x0, y0, x1, y1 = cube._corner()
+        at = lambda u, v: cube.hit(x0 + u * (x1 - x0), y0 + v * (y1 - y0))   # noqa: E731
+        assert at(0.5, 0.955) == "arrow_up"
+        assert at(0.5, 0.045) == "arrow_down"
+        assert at(0.045, 0.5) == "arrow_left"
+        assert at(0.955, 0.5) == "arrow_right"
+        assert at(0.0875, 0.8375) == "home"
+        assert cube.contains((x0 + x1) / 2, (y0 + y1) / 2)
+        assert not cube.contains(10, 10)
+    finally:
+        plotter.close()
+
+
+def test_arrows_show_only_while_the_mouse_is_over_the_cube(app):
+    plotter, cube = _offscreen_cube(app)
+    try:
+        assert not cube.show_controls
+        assert not cube.arrow_actors["arrow_up"].GetVisibility()
+        assert cube.set_hover(None, True) is True               # mouse enters the square
+        assert cube.arrow_actors["arrow_up"].GetVisibility() and cube.home_actor.GetVisibility()
+        assert cube.set_hover("arrow_up", True) is True
+        assert cube.set_hover(None, False) is True               # mouse leaves
+        assert not cube.home_actor.GetVisibility()
     finally:
         plotter.close()
 
@@ -168,13 +233,19 @@ class _FakeIren:
 
 
 class _FakeCube:
-    """Everything right of x=700 is the cube's front face."""
+    """Everything right of x=700 is the cube's front face; at y < 20 there its right arrow."""
     visible = True
+    tooltips = {}
 
     def hit(self, x, y):
-        return "front" if x > 700 else None
+        if x > 700:
+            return "arrow_right" if y < 20 else "front"
+        return None
 
-    def set_hover(self, part):
+    def contains(self, x, y):
+        return x > 700
+
+    def set_hover(self, part, inside=None):
         return False
 
 
@@ -335,6 +406,197 @@ def test_toolbar_hides_the_cube_views_while_the_cube_is_on(app, tmp_path, monkey
         assert all(views[v].isVisible() for v in ("top", "front", "right"))
         win.set_view_cube_visible(True)
         assert not views["top"].isVisible()
+    finally:
+        win.close()
+        win.deleteLater()
+
+
+# --- Arrows: 45° stops, Home, smooth turns ---------------------------------------------------
+
+
+@pytest.mark.parametrize("angle,direction,expected", [
+    (0, 1, 45), (0, -1, -45), (10, 1, 45), (10, -1, 0), (44.99999, 1, 90),
+    (-90, -1, -135), (-57, -1, -90), (-57, 1, -45), (90, 1, 135),
+])
+def test_next_stop(angle, direction, expected):
+    assert next_stop(angle, direction) == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("az,el", [(-90, 0), (-45, 45), (30, -45), (180, 0), (-90, 90), (0, -90),
+                                   (135, 90)])
+def test_view_frame_round_trip(az, el):
+    back, up = view_frame(az, el)
+    assert abs(np.dot(back, up)) < 1e-9
+    a, e = azimuth_elevation(back, up)
+    assert e == pytest.approx(el)
+    assert (a - az + 180) % 360 - 180 == pytest.approx(0, abs=1e-6)
+
+
+def test_top_frame_matches_the_top_view():
+    """Up from Front in two steps must be exactly Scene.set_view('top'): looking down, +Y up."""
+    back, up = view_frame(-90, 90)
+    assert np.allclose(back, (0, 0, 1)) and np.allclose(up, (0, 1, 0), atol=1e-12)
+    back, up = view_frame(-90, -90)       # tilting down from Front under the model: +Y at the bottom
+    assert np.allclose(back, (0, 0, -1)) and np.allclose(up, (0, -1, 0), atol=1e-12)
+
+
+def _cam(plotter):
+    cam = plotter.camera
+    back = np.array(cam.position) - np.array(cam.focal_point)
+    return azimuth_elevation(back / np.linalg.norm(back), np.array(cam.up))
+
+
+def test_arrows_walk_the_45_degree_stops(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("front")
+        assert _cam(plotter) == pytest.approx((-90, 0))
+        c.step(1, 0, animate=False)                         # right: the model turns right
+        assert _cam(plotter) == pytest.approx((-135, 0))
+        c.step(-1, 0, animate=False)
+        c.step(-1, 0, animate=False)                        # left twice: front-right corner side
+        assert _cam(plotter) == pytest.approx((-45, 0))
+        c.step(0, 1, animate=False)                         # up: from higher up
+        assert _cam(plotter) == pytest.approx((-45, 45))
+        c.step(0, 1, animate=False)                         # up again: straight down = Top
+        _, el = _cam(plotter)
+        assert el == pytest.approx(90)
+        _camera_ok(plotter)
+        assert _model_visible(plotter)
+        c.step(0, 1, animate=False)                         # no further than Top
+        assert _cam(plotter)[1] == pytest.approx(90)
+        c.step(0, -1, animate=False)
+        c.step(0, -1, animate=False)
+        c.step(0, -1, animate=False)
+        c.step(0, -1, animate=False)                        # down to Bottom
+        assert _cam(plotter)[1] == pytest.approx(-90)
+        _camera_ok(plotter)
+    finally:
+        plotter.close()
+
+
+def test_two_ups_from_front_is_the_top_view(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("front")
+        c.step(0, 1, animate=False)
+        c.step(0, 1, animate=False)
+        up = np.array(plotter.camera.up)
+        scene.set_view("top")
+        assert np.allclose(up, plotter.camera.up, atol=1e-9)
+    finally:
+        plotter.close()
+
+
+def test_arrow_after_a_free_drag_lines_up_again(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("iso")
+        c._orbit(37, -11)                                   # somewhere in between
+        c.step(1, 0, animate=False)
+        az, el = _cam(plotter)
+        assert (az / 45) == pytest.approx(round(az / 45), abs=1e-6)
+        assert el == pytest.approx(round(el, 6))            # the tilt is kept by a sideways step
+        c.step(0, -1, animate=False)
+        _, el = _cam(plotter)
+        assert (el / 45) == pytest.approx(round(el / 45), abs=1e-6)
+    finally:
+        plotter.close()
+
+
+def test_arrow_step_keeps_the_zoom(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("front")
+        dist = np.linalg.norm(np.array(plotter.camera.position) - plotter.camera.focal_point)
+        scale = plotter.camera.parallel_scale
+        c.step(1, 0, animate=False)
+        assert np.linalg.norm(np.array(plotter.camera.position) - plotter.camera.focal_point) == \
+            pytest.approx(dist)
+        assert plotter.camera.parallel_scale == pytest.approx(scale)
+    finally:
+        plotter.close()
+
+
+def test_smooth_turn_runs_and_ends_on_the_view(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("front")
+        start = c.camera_state()
+        scene.set_view("right", render=False)
+        end = c.camera_state()
+        c._set_state(start)
+        c.animate_to(end, ms=60)
+        assert c.animating
+        middle = c.blend(start, end, 0.5)
+        back = middle[0] - middle[1]
+        az, el = azimuth_elevation(back / np.linalg.norm(back), middle[2])
+        assert az == pytest.approx(-45) and el == pytest.approx(0, abs=1e-6)   # halfway round
+        import time
+        t0 = time.monotonic()
+        while c.animating and time.monotonic() - t0 < 2:
+            app.processEvents()
+        assert not c.animating
+        assert all(np.allclose(a, b) for a, b in zip(c.camera_state()[:3], end[:3]))
+    finally:
+        plotter.close()
+
+
+def test_a_press_stops_a_smooth_turn(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("front")
+        c.step(1, 0)
+        assert c.animating
+        c._begin("rotate")
+        assert not c.animating
+    finally:
+        plotter.close()
+
+
+def test_turning_to_the_opposite_side_never_breaks_the_camera(app):
+    plotter, scene, c = _scene_with_model(app)
+    try:
+        scene.set_view("front")
+        a = c.camera_state()
+        scene.set_view("back", render=False)
+        b = c.camera_state()
+        for t in (0.0, 0.25, 0.5, 0.75, 1.0):
+            pos, foc, up, _ = c.blend(a, b, t)
+            fwd = (foc - pos) / np.linalg.norm(foc - pos)
+            assert np.all(np.isfinite(pos)) and abs(np.dot(up, fwd)) < 1e-6
+    finally:
+        plotter.close()
+
+
+def test_click_on_an_arrow_steps_instead_of_picking_a_face(app):
+    plotter, c, iren, views = _controls(app)
+    try:
+        plotter.camera_position = [(0, -10, 0), (0, 0, 0), (0, 0, 1)]
+        iren.pos = (750, 10)
+        c._left_down()
+        c._button_up()
+        assert views == []
+        c.stop_animation()
+        assert c.animating is False
+    finally:
+        plotter.close()
+
+
+def test_home_on_the_cube_goes_to_iso(app, tmp_path, monkeypatch):
+    _need_3d_view()
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    from printview3d.settings import Settings
+    from printview3d.ui.main_window import MainWindow
+    win = MainWindow(Settings(str(tmp_path / "settings.json")))
+    try:
+        calls = []
+        win.set_view = lambda v, animate=False: calls.append((v, animate))
+        win._cube_view("home")
+        win._cube_view("left")
+        assert calls == [("iso", True), ("left", True)]
+        assert set(win.view_cube.tooltips) == {"arrow_left", "arrow_right", "arrow_up", "arrow_down",
+                                               "home"}
     finally:
         win.close()
         win.deleteLater()

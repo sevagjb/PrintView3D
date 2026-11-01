@@ -422,7 +422,7 @@ class MainWindow(QMainWindow):
         self.view_actions = []
         for view, key in ((None, "F"), ("iso", "1"), ("top", "2"), ("front", "3"), ("right", "4")):
             act = QAction(self)
-            act.triggered.connect(lambda _=False, v=view: self.set_view(v))
+            act.triggered.connect(lambda _=False, v=view: self.set_view(v, animate=True))
             tb.addAction(act)
             self.view_actions.append((act, key, view))
 
@@ -596,7 +596,8 @@ class MainWindow(QMainWindow):
         self.view_cube = ViewCube(self.plotter, theme.colors(), self._cube_labels())
         self.view_cube.set_visible(bool(self.settings.get("show_view_cube", True)))
         self.controls.cube = self.view_cube
-        self.controls.on_cube_view = self.set_view
+        self.controls.on_cube_view = self._cube_view
+        self.view_cube.set_tooltips(self._cube_tooltips())
         self._update_view_buttons()
         # The 3D view, or (FreeCAD file without FreeCAD) a large preview picture.
         self.view_stack = QStackedWidget()
@@ -754,6 +755,7 @@ class MainWindow(QMainWindow):
             act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
+            self.view_cube.set_tooltips(self._cube_tooltips())
         self.act_export_stl.setText(tr("Export STL"))
         self.act_export_stl.setToolTip(tr("Save the objects of this CAD file as STL files (Ctrl+E)")
                                        if getattr(self, "current_kind", "") in ("freecad", "step") else
@@ -1287,6 +1289,7 @@ class MainWindow(QMainWindow):
             self.gcode = None
             self._show_model(data)
         self.scene.set_bed_visible(self.act_bed.isChecked())
+        self.controls.stop_animation()
         self.scene.set_view("iso")
         self._update_slicer_button()
         # 3MF projects; FreeCAD and STEP files once FreeCAD has turned them into 3D (it has parts).
@@ -1524,6 +1527,7 @@ class MainWindow(QMainWindow):
         self._show_gcode(g)
         self._fill_zip_box()
         self.scene.set_bed_visible(self.act_bed.isChecked())
+        self.controls.stop_animation()
         self.scene.set_view("iso")
         self.statusBar().clearMessage()
 
@@ -1655,6 +1659,17 @@ class MainWindow(QMainWindow):
         return {"top": tr("Top"), "front": tr("Front"), "right": tr("Right"),
                 "back": tr("Back"), "left": tr("Left"), "bottom": tr("Bottom")}
 
+    @staticmethod
+    def _cube_tooltips() -> dict[str, str]:
+        return {"arrow_left": tr("Turn left 45°"), "arrow_right": tr("Turn right 45°"),
+                "arrow_up": tr("Tilt up 45° (towards Top)"),
+                "arrow_down": tr("Tilt down 45° (towards Bottom)"),
+                "home": tr("Home: Iso view, fitted")}
+
+    def _cube_view(self, part: str):
+        """A click on the view cube: a face picks that view, Home goes back to Iso."""
+        self.set_view("iso" if part == "home" else part, animate=True)
+
     def set_view_cube_visible(self, on: bool):
         self.view_cube.set_visible(on)
         self._update_view_buttons()
@@ -1673,10 +1688,20 @@ class MainWindow(QMainWindow):
                 act.setVisible(not cube_on)
 
     # ============================================================ actions
-    def set_view(self, view: Optional[str]):
+    def set_view(self, view: Optional[str], animate: bool = False):
+        """Show the model from `view` (None = fit the current view). animate=True turns there
+        smoothly (view buttons, keys and the view cube); the command line and screenshots jump."""
         if self.stack.currentIndex() != 1:
             return
-        self.scene.set_view(view or self.scene._view)
+        if not animate:
+            self.controls.stop_animation()
+            self.scene.set_view(view or self.scene._view)
+            return
+        start = self.controls.camera_state()
+        self.scene.set_view(view or self.scene._view, render=False)
+        end = self.controls.camera_state()
+        self.controls._set_state(start)
+        self.controls.animate_to(end)
 
     def _toggle_bed(self, on: bool):
         self.scene.set_bed_visible(on)
