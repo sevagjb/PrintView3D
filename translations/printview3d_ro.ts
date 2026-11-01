@@ -373,8 +373,14 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme</source>
-        <translation>Tema următoare</translation>
+        <source>Next theme style</source>
+        <translation type="unfinished">Stilul de temă următor</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Switch between light and dark</source>
+        <translation type="unfinished">Comută între luminos și întunecat</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1232,13 +1238,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation>Automat</translation>
+        <source>System follows the light or dark setting of your computer.</source>
+        <translation type="unfinished">Sistem urmează setarea luminos/întunecat a computerului.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation>Clic pe o temă ca s-o încerci imediat. OK o păstrează, Anulează revine.</translation>
+        <source>Pick a style and a mode to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="unfinished">Alege un stil și un mod pentru a le încerca imediat. OK le păstrează, Anulează revine.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1252,13 +1258,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Mica (soft tint of the wallpaper)</source>
-        <translation>Mica (nuanță discretă a fundalului de ecran)</translation>
+        <source>Mica</source>
+        <translation type="unfinished">Mica</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Acrylic (frosted glass)</source>
-        <translation>Acrylic (sticlă mată)</translation>
+        <source>Acrylic</source>
+        <translation type="unfinished">Acrilic</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Mica: a soft tint of your wallpaper. Acrylic: frosted glass.</source>
+        <translation type="unfinished">Mica: o nuanță discretă a imaginii de fundal. Acrilic: sticlă mată.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1861,14 +1872,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Automatic (system theme)</source>
-        <translation>Automat (tema sistemului)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Dark</source>
-        <extracomment>Colour theme name.</extracomment>
-        <translation>Întunecată</translation>
+        <source>Default</source>
+        <translation type="unfinished">Implicit</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1884,19 +1889,25 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
+        <source>Ember</source>
+        <translation type="unfinished">Ember</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Light</source>
         <extracomment>Colour theme name: light colours (not &apos;not heavy&apos;).</extracomment>
         <translation>Luminoasă</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Light</source>
-        <translation>Jar luminos</translation>
+        <source>Dark</source>
+        <extracomment>Colour theme name.</extracomment>
+        <translation>Întunecată</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Dark</source>
-        <translation>Jar întunecat</translation>
+        <source>System</source>
+        <translation type="unfinished">Sistem</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1957,6 +1968,38 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>Descarcă actualizarea</translation>
+    </message>
+    <message>
+        <source>Next theme</source>
+        <translation type="vanished">Tema următoare</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation type="vanished">Automat</translation>
+    </message>
+    <message>
+        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="vanished">Clic pe o temă ca s-o încerci imediat. OK o păstrează, Anulează revine.</translation>
+    </message>
+    <message>
+        <source>Mica (soft tint of the wallpaper)</source>
+        <translation type="vanished">Mica (nuanță discretă a fundalului de ecran)</translation>
+    </message>
+    <message>
+        <source>Acrylic (frosted glass)</source>
+        <translation type="vanished">Acrylic (sticlă mată)</translation>
+    </message>
+    <message>
+        <source>Automatic (system theme)</source>
+        <translation type="vanished">Automat (tema sistemului)</translation>
+    </message>
+    <message>
+        <source>Ember Light</source>
+        <translation type="vanished">Jar luminos</translation>
+    </message>
+    <message>
+        <source>Ember Dark</source>
+        <translation type="vanished">Jar întunecat</translation>
     </message>
 </context>
 </TS>

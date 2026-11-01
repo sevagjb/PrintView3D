@@ -1,5 +1,9 @@
-"""Colour themes: Automatic (follows the system), Dark, Gray, Graphite, Light, Ember Light and
-Ember Dark.
+"""Colour themes: four styles (Default, Gray, Graphite, Ember), each in a light and a dark
+version, and a mode: Light, Dark or System (follows the computer's light/dark setting).
+
+The setting "theme" is one value, so every value saved by older versions still works:
+  * a theme key ("light", "dark", "gray", "gray_light", "ember", ...): that style, fixed mode
+  * "auto": the Default style following the system; "auto_<style>": that style following it
 
 A theme sets the colours of the window (Qt palette + style sheet) and of the
 3D view (background, build plate, grid). Each theme also has its own accent colours: the teal
@@ -29,20 +33,23 @@ from ..i18n import tr_noop
 ACCENT = "#2fa4a0"
 ACCENT_HOVER = "#38bbb6"
 
-# Setting value -> name shown in Settings.
-THEME_NAMES = {
-    "auto": tr_noop("Automatic (system theme)"),
-    "dark": tr_noop("Dark"),
+# Style -> (its light theme, its dark theme). The order is the order of the cards and of Ctrl+T.
+STYLES = {
+    "default": ("light", "dark"),
+    "gray": ("gray_light", "gray"),
+    "graphite": ("graphite_light", "graphite"),
+    "ember": ("ember", "ember_dark"),
+}
+STYLE_NAMES = {
+    "default": tr_noop("Default"),
     "gray": tr_noop("Gray"),
     "graphite": tr_noop("Graphite"),
-    "light": tr_noop("Light"),
-    "ember": tr_noop("Ember Light"),
-    "ember_dark": tr_noop("Ember Dark"),
+    "ember": tr_noop("Ember"),
 }
-# Order used by Ctrl+T (next theme).
-CYCLE = ["dark", "gray", "graphite", "light", "ember", "ember_dark"]
+MODES = ("light", "dark", "system")
+MODE_NAMES = {"light": tr_noop("Light"), "dark": tr_noop("Dark"), "system": tr_noop("System")}
 # Themes with a light window; every other theme is dark (title bar, Mica, icon contrast).
-LIGHT_THEMES = {"light", "ember"}
+LIGHT_THEMES = {light for light, _ in STYLES.values()}
 
 # Accent keys of the classic themes (all the same teal, so nothing changes for them).
 # accent_ink / primary_ink: the symbol colour on a soft accent / primary tile.
@@ -120,6 +127,36 @@ THEMES: dict[str, dict[str, str]] = {
         "grid_minor": "#a3abb5", "grid_major": "#858e99", "plate_edge": "#5b6470",
         "axes_label": "#1f2328",
         **_classic("#1f7f7b", "#d3d8de", "#1f2328"),
+    },
+    # Gray by day: cool, mid-light greys (a little darker than Light, so it still feels "gray").
+    "gray_light": {
+        "window": "#e4e6e9", "base": "#f4f5f7", "alt": "#eceef1", "text": "#24282d",
+        "button": "#d9dce1", "button_hover": "#cfd3d9", "button_border": "#b8bdc4",
+        "tool_hover": "#d3d7dc", "tool_checked": "#c4c9d0",
+        "bar": "#d9dce0", "bar_border": "#bfc4ca", "border": "#c3c8ce",
+        "muted": "#545b64", "group_title": "#41474f", "disabled": "#999fa7",
+        "placeholder": "#7d848c", "tooltip": "#f4f5f7",
+        "groove": "#c3c8ce", "handle": "#ffffff", "handle_border": "#8e959d",
+        "link": "#156660", "thumb": "#c9ced4",
+        "bg_bottom": "#a9afb7", "bg_top": "#d4d8dd", "plate": "#979ea7",
+        "grid_minor": "#8a919a", "grid_major": "#6e7680", "plate_edge": "#474e57",
+        "axes_label": "#24282d",
+        **_classic("#1f7f7b", "#c4c9d0", "#24282d"),
+    },
+    # Graphite by day: warm latte and taupe, the same coffee tones as Graphite in daylight.
+    "graphite_light": {
+        "window": "#e9e3dc", "base": "#f6f2ed", "alt": "#efe9e2", "text": "#3a322b",
+        "button": "#ddd5cb", "button_hover": "#d3c9be", "button_border": "#bfb3a5",
+        "tool_hover": "#d8cfc4", "tool_checked": "#cbbfb1",
+        "bar": "#ddd5cb", "bar_border": "#c6b9aa", "border": "#c9bdaf",
+        "muted": "#6b5f53", "group_title": "#55493e", "disabled": "#a59a8e",
+        "placeholder": "#887c70", "tooltip": "#f6f2ed",
+        "groove": "#c9bdaf", "handle": "#ffffff", "handle_border": "#9a8d7f",
+        "link": "#145f59", "thumb": "#d3c9bd",
+        "bg_bottom": "#b5a998", "bg_top": "#e2dad0", "plate": "#a39684",
+        "grid_minor": "#958875", "grid_major": "#7a6d5c", "plate_edge": "#4d4236",
+        "axes_label": "#3a322b",
+        **_classic("#1f7f7b", "#cbbfb1", "#3a322b"),
     },
     # Warm cream paper with a bright orange and a lagoon teal: the slicer button, OK and the
     # chosen Settings page are orange; toolbar tiles, sliders and focus are teal. Text is a
@@ -237,14 +274,61 @@ def _run_gsettings(key: str) -> str:
         return ""
 
 
+def split_choice(choice: str) -> tuple[str, str]:
+    """A "theme" setting -> (style, mode). Unknown values: the Default style following the system."""
+    if choice.startswith("auto_") and choice[5:] in STYLES:
+        return choice[5:], "system"
+    for style, (light, dark) in STYLES.items():
+        if choice == light:
+            return style, "light"
+        if choice == dark:
+            return style, "dark"
+    return "default", "system"
+
+
+def make_choice(style: str, mode: str) -> str:
+    """(style, mode) -> the value saved in the "theme" setting."""
+    style = style if style in STYLES else "default"
+    if mode == "system":
+        return "auto" if style == "default" else f"auto_{style}"
+    return STYLES[style][0 if mode == "light" else 1]
+
+
+def is_valid_choice(choice: str) -> bool:
+    return make_choice(*split_choice(choice)) == choice
+
+
+def all_choices() -> list[str]:
+    """Every value the "theme" setting (and --theme) accepts."""
+    return [make_choice(s, m) for s in STYLES for m in MODES]
+
+
+def follows_system(choice: str | None = None) -> bool:
+    return split_choice(_setting if choice is None else choice)[1] == "system"
+
+
+def theme_for(style: str, mode: str) -> str:
+    """The theme shown for a style in a mode ("system": what the computer is set to now)."""
+    if mode == "system":
+        mode = "light" if system_theme() == "light" else "dark"
+    return STYLES[style][0 if mode == "light" else 1]
+
+
 def resolve(setting: str) -> str:
     if setting in THEMES:
         return setting
-    return system_theme()
+    return theme_for(*split_choice(setting))
+
+
+def display_name(name: str | None = None) -> str:
+    """'Ember · Light' for a theme key (translated)."""
+    from ..i18n import tr
+    style, mode = split_choice(name or _current)
+    return f"{tr(STYLE_NAMES[style])} · {tr(MODE_NAMES[mode])}"
 
 
 def current() -> str:
-    """The theme in use ('dark', 'gray', 'graphite', 'light', 'ember' or 'ember_dark')."""
+    """The theme in use: a key of THEMES ('light', 'dark', 'gray_light', 'ember_dark', ...)."""
     return _current
 
 
@@ -290,9 +374,9 @@ def is_dark(name: str | None = None) -> bool:
 def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     """Style the whole application. Returns the theme used."""
     global _setting, _current
-    _setting = choice if choice in THEME_NAMES else "auto"
+    _setting = choice if is_valid_choice(choice) else "auto"
     hints = QGuiApplication.styleHints()
-    if _setting == "auto" and hasattr(hints, "unsetColorScheme"):
+    if follows_system(_setting) and hasattr(hints, "unsetColorScheme"):
         hints.unsetColorScheme()            # back to the system's own dark/light before asking it
     _current = resolve(_setting)
     _tell_qt_light_or_dark(hints)
@@ -327,6 +411,8 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     primary, primary_hover = t["primary"], t["primary_hover"]
     # The line between Export STL and its arrow: white-ish on a filled button.
     divider = "rgba(255,255,255,0.35)" if filled_view_buttons() else t["button_border"]
+    # The chosen part of the Light/Dark/System and transparency selectors.
+    segment = segment_color()
     app.setStyleSheet(f"""
         QToolBar {{ background: {t['bar']}; border: none; border-bottom: 1px solid {t['bar_border']}; spacing: 4px; padding: 4px; }}
         QToolButton {{ padding: 5px 9px; border-radius: 5px; color: {t['text']}; }}
@@ -395,6 +481,13 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         }}
         QToolButton#themeCard:hover {{ border-color: {accent}; }}
         QToolButton#themeCard:checked {{ border: 3px solid {primary}; background: {t['tool_hover']}; }}
+        QFrame#segmented {{ background: {t['base']}; border: 1px solid {t['border']}; border-radius: 8px; }}
+        QToolButton#segment {{ border: none; border-radius: 6px; padding: 5px 14px; margin: 3px;
+            background: transparent; color: {t['text']}; font-weight: 600; }}
+        QToolButton#segment:hover {{ background: {t['tool_hover']}; }}
+        QToolButton#segment:checked {{ background: {segment}; color: white; }}
+        QToolButton#segment:disabled {{ color: {t['disabled']}; }}
+        QToolButton#segment:checked:disabled {{ background: {t['tool_checked']}; }}
     """ + (_mica_css(t, _current) if mica else ""))
     return _current
 
@@ -404,7 +497,7 @@ def _tell_qt_light_or_dark(hints) -> None:
     and the Mica/Acrylic backdrop in the same variant. Without this, Qt follows Windows' own dark
     mode and overrides ours: with Windows in dark mode, our light theme kept a dark title bar
     and a dark backdrop behind dark text (seen on Sevag's PC in 0.15.2 and 0.16.0)."""
-    if _setting == "auto" or not hasattr(hints, "setColorScheme"):
+    if follows_system(_setting) or not hasattr(hints, "setColorScheme"):
         return
     try:
         hints.setColorScheme(Qt.ColorScheme.Dark if is_dark() else Qt.ColorScheme.Light)
@@ -435,10 +528,86 @@ def filled_view_buttons(name: str | None = None) -> bool:
     return t["view_bg"] != t["button"]
 
 
-def next_theme(name: str) -> str:
-    """The theme after `name` for Ctrl+T."""
-    i = CYCLE.index(name) if name in CYCLE else -1
-    return CYCLE[(i + 1) % len(CYCLE)]
+def segment_color(name: str | None = None) -> str:
+    """Fill of the chosen part of a selector: the view buttons' teal where they are filled (Ember
+    Light), otherwise the primary colour of OK buttons."""
+    t = colors(name)
+    return t["view_bg"] if filled_view_buttons(name) else t["primary"]
+
+
+def segment_icon(kind: str, menu: bool = False) -> QIcon:
+    """Small symbols for the selectors: light (sun), dark (moon), system (screen), and window
+    transparency off (solid), mica (soft tint), acrylic (frosted). Drawn in the text colour, and
+    white when chosen (menu=True: always the text colour, as menus mark the chosen item themselves)."""
+    icon = QIcon()
+    states = ((colors()["text"], QIcon.Off), (colors()["text"] if menu else "#ffffff", QIcon.On))
+    for color, state in states:
+        icon.addPixmap(_segment_pixmap(kind, QColor(color)), QIcon.Normal, state)
+    dim = QColor(colors()["disabled"])
+    icon.addPixmap(_segment_pixmap(kind, dim), QIcon.Disabled, QIcon.Off)
+    icon.addPixmap(_segment_pixmap(kind, dim), QIcon.Disabled, QIcon.On)
+    return icon
+
+
+def _segment_pixmap(kind: str, fg: QColor) -> QPixmap:
+    size = 64
+    pm = QPixmap(size, size)
+    pm.fill(Qt.transparent)
+    p = QPainter(pm)
+    p.setRenderHint(QPainter.Antialiasing)
+    pen = QPen(fg, 5)
+    pen.setCapStyle(Qt.RoundCap)
+    p.setPen(pen)
+    p.setBrush(Qt.NoBrush)
+    c = QPointF(32, 32)
+    if kind == "light":                              # sun
+        p.setBrush(fg)
+        p.drawEllipse(c, 11, 11)
+        for i in range(8):
+            a = math.radians(i * 45)
+            p.drawLine(QPointF(32 + 19 * math.cos(a), 32 + 19 * math.sin(a)),
+                       QPointF(32 + 27 * math.cos(a), 32 + 27 * math.sin(a)))
+    elif kind == "dark":                             # crescent moon
+        moon = QPainterPath()
+        moon.addEllipse(c, 24, 24)
+        bite = QPainterPath()
+        bite.addEllipse(QPointF(46, 20), 21, 21)
+        p.fillPath(moon.subtracted(bite), fg)
+    elif kind == "system":                           # screen on a stand, half filled
+        p.drawRoundedRect(QRectF(6, 10, 52, 34), 5, 5)
+        p.drawLine(QPointF(32, 44), QPointF(32, 54))
+        p.drawLine(QPointF(20, 55), QPointF(44, 55))
+        half = QPainterPath()
+        half.addRect(QRectF(9, 13, 23, 28))
+        p.fillPath(half, fg)
+    elif kind == "off":                              # solid window
+        p.setBrush(fg)
+        p.drawRoundedRect(QRectF(10, 10, 44, 44), 7, 7)
+    elif kind == "mica":                             # window with a soft tint at the bottom
+        p.drawRoundedRect(QRectF(10, 10, 44, 44), 7, 7)
+        p.fillRect(QRectF(17, 32, 30, 15), fg)
+    elif kind == "acrylic":                          # frosted: a grid of dots
+        p.drawRoundedRect(QRectF(10, 10, 44, 44), 7, 7)
+        p.setPen(Qt.NoPen)
+        p.setBrush(fg)
+        for x in (22, 32, 42):
+            for y in (22, 32, 42):
+                p.drawEllipse(QPointF(x, y), 3.2, 3.2)
+    p.end()
+    return pm
+
+
+def next_theme(choice: str) -> str:
+    """Ctrl+T: the next style, keeping the mode (Light, Dark or System)."""
+    style, mode = split_choice(choice)
+    order = list(STYLES)
+    return make_choice(order[(order.index(style) + 1) % len(order)], mode)
+
+
+def toggle_light_dark(choice: str) -> str:
+    """Ctrl+Shift+T: the same style in the other mode (from System: the opposite of what is shown)."""
+    style, _ = split_choice(choice)
+    return make_choice(style, "light" if is_dark(resolve(choice)) else "dark")
 
 
 def theme_icon(name: str | None = None) -> QIcon:

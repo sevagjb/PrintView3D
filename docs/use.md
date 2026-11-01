@@ -32,7 +32,8 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+W` | Close the file (back to the start page) |
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
-| `Ctrl+T` | Next theme (Dark → Gray → Graphite → Light) |
+| `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
+| `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
@@ -113,12 +114,13 @@ A wrong or missing word? The link on that page leads to [How to translate](TRANS
 
 ## Themes
 
-Click the **palette icon** at the right end of the toolbar to pick a theme, or press **`Ctrl+T`** to
-step to the next one. The same choice is in **Settings → Appearance → Theme**.
+A theme is a **style** — **Default**, **Gray**, **Graphite** (warm coffee tones) or **Ember**
+(orange and teal) — in a **mode**: **Light**, **Dark** or **System** (follows the dark/light setting
+of your computer, and switches along when that changes). Every style has a light and a dark version.
 
-- **Automatic** follows the dark/light setting of Windows or your Linux desktop (and switches
-  along when that changes).
-- **Dark**, **Gray**, **Graphite** (a warm, dark brownish tone that is soft on the eyes) or **Light**.
+Choose in **Settings → Appearance → Theme** (a picture card per style and a Light / Dark / System
+selector), or with the **palette icon** at the right end of the toolbar. **`Ctrl+T`** steps to the
+next style; **`Ctrl+Shift+T`** switches between light and dark.
 
 The switch is immediate; the 3D background, plate and grid change with it, while G-code and
 model colours stay the same so they always match your slicer.

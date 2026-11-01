@@ -373,8 +373,14 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme</source>
-        <translation>السمة التالية</translation>
+        <source>Next theme style</source>
+        <translation type="unfinished">نمط السمة التالي</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Switch between light and dark</source>
+        <translation type="unfinished">التبديل بين الفاتح والداكن</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1232,13 +1238,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation>تلقائي</translation>
+        <source>System follows the light or dark setting of your computer.</source>
+        <translation type="unfinished">يتبع خيار «النظام» إعداد الوضع الفاتح أو الداكن في حاسوبك.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation>انقر على سمة لتجربتها فورًا. «موافق» يحتفظ بها، و«إلغاء» يعيد السمة السابقة.</translation>
+        <source>Pick a style and a mode to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="unfinished">اختر نمطًا ووضعًا لتجربته فورًا. «موافق» يحفظه، و«إلغاء» يعيد السابق.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1252,13 +1258,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Mica (soft tint of the wallpaper)</source>
-        <translation>Mica (لون خفيف من خلفية سطح المكتب)</translation>
+        <source>Mica</source>
+        <translation type="unfinished">Mica</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Acrylic (frosted glass)</source>
-        <translation>Acrylic (زجاج مصنفر)</translation>
+        <source>Acrylic</source>
+        <translation type="unfinished">Acrylic</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Mica: a soft tint of your wallpaper. Acrylic: frosted glass.</source>
+        <translation type="unfinished">يضفي Mica لمسة خفيفة من لون خلفية سطح المكتب، ويبدو Acrylic كالزجاج المصنفر.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1861,14 +1872,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Automatic (system theme)</source>
-        <translation>تلقائي (سمة النظام)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Dark</source>
-        <extracomment>Colour theme name.</extracomment>
-        <translation>داكن</translation>
+        <source>Default</source>
+        <translation type="unfinished">الافتراضي</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1884,19 +1889,25 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
+        <source>Ember</source>
+        <translation type="unfinished">إمبر</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Light</source>
         <extracomment>Colour theme name: light colours (not &apos;not heavy&apos;).</extracomment>
         <translation>فاتح</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Light</source>
-        <translation>جمر فاتح</translation>
+        <source>Dark</source>
+        <extracomment>Colour theme name.</extracomment>
+        <translation>داكن</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Dark</source>
-        <translation>جمر داكن</translation>
+        <source>System</source>
+        <translation type="unfinished">النظام</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1957,6 +1968,38 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>تنزيل التحديث</translation>
+    </message>
+    <message>
+        <source>Next theme</source>
+        <translation type="vanished">السمة التالية</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation type="vanished">تلقائي</translation>
+    </message>
+    <message>
+        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="vanished">انقر على سمة لتجربتها فورًا. «موافق» يحتفظ بها، و«إلغاء» يعيد السمة السابقة.</translation>
+    </message>
+    <message>
+        <source>Mica (soft tint of the wallpaper)</source>
+        <translation type="vanished">Mica (لون خفيف من خلفية سطح المكتب)</translation>
+    </message>
+    <message>
+        <source>Acrylic (frosted glass)</source>
+        <translation type="vanished">Acrylic (زجاج مصنفر)</translation>
+    </message>
+    <message>
+        <source>Automatic (system theme)</source>
+        <translation type="vanished">تلقائي (سمة النظام)</translation>
+    </message>
+    <message>
+        <source>Ember Light</source>
+        <translation type="vanished">جمر فاتح</translation>
+    </message>
+    <message>
+        <source>Ember Dark</source>
+        <translation type="vanished">جمر داكن</translation>
     </message>
     <message>
         <source>Export STL (3MF projects)</source>

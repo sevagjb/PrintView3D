@@ -283,22 +283,44 @@ class MainWindow(QMainWindow):
         self.apply_theme(choice)
 
     def next_theme(self):
-        self.choose_theme(theme.next_theme(theme.current()))
+        """Ctrl+T: the next style, in the same mode."""
+        self.choose_theme(theme.next_theme(theme.setting()))
+
+    def toggle_light_dark(self):
+        """Ctrl+Shift+T: the same style, light <-> dark."""
+        self.choose_theme(theme.toggle_light_dark(theme.setting()))
+
+    def _choose_style(self, style: str):
+        self.choose_theme(theme.make_choice(style, theme.split_choice(theme.setting())[1]))
+
+    def _choose_mode(self, mode: str):
+        self.choose_theme(theme.make_choice(theme.split_choice(theme.setting())[0], mode))
 
     def _update_theme_button(self):
         if not hasattr(self, "theme_btn"):
             return
         self._update_toolbar_icons()
-        for key, a in self.theme_actions.items():
-            a.setText(tr(theme.THEME_NAMES[key]))
-            a.setChecked(key == theme.setting())
-        self.act_next_theme.setText(tr("Next theme") + "\tCtrl+T")
+        style, mode = theme.split_choice(theme.setting())
+        for key, a in self.style_actions.items():
+            a.setText(tr(theme.STYLE_NAMES[key]))
+            a.setIcon(theme.theme_swatch(theme.theme_for(key, mode)))
+            a.setChecked(key == style)
+        for key, a in self.mode_actions.items():
+            a.setText(tr(theme.MODE_NAMES[key]))
+            a.setIcon(theme.segment_icon(key, menu=True))
+            a.setChecked(key == mode)
+        self.act_next_theme.setText(tr("Next theme style") + "\t" + self._native("Ctrl+T"))
+        self.act_toggle_dark.setText(tr("Switch between light and dark") + "\t" + self._native("Ctrl+Shift+T"))
         self.theme_btn.setToolTip(tr("Theme: {name} (Ctrl+T: next theme)").format(
-            name=tr(theme.THEME_NAMES[theme.current()])))
+            name=theme.display_name(theme.make_choice(style, mode))))
+
+    @staticmethod
+    def _native(seq: str) -> str:
+        return QKeySequence(seq).toString(QKeySequence.NativeText)
 
     def _system_theme_changed(self, *_):
-        if theme.setting() == "auto":
-            self.apply_theme("auto")
+        if theme.follows_system():
+            self.apply_theme(theme.setting())
 
     # =================================================================== UI
     def _build_toolbar(self):
@@ -419,19 +441,30 @@ class MainWindow(QMainWindow):
         self.screenshot_btn = icon_button(action=self.act_screenshot)
         tb.addWidget(self.screenshot_btn)
 
-        # Theme: palette at the end of the toolbar; its menu lists every theme.
+        # Theme: palette at the end of the toolbar; its menu has the styles, then Light/Dark/System.
         self.theme_menu = QMenu(self)
         self.theme_group = QActionGroup(self)
-        self.theme_actions = {}
-        for key in theme.THEME_NAMES:
-            a = QAction(theme.theme_swatch(key), "", self, checkable=True)
-            a.triggered.connect(lambda _=False, k=key: self.choose_theme(k))
+        self.style_actions = {}
+        for key in theme.STYLES:
+            a = QAction("", self, checkable=True)
+            a.triggered.connect(lambda _=False, k=key: self._choose_style(k))
             self.theme_group.addAction(a)
             self.theme_menu.addAction(a)
-            self.theme_actions[key] = a
+            self.style_actions[key] = a
+        self.theme_menu.addSeparator()
+        self.mode_group = QActionGroup(self)
+        self.mode_actions = {}
+        for key in theme.MODES:
+            a = QAction("", self, checkable=True)
+            a.triggered.connect(lambda _=False, k=key: self._choose_mode(k))
+            self.mode_group.addAction(a)
+            self.theme_menu.addAction(a)
+            self.mode_actions[key] = a
         self.theme_menu.addSeparator()
         self.act_next_theme = QAction(self, triggered=self.next_theme)
         self.theme_menu.addAction(self.act_next_theme)
+        self.act_toggle_dark = QAction(self, triggered=self.toggle_light_dark)
+        self.theme_menu.addAction(self.act_toggle_dark)
         self.theme_btn = icon_button(menu=self.theme_menu)
         tb.addWidget(self.theme_btn)
 
@@ -689,6 +722,7 @@ class MainWindow(QMainWindow):
     def _build_shortcuts(self):
         QShortcut(QKeySequence("Ctrl+P"), self, activated=self.open_in_slicer)
         QShortcut(QKeySequence("Ctrl+T"), self, activated=self.next_theme)
+        QShortcut(QKeySequence("Ctrl+Shift+T"), self, activated=self.toggle_light_dark)
         for act, key, _ in self.view_actions:
             QShortcut(QKeySequence(key), self, activated=act.trigger)
         # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.

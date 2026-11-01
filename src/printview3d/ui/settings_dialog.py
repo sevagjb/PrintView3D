@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 import sys
 
-from PySide6.QtCore import QDateTime, QLocale, QSize, Qt
+from PySide6.QtCore import QDateTime, QLocale, QSize, Qt, Signal
 from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
@@ -76,59 +76,76 @@ class SettingsDialog(QDialog):
         self._add_page("language", tr("Language"), [g0])
 
         # ---------------- Appearance ----------------
-        # Theme cards: a small picture of PrintView3D in each theme. Clicking one switches every
-        # window right away; Cancel puts back the theme from when Settings opened.
+        # A mode (Light / Dark / System) and four style cards, each a small picture of PrintView3D
+        # in that style and mode. Clicking switches every window right away; Cancel puts back the
+        # theme from when Settings opened.
         gt = QGroupBox(tr("Theme"))
         lt = QVBoxLayout(gt)
-        grid = QGridLayout()
-        grid.setHorizontalSpacing(10)
-        grid.setVerticalSpacing(10)
+        lt.setSpacing(10)
         self._theme_at_open = settings.get("theme", "auto")
-        if self._theme_at_open not in theme.THEME_NAMES:
+        if not theme.is_valid_choice(self._theme_at_open):
             self._theme_at_open = "auto"
         self._theme_choice = self._theme_at_open
+        self._style, self._mode = theme.split_choice(self._theme_at_open)
+        mode_row = QHBoxLayout()
+        self.mode_selector = Segmented([(m, tr(theme.MODE_NAMES[m]), m) for m in theme.MODES])
+        self.mode_selector.set_value(self._mode)
+        self.mode_selector.changed.connect(self._choose_mode)
+        mode_row.addWidget(self.mode_selector)
+        mode_hint = QLabel(tr("System follows the light or dark setting of your computer."))
+        mode_hint.setObjectName("muted")
+        mode_hint.setWordWrap(True)
+        mode_row.addSpacing(8)
+        mode_row.addWidget(mode_hint, 1)
+        lt.addLayout(mode_row)
+        cards = QHBoxLayout()
+        cards.setSpacing(10)
         self.theme_group = QButtonGroup(self)
         self.theme_group.setExclusive(True)
         self.theme_cards: dict[str, QToolButton] = {}
-        for i, key in enumerate(theme.THEME_NAMES):
+        for style in theme.STYLES:
             card = QToolButton()
             card.setObjectName("themeCard")
             card.setCheckable(True)
             card.setCursor(Qt.PointingHandCursor)
             card.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            card.setIcon(QIcon(theme.theme_preview(key, 112, 70)))
             card.setIconSize(QSize(112, 70))
-            card.setText(tr("Automatic") if key == "auto" else tr(theme.THEME_NAMES[key]))
-            card.setToolTip(tr(theme.THEME_NAMES[key]))
+            card.setText(tr(theme.STYLE_NAMES[style]))
             card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-            card.setChecked(key == self._theme_choice)
-            card.clicked.connect(lambda _=False, k=key: self._choose_theme(k))
+            card.setChecked(style == self._style)
+            card.clicked.connect(lambda _=False, k=style: self._choose_style(k))
             self.theme_group.addButton(card)
-            self.theme_cards[key] = card
-            grid.addWidget(card, i // 4, i % 4)
-        lt.addLayout(grid)
-        theme_note = QLabel(tr("Click a theme to try it right away. OK keeps it, Cancel goes back."))
+            self.theme_cards[style] = card
+            cards.addWidget(card)
+        self._draw_theme_cards()
+        lt.addLayout(cards)
+        theme_note = QLabel(tr("Pick a style and a mode to try it right away. OK keeps it, Cancel goes back."))
         theme_note.setObjectName("muted")
         theme_note.setWordWrap(True)
         lt.addWidget(theme_note)
 
         ga = QGroupBox(tr("Window transparency"))
-        la = QFormLayout(ga)
+        la = QVBoxLayout(ga)
+        la.setSpacing(8)
         from .. import win_mica
-        self.backdrop_combo = QComboBox()
-        self.backdrop_combo.addItem(tr("Off"), "off")
-        self.backdrop_combo.addItem(tr("Mica (soft tint of the wallpaper)"), "mica")
-        self.backdrop_combo.addItem(tr("Acrylic (frosted glass)"), "acrylic")
-        self.backdrop_combo.setCurrentIndex(
-            max(0, self.backdrop_combo.findData(win_mica.choice(settings) if win_mica.supported() else "off")))
-        self.backdrop_combo.setEnabled(win_mica.supported())
-        la.addRow(self.backdrop_combo)
+        self.backdrop_selector = Segmented([("off", tr("Off"), "off"), ("mica", tr("Mica"), "mica"),
+                                            ("acrylic", tr("Acrylic"), "acrylic")])
+        self.backdrop_selector.set_value(win_mica.choice(settings) if win_mica.supported() else "off")
+        self.backdrop_selector.setEnabled(win_mica.supported())
+        backdrop_row = QHBoxLayout()
+        backdrop_row.addWidget(self.backdrop_selector)
+        backdrop_hint = QLabel(tr("Mica: a soft tint of your wallpaper. Acrylic: frosted glass."))
+        backdrop_hint.setObjectName("muted")
+        backdrop_hint.setWordWrap(True)
+        backdrop_row.addSpacing(8)
+        backdrop_row.addWidget(backdrop_hint, 1)
+        la.addLayout(backdrop_row)
         mica_note = QLabel(tr("Windows 11 only. Takes effect after restarting PrintView3D. Windows shows a "
                               "plain colour while the window is not active.")
                            if win_mica.supported() else tr("Needs Windows 11."))
         mica_note.setObjectName("muted")
         mica_note.setWordWrap(True)
-        la.addRow(mica_note)
+        la.addWidget(mica_note)
         self._add_page("appearance", tr("Appearance"), [gt, ga], keep_titles=True)
 
         # ---------------- Slicer ----------------
@@ -460,12 +477,33 @@ class SettingsDialog(QDialog):
             dot = key == "updates" and bool(getattr(self, "_available", None))
             self.nav.item(row).setIcon(theme.nav_icon(key, dot=dot))
 
-    def _choose_theme(self, key: str):
-        """A theme card was clicked: show the theme now (OK keeps it, Cancel goes back)."""
-        self.theme_cards[key].setChecked(True)
-        if key != self._theme_choice:
-            self._theme_choice = key
-            self._apply_theme_now(key)
+    def _choose_theme(self, choice: str):
+        """Show the theme now (OK keeps it, Cancel goes back)."""
+        self._style, self._mode = theme.split_choice(choice)
+        self.theme_cards[self._style].setChecked(True)
+        self.mode_selector.set_value(self._mode)
+        if choice != self._theme_choice:
+            self._theme_choice = choice
+            self._apply_theme_now(choice)
+        self._draw_theme_cards()
+
+    def _choose_style(self, style: str):
+        """A style card was clicked."""
+        self._choose_theme(theme.make_choice(style, self._mode))
+
+    def _choose_mode(self, mode: str):
+        """Light, Dark or System was clicked: the same style in that mode."""
+        self._choose_theme(theme.make_choice(self._style, mode))
+
+    def _draw_theme_cards(self):
+        """Each card shows its style in the chosen mode (System: as the computer is set now)."""
+        for style, card in self.theme_cards.items():
+            name = theme.theme_for(style, self._mode)
+            card.setIcon(QIcon(theme.theme_preview(name, 112, 70)))
+            card.setToolTip(theme.display_name(name))
+        for selector in (self.mode_selector, getattr(self, "backdrop_selector", None)):
+            if selector is not None:
+                selector.refresh_icons()                    # their symbols use the text colour
 
     def theme_choice(self) -> str:
         """The theme chosen on the Appearance page."""
@@ -474,8 +512,7 @@ class SettingsDialog(QDialog):
     def reject(self):
         """Cancel, Esc or the window's cross: back to the theme from when Settings opened."""
         if self._theme_choice != self._theme_at_open:
-            self._theme_choice = self._theme_at_open
-            self._apply_theme_now(self._theme_at_open)
+            self._choose_theme(self._theme_at_open)
         super().reject()
 
     @staticmethod
@@ -740,9 +777,9 @@ class SettingsDialog(QDialog):
             self.settings.set("language", lang)
             # Takes effect immediately: every window re-sets its texts.
             i18n.apply_language(QApplication.instance(), lang)
-        if self.backdrop_combo.isEnabled():
+        if self.backdrop_selector.isEnabled():
             from .. import win_mica
-            backdrop = self.backdrop_combo.currentData()
+            backdrop = self.backdrop_selector.value()
             before = win_mica.choice(self.settings)
             self.settings.set("backdrop", backdrop)
             if backdrop != before and backdrop != getattr(parent, "backdrop_at_start", before):
@@ -790,7 +827,8 @@ def shortcut_rows() -> list[tuple[list[str], str]]:
         ([_key("Ctrl+W")], tr("Close the file (back to the start page)")),
         ([_key("Ctrl+P")], tr("Open the file in your slicer")),
         ([_key("Ctrl+E")], tr("Export STL (3MF, FreeCAD and STEP)")),
-        ([_key("Ctrl+T")], tr("Next theme")),
+        ([_key("Ctrl+T")], tr("Next theme style")),
+        ([_key("Ctrl+Shift+T")], tr("Switch between light and dark")),
         (["F"], view.format(view=tr("Fit"))),
         (["1"], view.format(view=tr("Iso"))),
         (["2"], view.format(view=tr("Top"))),
@@ -811,3 +849,50 @@ def mouse_rows() -> list[tuple[list[str], str]]:
         ([tr("Click the view cube")], tr("Jump to the view of that face")),
         ([tr("Drag the view cube")], tr("Rotate (its ring: turn without tilting)")),
     ]
+
+
+class Segmented(QFrame):
+    """A row of choices where exactly one is chosen (Light | Dark | System), each with a small
+    symbol. Looks like one control; the chosen part is filled (see theme: QFrame#segmented)."""
+
+    changed = Signal(str)
+
+    def __init__(self, options: list[tuple[str, str, str]], parent=None):
+        super().__init__(parent)
+        self.setObjectName("segmented")
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        row = QHBoxLayout(self)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(0)
+        self._group = QButtonGroup(self)
+        self._group.setExclusive(True)
+        self.buttons: dict[str, QToolButton] = {}
+        self._kinds: dict[str, str] = {}
+        for key, text, kind in options:
+            b = QToolButton()
+            b.setObjectName("segment")
+            b.setCheckable(True)
+            b.setCursor(Qt.PointingHandCursor)
+            b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            b.setIconSize(QSize(16, 16))
+            b.setText(text)
+            b.clicked.connect(lambda _=False, k=key: self.changed.emit(k))
+            self._group.addButton(b)
+            row.addWidget(b)
+            self.buttons[key] = b
+            self._kinds[key] = kind
+        self.refresh_icons()
+
+    def value(self) -> str:
+        for key, b in self.buttons.items():
+            if b.isChecked():
+                return key
+        return next(iter(self.buttons))
+
+    def set_value(self, key: str):
+        if key in self.buttons:
+            self.buttons[key].setChecked(True)
+
+    def refresh_icons(self):
+        for key, b in self.buttons.items():
+            b.setIcon(theme.segment_icon(self._kinds[key]))
