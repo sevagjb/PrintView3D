@@ -2,7 +2,7 @@
 
 ## 0.22.0
 - **Thema's: vier stijlen, elk licht en donker.** Kies **Standaard**, **Grijs**, **Grafiet** of
-  **Ember**, en **Licht**, **Donker** or **Systeem** (volgt je computer en schakelt mee).
+  **Ember**, en **Licht**, **Donker** of **Systeem** (volgt je computer en schakelt mee).
   Nieuw zijn Grijs en Grafiet overdag. **Instellingen → Uiterlijk** heeft een Licht / Donker / Systeem-kiezer en
   een afbeeldingskaart voor elke stijl; het paletmenu in de werkbalk vermeldt de stijlen en vervolgens de modi.
   `Ctrl+T` gaat naar de volgende stijl, de nieuwe `Ctrl+Shift+T` schakelt tussen licht en donker.
@@ -13,12 +13,12 @@
 - **Een rustigere werkbalk**: Boven, Voor en Rechts staan nu op de weergavekubus, dus de werkbalk behoudt Passend, Iso
   en Bouwplaat. De toetsen `2` `3` `4` werken nog steeds, en de knoppen komen terug wanneer de kubus wordt uitgeschakeld.
 - **Ember Licht**: STL exporteren en de weergaveknoppen zijn gevuld met diep cyaan/donkerblauw, met witte tekst.
-- **Venstransparantie** (Windows 11) wordt gekozen met hetzelfde type kiezer: Uit, Mica of Acryl.
+- **Venstertransparantie** (Windows 11) wordt gekozen met hetzelfde type kiezer: Uit, Mica of Acryl.
 - **Opgelost**: na de weergave Boven kon het draaien van het model ervoor zorgen dat het verdween totdat op een weergaveknop werd gedrukt.
 
 ## 0.21.2
 - **De eerste start toont PrintView3D zelf**, zonder vragen eroverheen. *Controleren op updates?*
-  wordt gevraagd bij de tweede start en het GitHub-stermenu verschijnt eenmalig bij de derde start. Er verandert niets
+  wordt gevraagd bij de tweede start en het GitHub-sterbericht verschijnt eenmalig bij de derde start. Er verandert niets
   voor mensen die bijwerken vanaf een oudere versie.
 - **Linux: licht thema wanneer de desktop geen donkere instelling heeft.** Met *Automatisch* (de standaardinstelling voor nieuwe
   installaties) leest PrintView3D nu ook de GNOME-, GTK- en KDE-instellingen wanneer Qt het niet kan bepalen; als geen van
@@ -45,9 +45,9 @@
   (`Ctrl+E`) de solids op als gewone STL-bestanden, net zoals het doet voor 3MF-projecten: alles in één bestand,
   of één bestand per solid.
 - **De knop STL exporteren heeft een pijl** (zoals *Openen in slicer*) met alle opties tegelijk:
-  *Alle objecten als één STL*, *Één STL per object* en *Objecten kiezen…*.
+  *Alle objecten als één STL*, *Eén STL per object* en *Objecten kiezen…*.
   [Details](README.md#export-stl-from-3mf).
-- **Kies wat een klik doet** in **Instellingen → Bestanden → STL exporteren**: toom de lijst met objecten
+- **Kies wat een klik doet** in **Instellingen → Bestanden → STL exporteren**: toon de lijst met objecten
   (zoals voorheen), sla alles op als één STL, of sla één STL per object op. `Ctrl+E` doet hetzelfde.
 - **macOS**: het drukken op **OK** in Instellingen sloeg niets op en toonde een foutmelding; opgelost.
 
@@ -108,7 +108,7 @@ Veiligheidsupdate. Met dank aan een beoordeling van hoe PrintView3D omgaat met b
   mensen die bijwerken vanaf een oudere versie zien dit niet. **Instellingen → Over** behoudt de link.
 - **Wat is er nieuw na een update**: de eerste start na het bijwerken toont wat er is gewijzigd sinds de
   versie die je had, eenmalig. Het werkt ongeacht hoe je hebt bijgewerkt (installatieprogramma, winget, zip of
-  AppImage) en offline, vanuit de changelog die in het programma is opgelopen. Een schone installatie slaat dit over.
+  AppImage) en offline, vanuit de changelog die in het programma is meegeleverd. Een schone installatie slaat dit over.
 
 ## 0.17.0
 - **STL exporteren uit 3MF** (werkbalkknop **STL exporteren**, `Ctrl+E`, getoond voor 3MF-bestanden): een venster
@@ -120,11 +120,11 @@ Veiligheidsupdate. Met dank aan een beoordeling van hoe PrintView3D omgaat met b
   materialen of printinstellingen. Afmetingen in millimeters, opgeslagen als binaire STL.
 - 3MF-objecten die geen naam hebben in het model zelf, nemen nu hun naam over uit de objectinstellingen van de slicer
   (Creality Print, OrcaSlicer, Bambu Studio, PrusaSlicer) in plaats van "Object 1", "Object 2".
-- **Nu opnieuw opstarten / Later**: het wijzigen van **Venstransparantie** (Instellingen → Uiterlijk) of **Gebruik de
+- **Nu opnieuw opstarten / Later**: het wijzigen van **Venstertransparantie** (Instellingen → Uiterlijk) of **Gebruik de
   krachtige grafische kaart** (Instellingen → Viewer) wordt pas van kracht na een herstart, dus OK vraagt nu
   **Nu opnieuw opstarten** of **Later**. Nu opnieuw opstarten sluit PrintView3D en opent het opnieuw met hetzelfde
   bestand; Later bewaart het voor de volgende start. Het terugzetten naar wat momenteel draait vraagt niets.
-- **Één venster**: een bestand waarop je dubbelklikt (of opent met "Openen met") terwijl PrintView3D open is, wordt
+- **Eén venster**: een bestand waarop je dubbelklikt (of opent met "Openen met") terwijl PrintView3D open is, wordt
   getoond in dat venster, dat naar de voorgrond komt, in plaats van in een tweede venster. Nieuwe optie
   **Instellingen → Bestanden → Elk bestand in een nieuw venster openen** voor het oude gedrag. Het starten van
   PrintView3D zonder bestand opent nog steeds een nieuw venster; `--new-window` op de opdrachtregel opent
@@ -137,7 +137,7 @@ Veiligheidsupdate. Met dank aan een beoordeling van hoe PrintView3D omgaat met b
   behield het lichte thema een donkere titelbalk, en met transparantie aan een donkere achtergrond achter donkere tekst.
 
 ## 0.16.0
-- **Venstransparantie: Uit, Mica of Acryl** (Instellingen → Uiterlijk, Windows 11). Nieuw: **Acryl**,
+- **Venstertransparantie: Uit, Mica of Acryl** (Instellingen → Uiterlijk, Windows 11). Nieuw: **Acryl**,
   matglas dat alles vervaagt wat zich achter het venster bevindt (bureaublad, andere vensters). Mica blijft de
   rustige optie, een zachte tint van de achtergrond. De Mica-schakelaar uit 0.15 blijft behouden.
 - **Leesbaar op elke achtergrond**: met Mica of Acryl krijgen de werkbalk, het zijpaneel en de statusbalk een
@@ -150,7 +150,7 @@ Veiligheidsupdate. Met dank aan een beoordeling van hoe PrintView3D omgaat met b
 - **Opgelost: Instellingen werden zwart met Windows-transparantie (Mica) aan.** De Mica-stijlregels bereikten
   elk venster dat bij het hoofdvenster hoort, inclusief dialoogvensters; ze noemen nu alleen het eigen hoofdvenster van de
   werkbalk, het zijpaneel en de statusbalk, zodat Instellingen en de andere dialoogvensters dekkend blijven.
-- **Het thema veranderd live in Instellingen**: het kiezen van Licht, Donker, Grijs of Grafiet schakelt het hele
+- **Het thema verandert live in Instellingen**: het kiezen van Licht, Donker, Grijs of Grafiet schakelt het hele
   programma direct om, net zoals de werkbalkknop doet. OK behoudt het; Annuleren, Esc of het kruisje zet het
   thema terug van toen Instellingen werd geopend.
 - Over Mica zelf: Windows tekent het als een zachte, vrijwel dekkende tint van de achtergrond, niet als transparant
@@ -218,7 +218,7 @@ Veiligheidsupdate. Met dank aan een beoordeling van hoe PrintView3D omgaat met b
   één keer *Toch openen* in Systeeminstellingen → Privacy en beveiliging (stappen in de README).
 - Finder: *Openen met → PrintView3D* voor .stl, .3mf, .gcode en .FCStd; bestanden die vanuit Finder worden geopend of
   op het Dock-pictogram worden neergezet, openen in het venster.
-- Slicers die in /Applicaties zijn geïnstalleerd worden automatisch gevonden op de Mac.
+- Slicers die in /Applications zijn geïnstalleerd worden automatisch gevonden op de Mac.
 
 ## 0.10.1
 - Opgelost: in Instellingen op Windows was de markering van de geselecteerde pagina in de zijbalk hoger dan
@@ -333,7 +333,7 @@ Veiligheidsupdate. Met dank aan een beoordeling van hoe PrintView3D omgaat met b
 - Opgelost: 3MF-bestanden die niet-gedeclareerde XML-naamruimte-voorvoegsels gebruiken (bijv. `p:`) mislukten met
   "ParseError: unbound prefix". Ze worden nu gerepareerd tijdens het laden.
 
-## 0.10 — eerste versie
+## 0.1.0 — eerste versie
 - Bekijk STL (binair + ASCII), 3MF (incl. Creality Print / OrcaSlicer projecten met meerdere bestanden) en G-code
 - G-code: laagschuifregelaar, "alleen deze laag", kleuring van functies en filters, verplaatsingsbewegingen, bogen (G2/G3)
 - Leest printtijd, filamentgebruik, printer, bedgrootte en de ingesloten miniatuur uit G-code
