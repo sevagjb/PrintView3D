@@ -600,3 +600,37 @@ def test_home_on_the_cube_goes_to_iso(app, tmp_path, monkeypatch):
     finally:
         win.close()
         win.deleteLater()
+
+
+# --- Double-click must never take the controls away ------------------------------------------
+
+def test_double_click_keeps_our_controls(app):
+    """Regression: pyvista re-applies the interactor style it has on record on every double-click
+    (its chart toggle). Our style was set on VTK behind pyvista's back, so a double-click - two
+    quick clicks on a view cube arrow - silently swapped in pyvista's trackball, and the cube,
+    arrows and Home stopped working until a restart. Our style must be pyvista's record too, and
+    the chart double-click handler must be gone."""
+    _need_3d_view()
+    pv = pytest.importorskip("pyvista")
+    from types import SimpleNamespace
+
+    from printview3d.ui.camera_controls import TurntableControls
+    plotter = pv.Plotter(off_screen=True, window_size=(400, 300))
+    try:
+        if plotter.iren is None:
+            pytest.skip("no pyvista interactor")
+        plotter.add_mesh(pv.Cube())
+        scene = SimpleNamespace(default_pivot=lambda: (0, 0, 0), pickable_actors=lambda: [])
+        c = TurntableControls(plotter, scene)
+        iren = plotter.iren.interactor
+        assert iren.GetInteractorStyle() is c.style
+        assert plotter.iren.style is c.style                  # pyvista's record agrees
+        for _ in range(3):                                    # a quick double (and triple) click
+            iren.SetEventInformation(100, 100, 0, 0, "\0", 0)
+            iren.InvokeEvent("LeftButtonPressEvent")
+            iren.InvokeEvent("LeftButtonReleaseEvent")
+        assert iren.GetInteractorStyle() is c.style
+        plotter.iren.update_style()                           # whatever pyvista re-applies ...
+        assert iren.GetInteractorStyle() is c.style           # ... is ours
+    finally:
+        plotter.close()

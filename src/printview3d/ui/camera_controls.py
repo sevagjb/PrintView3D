@@ -147,7 +147,7 @@ class TurntableControls:
 
         # An empty style: we handle the mouse ourselves.
         self.style = vtkInteractorStyleUser()
-        self.iren.SetInteractorStyle(self.style)
+        self._install_style(plotter)
         s = self.style
         s.AddObserver("LeftButtonPressEvent", self._left_down)
         s.AddObserver("LeftButtonReleaseEvent", self._button_up)
@@ -162,6 +162,32 @@ class TurntableControls:
         # Swallow VTK's own key shortcuts (w = wireframe, e/q = quit, ...)
         s.AddObserver("CharEvent", lambda *_: None)
         s.AddObserver("KeyPressEvent", lambda *_: None)
+
+    def _install_style(self, plotter):
+        """Make our style the interactor's style - and pyvista's too.
+
+        Root cause of "after a double-click the view cube and its arrows stop working until a
+        restart": pyvista keeps its own record of the interactor style (a trackball style it sets
+        up at start) and, on every double-click in the 3D view, its built-in chart toggle
+        (_toggle_chart_interaction) puts that recorded style back on the interactor. Our style was
+        set on VTK directly, so pyvista still had its trackball on record: a double-click (two
+        clicks within 0.8 s on nearly the same spot - two quick clicks on an arrow) silently
+        replaced our controls with pyvista's trackball. Dragging still turned the view (the
+        trackball), but no click ever reached the cube again, and opening a file did not help.
+
+        So: register our style through pyvista, so its record and the real style always agree,
+        and remove that chart double-click handler - PrintView3D has no pyvista charts.
+        """
+        pv_iren = getattr(plotter, "iren", None)
+        if pv_iren is not None and hasattr(pv_iren, "untrack_click_position"):
+            try:
+                pv_iren.untrack_click_position(side="left")
+            except Exception:   # noqa: BLE001 - older/newer pyvista: the style below still fixes it
+                pass
+        if pv_iren is not None and hasattr(type(pv_iren), "style"):
+            pv_iren.style = self.style                 # pyvista sets it on the interactor too
+        if self.iren.GetInteractorStyle() is not self.style:
+            self.iren.SetInteractorStyle(self.style)
 
     # ------------------------------------------------------------ rendering
     def request_render(self):
