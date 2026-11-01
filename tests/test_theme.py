@@ -42,7 +42,7 @@ def test_all_themes_have_the_same_colour_keys():
             assert value.startswith("#") and len(value) == 7
 
 
-@pytest.mark.parametrize("name", ["dark", "gray", "light", "ember", "ember_dark"])
+@pytest.mark.parametrize("name", ["dark", "gray", "light", "ember", "ember_dark", "gray_light", "graphite_light"])
 def test_apply_theme(app, name):
     assert theme.apply_theme(app, name) == name
     assert theme.current() == name
@@ -59,23 +59,89 @@ def test_unknown_value_falls_back_to_auto(app):
     assert theme.setting() == "auto"
 
 
-def test_theme_order():
-    assert list(theme.THEME_NAMES) == ["auto", "dark", "gray", "graphite", "light", "ember", "ember_dark"]
-    assert set(theme.CYCLE) == set(theme.THEMES)
+def test_styles_and_modes():
+    assert list(theme.STYLES) == ["default", "gray", "graphite", "ember"]
+    assert theme.MODES == ("light", "dark", "system")
+    # Every style has a light and a dark theme, and together they are all the themes.
+    assert {k for pair in theme.STYLES.values() for k in pair} == set(theme.THEMES)
+    for light, dark in theme.STYLES.values():
+        assert not theme.is_dark(light) and theme.is_dark(dark)
 
 
-def test_next_theme_cycles_through_all():
-    seen, t = [], "dark"
-    for _ in range(6):
+@pytest.mark.parametrize("old,style,mode", [
+    # Every value older versions saved keeps meaning the same thing.
+    ("auto", "default", "system"), ("dark", "default", "dark"), ("light", "default", "light"),
+    ("gray", "gray", "dark"), ("graphite", "graphite", "dark"),
+    ("ember", "ember", "light"), ("ember_dark", "ember", "dark"),
+    # New values.
+    ("gray_light", "gray", "light"), ("graphite_light", "graphite", "light"), ("auto_ember", "ember", "system"),
+])
+def test_saved_values_map_to_style_and_mode(old, style, mode):
+    assert theme.split_choice(old) == (style, mode)
+    assert theme.make_choice(style, mode) == old
+    assert theme.is_valid_choice(old)
+
+
+def test_unknown_values_are_not_valid():
+    for bad in ("purple", "auto_purple", "", "auto_default"):
+        assert not theme.is_valid_choice(bad), bad
+    assert theme.split_choice("purple") == ("default", "system")
+
+
+def test_cli_lists_every_choice():
+    from printview3d.app import THEME_CHOICES
+    assert set(THEME_CHOICES) == set(theme.all_choices())
+
+
+def test_system_mode_follows_the_computer(app, monkeypatch):
+    monkeypatch.setattr(theme, "system_theme", lambda: "light")
+    assert theme.resolve("auto_ember") == "ember" and theme.resolve("auto") == "light"
+    monkeypatch.setattr(theme, "system_theme", lambda: "dark")
+    assert theme.resolve("auto_ember") == "ember_dark" and theme.resolve("auto_gray") == "gray"
+    assert theme.apply_theme(app, "auto_graphite") == "graphite"
+    assert theme.setting() == "auto_graphite" and theme.follows_system()
+    theme.apply_theme(app, "dark")
+
+
+def test_next_theme_keeps_the_mode():
+    seen, t = [], "light"
+    for _ in range(4):
         t = theme.next_theme(t)
         seen.append(t)
-    assert seen == ["gray", "graphite", "light", "ember", "ember_dark", "dark"]
-    assert theme.next_theme("auto") == "dark"
+    assert seen == ["gray_light", "graphite_light", "ember", "light"]
+    assert theme.next_theme("ember_dark") == "dark"
+    assert theme.next_theme("auto") == "auto_gray"
+    assert theme.next_theme("auto_ember") == "auto"
+
+
+def test_toggle_light_dark(monkeypatch):
+    assert theme.toggle_light_dark("ember") == "ember_dark"
+    assert theme.toggle_light_dark("gray") == "gray_light"
+    monkeypatch.setattr(theme, "system_theme", lambda: "dark")
+    assert theme.toggle_light_dark("auto_ember") == "ember"        # from System: the opposite of now
 
 
 def test_theme_icon_draws(app):
-    for name in theme.CYCLE:
+    for name in theme.THEMES:
         assert not theme.theme_icon(name).isNull()
+
+
+def test_segment_icons_draw(app):
+    for kind in ("light", "dark", "system", "off", "mica", "acrylic"):
+        assert not theme.segment_icon(kind).isNull()
+
+
+@pytest.mark.parametrize("name", ["gray_light", "graphite_light"])
+def test_new_light_themes_are_readable(name):
+    t = theme.THEMES[name]
+    for fg, bg in (("text", "window"), ("text", "bar"), ("text", "base"), ("muted", "window"),
+                   ("link", "window"), ("group_title", "window")):
+        assert _contrast(t[fg], t[bg]) >= 4.5, (fg, bg)
+
+
+def test_selector_fill_is_readable_with_white_text():
+    for name in theme.THEMES:
+        assert _contrast(theme.segment_color(name), "#ffffff") >= 2.4, name
 
 
 def test_mica_makes_only_the_main_window_transparent(app):
@@ -177,7 +243,7 @@ def test_about_page_lists_the_shortcuts(app, tmp_path):
     d = SettingsDialog(Settings(str(tmp_path / "settings.json")), page="about")
     keys = {k for row_keys, _ in shortcut_rows() for k in row_keys}
     # Keys are shown as the system writes them: Ctrl+O on Windows and Linux, ⌘O on a Mac.
-    for k in ("Ctrl+O", "Ctrl+P", "Ctrl+E", "Ctrl+T", "F", "1", "2", "3", "4"):
+    for k in ("Ctrl+O", "Ctrl+P", "Ctrl+E", "Ctrl+T", "Ctrl+Shift+T", "F", "1", "2", "3", "4"):
         assert _key(k) in keys, k
     assert len(mouse_rows()) >= 3
     d.deleteLater()
@@ -233,7 +299,7 @@ def test_primary_colour_reaches_the_style_sheet(app):
 
 
 def test_previews_and_swatches_draw(app):
-    for name in theme.THEME_NAMES:
+    for name in list(theme.THEMES) + ["auto"]:
         pm = theme.theme_preview(name, 112, 70)
         assert not pm.isNull() and pm.deviceIndependentSize().width() == 112
         assert not theme.theme_swatch(name).isNull()
@@ -246,11 +312,14 @@ def test_theme_cards_preview_live_and_cancel_goes_back(app, tmp_path):
     s.set("theme", "dark")
     theme.apply_theme(app, "dark")
     d = SettingsDialog(s, page="appearance")
-    assert set(d.theme_cards) == set(theme.THEME_NAMES)
-    assert d.theme_cards["dark"].isChecked()
-    d.theme_cards["ember"].click()
+    assert list(d.theme_cards) == list(theme.STYLES)
+    assert d.theme_cards["default"].isChecked() and d.mode_selector.value() == "dark"
+    d.theme_cards["ember"].click()                      # Ember, still dark
+    assert theme.current() == "ember_dark" and d.theme_choice() == "ember_dark"
+    assert d.theme_cards["ember"].isChecked() and not d.theme_cards["default"].isChecked()
+    d.mode_selector.buttons["light"].click()            # Ember, now light
     assert theme.current() == "ember" and d.theme_choice() == "ember"
-    assert d.theme_cards["ember"].isChecked() and not d.theme_cards["dark"].isChecked()
+    assert d.theme_cards["ember"].isChecked()
     d.reject()
     assert theme.current() == "dark" and s.get("theme") == "dark"
 
@@ -261,10 +330,33 @@ def test_theme_card_ok_saves(app, tmp_path):
     s.set("theme", "dark")
     theme.apply_theme(app, "dark")
     d = SettingsDialog(s, page="appearance")
-    d.theme_cards["ember_dark"].click()
+    d.theme_cards["ember"].click()
     d._save()
     assert s.get("theme") == "ember_dark"
     theme.apply_theme(app, "dark")
+
+
+def test_system_mode_ok_saves(app, tmp_path):
+    from printview3d.ui.settings_dialog import SettingsDialog
+    s = Settings(str(tmp_path / "settings.json"))
+    s.set("theme", "gray")
+    theme.apply_theme(app, "gray")
+    d = SettingsDialog(s, page="appearance")
+    assert d.theme_cards["gray"].isChecked() and d.mode_selector.value() == "dark"
+    d.mode_selector.buttons["system"].click()
+    d._save()
+    assert s.get("theme") == "auto_gray"
+    theme.apply_theme(app, "dark")
+
+
+def test_transparency_selector(app, tmp_path):
+    from printview3d import win_mica
+    from printview3d.ui.settings_dialog import SettingsDialog
+    d = SettingsDialog(Settings(str(tmp_path / "settings.json")), page="appearance")
+    assert list(d.backdrop_selector.buttons) == ["off", "mica", "acrylic"]
+    assert d.backdrop_selector.value() == "off"
+    assert d.backdrop_selector.isEnabled() == win_mica.supported()      # Windows 11 only
+    d.deleteLater()
 
 
 # --- 0.21.2: Linux without a colour-scheme answer from Qt starts light ------------------------

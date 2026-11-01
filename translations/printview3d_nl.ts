@@ -373,8 +373,14 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme</source>
-        <translation>Volgend thema</translation>
+        <source>Next theme style</source>
+        <translation>Volgende themastijl</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Switch between light and dark</source>
+        <translation>Wisselen tussen licht en donker</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -892,6 +898,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Back</source>
+        <extracomment>Label on the view cube: camera view from behind.</extracomment>
+        <translation>Achter</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Left</source>
+        <extracomment>Label on the view cube: camera view from the left.</extracomment>
+        <translation>Links</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Bottom</source>
+        <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation>Onder</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>custom slicer</source>
         <translation>aangepaste slicer</translation>
@@ -1214,13 +1238,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation>Automatisch</translation>
+        <source>System follows the light or dark setting of your computer.</source>
+        <translation>Systeem volgt de lichte of donkere instelling van je computer.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation>Klik op een thema om het meteen te proberen. OK houdt het, Annuleren zet het vorige terug.</translation>
+        <source>Pick a style and a mode to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation>Kies een stijl en een modus om het meteen te proberen. OK bewaart het, Annuleren gaat terug.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1234,13 +1258,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Mica (soft tint of the wallpaper)</source>
-        <translation>Mica (zachte tint van de achtergrond)</translation>
+        <source>Mica</source>
+        <translation>Mica</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Acrylic (frosted glass)</source>
-        <translation>Acrylic (matglas)</translation>
+        <source>Acrylic</source>
+        <translation>Acryl</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Mica: a soft tint of your wallpaper. Acrylic: frosted glass.</source>
+        <translation>Mica: een zachte tint van je achtergrond. Acryl: matglas.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1410,6 +1439,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show build plate grid</source>
         <translation>Raster van de printplaat tonen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation>Weergavekubus tonen (rechterbovenhoek van de 3D-weergave)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1817,15 +1851,29 @@
         <translation>Muiswiel</translation>
     </message>
     <message>
-        <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Automatic (system theme)</source>
-        <translation>Automatisch (systeemthema)</translation>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Jump to the view of that face</source>
+        <translation>Naar de weergave van dat vlak springen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click the view cube</source>
+        <translation>Klik op de weergavekubus</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Rotate (its ring: turn without tilting)</source>
+        <translation>Draaien (de ring: draaien zonder kantelen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Drag the view cube</source>
+        <translation>Sleep de weergavekubus</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Dark</source>
-        <extracomment>Colour theme name.</extracomment>
-        <translation>Donker</translation>
+        <source>Default</source>
+        <translation>Standaard</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1841,19 +1889,25 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
+        <source>Ember</source>
+        <translation>Ember</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Light</source>
         <extracomment>Colour theme name: light colours (not &apos;not heavy&apos;).</extracomment>
         <translation>Licht</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Light</source>
-        <translation>Gloed licht</translation>
+        <source>Dark</source>
+        <extracomment>Colour theme name.</extracomment>
+        <translation>Donker</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Dark</source>
-        <translation>Gloed donker</translation>
+        <source>System</source>
+        <translation>Systeem</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1914,6 +1968,38 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>Update downloaden</translation>
+    </message>
+    <message>
+        <source>Next theme</source>
+        <translation type="vanished">Volgend thema</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation type="vanished">Automatisch</translation>
+    </message>
+    <message>
+        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="vanished">Klik op een thema om het meteen te proberen. OK houdt het, Annuleren zet het vorige terug.</translation>
+    </message>
+    <message>
+        <source>Mica (soft tint of the wallpaper)</source>
+        <translation type="vanished">Mica (zachte tint van de achtergrond)</translation>
+    </message>
+    <message>
+        <source>Acrylic (frosted glass)</source>
+        <translation type="vanished">Acrylic (matglas)</translation>
+    </message>
+    <message>
+        <source>Automatic (system theme)</source>
+        <translation type="vanished">Automatisch (systeemthema)</translation>
+    </message>
+    <message>
+        <source>Ember Light</source>
+        <translation type="vanished">Gloed licht</translation>
+    </message>
+    <message>
+        <source>Ember Dark</source>
+        <translation type="vanished">Gloed donker</translation>
     </message>
     <message>
         <source>Export STL (3MF projects)</source>

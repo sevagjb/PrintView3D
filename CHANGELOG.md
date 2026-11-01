@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.22.0
+- **Themes: four styles, each light and dark.** Choose **Default**, **Gray**, **Graphite** or
+  **Ember**, and **Light**, **Dark** or **System** (follows your computer and switches along with it).
+  New are Gray and Graphite by day. **Settings → Appearance** has a Light / Dark / System selector and
+  a picture card for each style; the palette menu in the toolbar lists the styles, then the modes.
+  `Ctrl+T` goes to the next style, the new `Ctrl+Shift+T` switches between light and dark.
+  The theme you use now carries over. [Details](README.md#themes).
+- **View cube** in the top-right corner of the 3D view: click a face to see the model from that side
+  (now also from the back, left and below), drag the cube to rotate, drag the ring under it to turn
+  without tilting. Switch it off in **Settings → Viewer** if you don't want it.
+- **A calmer toolbar**: Top, Front and Right are on the view cube now, so the toolbar keeps Fit, Iso
+  and Plate. The keys `2` `3` `4` still work, and the buttons come back when the cube is switched off.
+- **Ember Light**: Export STL and the view buttons are filled with deep teal, with white text.
+- **Window transparency** (Windows 11) is chosen with the same kind of selector: Off, Mica or Acrylic.
+- **Fixed**: after the Top view, rotating could make the model disappear until a view button was
+  pressed.
+
 ## 0.21.2
 - **The first start shows PrintView3D itself**, with no questions on top of it. *Check for updates?*
   is asked on the second start and the GitHub star message comes on the third, once. Nothing changes

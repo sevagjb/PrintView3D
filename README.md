@@ -51,7 +51,7 @@ without exporting an STL first.
 | **Open in your slicer** | One click (or `Ctrl+P`) opens the current file in your slicer. Installed slicers are found automatically. |
 | **Default app** | Optional: make PrintView3D open `.stl`, `.3mf` and `.gcode` files when you double-click them. Fully reversible. |
 | **Your language** | English, العربية (Arabic, right-to-left), Nederlands, Deutsch, Français, Español and Română; switch any time in Settings, no restart needed. [Help translate](#translations). |
-| **Themes** | Automatic (follows your system), Dark, Gray, Graphite (warm, easy on the eyes), Light, Ember Light or Ember Dark (warm orange and teal), for the window and the 3D view. Pick one from picture cards in Settings, the palette icon or `Ctrl+T`. Toolpath colours stay the same in every theme. |
+| **Themes** | Four styles — Default, Gray, Graphite (warm, easy on the eyes) and Ember (warm orange and teal) — each in a light and a dark version, with Light, Dark or System (follows your computer), for the window and the 3D view. Pick from picture cards in Settings, the palette icon, `Ctrl+T` (next style) or `Ctrl+Shift+T` (light ↔ dark). Toolpath colours stay the same in every theme. |
 | **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
@@ -240,6 +240,7 @@ menu or applications menu, without a file, always opens a new window.
 | **Left-drag** | Rotate. Press *on the model* to rotate around that exact point; press on empty space to rotate around the model's centre. The plate always stays level. |
 | **Right-drag** (or middle-drag, or Shift + left-drag) | Move (pan) |
 | **Mouse wheel** | Zoom towards the mouse pointer |
+| **View cube** (top-right corner) | Click a face to jump to that view (Top, Front, Right, Back, Left or Bottom). Drag the cube to rotate, or drag the ring under it to turn without tilting. Because Top, Front and Right are on the cube, the toolbar keeps only Fit, Iso and Plate; hide the cube in Settings → Viewer and those three buttons come back. The keys `2` `3` `4` work either way. |
 
 Looking from underneath? The plate gets out of the way so you can see the bottom of the part.
 
@@ -253,7 +254,8 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+W` | Close the file (back to the start page) |
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
-| `Ctrl+T` | Next theme (Dark → Gray → Graphite → Light → Ember Light → Ember Dark) |
+| `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
+| `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
@@ -396,35 +398,50 @@ A wrong or missing word? The link on that page leads to [How to translate](docs/
 
 ### Themes
 
-There are three ways to pick a theme:
+A theme is a **style** in a **mode**. There are four styles — **Default**, **Gray**, **Graphite**
+and **Ember** — and each comes in a light and a dark version. The mode picks which one you see:
 
-- **Settings → Appearance → Theme** shows every theme as a **picture card**: a small view of
-  PrintView3D in that theme, with its toolbar, side panel and 3D view. Click a card and every
-  window switches at once, so you can try them one after another. **OK** keeps the theme you
-  clicked last; **Cancel** goes back to the theme you had when you opened Settings.
-- The **palette icon** at the right end of the toolbar opens a menu of all themes, each with a
-  small colour swatch.
-- **`Ctrl+T`** steps to the next theme.
+- **Light** or **Dark**: always that version.
+- **System**: follows the dark/light setting of Windows, macOS or your Linux desktop, and switches
+  along when that changes. On Linux it reads the GNOME, GTK or KDE setting; if the desktop doesn't
+  say dark anywhere, PrintView3D starts light.
 
-The themes:
+Where to choose:
 
-- **Automatic** follows the dark/light setting of Windows or your Linux desktop (and switches
-  along when that changes). On Linux it reads the GNOME, GTK or KDE setting; if the desktop
-  doesn't say dark anywhere, PrintView3D starts light.
-- **Dark**, **Gray**, **Graphite** (a warm, dark brownish tone that is soft on the eyes) or
-  **Light**, with teal buttons.
-- **Ember Light**: warm cream with a bright orange and a lagoon teal. The slicer button, OK and the
-  chosen Settings page are orange; the toolbar tiles, sliders and focus are teal; text is a soft
-  slate grey instead of black. The 3D view is a deeper sand colour, so white and yellow toolpaths
-  stay visible.
-- **Ember Dark**: the same orange and teal at night, on deep lagoon greens instead of grey, with a
-  teal-lit build plate.
+- **Settings → Appearance → Theme**: a Light / Dark / System selector and a **picture card** for
+  each style, showing PrintView3D in that style and mode. Click a card or a mode and every window
+  switches at once, so you can try them one after another. **OK** keeps your choice; **Cancel**
+  goes back to the theme you had when you opened Settings.
+- The **palette icon** at the right end of the toolbar: the four styles with a colour swatch, then
+  Light, Dark and System.
+- **`Ctrl+T`** steps to the next style and keeps the mode; **`Ctrl+Shift+T`** switches the same
+  style between light and dark.
+
+The styles:
+
+- **Default**: neutral greys with teal buttons — white-grey by day, charcoal at night.
+- **Gray**: cooler, mid greys in both versions.
+- **Graphite**: warm coffee tones — latte and taupe by day, a dark brownish charcoal that is soft
+  on the eyes at night.
+- **Ember**: orange and teal. By day warm cream: the slicer button, OK and the chosen
+  Settings page are orange; the toolbar tiles, sliders and focus are teal; Export STL and the view
+  buttons (Fit, Iso, Plate) are filled with a deep teal with white text; text is
+  a soft slate grey instead of black, and the 3D view a deeper sand colour, so white and yellow
+  toolpaths stay visible. At night the same orange and teal on deep lagoon greens, with a teal-lit
+  build plate.
+
+Settings from older versions carry over: *Automatic* becomes Default + System, *Ember Light*
+becomes Ember + Light, *Ember Dark* becomes Ember + Dark, and so on.
+
+**Window transparency** (Windows 11) sits under the theme, with the same kind of selector:
+**Off**, **Mica** (a soft tint of your wallpaper) or **Acrylic** (frosted glass). It takes effect
+after a restart; on other systems it stays Off.
 
 The switch is immediate; the 3D background, plate and grid change with it, while G-code and
 model colours stay the same so they always match your slicer. In every theme, text and grey labels
 have a contrast of at least 4.5 : 1 against the window, so they stay easy to read.
 
-![Settings → Appearance with a picture card for every theme](docs/screenshot-theme-picker.png)
+![Settings → Appearance with a picture card for every theme style](docs/screenshot-theme-picker.png)
 
 ![Ember Light with a 3MF plate, and Ember Dark with G-code](docs/screenshot-theme-ember.png)
 

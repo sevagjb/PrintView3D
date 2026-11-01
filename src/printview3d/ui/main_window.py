@@ -253,6 +253,7 @@ class MainWindow(QMainWindow):
             # Once more after Qt has finished its own update of the window, so ours is the last word.
             QTimer.singleShot(200, lambda: self.mica and win_mica.set_dark(int(self.winId()), theme.is_dark()))
         self.scene.set_colors(theme.colors())
+        self.view_cube.set_colors(theme.colors())
         self._update_theme_button()
         self.refresh_update_badge()
         # The ZIP list's type labels take their text colour from the theme when they are made.
@@ -282,22 +283,44 @@ class MainWindow(QMainWindow):
         self.apply_theme(choice)
 
     def next_theme(self):
-        self.choose_theme(theme.next_theme(theme.current()))
+        """Ctrl+T: the next style, in the same mode."""
+        self.choose_theme(theme.next_theme(theme.setting()))
+
+    def toggle_light_dark(self):
+        """Ctrl+Shift+T: the same style, light <-> dark."""
+        self.choose_theme(theme.toggle_light_dark(theme.setting()))
+
+    def _choose_style(self, style: str):
+        self.choose_theme(theme.make_choice(style, theme.split_choice(theme.setting())[1]))
+
+    def _choose_mode(self, mode: str):
+        self.choose_theme(theme.make_choice(theme.split_choice(theme.setting())[0], mode))
 
     def _update_theme_button(self):
         if not hasattr(self, "theme_btn"):
             return
         self._update_toolbar_icons()
-        for key, a in self.theme_actions.items():
-            a.setText(tr(theme.THEME_NAMES[key]))
-            a.setChecked(key == theme.setting())
-        self.act_next_theme.setText(tr("Next theme") + "\tCtrl+T")
+        style, mode = theme.split_choice(theme.setting())
+        for key, a in self.style_actions.items():
+            a.setText(tr(theme.STYLE_NAMES[key]))
+            a.setIcon(theme.theme_swatch(theme.theme_for(key, mode)))
+            a.setChecked(key == style)
+        for key, a in self.mode_actions.items():
+            a.setText(tr(theme.MODE_NAMES[key]))
+            a.setIcon(theme.segment_icon(key, menu=True))
+            a.setChecked(key == mode)
+        self.act_next_theme.setText(tr("Next theme style") + "\t" + self._native("Ctrl+T"))
+        self.act_toggle_dark.setText(tr("Switch between light and dark") + "\t" + self._native("Ctrl+Shift+T"))
         self.theme_btn.setToolTip(tr("Theme: {name} (Ctrl+T: next theme)").format(
-            name=tr(theme.THEME_NAMES[theme.current()])))
+            name=theme.display_name(theme.make_choice(style, mode))))
+
+    @staticmethod
+    def _native(seq: str) -> str:
+        return QKeySequence(seq).toString(QKeySequence.NativeText)
 
     def _system_theme_changed(self, *_):
-        if theme.setting() == "auto":
-            self.apply_theme("auto")
+        if theme.follows_system():
+            self.apply_theme(theme.setting())
 
     # =================================================================== UI
     def _build_toolbar(self):
@@ -407,6 +430,9 @@ class MainWindow(QMainWindow):
         self.act_bed.setChecked(bool(self.settings.get("show_bed", True)))
         self.act_bed.toggled.connect(self._toggle_bed)
         tb.addAction(self.act_bed)
+        # Named, so a theme can style them on their own (Ember Light fills them with teal).
+        for act in [a for a, _, _ in self.view_actions] + [self.act_bed]:
+            tb.widgetForAction(act).setObjectName("viewButton")
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -415,19 +441,30 @@ class MainWindow(QMainWindow):
         self.screenshot_btn = icon_button(action=self.act_screenshot)
         tb.addWidget(self.screenshot_btn)
 
-        # Theme: palette at the end of the toolbar; its menu lists every theme.
+        # Theme: palette at the end of the toolbar; its menu has the styles, then Light/Dark/System.
         self.theme_menu = QMenu(self)
         self.theme_group = QActionGroup(self)
-        self.theme_actions = {}
-        for key in theme.THEME_NAMES:
-            a = QAction(theme.theme_swatch(key), "", self, checkable=True)
-            a.triggered.connect(lambda _=False, k=key: self.choose_theme(k))
+        self.style_actions = {}
+        for key in theme.STYLES:
+            a = QAction("", self, checkable=True)
+            a.triggered.connect(lambda _=False, k=key: self._choose_style(k))
             self.theme_group.addAction(a)
             self.theme_menu.addAction(a)
-            self.theme_actions[key] = a
+            self.style_actions[key] = a
+        self.theme_menu.addSeparator()
+        self.mode_group = QActionGroup(self)
+        self.mode_actions = {}
+        for key in theme.MODES:
+            a = QAction("", self, checkable=True)
+            a.triggered.connect(lambda _=False, k=key: self._choose_mode(k))
+            self.mode_group.addAction(a)
+            self.theme_menu.addAction(a)
+            self.mode_actions[key] = a
         self.theme_menu.addSeparator()
         self.act_next_theme = QAction(self, triggered=self.next_theme)
         self.theme_menu.addAction(self.act_next_theme)
+        self.act_toggle_dark = QAction(self, triggered=self.toggle_light_dark)
+        self.theme_menu.addAction(self.act_toggle_dark)
         self.theme_btn = icon_button(menu=self.theme_menu)
         tb.addWidget(self.theme_btn)
 
@@ -441,7 +478,7 @@ class MainWindow(QMainWindow):
         self.recent_btn.setIcon(theme.tool_icon("recent"))
         # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
         self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
-        self.act_export_stl.setIcon(theme.tool_icon("export"))
+        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons()))
         self.theme_btn.setIcon(theme.tool_icon("theme", warm=True))
         self.recent_menu.setIcon(theme.tool_icon("recent"))
         self.act_settings.setIcon(theme.tool_icon("settings"))
@@ -554,6 +591,13 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        # The view cube in the top-right corner (Settings -> Viewer can hide it).
+        from .view_cube import ViewCube
+        self.view_cube = ViewCube(self.plotter, theme.colors(), self._cube_labels())
+        self.view_cube.set_visible(bool(self.settings.get("show_view_cube", True)))
+        self.controls.cube = self.view_cube
+        self.controls.on_cube_view = self.set_view
+        self._update_view_buttons()
         # The 3D view, or (FreeCAD file without FreeCAD) a large preview picture.
         self.view_stack = QStackedWidget()
         self.view_stack.addWidget(self.plotter.interactor)
@@ -679,6 +723,7 @@ class MainWindow(QMainWindow):
     def _build_shortcuts(self):
         QShortcut(QKeySequence("Ctrl+P"), self, activated=self.open_in_slicer)
         QShortcut(QKeySequence("Ctrl+T"), self, activated=self.next_theme)
+        QShortcut(QKeySequence("Ctrl+Shift+T"), self, activated=self.toggle_light_dark)
         for act, key, _ in self.view_actions:
             QShortcut(QKeySequence(key), self, activated=act.trigger)
         # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.
@@ -707,6 +752,8 @@ class MainWindow(QMainWindow):
         for act, key, view in self.view_actions:
             act.setText(view_names[view])
             act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
+        if hasattr(self, "view_cube"):
+            self.view_cube.set_labels(self._cube_labels())
         self.act_export_stl.setText(tr("Export STL"))
         self.act_export_stl.setToolTip(tr("Save the objects of this CAD file as STL files (Ctrl+E)")
                                        if getattr(self, "current_kind", "") in ("freecad", "step") else
@@ -1603,6 +1650,28 @@ class MainWindow(QMainWindow):
         if self.gcode is not None and self.layers_box.isVisible():
             self.layer_slider.setValue(max(0, min(value, self.layer_slider.maximum())))
 
+    @staticmethod
+    def _cube_labels() -> dict[str, str]:
+        return {"top": tr("Top"), "front": tr("Front"), "right": tr("Right"),
+                "back": tr("Back"), "left": tr("Left"), "bottom": tr("Bottom")}
+
+    def set_view_cube_visible(self, on: bool):
+        self.view_cube.set_visible(on)
+        self._update_view_buttons()
+        self.plotter.render()
+
+    # Views the cube offers: their toolbar buttons only show while the cube is switched off.
+    CUBE_VIEWS = ("top", "front", "right")
+
+    def _update_view_buttons(self):
+        """With the view cube on, the toolbar keeps Fit, Iso and Plate; Top, Front and Right are on
+        the cube. Switch the cube off (Settings -> Viewer) and their buttons come back. The keys
+        2, 3 and 4 work either way."""
+        cube_on = self.view_cube.visible
+        for act, _, view in self.view_actions:
+            if view in self.CUBE_VIEWS:
+                act.setVisible(not cube_on)
+
     # ============================================================ actions
     def set_view(self, view: Optional[str]):
         if self.stack.currentIndex() != 1:
@@ -1871,7 +1940,14 @@ class MainWindow(QMainWindow):
         path, _ = QFileDialog.getSaveFileName(self, tr("Save screenshot"), start,
                                               tr("PNG image") + " (*.png)")
         if path:
-            self.plotter.screenshot(path)
+            # The picture shows the model, not the view cube.
+            cube_on = self.view_cube.visible
+            self.view_cube.set_visible(False)
+            try:
+                self.plotter.screenshot(path)
+            finally:
+                self.view_cube.set_visible(cube_on)
+                self.plotter.render()
             self.statusBar().showMessage(tr("Saved {path}").format(path=path), 6000)
 
     def open_settings(self, page: str = ""):
@@ -1892,6 +1968,9 @@ class MainWindow(QMainWindow):
             show_bed = bool(self.settings.get("show_bed", True))
             if self.act_bed.isChecked() != show_bed:
                 self.act_bed.setChecked(show_bed)
+            show_cube = bool(self.settings.get("show_view_cube", True))
+            if self.view_cube.visible != show_cube:
+                self.set_view_cube_visible(show_cube)
 
     # ------------------------------------------------------------ updates
     def start_update_checks(self):

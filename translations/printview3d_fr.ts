@@ -373,8 +373,14 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme</source>
-        <translation type="unfinished">Thème suivant</translation>
+        <source>Next theme style</source>
+        <translation type="unfinished">Style de thème suivant</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Switch between light and dark</source>
+        <translation type="unfinished">Basculer entre clair et sombre</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -892,6 +898,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Back</source>
+        <extracomment>Label on the view cube: camera view from behind.</extracomment>
+        <translation type="unfinished">Arrière</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Left</source>
+        <extracomment>Label on the view cube: camera view from the left.</extracomment>
+        <translation type="unfinished">Gauche</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Bottom</source>
+        <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation type="unfinished">Dessous</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>custom slicer</source>
         <translation type="unfinished">trancheur personnalisé</translation>
@@ -1214,13 +1238,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation type="unfinished">Automatique</translation>
+        <source>System follows the light or dark setting of your computer.</source>
+        <translation type="unfinished">Système suit le réglage clair ou sombre de votre ordinateur.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation type="unfinished">Cliquez sur un thème pour l'essayer tout de suite. OK le garde, Annuler revient au précédent.</translation>
+        <source>Pick a style and a mode to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="unfinished">Choisissez un style et un mode pour les essayer tout de suite. OK les garde, Annuler revient en arrière.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1234,13 +1258,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Mica (soft tint of the wallpaper)</source>
-        <translation type="unfinished">Mica (légère teinte du fond d&apos;écran)</translation>
+        <source>Mica</source>
+        <translation type="unfinished">Mica</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Acrylic (frosted glass)</source>
-        <translation type="unfinished">Acrylic (verre dépoli)</translation>
+        <source>Acrylic</source>
+        <translation type="unfinished">Acrylique</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Mica: a soft tint of your wallpaper. Acrylic: frosted glass.</source>
+        <translation type="unfinished">Mica : une légère teinte de votre fond d’écran. Acrylique : verre dépoli.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1410,6 +1439,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show build plate grid</source>
         <translation type="unfinished">Afficher la grille du plateau</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation type="unfinished">Afficher le cube de vue (coin supérieur droit de la vue 3D)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1817,15 +1851,29 @@
         <translation type="unfinished">Molette de la souris</translation>
     </message>
     <message>
-        <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Automatic (system theme)</source>
-        <translation type="unfinished">Automatique (thème du système)</translation>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Jump to the view of that face</source>
+        <translation type="unfinished">Passer à la vue de cette face</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click the view cube</source>
+        <translation type="unfinished">Clic sur le cube de vue</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Rotate (its ring: turn without tilting)</source>
+        <translation type="unfinished">Pivoter (son anneau : tourner sans incliner)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Drag the view cube</source>
+        <translation type="unfinished">Glisser le cube de vue</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Dark</source>
-        <extracomment>Colour theme name.</extracomment>
-        <translation type="unfinished">Sombre</translation>
+        <source>Default</source>
+        <translation type="unfinished">Par défaut</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1841,19 +1889,25 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
+        <source>Ember</source>
+        <translation type="unfinished">Ember</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Light</source>
         <extracomment>Colour theme name: light colours (not &apos;not heavy&apos;).</extracomment>
         <translation type="unfinished">Clair</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Light</source>
-        <translation type="unfinished">Braise clair</translation>
+        <source>Dark</source>
+        <extracomment>Colour theme name.</extracomment>
+        <translation type="unfinished">Sombre</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
-        <source>Ember Dark</source>
-        <translation type="unfinished">Braise sombre</translation>
+        <source>System</source>
+        <translation type="unfinished">Système</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1914,6 +1968,38 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation type="unfinished">Télécharger la mise à jour</translation>
+    </message>
+    <message>
+        <source>Next theme</source>
+        <translation type="vanished">Thème suivant</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation type="vanished">Automatique</translation>
+    </message>
+    <message>
+        <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
+        <translation type="vanished">Cliquez sur un thème pour l&apos;essayer tout de suite. OK le garde, Annuler revient au précédent.</translation>
+    </message>
+    <message>
+        <source>Mica (soft tint of the wallpaper)</source>
+        <translation type="vanished">Mica (légère teinte du fond d&apos;écran)</translation>
+    </message>
+    <message>
+        <source>Acrylic (frosted glass)</source>
+        <translation type="vanished">Acrylic (verre dépoli)</translation>
+    </message>
+    <message>
+        <source>Automatic (system theme)</source>
+        <translation type="vanished">Automatique (thème du système)</translation>
+    </message>
+    <message>
+        <source>Ember Light</source>
+        <translation type="vanished">Braise clair</translation>
+    </message>
+    <message>
+        <source>Ember Dark</source>
+        <translation type="vanished">Braise sombre</translation>
     </message>
     <message>
         <source>Export STL (3MF projects)</source>

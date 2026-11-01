@@ -148,7 +148,7 @@ PrintView3D.exe part.gcode --screenshot out.png    save a picture and exit
 PrintView3D.exe model.stl --send-to-slicer         open the file in your default slicer and exit
 PrintView3D.exe model.stl --send-to-slicer orcaslicer   ...or in a specific one
 PrintView3D.exe --lang ar                          start in a language (en, ar, nl, de, fr, es)
-PrintView3D.exe --theme light                      start with a theme (auto, dark, gray, graphite, light)
+PrintView3D.exe --theme light                      start with a theme (light, dark, auto, gray_light, gray, auto_gray, …, ember, ember_dark, auto_ember)
 PrintView3D.exe --register                         add to "Open with" (Linux: also the applications menu)
 PrintView3D.exe --unregister                       remove file associations
 (on Linux use ./PrintView3D-x86_64.AppImage instead of PrintView3D.exe)

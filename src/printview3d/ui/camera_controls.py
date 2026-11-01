@@ -5,6 +5,8 @@
                     - press on empty space: it rotates around the model's centre
   * Right-drag      pan            (also middle-drag or Shift + left-drag)
   * Mouse wheel     zoom towards the point under the cursor
+  * View cube       (top-right corner) click a face to jump to that view, drag the cube to orbit,
+                    drag its ring to turn around the vertical axis only - see view_cube.py
 
 Why it is built this way (root causes of earlier problems):
 
@@ -31,6 +33,7 @@ from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
 from vtkmodules.vtkRenderingCore import vtkPropPicker
 
 ROTATE_DEG_PER_PX = 0.3       # orbit speed (degrees per screen pixel)
+CLICK_SLOP_PX = 4             # a press on the view cube that moves less than this is a click
 ZOOM_STEP = 1.15              # zoom factor per wheel notch
 MAX_PITCH = 88.0              # how far the camera may look up/down (degrees)
 
@@ -53,6 +56,12 @@ class TurntableControls:
         self.last = (0, 0)
         self.pivot = None
         self.picker = vtkPropPicker()
+        # The view cube (set by the main window) and what a click on one of its faces does.
+        self.cube = None
+        self.on_cube_view = None
+        self._cube_part = None
+        self._press = (0, 0)
+        self._dragged = False
 
         # Redraw at most once per pass of the Qt event loop.
         self._render_timer = QTimer()
@@ -71,6 +80,7 @@ class TurntableControls:
         s.AddObserver("MiddleButtonPressEvent", self._pan_down)
         s.AddObserver("MiddleButtonReleaseEvent", self._button_up)
         s.AddObserver("MouseMoveEvent", self._move)
+        s.AddObserver("LeaveEvent", lambda *_: self.leave())
         s.AddObserver("MouseWheelForwardEvent", lambda *_: self._zoom(ZOOM_STEP))
         s.AddObserver("MouseWheelBackwardEvent", lambda *_: self._zoom(1 / ZOOM_STEP))
         # Swallow VTK's own key shortcuts (w = wireframe, e/q = quit, ...)
@@ -110,6 +120,22 @@ class TurntableControls:
         return np.array(self.renderer.GetActiveCamera().GetFocalPoint())
 
     def _left_down(self, *_):
+        x, y = self.iren.GetEventPosition()
+        part = self.cube.hit(x, y) if self.cube is not None else None
+        if part is not None:
+            # On the cube: a click picks a view, a drag orbits around the model's centre
+            # (the ring: only around the vertical axis).
+            self._cube_part = part
+            self._press = (x, y)
+            self._dragged = False
+            self.mode = "cube"
+            self.last = (x, y)
+            c = self.scene.default_pivot()
+            self.pivot = np.array(c) if c is not None else \
+                np.array(self.renderer.GetActiveCamera().GetFocalPoint())
+            if self.on_start:
+                self.on_start()
+            return
         self._begin("pan" if self.iren.GetShiftKey() else "rotate")
 
     def _pan_down(self, *_):
@@ -118,7 +144,15 @@ class TurntableControls:
     def _button_up(self, *_):
         if self.mode is None:
             return
+        clicked = self.mode == "cube" and not self._dragged and self._cube_part not in (None, "ring")
+        part = self._cube_part
         self.mode = None
+        self._cube_part = None
+        if clicked and self.on_cube_view:
+            if self.on_end:
+                self.on_end()
+            self.on_cube_view(part)
+            return
         if self.on_end:
             self.on_end()
         self._render_timer.stop()
@@ -126,31 +160,71 @@ class TurntableControls:
 
     # ------------------------------------------------------------ motion
     def _move(self, *_):
-        if self.mode is None:
-            return
         x, y = self.iren.GetEventPosition()
+        if self.mode is None:
+            self._hover(x, y)
+            return
         dx, dy = x - self.last[0], y - self.last[1]
         self.last = (x, y)
         if dx == 0 and dy == 0:
             return
-        if self.mode == "rotate":
+        if self.mode == "cube":
+            if not self._dragged:
+                if abs(x - self._press[0]) + abs(y - self._press[1]) < CLICK_SLOP_PX:
+                    return
+                self._dragged = True
+                dx, dy = x - self._press[0], y - self._press[1]
+            self._orbit(dx, 0 if self._cube_part == "ring" else dy)
+        elif self.mode == "rotate":
             self._orbit(dx, dy)
         else:
             self._pan(dx, dy)
         self.request_render()
 
+    def _hover(self, x, y):
+        """Light up the view cube's face under the mouse (and show a hand cursor there)."""
+        if self.cube is None:
+            return
+        part = self.cube.hit(x, y)
+        if self.cube.set_hover(part):
+            try:
+                from PySide6.QtCore import Qt
+                widget = self.p.interactor
+                if part is None:
+                    widget.unsetCursor()
+                else:
+                    widget.setCursor(Qt.PointingHandCursor if part != "ring" else Qt.SizeHorCursor)
+            except Exception:   # noqa: BLE001 - no Qt widget (tests)
+                pass
+            self.request_render()
+
+    def leave(self):
+        """The mouse left the 3D view: no face stays lit."""
+        if self.cube is not None and self.cube.set_hover(None):
+            self.request_render()
+
     def _orbit(self, dx, dy):
-        """Turntable orbit around self.pivot, keeping world Z up."""
+        """Turntable orbit around self.pivot, keeping world Z up.
+
+        Looking straight down (Top view) or up (Bottom view) is a special case: the viewing
+        direction is then the Z axis itself, so "Z is up" means nothing there and the tilt axis
+        cross(forward, Z) is zero. Earlier versions still forced view-up to Z; VTK then had no
+        usable up direction (it became 0, 0, 0) and the model disappeared until a view button was
+        pressed. Now the camera's own up direction (the top of the screen) is turned along, and
+        is used for the tilt axis and as view-up whenever the camera looks straight down or up.
+        """
         cam = self.renderer.GetActiveCamera()
         pos = np.array(cam.GetPosition())
         foc = np.array(cam.GetFocalPoint())
+        up = np.array(cam.GetViewUp())
         piv = self.pivot if self.pivot is not None else foc
 
-        # 1) spin around the vertical axis through the pivot
+        # 1) spin around the vertical axis through the pivot (the screen's up turns along)
         z = np.array([0.0, 0.0, 1.0])
         yaw = -math.radians(dx * ROTATE_DEG_PER_PX)
         pos = piv + _rotate(pos - piv, z, yaw)
         foc = piv + _rotate(foc - piv, z, yaw)
+        up = _rotate(up, z, yaw)
 
         # 2) tilt around the camera's horizontal axis through the pivot,
         #    limited so the camera never flips over the top or bottom
@@ -161,18 +235,27 @@ class TurntableControls:
         fwd /= dist
         pitch_now = math.degrees(math.asin(max(-1.0, min(1.0, fwd[2]))))
         pitch_delta = dy * ROTATE_DEG_PER_PX           # drag up = look from lower down
-        pitch_new = max(-MAX_PITCH, min(MAX_PITCH, pitch_now + pitch_delta))
+        # Already beyond the limit (Top/Bottom view looks exactly down/up): only tilt back.
+        lo, hi = min(-MAX_PITCH, pitch_now), max(MAX_PITCH, pitch_now)
+        pitch_new = max(lo, min(hi, pitch_now + pitch_delta))
         tilt = math.radians(pitch_new - pitch_now)
         right = np.cross(fwd, z)
+        if float(np.linalg.norm(right)) < 1e-6:        # straight down/up: use the screen's sideways
+            right = np.cross(fwd, up)
         n = float(np.linalg.norm(right))
         if n > 1e-9 and tilt != 0.0:
             right /= n
             pos = piv + _rotate(pos - piv, right, tilt)
             foc = piv + _rotate(foc - piv, right, tilt)
+            up = _rotate(up, right, tilt)
 
         cam.SetPosition(*pos)
         cam.SetFocalPoint(*foc)
-        cam.SetViewUp(0, 0, 1)
+        fwd = (foc - pos) / max(float(np.linalg.norm(foc - pos)), 1e-9)
+        if abs(fwd[2]) > 0.9999:
+            cam.SetViewUp(*up)                         # straight down/up: keep the screen's up
+        else:
+            cam.SetViewUp(0, 0, 1)
         cam.OrthogonalizeViewUp()
 
     def _pan(self, dx, dy):
