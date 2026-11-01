@@ -374,13 +374,13 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
-        <translation type="unfinished">Volgende themastijl</translation>
+        <translation>Volgende themastijl</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Switch between light and dark</source>
-        <translation type="unfinished">Wisselen tussen licht en donker</translation>
+        <translation>Wisselen tussen licht en donker</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -900,19 +900,19 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Back</source>
         <extracomment>Label on the view cube: camera view from behind.</extracomment>
-        <translation type="unfinished">Achter</translation>
+        <translation>Achter</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Left</source>
         <extracomment>Label on the view cube: camera view from the left.</extracomment>
-        <translation type="unfinished">Links</translation>
+        <translation>Links</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Bottom</source>
         <extracomment>Label on the view cube: camera view from below.</extracomment>
-        <translation type="unfinished">Onder</translation>
+        <translation>Onder</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1239,12 +1239,12 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>System follows the light or dark setting of your computer.</source>
-        <translation type="unfinished">Systeem volgt de lichte of donkere instelling van je computer.</translation>
+        <translation>Systeem volgt de lichte of donkere instelling van je computer.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Pick a style and a mode to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation type="unfinished">Kies een stijl en een modus om het meteen te proberen. OK bewaart het, Annuleren gaat terug.</translation>
+        <translation>Kies een stijl en een modus om het meteen te proberen. OK bewaart het, Annuleren gaat terug.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1259,17 +1259,17 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mica</source>
-        <translation type="unfinished">Mica</translation>
+        <translation>Mica</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Acrylic</source>
-        <translation type="unfinished">Acryl</translation>
+        <translation>Acryl</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mica: a soft tint of your wallpaper. Acrylic: frosted glass.</source>
-        <translation type="unfinished">Mica: een zachte tint van je achtergrond. Acryl: matglas.</translation>
+        <translation>Mica: een zachte tint van je achtergrond. Acryl: matglas.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1443,7 +1443,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show the view cube (top-right corner of the 3D view)</source>
-        <translation type="unfinished">Weergavekubus tonen (rechterbovenhoek van de 3D-weergave)</translation>
+        <translation>Weergavekubus tonen (rechterbovenhoek van de 3D-weergave)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1853,27 +1853,27 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Jump to the view of that face</source>
-        <translation type="unfinished">Naar de weergave van dat vlak springen</translation>
+        <translation>Naar de weergave van dat vlak springen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Click the view cube</source>
-        <translation type="unfinished">Klik op de weergavekubus</translation>
+        <translation>Klik op de weergavekubus</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Rotate (its ring: turn without tilting)</source>
-        <translation type="unfinished">Draaien (de ring: draaien zonder kantelen)</translation>
+        <translation>Draaien (de ring: draaien zonder kantelen)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Drag the view cube</source>
-        <translation type="unfinished">Sleep de weergavekubus</translation>
+        <translation>Sleep de weergavekubus</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Default</source>
-        <translation type="unfinished">Standaard</translation>
+        <translation>Standaard</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1890,7 +1890,7 @@
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Ember</source>
-        <translation type="unfinished">Ember</translation>
+        <translation>Ember</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1907,7 +1907,7 @@
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
         <source>System</source>
-        <translation type="unfinished">Systeem</translation>
+        <translation>Systeem</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>

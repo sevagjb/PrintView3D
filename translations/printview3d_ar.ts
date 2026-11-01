@@ -374,13 +374,13 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
-        <translation type="unfinished">نمط السمة التالي</translation>
+        <translation>نمط السمة التالي</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Switch between light and dark</source>
-        <translation type="unfinished">التبديل بين الفاتح والداكن</translation>
+        <translation>التبديل بين الفاتح والداكن</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -900,19 +900,19 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Back</source>
         <extracomment>Label on the view cube: camera view from behind.</extracomment>
-        <translation type="unfinished">خلف</translation>
+        <translation>خلف</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Left</source>
         <extracomment>Label on the view cube: camera view from the left.</extracomment>
-        <translation type="unfinished">يسار</translation>
+        <translation>يسار</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Bottom</source>
         <extracomment>Label on the view cube: camera view from below.</extracomment>
-        <translation type="unfinished">أسفل</translation>
+        <translation>أسفل</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1239,12 +1239,12 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>System follows the light or dark setting of your computer.</source>
-        <translation type="unfinished">يتبع خيار «النظام» إعداد الوضع الفاتح أو الداكن في حاسوبك.</translation>
+        <translation>يتبع خيار «النظام» إعداد الوضع الفاتح أو الداكن في حاسوبك.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Pick a style and a mode to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation type="unfinished">اختر نمطًا ووضعًا لتجربته فورًا. «موافق» يحفظه، و«إلغاء» يعيد السابق.</translation>
+        <translation>اختر نمطًا ووضعًا لتجربته فورًا. «موافق» يحفظه، و«إلغاء» يعيد السابق.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1259,17 +1259,17 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mica</source>
-        <translation type="unfinished">Mica</translation>
+        <translation>Mica</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Acrylic</source>
-        <translation type="unfinished">Acrylic</translation>
+        <translation>Acrylic</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mica: a soft tint of your wallpaper. Acrylic: frosted glass.</source>
-        <translation type="unfinished">يضفي Mica لمسة خفيفة من لون خلفية سطح المكتب، ويبدو Acrylic كالزجاج المصنفر.</translation>
+        <translation>يضفي Mica لمسة خفيفة من لون خلفية سطح المكتب، ويبدو Acrylic كالزجاج المصنفر.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1443,7 +1443,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show the view cube (top-right corner of the 3D view)</source>
-        <translation type="unfinished">إظهار مكعب العرض (الزاوية العلوية اليمنى من العرض ثلاثي الأبعاد)</translation>
+        <translation>إظهار مكعب العرض (الزاوية العلوية اليمنى من العرض ثلاثي الأبعاد)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1853,27 +1853,27 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Jump to the view of that face</source>
-        <translation type="unfinished">الانتقال إلى عرض ذلك الوجه</translation>
+        <translation>الانتقال إلى عرض ذلك الوجه</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Click the view cube</source>
-        <translation type="unfinished">النقر على مكعب العرض</translation>
+        <translation>النقر على مكعب العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Rotate (its ring: turn without tilting)</source>
-        <translation type="unfinished">تدوير (حلقته: لفّ دون إمالة)</translation>
+        <translation>تدوير (حلقته: لفّ دون إمالة)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Drag the view cube</source>
-        <translation type="unfinished">سحب مكعب العرض</translation>
+        <translation>سحب مكعب العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Default</source>
-        <translation type="unfinished">الافتراضي</translation>
+        <translation>الافتراضي</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1890,7 +1890,7 @@
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
         <source>Ember</source>
-        <translation type="unfinished">إمبر</translation>
+        <translation>إمبر</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
@@ -1907,7 +1907,7 @@
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
         <source>System</source>
-        <translation type="unfinished">النظام</translation>
+        <translation>النظام</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
