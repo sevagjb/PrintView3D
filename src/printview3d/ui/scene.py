@@ -338,6 +338,13 @@ class Scene:
             pos, up = c + (0, -d, 0), (0, 0, 1)
         elif view == "right":
             pos, up = c + (d, 0, 0), (0, 0, 1)
+        # The other three come from the view cube.
+        elif view == "back":
+            pos, up = c + (0, d, 0), (0, 0, 1)
+        elif view == "left":
+            pos, up = c + (-d, 0, 0), (0, 0, 1)
+        elif view == "bottom":
+            pos, up = c - (0, 0, d), (0, 1, 0)
         else:  # iso: from the front-right, slightly above
             direction = np.array([0.65, -1.0, 0.75])
             pos, up = c + direction / np.linalg.norm(direction) * d, (0, 0, 1)

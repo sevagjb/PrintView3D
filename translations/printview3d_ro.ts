@@ -892,6 +892,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Back</source>
+        <extracomment>Label on the view cube: camera view from behind.</extracomment>
+        <translation type="unfinished">Spate</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Left</source>
+        <extracomment>Label on the view cube: camera view from the left.</extracomment>
+        <translation type="unfinished">Stânga</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Bottom</source>
+        <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation type="unfinished">Jos</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>custom slicer</source>
         <translation>slicer personalizat</translation>
@@ -1413,6 +1431,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation type="unfinished">Afișează cubul de vizualizare (colțul din dreapta sus al vederii 3D)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafică</translation>
     </message>
@@ -1815,6 +1838,26 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse wheel</source>
         <translation>Rotița mouse-ului</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Jump to the view of that face</source>
+        <translation type="unfinished">Trece la vederea acelei fețe</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click the view cube</source>
+        <translation type="unfinished">Clic pe cubul de vizualizare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Rotate (its ring: turn without tilting)</source>
+        <translation type="unfinished">Rotește (inelul său: întoarce fără înclinare)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Drag the view cube</source>
+        <translation type="unfinished">Trage cubul de vizualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>

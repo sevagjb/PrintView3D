@@ -892,6 +892,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Back</source>
+        <extracomment>Label on the view cube: camera view from behind.</extracomment>
+        <translation type="unfinished">Arrière</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Left</source>
+        <extracomment>Label on the view cube: camera view from the left.</extracomment>
+        <translation type="unfinished">Gauche</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Bottom</source>
+        <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation type="unfinished">Dessous</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>custom slicer</source>
         <translation type="unfinished">trancheur personnalisé</translation>
@@ -1220,7 +1238,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Click a theme to try it right away. OK keeps it, Cancel goes back.</source>
-        <translation type="unfinished">Cliquez sur un thème pour l'essayer tout de suite. OK le garde, Annuler revient au précédent.</translation>
+        <translation type="unfinished">Cliquez sur un thème pour l&apos;essayer tout de suite. OK le garde, Annuler revient au précédent.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1410,6 +1428,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show build plate grid</source>
         <translation type="unfinished">Afficher la grille du plateau</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation type="unfinished">Afficher le cube de vue (coin supérieur droit de la vue 3D)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1815,6 +1838,26 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse wheel</source>
         <translation type="unfinished">Molette de la souris</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Jump to the view of that face</source>
+        <translation type="unfinished">Passer à la vue de cette face</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click the view cube</source>
+        <translation type="unfinished">Clic sur le cube de vue</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Rotate (its ring: turn without tilting)</source>
+        <translation type="unfinished">Pivoter (son anneau : tourner sans incliner)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Drag the view cube</source>
+        <translation type="unfinished">Glisser le cube de vue</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>

@@ -892,6 +892,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Back</source>
+        <extracomment>Label on the view cube: camera view from behind.</extracomment>
+        <translation type="unfinished">Achter</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Left</source>
+        <extracomment>Label on the view cube: camera view from the left.</extracomment>
+        <translation type="unfinished">Links</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Bottom</source>
+        <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation type="unfinished">Onder</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>custom slicer</source>
         <translation>aangepaste slicer</translation>
@@ -1413,6 +1431,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation type="unfinished">Weergavekubus tonen (rechterbovenhoek van de 3D-weergave)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafische kaart</translation>
     </message>
@@ -1815,6 +1838,26 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse wheel</source>
         <translation>Muiswiel</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Jump to the view of that face</source>
+        <translation type="unfinished">Naar de weergave van dat vlak springen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click the view cube</source>
+        <translation type="unfinished">Klik op de weergavekubus</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Rotate (its ring: turn without tilting)</source>
+        <translation type="unfinished">Draaien (de ring: draaien zonder kantelen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Drag the view cube</source>
+        <translation type="unfinished">Sleep de weergavekubus</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>

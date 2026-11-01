@@ -282,8 +282,11 @@ class SettingsDialog(QDialog):
         self.travel_cb.setChecked(bool(settings.get("show_travel")))
         self.bed_cb = QCheckBox(tr("Show build plate grid"))
         self.bed_cb.setChecked(bool(settings.get("show_bed", True)))
+        self.cube_cb = QCheckBox(tr("Show the view cube (top-right corner of the 3D view)"))
+        self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
         l3.addWidget(self.travel_cb)
         l3.addWidget(self.bed_cb)
+        l3.addWidget(self.cube_cb)
 
         # ---------------- Graphics ----------------
         g4 = QGroupBox(tr("Graphics"))
@@ -718,6 +721,7 @@ class SettingsDialog(QDialog):
         self.settings.set("freecad_path", self.freecad_edit.text().strip())
         self.settings.set("show_travel", self.travel_cb.isChecked())
         self.settings.set("show_bed", self.bed_cb.isChecked())
+        self.settings.set("show_view_cube", self.cube_cb.isChecked())
         if sys.platform != "darwin":        # not on the Mac's Files page (its box is never shown)
             self.settings.set("new_window", self.new_window_cb.isChecked())
         self.settings.set("export_mode", self.export_combo.currentData())
@@ -804,4 +808,6 @@ def mouse_rows() -> list[tuple[list[str], str]]:
         ([tr("Right-drag"), tr("Middle-drag")], tr("Move (pan)")),
         ([tr("Shift + left-drag")], tr("Move (pan)")),
         ([tr("Mouse wheel")], tr("Zoom towards the mouse pointer")),
+        ([tr("Click the view cube")], tr("Jump to the view of that face")),
+        ([tr("Drag the view cube")], tr("Rotate (its ring: turn without tilting)")),
     ]

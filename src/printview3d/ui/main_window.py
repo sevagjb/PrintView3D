@@ -253,6 +253,7 @@ class MainWindow(QMainWindow):
             # Once more after Qt has finished its own update of the window, so ours is the last word.
             QTimer.singleShot(200, lambda: self.mica and win_mica.set_dark(int(self.winId()), theme.is_dark()))
         self.scene.set_colors(theme.colors())
+        self.view_cube.set_colors(theme.colors())
         self._update_theme_button()
         self.refresh_update_badge()
         # The ZIP list's type labels take their text colour from the theme when they are made.
@@ -407,6 +408,9 @@ class MainWindow(QMainWindow):
         self.act_bed.setChecked(bool(self.settings.get("show_bed", True)))
         self.act_bed.toggled.connect(self._toggle_bed)
         tb.addAction(self.act_bed)
+        # Named, so a theme can style them on their own (Ember Light fills them with teal).
+        for act in [a for a, _, _ in self.view_actions] + [self.act_bed]:
+            tb.widgetForAction(act).setObjectName("viewButton")
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -441,7 +445,7 @@ class MainWindow(QMainWindow):
         self.recent_btn.setIcon(theme.tool_icon("recent"))
         # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
         self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
-        self.act_export_stl.setIcon(theme.tool_icon("export"))
+        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons()))
         self.theme_btn.setIcon(theme.tool_icon("theme", warm=True))
         self.recent_menu.setIcon(theme.tool_icon("recent"))
         self.act_settings.setIcon(theme.tool_icon("settings"))
@@ -554,6 +558,12 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        # The view cube in the top-right corner (Settings -> Viewer can hide it).
+        from .view_cube import ViewCube
+        self.view_cube = ViewCube(self.plotter, theme.colors(), self._cube_labels())
+        self.view_cube.set_visible(bool(self.settings.get("show_view_cube", True)))
+        self.controls.cube = self.view_cube
+        self.controls.on_cube_view = self.set_view
         # The 3D view, or (FreeCAD file without FreeCAD) a large preview picture.
         self.view_stack = QStackedWidget()
         self.view_stack.addWidget(self.plotter.interactor)
@@ -707,6 +717,8 @@ class MainWindow(QMainWindow):
         for act, key, view in self.view_actions:
             act.setText(view_names[view])
             act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
+        if hasattr(self, "view_cube"):
+            self.view_cube.set_labels(self._cube_labels())
         self.act_export_stl.setText(tr("Export STL"))
         self.act_export_stl.setToolTip(tr("Save the objects of this CAD file as STL files (Ctrl+E)")
                                        if getattr(self, "current_kind", "") in ("freecad", "step") else
@@ -1603,6 +1615,15 @@ class MainWindow(QMainWindow):
         if self.gcode is not None and self.layers_box.isVisible():
             self.layer_slider.setValue(max(0, min(value, self.layer_slider.maximum())))
 
+    @staticmethod
+    def _cube_labels() -> dict[str, str]:
+        return {"top": tr("Top"), "front": tr("Front"), "right": tr("Right"),
+                "back": tr("Back"), "left": tr("Left"), "bottom": tr("Bottom")}
+
+    def set_view_cube_visible(self, on: bool):
+        self.view_cube.set_visible(on)
+        self.plotter.render()
+
     # ============================================================ actions
     def set_view(self, view: Optional[str]):
         if self.stack.currentIndex() != 1:
@@ -1871,7 +1892,14 @@ class MainWindow(QMainWindow):
         path, _ = QFileDialog.getSaveFileName(self, tr("Save screenshot"), start,
                                               tr("PNG image") + " (*.png)")
         if path:
-            self.plotter.screenshot(path)
+            # The picture shows the model, not the view cube.
+            cube_on = self.view_cube.visible
+            self.view_cube.set_visible(False)
+            try:
+                self.plotter.screenshot(path)
+            finally:
+                self.view_cube.set_visible(cube_on)
+                self.plotter.render()
             self.statusBar().showMessage(tr("Saved {path}").format(path=path), 6000)
 
     def open_settings(self, page: str = ""):
@@ -1892,6 +1920,9 @@ class MainWindow(QMainWindow):
             show_bed = bool(self.settings.get("show_bed", True))
             if self.act_bed.isChecked() != show_bed:
                 self.act_bed.setChecked(show_bed)
+            show_cube = bool(self.settings.get("show_view_cube", True))
+            if self.view_cube.visible != show_cube:
+                self.set_view_cube_visible(show_cube)
 
     # ------------------------------------------------------------ updates
     def start_update_checks(self):

@@ -53,6 +53,13 @@ def _classic(ink: str, selected: str, text: str) -> dict[str, str]:
             "selected_bg": selected, "selected_text": text}
 
 
+# The view buttons (Fit, Iso, Top, Front, Right, Plate) and Export STL. Most themes draw them like
+# every other toolbar button; Ember Light fills them with its deep teal and white text.
+def _plain_view_buttons(t: dict[str, str]) -> dict[str, str]:
+    return {"view_bg": t["button"], "view_bg_hover": t["button_hover"], "view_bg_checked": t["tool_checked"],
+            "view_border": t["button_border"], "view_border_hover": t["muted"], "view_text": t["text"]}
+
+
 THEMES: dict[str, dict[str, str]] = {
     "dark": {
         # window
@@ -133,6 +140,10 @@ THEMES: dict[str, dict[str, str]] = {
         "accent": "#2cc1b2", "accent_hover": "#4fd0c3", "accent_ink": "#14736a",
         "primary": "#ef791b", "primary_hover": "#f48f3e", "primary_ink": "#c9600f",
         "selected_bg": "#ef791b", "selected_text": "#ffffff",
+        # Sevag's design: view buttons and Export STL filled with the deep teal of the toolbar
+        # symbols, white text; the chosen one (Plate on) a shade darker.
+        "view_bg": "#14736a", "view_bg_hover": "#1b8a7f", "view_bg_checked": "#0c564f",
+        "view_border": "#14736a", "view_border_hover": "#1b8a7f", "view_text": "#ffffff",
     },
     # The same orange + teal at night: deep lagoon greens instead of grey, teal-lit build plate.
     "ember_dark": {
@@ -152,6 +163,11 @@ THEMES: dict[str, dict[str, str]] = {
         "selected_bg": "#ef791b", "selected_text": "#ffffff",
     },
 }
+
+for _t in THEMES.values():
+    for _k, _v in _plain_view_buttons(_t).items():
+        _t.setdefault(_k, _v)
+del _t, _k, _v
 
 _setting = "auto"
 _current = "dark"
@@ -309,6 +325,8 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     app.setPalette(pal)
     accent, accent_hover = t["accent"], t["accent_hover"]
     primary, primary_hover = t["primary"], t["primary_hover"]
+    # The line between Export STL and its arrow: white-ish on a filled button.
+    divider = "rgba(255,255,255,0.35)" if filled_view_buttons() else t["button_border"]
     app.setStyleSheet(f"""
         QToolBar {{ background: {t['bar']}; border: none; border-bottom: 1px solid {t['bar_border']}; spacing: 4px; padding: 4px; }}
         QToolButton {{ padding: 5px 9px; border-radius: 5px; color: {t['text']}; }}
@@ -322,8 +340,13 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QToolBar QToolButton#iconButton::menu-indicator {{ image: none; width: 0; }}
         QToolBar QToolButton#exportButton {{ padding: 2px 10px 2px 3px; }}
         QToolBar QToolButton#exportButton[popupMode="1"] {{ padding-right: 26px; }}
-        QToolBar QToolButton#exportButton::menu-button {{ width: 20px; border-left: 1px solid {t['button_border']};
+        QToolBar QToolButton#exportButton::menu-button {{ width: 20px; border-left: 1px solid {divider};
             border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
+        QToolBar QToolButton#viewButton, QToolBar QToolButton#exportButton {{
+            background: {t['view_bg']}; border-color: {t['view_border']}; color: {t['view_text']}; }}
+        QToolBar QToolButton#viewButton:hover, QToolBar QToolButton#exportButton:hover {{
+            background: {t['view_bg_hover']}; border-color: {t['view_border_hover']}; }}
+        QToolBar QToolButton#viewButton:checked {{ background: {t['view_bg_checked']}; border-color: {accent}; }}
         QToolButton#slicerButton {{ background: {primary}; color: white; font-weight: 600; padding: 2px 14px 2px 3px; }}
         QToolButton#slicerButton:hover {{ background: {primary_hover}; }}
         QToolButton#slicerButton[popupMode="1"] {{ padding-right: 28px; }}
@@ -403,6 +426,13 @@ def _mica_css(t: dict, name: str) -> str:
 def _rgba(hex_color: str, alpha: float) -> str:
     c = QColor(hex_color)
     return f"rgba({c.red()}, {c.green()}, {c.blue()}, {alpha})"
+
+
+def filled_view_buttons(name: str | None = None) -> bool:
+    """True if the theme fills the view buttons and Export STL with colour (Ember Light):
+    the Export STL symbol is then drawn white, like the slicer button's."""
+    t = colors(name)
+    return t["view_bg"] != t["button"]
 
 
 def next_theme(name: str) -> str:

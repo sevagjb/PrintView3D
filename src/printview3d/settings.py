@@ -34,6 +34,7 @@ DEFAULTS = {
     "recent_files": [],
     "show_travel": False,
     "show_bed": True,
+    "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
     "max_recent": 10,
 }
 

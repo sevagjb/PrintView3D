@@ -892,6 +892,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Back</source>
+        <extracomment>Label on the view cube: camera view from behind.</extracomment>
+        <translation type="unfinished">Trasera</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Left</source>
+        <extracomment>Label on the view cube: camera view from the left.</extracomment>
+        <translation type="unfinished">Izquierda</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Bottom</source>
+        <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation type="unfinished">Inferior</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>custom slicer</source>
         <translation type="unfinished">laminador personalizado</translation>
@@ -1413,6 +1431,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation type="unfinished">Mostrar el cubo de vista (esquina superior derecha de la vista 3D)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation type="unfinished">Gráficos</translation>
     </message>
@@ -1815,6 +1838,26 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse wheel</source>
         <translation type="unfinished">Rueda del ratón</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Jump to the view of that face</source>
+        <translation type="unfinished">Ir a la vista de esa cara</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click the view cube</source>
+        <translation type="unfinished">Clic en el cubo de vista</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Rotate (its ring: turn without tilting)</source>
+        <translation type="unfinished">Girar (su anillo: girar sin inclinar)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Drag the view cube</source>
+        <translation type="unfinished">Arrastrar el cubo de vista</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/theme.py"></location>
