@@ -35,7 +35,11 @@ Then add a test in `tests/test_slicer.py` if the detection has anything special.
 ## Translations
 
 PrintView3D uses Qt's standard translation files: one file per language in
-[`translations/`](translations) (`printview3d_ar.ts`, `printview3d_de.ts`, …).
+[`translations/`](translations) (`printview3d_ar.ts`, `printview3d_de.ts`, …). The release notes
+in the program's *What's new* window come from [`CHANGELOG.md`](CHANGELOG.md) and its translations
+`CHANGELOG.<code>.md` (`CHANGELOG.ar.md`, `CHANGELOG.nl.md`); versions a translation doesn't have
+yet are shown in English. A translation update covers both: the new program texts and the newest
+changelog section(s). See [docs/TRANSLATING.md](docs/TRANSLATING.md#whats-new-translating-the-changelog).
 
 **Translating or correcting a translation**
 - Translations are made on GitHub only. The step-by-step guide, including editing in the browser

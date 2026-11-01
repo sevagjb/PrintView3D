@@ -355,6 +355,8 @@ class MainWindow(QMainWindow):
         self.act_settings = QAction(self, triggered=self.open_settings)
         self.act_updates = QAction(self, triggered=lambda: self.open_settings("updates"))
         self.act_about = QAction(self, triggered=lambda: self.open_settings("about"))
+        # This version's notes, any time (the same window as once after an update).
+        self.act_whats_new = QAction(self, triggered=lambda: update_ui.show_current(self))
         self.addAction(self.act_open)
 
         self.recent_menu = QMenu(self)
@@ -369,6 +371,7 @@ class MainWindow(QMainWindow):
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.act_settings)
         self.main_menu.addAction(self.act_updates)
+        self.main_menu.addAction(self.act_whats_new)
         self.main_menu.addAction(self.act_about)
         self.menu_btn = icon_button(menu=self.main_menu)
         tb.addWidget(self.menu_btn)
@@ -484,6 +487,7 @@ class MainWindow(QMainWindow):
         self.act_settings.setIcon(theme.tool_icon("settings"))
         self.act_updates.setIcon(theme.tool_icon("updates"))
         self.act_about.setIcon(theme.tool_icon("about"))
+        self.act_whats_new.setIcon(theme.tool_icon("whats_new"))
 
     def _build_preview_page(self) -> QWidget:
         page = QWidget()
@@ -770,6 +774,7 @@ class MainWindow(QMainWindow):
         self.act_settings.setText(tr("Settings"))
         self.act_updates.setText(tr("Updates"))
         self.act_about.setText(tr("About"))
+        self.act_whats_new.setText(tr("What's new"))
         self._update_theme_button()
         self.refresh_update_badge()
 

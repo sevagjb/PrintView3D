@@ -539,6 +539,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>What&apos;s new</source>
+        <translation type="unfinished">Novedades</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drop a 3D model or G-code file here, or open one.</source>
         <translation type="unfinished">Arrastra aquí un modelo 3D o un archivo G-code, o abre uno.</translation>
     </message>
@@ -1512,11 +1518,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>What&apos;s new</source>
-        <translation type="unfinished">Novedades</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation type="unfinished">Omitir esta versión</translation>
@@ -1951,13 +1952,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>PrintView3D was updated to {version}.</source>
-        <translation type="unfinished">PrintView3D se ha actualizado a {version}.</translation>
+        <source>Not translated yet, shown in English.</source>
+        <translation>Aún no traducido, se muestra en inglés.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>All changes</source>
-        <translation type="unfinished">Todos los cambios</translation>
+        <source>The notes for this version are not included in this build.</source>
+        <translation>Las notas de esta versión no están incluidas en esta compilación.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>All changes on GitHub</source>
+        <translation>Todos los cambios en GitHub</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>PrintView3D was updated to {version}.</source>
+        <translation type="unfinished">PrintView3D se ha actualizado a {version}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1993,6 +2004,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation type="unfinished">Descargar actualización</translation>
+    </message>
+    <message>
+        <source>All changes</source>
+        <translation type="vanished">Todos los cambios</translation>
     </message>
     <message>
         <source>Next theme</source>

@@ -958,6 +958,15 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
         p.setBrush(fg)
         p.drawEllipse(QPointF(32, 19), 3.5, 3.5)
         p.restore()
+    elif kind == "whats_new":                    # a big and a small sparkle
+        for cx, cy, r in ((28, 36, 20), (50, 14, 9)):
+            star = QPainterPath()
+            star.moveTo(cx, cy - r)
+            star.quadTo(cx, cy, cx + r, cy)
+            star.quadTo(cx, cy, cx, cy + r)
+            star.quadTo(cx, cy, cx - r, cy)
+            star.quadTo(cx, cy, cx, cy - r)
+            p.fillPath(star, fg)
     elif kind == "export":                       # page with an arrow going out
         page = QPainterPath()
         page.moveTo(40, 56)
@@ -975,7 +984,7 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
 
 
 TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
-              "settings", "updates", "about")
+              "settings", "updates", "about", "whats_new")
 
 
 def tool_icon(kind: str, on_accent: bool = False, warm: bool = False) -> QIcon:

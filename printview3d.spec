@@ -44,14 +44,18 @@ hiddenimports = (
     ]
 )
 
+import glob
+
 from PyInstaller.utils.hooks import collect_data_files
 
 a = Analysis(
     ["src/printview3d/__main__.py"],
     pathex=["src"],
-    # CHANGELOG.md goes along for the "What's new" window shown after an update (works offline).
-    datas=[("src/printview3d/resources", "printview3d/resources"),
-           ("CHANGELOG.md", "printview3d/resources")] + collect_data_files("certifi"),
+    # The changelogs (CHANGELOG.md and its translations CHANGELOG.<lang>.md) go along for the
+    # "What's new" window (works offline).
+    datas=[("src/printview3d/resources", "printview3d/resources")]
+          + [(f, "printview3d/resources") for f in sorted(glob.glob("CHANGELOG*.md"))]
+          + collect_data_files("certifi"),
     hiddenimports=hiddenimports,
     excludes=[
         # Not needed and large; keeps the build smaller.

@@ -484,9 +484,13 @@ When a new version exists, the version in the bottom-right corner shows a **red 
   starts such a tool.
 - **Skip this version** hides that version; the next one is shown again.
 
-After an update, the first start shows **What's new** for the version you now have, once, however
-you updated (installer, winget, zip or AppImage). It is read from the changelog that comes with the
-program, so it needs no connection. A fresh install doesn't show it.
+After an update, the first start shows **What's new** since the version you had, once, however
+you updated (installer, winget, zip or AppImage). Any time later, **Menu → What's new** shows the
+notes of the version you have, with a button to every change on GitHub. Both are read from the
+changelog that comes with the program, so they need no connection; a fresh install doesn't show the
+window by itself. The notes are in your language where the changelog is translated (Arabic and
+Dutch: [`CHANGELOG.ar.md`](CHANGELOG.ar.md), [`CHANGELOG.nl.md`](CHANGELOG.nl.md)); otherwise, or
+for a version not translated yet, they are shown in English.
 
 ![Settings → Updates when a new version is available](docs/screenshot-updates.png)
 
