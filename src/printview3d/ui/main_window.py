@@ -734,10 +734,19 @@ class MainWindow(QMainWindow):
         self.kind_label.setObjectName("muted")
         L.addWidget(self.kind_label)
 
+        # The picture the slicer saved in the file. Next to the 3D view it mostly shows the same
+        # thing, so a click on the link above it folds it away (remembered); it still helps while
+        # a big file loads or when the 3D view can't show the file (issue #62).
+        self.thumb_toggle = QLabel()
+        self.thumb_toggle.setObjectName("moreLink")
+        self.thumb_toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        self.thumb_toggle.linkActivated.connect(lambda _=None: self.set_thumbnail_open(not self._thumbnail_open()))
+        L.addWidget(self.thumb_toggle)
         self.thumb_label = QLabel()
         self.thumb_label.setAlignment(Qt.AlignCenter)
         self.thumb_label.setObjectName("thumbnail")
         L.addWidget(self.thumb_label)
+        self._has_thumbnail = False
 
         # ZIP files: the 3D files inside, to pick one or show them all.
         self.zip_box = QGroupBox()
@@ -934,7 +943,7 @@ class MainWindow(QMainWindow):
     def _reset_side_panel(self):
         self.name_label.setText("")
         self.kind_label.setText("")
-        self.thumb_label.hide()
+        self._show_thumbnail(False)
         while self.details_form.rowCount():
             self.details_form.removeRow(0)
         self._clear_layout(self.zip_layout)
@@ -1005,15 +1014,33 @@ class MainWindow(QMainWindow):
         self.objects_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
     def _set_thumbnail(self, data: Optional[bytes]):
-        if not data:
-            self.thumb_label.hide()
-            return
         pm = QPixmap()
-        if pm.loadFromData(data) and not pm.isNull() and pm.width() > 8:
+        if data and pm.loadFromData(data) and not pm.isNull() and pm.width() > 8:
             self.thumb_label.setPixmap(pm.scaled(220, 220, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-            self.thumb_label.show()
+            self._show_thumbnail(True)
         else:
-            self.thumb_label.hide()
+            self._show_thumbnail(False)
+
+    def _thumbnail_open(self) -> bool:
+        return bool(self.settings.get("thumbnail_open", True))
+
+    def set_thumbnail_open(self, on: bool):
+        """Fold the preview picture away or show it again; remembered for the next files."""
+        self.settings.set("thumbnail_open", bool(on))
+        self._show_thumbnail(self._has_thumbnail)
+
+    def _show_thumbnail(self, has: bool):
+        """`has`: this file has a preview picture. The link is shown with it, the picture only
+        when it isn't folded away."""
+        self._has_thumbnail = has
+        is_open = self._thumbnail_open()
+        # ▸ points to where the text goes: to the left in right-to-left languages such as Arabic.
+        closed = "◂" if self.layoutDirection() == Qt.RightToLeft else "▸"
+        self.thumb_toggle.setText('<a href="#">{} {}</a>'.format("▾" if is_open else closed,
+                                                                 tr("Preview picture")))
+        self.thumb_toggle.setToolTip(tr("Show less") if is_open else tr("Show more"))
+        self.thumb_toggle.setVisible(has)
+        self.thumb_label.setVisible(has and is_open)
 
     def _kind_text(self) -> str:
         if self.showing_embedded:
@@ -1489,7 +1516,7 @@ class MainWindow(QMainWindow):
         self.kind_label.setText(self._kind_text())
         self._add_zip_detail()
         if m.freecad is not None and not m.parts:
-            self.thumb_label.hide()                 # shown large on the preview page
+            self._show_thumbnail(False)             # shown large on the preview page
         else:
             self._set_thumbnail(m.thumbnail)
         actors = getattr(self, "_model_actors", [])

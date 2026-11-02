@@ -151,3 +151,41 @@ def test_panel_rebuilds_in_another_language(window, app):
     finally:
         i18n.apply_language(app, "en")
         w._on_language_changed()
+
+
+def test_preview_picture_folds_away_and_stays_folded(window, app):
+    """The file's own preview picture can be folded away with the link above it; the choice is
+    remembered for the next files and the next start (issue #62)."""
+    w = window
+    w.load_sync(BUSY)
+    _settle(app)
+    assert w.thumb_toggle.isVisible() and w.thumb_label.isVisible()
+    w.thumb_toggle.linkActivated.emit("#")                    # a click on the link
+    _settle(app)
+    assert w.thumb_toggle.isVisible() and not w.thumb_label.isVisible()
+    assert w.settings.get("thumbnail_open") is False
+    assert Settings(w.settings.path).get("thumbnail_open") is False   # saved
+    w.load_sync(BUSY)
+    _settle(app)
+    assert w.thumb_toggle.isVisible() and not w.thumb_label.isVisible()
+    w.thumb_toggle.linkActivated.emit("#")
+    _settle(app)
+    assert w.thumb_label.isVisible()
+
+
+def test_no_preview_link_without_a_picture(window, app):
+    w = window
+    w.load_sync(TWO_PARTS)                                    # this 3MF has no picture
+    _settle(app)
+    assert not w.thumb_toggle.isVisible() and not w.thumb_label.isVisible()
+
+
+def test_preview_link_arrow_follows_the_text_direction(window, app):
+    from PySide6.QtCore import Qt
+    w = window
+    w.load_sync(BUSY)
+    w.set_thumbnail_open(False)
+    assert "▸" in w.thumb_toggle.text()
+    w.setLayoutDirection(Qt.RightToLeft)
+    w.set_thumbnail_open(False)
+    assert "◂" in w.thumb_toggle.text()
