@@ -359,6 +359,8 @@ MICA_CSS = """
     QStatusBar#mainStatusBar {{ background: {bar}; }}
     QStackedWidget#centralStack QScrollArea > QWidget > QWidget {{ background: {panel}; }}
     QStackedWidget#centralStack QGroupBox {{ background: {box}; }}
+    /* The Objects list scrolls inside its box: it must not get the panel's layer a second time. */
+    QStackedWidget#centralStack QWidget#objectsList {{ background: transparent; }}
     QStackedWidget#centralStack QGroupBox::title {{ color: {title}; }}
     QStackedWidget#centralStack QLabel#muted, QStackedWidget#centralStack QLabel#formKey {{ color: {muted}; }}
 """
@@ -450,6 +452,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QPushButton#link {{ color: {t['link']}; border: none; background: transparent; }}
         QPushButton#link:hover {{ text-decoration: underline; }}
         QScrollArea {{ border: none; }}
+        QScrollArea#objectsScroll, QScrollArea#objectsScroll > QWidget, QWidget#objectsList {{ background: transparent; }}
         QSlider::groove:horizontal {{ height: 6px; background: {t['groove']}; border-radius: 3px; }}
         QSlider::sub-page:horizontal {{ background: {accent}; border-radius: 3px; }}
         QSlider::handle:horizontal {{ background: {t['handle']}; border: 1px solid {t['handle_border']};

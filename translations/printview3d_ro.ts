@@ -372,6 +372,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show less</source>
+        <translation type="unfinished">Afișează mai puțin</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show more</source>
+        <translation type="unfinished">Afișează mai mult</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished">Stilul de temă următor</translation>

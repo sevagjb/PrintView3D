@@ -4,7 +4,8 @@ Run:  python tests/make_samples.py
 Creates tests/data/cube_binary.stl, cube_ascii.stl, two_parts.3mf,
 cylinder.gcode and the general 3D formats: two_parts.obj (+ .mtl),
 cube_binary.ply, quads_ascii.ply, cube_colors.off, two_nodes.glb and
-embedded.gltf. The 3MF mimics Creality Print / OrcaSlicer's multi-file
+embedded.gltf, and busy_project.3mf (twelve objects and a long description,
+issue #62). The 3MF mimics Creality Print / OrcaSlicer's multi-file
 layout, and the G-code mimics their comment style.
 """
 
@@ -113,6 +114,75 @@ def write_3mf(path):
         _fixed_writestr(z, "Metadata/project_settings.config", settings)
         _fixed_writestr(z, "Metadata/plate_1.png", _png_1px())
         _fixed_writestr(z, "Metadata/plate_1.gcode", make_gcode(radius=10, height=4, cx=175, cy=175))
+
+
+def _png(w, h, rgb=(0x4a, 0xa3, 0xdf)):
+    """A plain one-colour PNG of w x h pixels (zlib only, no Pillow)."""
+    import zlib
+    raw = b"".join(b"\x00" + bytes(rgb) * w for _ in range(h))
+
+    def chunk(t, d):
+        return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xFFFFFFFF)
+
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+
+
+BUSY_DESCRIPTION = "\n\n".join([
+    "A modular desk organiser set: twelve separate parts that print without supports and "
+    "click together with friction-fit joints. Every part fits on a 256 x 256 mm plate.",
+    "Print settings: 0.2 mm layer height, 3 walls, 15 % gyroid infill. PLA and PETG both work; "
+    "for PETG lower the bridge speed. The pen cups look best with a 0.4 mm nozzle and a matte "
+    "filament, the drawers slide more smoothly when printed in PETG.",
+    "Assembly: push the connectors into the base plates first, then slide the cups and trays on "
+    "from above. If a joint is too tight, scale the connectors to 99 % in your slicer. "
+    "No glue or screws are needed.",
+    "Remixes are welcome. Please share a photo of your print in the comments and tell me which "
+    "filament you used, so other makers can see how it turns out in different colours.",
+    "Changelog: v3 thicker drawer walls, v2 rounder edges on the pen cups, v1 first upload.",
+])
+
+
+def write_3mf_busy_project(path):
+    """A slicer project like the ones from MakerWorld / Printables: twelve objects, a long
+    description, designer, profiles and a large plate picture. In version 0.23.0 the
+    Details box of this file pushes the Objects box below the window (issue #62)."""
+    core = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"
+    names = ["Base plate left", "Base plate right", "Pen cup tall", "Pen cup short", "Phone stand",
+             "Card holder", "Drawer frame", "Drawer", "Cable clip", "Connector A", "Connector B",
+             "Label plate"]
+    objs, items = [], []
+    for i, name in enumerate(names):
+        size = 12 + (i % 4) * 6
+        v, f = cube_tris(size, -size / 2, -size / 2, 0)
+        vs = "".join(f'<vertex x="{x}" y="{y}" z="{z}"/>' for x, y, z in v)
+        ts = "".join(f'<triangle v1="{a}" v2="{b}" v3="{c}"/>' for a, b, c in f)
+        objs.append(f'<object id="{i + 1}" name="{name}" type="model"><mesh><vertices>{vs}</vertices>'
+                    f'<triangles>{ts}</triangles></mesh></object>')
+        x, y = 40 + (i % 4) * 55, 50 + (i // 4) * 70
+        items.append(f'<item objectid="{i + 1}" transform="1 0 0 0 1 0 0 0 1 {x} {y} 0"/>')
+    from xml.sax.saxutils import escape
+    model = (f'<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xmlns="{core}">'
+             f'<metadata name="Application">BambuStudio-02.03.00.70</metadata>'
+             f'<metadata name="Title">Modular desk organiser - 12 parts, no supports</metadata>'
+             f'<metadata name="Designer">PrintView3D test files</metadata>'
+             f'<metadata name="Description">{escape(BUSY_DESCRIPTION)}</metadata>'
+             f'<resources>{"".join(objs)}</resources><build>{"".join(items)}</build></model>')
+    rels = ('<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Target="/3D/3dmodel.model" Id="rel0" '
+            'Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
+    settings = ('{"printer_model": "Bambu Lab P1S", '
+                '"printer_settings_id": "Bambu Lab P1S 0.4 nozzle", '
+                '"print_settings_id": "0.20mm Standard @BBL X1C - 3 walls 15% gyroid", '
+                '"layer_height": "0.2", "nozzle_diameter": ["0.4"], "filament_type": ["PLA"], '
+                '"filament_settings_id": ["Bambu PLA Matte @BBL X1C"], '
+                '"printable_area": ["0x0", "256x0", "256x256", "0x256"]}')
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        _fixed_writestr(z, "[Content_Types].xml", '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>')
+        _fixed_writestr(z, "_rels/.rels", rels)
+        _fixed_writestr(z, "3D/3dmodel.model", model)
+        _fixed_writestr(z, "Metadata/project_settings.config", settings)
+        _fixed_writestr(z, "Metadata/plate_1.png", _png(256, 256))
 
 
 def make_gcode(radius=15.0, height=10.0, cx=110.0, cy=110.0, layer_h=0.2):
@@ -299,6 +369,7 @@ def main():
     write_stl_binary(os.path.join(OUT, "cube_binary.stl"))
     write_stl_ascii(os.path.join(OUT, "cube_ascii.stl"))
     write_3mf(os.path.join(OUT, "two_parts.3mf"))
+    write_3mf_busy_project(os.path.join(OUT, "busy_project.3mf"))
     with open(os.path.join(OUT, "cylinder.gcode"), "w") as fh:
         fh.write(make_gcode())
     write_obj(os.path.join(OUT, "two_parts.obj"))

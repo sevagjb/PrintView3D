@@ -145,6 +145,53 @@ class _ElidedLabel(QLabel):
         self.setText(self.fontMetrics().elidedText(self._full, Qt.ElideRight, max(10, self.width())))
 
 
+class _LongValue(QWidget):
+    """A long detail value (such as a project's description): the first lines, and a
+    "Show more" / "Show less" link when there is more. A description of a few paragraphs
+    made the Details box so tall that the Objects box ended up below the window (issue #62)."""
+
+    LINES = 4
+
+    def __init__(self, text: str, parent=None):
+        super().__init__(parent)
+        self.expanded = False
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(2)
+        self.label = QLabel(text)
+        self.label.setWordWrap(True)
+        self.label.setAlignment(Qt.AlignTop | Qt.AlignLeading)
+        self.label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        lay.addWidget(self.label)
+        self.toggle = QLabel()
+        self.toggle.setObjectName("moreLink")
+        self.toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        self.toggle.linkActivated.connect(lambda _=None: self.set_expanded(not self.expanded))
+        lay.addWidget(self.toggle)
+        self._update()
+
+    def collapsed_height(self) -> int:
+        return self.label.fontMetrics().lineSpacing() * self.LINES
+
+    def is_clamped(self) -> bool:
+        """True when the text is longer than the first lines (so the link is shown)."""
+        return self.label.heightForWidth(max(1, self.label.width())) > self.collapsed_height()
+
+    def set_expanded(self, on: bool):
+        self.expanded = on
+        self._update()
+
+    def _update(self):
+        long_text = self.is_clamped()
+        self.label.setMaximumHeight(16777215 if (self.expanded or not long_text) else self.collapsed_height())
+        self.toggle.setVisible(long_text)
+        self.toggle.setText('<a href="#">{}</a>'.format(tr("Show less") if self.expanded else tr("Show more")))
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        self._update()           # a narrower panel wraps into more lines
+
+
 class _RowList(QListWidget):
     """A list of row widgets that follow the list's width. (A plain QListWidget keeps a row
     widget at its first width: when the panel's scroll bar appeared, the rows stayed 14 px
@@ -650,13 +697,26 @@ class MainWindow(QMainWindow):
         self.zip_layout = QVBoxLayout(self.zip_box)
         L.addWidget(self.zip_box)
 
+        # Objects above Details: the object checkboxes are something you use, the details only
+        # something you read, and a long description no longer pushes them off the screen (#62).
+        self.objects_box = QGroupBox()
+        box_layout = QVBoxLayout(self.objects_box)
+        box_layout.setContentsMargins(0, 0, 0, 0)
+        self.objects_scroll = QScrollArea()
+        self.objects_scroll.setObjectName("objectsScroll")
+        self.objects_scroll.setWidgetResizable(True)
+        self.objects_scroll.setFrameShape(QScrollArea.NoFrame)
+        self.objects_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        objects_list = QWidget()
+        objects_list.setObjectName("objectsList")
+        self.objects_layout = QVBoxLayout(objects_list)
+        self.objects_scroll.setWidget(objects_list)
+        box_layout.addWidget(self.objects_scroll)
+        L.addWidget(self.objects_box)
+
         self.details_box = QGroupBox()
         self.details_form = QFormLayout(self.details_box)
         L.addWidget(self.details_box)
-
-        self.objects_box = QGroupBox()
-        self.objects_layout = QVBoxLayout(self.objects_box)
-        L.addWidget(self.objects_box)
 
         self.embedded_box = QGroupBox()
         self.embedded_layout = QVBoxLayout(self.embedded_box)
@@ -868,10 +928,33 @@ class MainWindow(QMainWindow):
     def _add_detail(self, key: str, value: str):
         k = QLabel(key)
         k.setObjectName("formKey")
-        v = QLabel(str(value))
+        text = str(value)
+        if len(text) > self.LONG_DETAIL_CHARS or "\n" in text:
+            self.details_form.addRow(k, _LongValue(text))
+            return
+        v = QLabel(text)
         v.setWordWrap(True)
         v.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.details_form.addRow(k, v)
+
+    # Values longer than this (or with line breaks) start folded to their first lines.
+    LONG_DETAIL_CHARS = 160
+    # More objects than this: the Objects list scrolls on its own, so Details stays in reach.
+    OBJECTS_VISIBLE_ROWS = 10
+
+    def _fit_objects_list(self):
+        """Show the Objects list in full up to OBJECTS_VISIBLE_ROWS objects, longer lists
+        scroll inside the box."""
+        n = self.objects_layout.count()
+        inner = self.objects_scroll.widget()
+        if n <= self.OBJECTS_VISIBLE_ROWS:
+            self.objects_scroll.setFixedHeight(inner.sizeHint().height())
+            self.objects_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            return
+        row = self.objects_layout.itemAt(0).widget().sizeHint().height() + self.objects_layout.spacing()
+        m = self.objects_layout.contentsMargins()
+        self.objects_scroll.setFixedHeight(row * self.OBJECTS_VISIBLE_ROWS + m.top())
+        self.objects_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
     def _set_thumbnail(self, data: Optional[bytes]):
         if not data:
@@ -1390,6 +1473,7 @@ class MainWindow(QMainWindow):
                 cb.toggled.connect(lambda on, a=actor: (a.SetVisibility(on), self.plotter.render()))
                 self.objects_layout.addWidget(cb)
             self.objects_box.setTitle(tr("Objects ({n})").format(n=len(m.parts)))
+            self._fit_objects_list()
             self.objects_box.show()
 
         if m.freecad:
