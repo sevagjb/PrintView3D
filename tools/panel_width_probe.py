@@ -17,6 +17,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(ROOT, "src"))
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+if sys.platform == "win32":                 # as in tests/conftest.py: offscreen needs the font folder
+    os.environ.setdefault("QT_QPA_FONTDIR", os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts"))
 
 from PySide6.QtGui import QFontMetrics  # noqa: E402
 from PySide6.QtWidgets import QApplication, QLayout, QWidget  # noqa: E402
