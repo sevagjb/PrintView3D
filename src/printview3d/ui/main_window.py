@@ -182,6 +182,7 @@ class _LongValue(QWidget):
         lay.addWidget(self.label)
         self.toggle = QLabel()
         self.toggle.setObjectName("moreLink")
+        self.toggle.setWordWrap(True)
         self.toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
         self.toggle.linkActivated.connect(lambda _=None: self.set_expanded(not self.expanded))
         lay.addWidget(self.toggle)
@@ -756,6 +757,7 @@ class MainWindow(QMainWindow):
         # a big file loads or when the 3D view can't show the file (issue #62).
         self.thumb_toggle = QLabel()
         self.thumb_toggle.setObjectName("moreLink")
+        self.thumb_toggle.setWordWrap(True)      # "▾ Imagine de previzualizare" at a big font
         self.thumb_toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
         self.thumb_toggle.linkActivated.connect(lambda _=None: self.set_thumbnail_open(not self._thumbnail_open()))
         L.addWidget(self.thumb_toggle)
@@ -789,6 +791,11 @@ class MainWindow(QMainWindow):
 
         self.details_box = QGroupBox()
         self.details_form = QFormLayout(self.details_box)
+        # Side by side, a row needs its name AND its value next to each other: with a compound
+        # word ("Filamentprofiel") and an unbreakable value, or a bigger font (Windows display
+        # scaling), that made the panel wider than its view. A row that doesn't fit puts the
+        # value under its name instead; rows that fit stay side by side.
+        self.details_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
         L.addWidget(self.details_box)
 
         self.embedded_box = QGroupBox()
@@ -1577,9 +1584,11 @@ class MainWindow(QMainWindow):
                 size = part.size()
                 size_text = ltr(_size_mm(size)) if size else ""
                 if size_text:
-                    lbl = QLabel(size_text)
+                    # Full width when there is room; in a very narrow panel (big font) it ends
+                    # in "…" instead of pushing the panel wider than its view. Tooltip: all of it.
+                    lbl = _ElidedLabel(size_text)
                     lbl.setObjectName("objectSize")
-                    lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+                    lbl.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
                     rl.addWidget(lbl)
                 tip = [part.name]
                 if size_text:

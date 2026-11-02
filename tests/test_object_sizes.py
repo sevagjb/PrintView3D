@@ -108,26 +108,54 @@ def test_long_object_names_do_not_widen_the_panel(window, app):
     assert w.side.minimumSizeHint().width() <= w.side.parentWidget().width()
 
 
+@pytest.fixture
+def font_pt(app, request):
+    """The app's font size for one test (None: the platform's own). Restored afterwards."""
+    old = app.font()
+    if request.param:
+        f = app.font()
+        f.setPointSizeF(request.param)
+        app.setFont(f)
+    yield request.param
+    app.setFont(old)
+
+
+@pytest.mark.parametrize("font_pt", [None, 16], indirect=True, ids=["platform-font", "16pt"])
 @pytest.mark.parametrize("code", ["en", "ar", "nl", "de", "fr", "es", "ro"])
-def test_side_panel_fits_its_view_in_every_language(window, app, code):
+def test_side_panel_fits_its_view_in_every_language(app, tmp_path, code, font_pt):
     """In 0.24.0 the Arabic panel was 345 px wide in a 294 px view: the long field name
-    "ملف تعريف الخيط (الفلمنت)" did not wrap, and right-to-left cut the overflow off on the left."""
+    "ملف تعريف الخيط (الفلمنت)" did not wrap, and right-to-left cut the overflow off on the left.
+    Compound words ("Filamentprofiel") and bigger fonts (Windows display scaling: the first
+    version of this fix failed there) did the same, until long Details rows could wrap. The
+    16 pt runs check that on every platform."""
     import sys
+    from PySide6.QtCore import QEvent
     from printview3d import i18n
+    from printview3d.ui import main_window as mw
     sys.path.insert(0, os.path.join(HERE, "..", "tools"))
     import i18n as tool                                  # tools/i18n.py
     tool.cmd_compile()
-    w = window
+    i18n.apply_language(app, code)
+    w = mw.MainWindow(Settings(str(tmp_path / "settings.json")))   # built with that font
     try:
-        i18n.apply_language(app, code)
-        w._on_language_changed()
+        w.resize(1280, 760)
+        w.show()
         w.load_sync(BUSY)
         _settle(app)
-        assert w.side.width() <= w.side.parentWidget().width()
-        assert w.side.minimumSizeHint().width() <= w.side.parentWidget().width()
+        view = w.side.parentWidget().width()
+        assert w.side.width() <= view
+        assert w.side.minimumSizeHint().width() <= view
     finally:
         i18n.apply_language(app, "en")
-        w._on_language_changed()
+        w.close()
+        w.deleteLater()
+        app.sendPostedEvents(None, QEvent.DeferredDelete)
+        app.processEvents()
+
+
+def test_long_details_rows_wrap_instead_of_widening(window):
+    from PySide6.QtWidgets import QFormLayout
+    assert window.details_form.rowWrapPolicy() == QFormLayout.WrapLongRows
 
 
 def test_long_words_in_details_can_wrap(window, app):
