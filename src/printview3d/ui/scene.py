@@ -8,11 +8,16 @@ from typing import Optional
 import numpy as np
 import pyvista as pv
 
+from vtkmodules.vtkCommonDataModel import vtkPlane
+from vtkmodules.vtkRenderingCore import vtkProperty
+
 from ..loaders import FEATURES, GcodeData, ModelData
 from ..loaders.gcode import TRAVEL
 from . import theme
 
 PLATE_MODES = ("printer", "fit", "custom", "infinite")
+XRAY_OPACITY = 0.3            # View -> X-ray: how solid the parts stay
+CUT_COLOR = "#e0604f"         # View -> Clip: inside faces that the cut lays open
 INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
 INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
 
@@ -69,6 +74,17 @@ class Scene:
         self._file_bed: Optional[tuple] = None      # the printer's plate saved in the file
         self._plate_for: Optional[tuple] = None     # (bounds, z) of what is shown
         self._infinite = False
+        # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
+        self.wireframe = False
+        self.xray = False
+        self.clip_z: Optional[float] = None          # height of the cut; None = no cut
+        self._clip_plane = vtkPlane()
+        self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
+        self._cut_prop = vtkProperty()
+        self._cut_prop.SetColor(*(v / 255 for v in _hex_to_rgb(CUT_COLOR)))
+        self._cut_prop.SetAmbient(0.25)
+        self._cut_prop.SetDiffuse(0.75)
+        self._peeling = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
         self._color_axes()
@@ -130,6 +146,7 @@ class Scene:
         self._file_bed = None
         self._plate_for = None
         self._infinite = False
+        self.apply_view_options()            # no parts: turns depth peeling off
 
     def render(self):
         self.p.render()
@@ -399,7 +416,64 @@ class Scene:
         self.focus_bounds = b
         if model.bed or b:
             self.set_plate_source(model.bed, b, 0.0 if model.bed else b[4])
+        self.apply_view_options()
         return self.model_actors
+
+    # ------------------------------------------------------ view options (#60)
+    def model_z_range(self) -> Optional[tuple]:
+        """(bottom, top) of the model, for the clip slider; None without a model."""
+        if not self.model_actors or not self.focus_bounds:
+            return None
+        return (float(self.focus_bounds[4]), float(self.focus_bounds[5]))
+
+    def set_wireframe(self, on: bool):
+        self.wireframe = bool(on)
+        self.apply_view_options()
+
+    def set_xray(self, on: bool):
+        self.xray = bool(on)
+        self.apply_view_options()
+
+    def set_clip(self, z: Optional[float]):
+        """Cut the parts at height z (mm) and hide what is above; None: no cut."""
+        self.clip_z = None if z is None else float(z)
+        self.apply_view_options()
+
+    def apply_view_options(self):
+        """Wireframe, X-ray and the cut on every part of the model (G-code toolpaths keep
+        their look: they are lines already, and the layer slider is their cut)."""
+        if self.clip_z is not None:
+            self._clip_plane.SetOrigin(0.0, 0.0, self.clip_z)
+        for actor in self.model_actors:
+            prop = actor.GetProperty()
+            if self.wireframe:
+                prop.SetRepresentationToWireframe()
+                prop.LightingOff()           # lit lines come out dark and broken: full colour instead
+            else:
+                prop.SetRepresentationToSurface()
+                prop.LightingOn()
+            prop.SetOpacity(XRAY_OPACITY if self.xray else 1.0)
+            self._cut_prop.SetOpacity(XRAY_OPACITY if self.xray else 1.0)
+            mapper = actor.GetMapper()
+            mapper.RemoveAllClippingPlanes()
+            if self.clip_z is not None:
+                mapper.AddClippingPlane(self._clip_plane)
+                # Through the cut you look at the inside of the walls: their back faces.
+                actor.SetBackfaceProperty(self._cut_prop)
+            else:
+                actor.SetBackfaceProperty(None)
+        # See-through parts are only drawn in the right order with depth peeling. It costs
+        # several drawing passes per frame, so it is only on while X-ray is.
+        want = self.xray and bool(self.model_actors)
+        if want != self._peeling:
+            try:
+                if want:
+                    self.p.enable_depth_peeling(number_of_peels=4, occlusion_ratio=0.0)
+                else:
+                    self.p.disable_depth_peeling()
+                self._peeling = want
+            except Exception:       # a renderer without depth peeling: X-ray still works, less exact
+                self._peeling = want
 
     @staticmethod
     def model_color(i: int, n: int) -> str:

@@ -392,16 +392,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show less</source>
-        <translation>Minder tonen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show more</source>
-        <translation>Meer tonen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate size</source>
         <translation>Plaatformaat</translation>
@@ -567,6 +557,38 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>Weergave</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
+        <translation>Hoe het model getekend wordt: draadmodel, röntgen, van boven afsnijden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Wireframe</source>
+        <translation>Draadmodel</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>X-ray (see-through)</source>
+        <translation>Röntgen (doorzichtig)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip from the top</source>
+        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
+        <translation>Van boven afsnijden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn off</source>
+        <translation>Uitzetten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation>Schermafbeelding</translation>
     </message>
@@ -653,6 +675,16 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Next layer</source>
         <translation>Volgende laag</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show less</source>
+        <translation>Minder tonen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show more</source>
+        <translation>Meer tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -995,6 +1027,12 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
         <translation>Startweergave: Iso, passend</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height {z} of {top} mm</source>
+        <extracomment>Clip slider: {z} is the height of the cut above the model&apos;s bottom, {top} its full height.</extracomment>
+        <translation>Hoogte {z} van {top} mm</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1876,6 +1914,21 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Export STL (3MF, FreeCAD and STEP)</source>
         <translation type="unfinished">STL exporteren (3MF, FreeCAD en STEP)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Wireframe on / off (models)</source>
+        <translation>Draadmodel aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>X-ray (see-through) on / off (models)</source>
+        <translation>Röntgen (doorzichtig) aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Clip from the top on / off (models)</source>
+        <translation>Van boven afsnijden aan / uit (modellen)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

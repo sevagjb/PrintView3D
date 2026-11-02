@@ -392,16 +392,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show less</source>
-        <translation type="unfinished">Afficher moins</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show more</source>
-        <translation type="unfinished">Afficher plus</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate size</source>
         <translation type="unfinished">Taille du plateau</translation>
@@ -567,6 +557,38 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation type="unfinished">Affichage</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
+        <translation type="unfinished">Comment le modèle est dessiné : fil de fer, rayons X, coupe par le haut</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Wireframe</source>
+        <translation type="unfinished">Fil de fer</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>X-ray (see-through)</source>
+        <translation type="unfinished">Rayons X (transparent)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip from the top</source>
+        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
+        <translation type="unfinished">Coupe par le haut</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn off</source>
+        <translation type="unfinished">Désactiver</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation type="unfinished">Capture d&apos;écran</translation>
     </message>
@@ -653,6 +675,16 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Next layer</source>
         <translation type="unfinished">Couche suivante</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show less</source>
+        <translation type="unfinished">Afficher moins</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show more</source>
+        <translation type="unfinished">Afficher plus</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -995,6 +1027,12 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
         <translation>Vue d’origine : Iso, ajustée</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height {z} of {top} mm</source>
+        <extracomment>Clip slider: {z} is the height of the cut above the model&apos;s bottom, {top} its full height.</extracomment>
+        <translation type="unfinished">Hauteur {z} sur {top} mm</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1876,6 +1914,21 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Export STL (3MF, FreeCAD and STEP)</source>
         <translation type="unfinished">Exporter en STL (3MF, FreeCAD et STEP)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Wireframe on / off (models)</source>
+        <translation type="unfinished">Fil de fer activé / désactivé (modèles)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>X-ray (see-through) on / off (models)</source>
+        <translation type="unfinished">Rayons X (transparent) activé / désactivé (modèles)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Clip from the top on / off (models)</source>
+        <translation type="unfinished">Coupe par le haut activée / désactivée (modèles)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

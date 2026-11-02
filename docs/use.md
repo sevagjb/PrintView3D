@@ -35,9 +35,24 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
+| `W` · `X` · `C` | Wireframe · X-ray · Clip from the top, on / off (models) |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
+
+## View: wireframe, X-ray and clip
+
+The **View** button in the toolbar changes how a model is drawn (STL, 3MF, OBJ and the other
+model formats; G-code has its layer slider instead):
+
+- **Wireframe** (`W`): the triangles of the mesh, to see how fine it is or spot broken geometry.
+- **X-ray** (`X`): the parts become see-through, so parts inside other parts, cavities and
+  hollow walls show.
+- **Clip from the top** (`C`): hides everything above a height. A slider in the side panel moves
+  the cut; the inside of the walls that the cut lays open is drawn in red. **Turn off** or `C`
+  shows the whole model again.
+
+The options stay on when you open the next model, and work together (X-ray and clip, for example).
 
 ## Choosing your slicer
 

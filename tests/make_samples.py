@@ -397,6 +397,72 @@ def write_3mf_larger_than_plate(path):
         _fixed_writestr(z, "Metadata/project_settings.config", settings)
 
 
+def _mesh_object_xml(oid, name, verts, tris):
+    vs = "".join(f'<vertex x="{x:.4f}" y="{y:.4f}" z="{z:.4f}"/>' for x, y, z in verts)
+    ts = "".join(f'<triangle v1="{a}" v2="{b}" v3="{c}"/>' for a, b, c in tris)
+    return (f'<object id="{oid}" name="{name}" type="model"><mesh><vertices>{vs}</vertices>'
+            f'<triangles>{ts}</triangles></mesh></object>')
+
+
+def _box(x0, y0, z0, x1, y1, z1, inward=False):
+    """Vertices and triangles of a box; inward=True turns the faces inside (a cavity)."""
+    v = [(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0),
+         (x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)]
+    f = [(0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4),
+         (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)]
+    if inward:
+        f = [(a, c, b) for a, b, c in f]
+    return v, f
+
+
+def _tube(cx, cy, r_out, r_in, h, n=48):
+    """A tube standing on z = 0: outer and inner wall, top and bottom ring."""
+    v, f = [], []
+    for k in range(n):
+        a = 2 * math.pi * k / n
+        c, s = math.cos(a), math.sin(a)
+        v += [(cx + r_out * c, cy + r_out * s, 0), (cx + r_out * c, cy + r_out * s, h),
+              (cx + r_in * c, cy + r_in * s, 0), (cx + r_in * c, cy + r_in * s, h)]
+    for k in range(n):
+        o0, o1 = 4 * k, 4 * ((k + 1) % n)
+        ob, ot, ib, it = o0, o0 + 1, o0 + 2, o0 + 3
+        ob2, ot2, ib2, it2 = o1, o1 + 1, o1 + 2, o1 + 3
+        f += [(ob, ob2, ot2), (ob, ot2, ot)]          # outer wall, facing out
+        f += [(ib, it2, ib2), (ib, it, it2)]          # inner wall, facing the hole
+        f += [(ot, ot2, it2), (ot, it2, it)]          # top ring
+        f += [(ob, ib2, ob2), (ob, ib, ib2)]          # bottom ring
+    return v, f
+
+
+def write_3mf_inside_view(path):
+    """Things you only see with X-ray or the clip slider (issue #60): a closed box with a
+    hollow inside and a small part hidden in it, and a tube to look into from the side."""
+    core = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"
+    bv, bf = _box(0, 0, 0, 60, 40, 30)
+    cv, cf = _box(5, 5, 5, 55, 35, 25, inward=True)    # 5 mm walls, closed on every side
+    box_v, box_f = bv + cv, bf + [(a + 8, b + 8, c + 8) for a, b, c in cf]
+    hidden_v, hidden_f = _box(20, 12, 5, 40, 28, 15)   # sits on the cavity floor, out of sight
+    tube_v, tube_f = _tube(105, 20, 15, 10, 40)
+    objs = (_mesh_object_xml(1, "Hollow box", box_v, box_f)
+            + _mesh_object_xml(2, "Hidden part", hidden_v, hidden_f)
+            + _mesh_object_xml(3, "Tube", tube_v, tube_f))
+    items = "".join(f'<item objectid="{i}" transform="1 0 0 0 1 0 0 0 1 60 90 0"/>' for i in (1, 2, 3))
+    model = (f'<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xmlns="{core}">'
+             f'<metadata name="Application">PrintView3D test files</metadata>'
+             f'<metadata name="Title">Inside view: hollow box, hidden part and a tube</metadata>'
+             f'<resources>{objs}</resources><build>{items}</build></model>')
+    rels = ('<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Target="/3D/3dmodel.model" Id="rel0" '
+            'Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
+    settings = ('{"printer_model": "Creality K2 Plus", "layer_height": "0.2", "nozzle_diameter": ["0.4"], '
+                '"filament_type": ["PLA"], "printable_area": ["0x0", "350x0", "350x350", "0x350"]}')
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        _fixed_writestr(z, "[Content_Types].xml", '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>')
+        _fixed_writestr(z, "_rels/.rels", rels)
+        _fixed_writestr(z, "3D/3dmodel.model", model)
+        _fixed_writestr(z, "Metadata/project_settings.config", settings)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     write_stl_binary(os.path.join(OUT, "cube_binary.stl"))
@@ -411,6 +477,7 @@ def main():
     write_off(os.path.join(OUT, "cube_colors.off"))
     write_glb(os.path.join(OUT, "two_nodes.glb"))
     write_gltf(os.path.join(OUT, "embedded.gltf"))
+    write_3mf_inside_view(os.path.join(OUT, "inside_view.3mf"))   # issue #60
     write_3mf_larger_than_plate(os.path.join(OUT, "larger_than_plate.3mf"))   # issue #61
     print("Sample files written to", OUT)
 
