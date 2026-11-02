@@ -145,6 +145,25 @@ class _ElidedLabel(QLabel):
         self.setText(self.fontMetrics().elidedText(self._full, Qt.ElideRight, max(10, self.width())))
 
 
+class _RowList(QListWidget):
+    """A list of row widgets that follow the list's width. (A plain QListWidget keeps a row
+    widget at its first width: when the panel's scroll bar appeared, the rows stayed 14 px
+    too wide and the file sizes at their right end were cut off.)"""
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        QTimer.singleShot(0, self.doItemsLayout)
+
+
+class _KeySwallower(QObject):
+    """Stops VTK's built-in single-letter shortcuts (wireframe, quit, ...)."""
+
+    def eventFilter(self, obj, ev):
+        if ev.type() in (QEvent.KeyPress, QEvent.KeyRelease):
+            return True
+        return False
+
+
 class PlateSizeDialog(QDialog):
     """Plate menu -> Custom size: width and depth of the plate in millimetres."""
 
@@ -175,25 +194,6 @@ class PlateSizeDialog(QDialog):
 
     def plate_size(self) -> tuple:
         return (self.width_spin.value(), self.depth_spin.value())
-
-
-class _RowList(QListWidget):
-    """A list of row widgets that follow the list's width. (A plain QListWidget keeps a row
-    widget at its first width: when the panel's scroll bar appeared, the rows stayed 14 px
-    too wide and the file sizes at their right end were cut off.)"""
-
-    def resizeEvent(self, e):
-        super().resizeEvent(e)
-        QTimer.singleShot(0, self.doItemsLayout)
-
-
-class _KeySwallower(QObject):
-    """Stops VTK's built-in single-letter shortcuts (wireframe, quit, ...)."""
-
-    def eventFilter(self, obj, ev):
-        if ev.type() in (QEvent.KeyPress, QEvent.KeyRelease):
-            return True
-        return False
 
 
 def _return_free_memory() -> None:
