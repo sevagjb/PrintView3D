@@ -10,7 +10,7 @@ de nieuwste.
 
 | Python-versie | Werkt het? |
 |---|---|
-| 3.10, 3.11 | ✅ Ja |
+| 3.10, 3.11 | ❌ Nee (te oud voor de bibliotheekversies waarmee gebouwd wordt, zoals NumPy 2.5) |
 | **3.12** | ✅ **Ja, aanbevolen** (dit gebruiken de officiële versies) |
 | 3.13, 3.14 | ✅ Ja |
 | 3.15 en nieuwer | ❌ Nog niet (er is nog geen VTK-versie voor) |
@@ -31,12 +31,12 @@ de nieuwste.
 
 ### Linux {#linux}
 
-Controleer met `python3 --version`. Staat er 3.15 of nieuwer, installeer dan 3.12 ernaast:
+Controleer met `python3 --version`. Staat er 3.11 of ouder, of 3.15 of nieuwer, installeer dan 3.12 ernaast:
 
 | Distributie | Opdracht |
 |---|---|
 | Ubuntu / Mint / Pop!_OS | `sudo apt install python3.12 python3.12-venv` (op oudere Ubuntu eerst: `sudo add-apt-repository ppa:deadsnakes/ppa`) |
-| Debian | `sudo apt install python3 python3-venv` (Debian 12/13 hebben een ondersteunde versie) |
+| Debian | `sudo apt install python3 python3-venv` (Debian 13 heeft 3.13; Debian 12 heeft 3.11, die te oud is: gebruik [pyenv](https://github.com/pyenv/pyenv)) |
 | Fedora | `sudo dnf install python3.12` |
 | Arch / Manjaro | `yay -S python312`, of gebruik [pyenv](https://github.com/pyenv/pyenv) |
 
@@ -74,18 +74,19 @@ sneller.
 
 ```mermaid
 flowchart LR
-    A["Een ondersteunde Python zoeken<br/>(3.12 → 3.13 → 3.14 → 3.11 → 3.10)"] --> B["Een eigen omgeving<br/>maken (.venv)"]
+    A["Een ondersteunde Python zoeken<br/>(3.12 → 3.13 → 3.14)"] --> B["Een eigen omgeving<br/>maken (.venv)"]
     B --> C["Bibliotheken installeren<br/>(Qt, VTK, PyVista, NumPy)"]
     C --> D["De tests uitvoeren"]
     D --> E["PyInstaller verpakt alles<br/>in dist/PrintView3D"]
     E --> F["Windows: zip-map<br/>Linux: AppImage"]
 ```
 
-1. **Python zoeken.** Het zoekt 3.12, dan 3.13, 3.14, 3.11, 3.10 (Windows: via de `py`-launcher; Linux:
+1. **Python zoeken.** Het zoekt 3.12, dan 3.13 en 3.14 (Windows: via de `py`-launcher; Linux:
    `python3.12`, `python3.13`, …) en gebruikt de eerste die het vindt. Is er geen geïnstalleerd, dan stopt het
    en zegt het wat je moet installeren.
 2. **`.venv` maken.** Een eigen map met een eigen kopie van de bibliotheken, zodat er niets in je systeem-Python
-   wordt geïnstalleerd en niets anders op je pc verandert. Verwijder `.venv` om opnieuw te beginnen.
+   wordt geïnstalleerd en niets anders op je pc verandert. Verwijder `.venv` om opnieuw te beginnen. Een `.venv` die eerder met een
+   niet-ondersteunde Python is gemaakt, wordt automatisch vervangen.
 3. **Bibliotheken installeren** uit `requirements.txt` (het programma) en `requirements-build.txt`
    (PyInstaller en pytest).
 4. **De tests uitvoeren** in `tests/`. Het bouwen stopt als er een test mislukt.
@@ -104,7 +105,8 @@ flowchart LR
 | `Python was not found` / `'py' is not recognized` | Installeer Python via python.org of winget (stap 1); beide hebben de `py`-launcher. |
 | Linux: `Could not create a virtual environment` | Installeer de venv-module, bijv. `sudo apt install python3.12-venv`. |
 | Linux: `qt.qpa.plugin: Could not load the Qt platform plugin "xcb"` bij starten vanuit de broncode | Installeer het X11-hulpje van Qt: `sudo apt install libxcb-cursor0` (Fedora: `xcb-util-cursor`). De AppImage bevat het al. |
-| Het bouwen mislukt bij het installeren van `vtk` | Je gebruikt een Python die niet ondersteund wordt. Verwijder de map `.venv`, installeer 3.12 en bouw opnieuw. |
+| `Cannot install numpy` … `conflicting dependencies` / `ResolutionImpossible` | Je Python is ouder dan 3.12 (een ouder bouwscript accepteerde 3.10 en 3.11). Installeer 3.12 (stap 1) en bouw opnieuw; het script vervangt de oude `.venv` zelf. |
+| Het bouwen mislukt bij het installeren van `vtk` | Je gebruikt een Python die niet ondersteund wordt. Installeer 3.12 en bouw opnieuw; het script vervangt de oude `.venv` zelf. |
 | Tests mislukken | [Meld het](https://github.com/sevagjb/PrintView3D/issues) en plak de uitvoer erbij. |
 | Windows Defender verwijdert of blokkeert de `.exe` | Een bekend vals alarm bij PyInstaller-programma's. Sta het toe in *Windows-beveiliging → Beveiligingsgeschiedenis*. |
 
