@@ -323,11 +323,13 @@ class Scene:
         self.p.render()
 
     # ----------------------------------------------------------------- camera
-    def set_view(self, view: str = "iso"):
+    def set_view(self, view: str = "iso", render: bool = True):
+        """Point the camera at the model from `view` and fit it. render=False only sets the camera
+        (the main window then turns there smoothly)."""
         self._view = view
         b = self.focus_bounds or self.bed_bounds
         if b is None:
-            self.p.view_isometric()
+            self.p.view_isometric(render=render)
             return
         c = np.array([(b[0] + b[1]) / 2, (b[2] + b[3]) / 2, (b[4] + b[5]) / 2])
         size = max(b[1] - b[0], b[3] - b[2], b[5] - b[4], 1.0)
@@ -349,7 +351,8 @@ class Scene:
             direction = np.array([0.65, -1.0, 0.75])
             pos, up = c + direction / np.linalg.norm(direction) * d, (0, 0, 1)
         self.p.camera_position = [tuple(pos), tuple(c), up]
-        self.p.reset_camera(bounds=b)
+        self.p.reset_camera(render=False, bounds=b)
         self.p.camera.zoom(0.95)
         self.p.reset_camera_clipping_range()
-        self.p.render()
+        if render:
+            self.p.render()

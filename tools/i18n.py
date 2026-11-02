@@ -7,7 +7,8 @@
                                    (src/printview3d/resources/translations/)
     python tools/i18n.py check     fail if the .ts files are out of date or a translation
                                    breaks a {placeholder}; used by the tests and CI
-    python tools/i18n.py stats     show how complete each language is
+    python tools/i18n.py stats     show how complete each language is (program texts and
+                                   the translated changelogs, CHANGELOG.<xx>.md)
     python tools/i18n.py new XX    start a new language (XX = code, e.g. it, pt_BR, tr)
 
 Files
@@ -284,6 +285,52 @@ def stats() -> dict[str, tuple[int, int, int]]:
     return out
 
 
+# ---------------------------------------------------------------- translated changelogs
+# CHANGELOG.md is the English original; CHANGELOG.<code>.md a translation with the same
+# "## 0.22.0" headings. The program shows a version that isn't translated yet in English.
+CHANGELOG_HEADING = re.compile(r"^## +(\S+)", re.MULTILINE)
+
+
+def changelog_versions(path: str) -> list[str]:
+    with open(path, encoding="utf-8") as f:
+        return CHANGELOG_HEADING.findall(f.read())
+
+
+def changelog_files() -> dict[str, str]:
+    """lang -> path of every translated changelog (CHANGELOG.<lang>.md)."""
+    out = {}
+    for name in sorted(os.listdir(ROOT)):
+        m = re.fullmatch(r"CHANGELOG\.([A-Za-z_]+)\.md", name)
+        if m:
+            out[m.group(1)] = os.path.join(ROOT, name)
+    return out
+
+
+def changelog_problems() -> list[str]:
+    """Headings a program can't match: versions the English changelog doesn't have (a typo such
+    as "## 0.10" for 0.1.0, or a version that isn't released yet), or versions out of order."""
+    english = changelog_versions(os.path.join(ROOT, "CHANGELOG.md"))
+    errs = []
+    for path in changelog_files().values():
+        got = changelog_versions(path)
+        for v in got:
+            if v not in english:
+                errs.append(f"{os.path.basename(path)}: '## {v}' is not a version in CHANGELOG.md")
+        known = [v for v in got if v in english]
+        if known != [v for v in english if v in known]:
+            errs.append(f"{os.path.basename(path)}: versions are not in the same order as CHANGELOG.md")
+        if len(set(got)) != len(got):
+            errs.append(f"{os.path.basename(path)}: a version appears twice")
+    return errs
+
+
+def changelog_missing() -> dict[str, list[str]]:
+    """lang -> English versions its changelog doesn't have yet (shown in English)."""
+    english = changelog_versions(os.path.join(ROOT, "CHANGELOG.md"))
+    return {lang: [v for v in english if v not in changelog_versions(path)]
+            for lang, path in changelog_files().items()}
+
+
 def main(argv: list[str]) -> int:
     if not argv or argv[0] in ("-h", "--help"):
         print(__doc__)
@@ -296,7 +343,7 @@ def main(argv: list[str]) -> int:
     elif cmd == "new" and len(argv) == 2:
         cmd_new(argv[1])
     elif cmd == "check":
-        errs = problems()
+        errs = problems() + changelog_problems()
         for e in errs:
             print("ERROR:", e)
         if errs:
@@ -306,6 +353,17 @@ def main(argv: list[str]) -> int:
         for lang, (total, done, reviewed) in stats().items():
             print(f"{lang:6} {done * 100 // max(1, total):3}% translated, "
                   f"{reviewed * 100 // max(1, total):3}% reviewed  ({done}/{total})")
+        print()
+        print("What's new (CHANGELOG.<lang>.md; missing versions are shown in English):")
+        missing = changelog_missing()
+        for lang in stats():
+            if lang not in missing:
+                print(f"{lang:6} not translated (English)")
+            elif missing[lang]:
+                shown = ", ".join(missing[lang][:5]) + (" ..." if len(missing[lang]) > 5 else "")
+                print(f"{lang:6} missing {len(missing[lang])}: {shown}")
+            else:
+                print(f"{lang:6} complete")
     else:
         print(__doc__)
         return 2

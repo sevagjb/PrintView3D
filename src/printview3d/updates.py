@@ -82,18 +82,45 @@ def is_newer(remote: str, local: str = __version__) -> bool:
     return bool(r) and r + (0,) * (n - len(r)) > l_ + (0,) * (n - len(l_))
 
 
-# ------------------------------------------------------------------ "What's new" after an update
-def changelog_text() -> str:
-    """CHANGELOG.md: bundled with the program (resources/), or from the source checkout."""
+# ------------------------------------------------------------------ "What's new"
+# CHANGELOG.md is the English original. A translation is CHANGELOG.<code>.md (CHANGELOG.ar.md,
+# CHANGELOG.nl.md, ...): the same "## 0.22.0" headings, translated text under them. A version a
+# translation doesn't have (yet) is shown in English, so a missing translation never blocks a
+# release and the window is never empty.
+
+def changelog_file(lang: str = "en") -> str:
+    """The changelog's file name for a language: CHANGELOG.md, or CHANGELOG.<lang>.md."""
+    return "CHANGELOG.md" if lang in ("", "en") else f"CHANGELOG.{lang}.md"
+
+
+def _changelog_path(lang: str = "en") -> str:
+    """Where the changelog for `lang` is: bundled with the program (resources/), or in the source
+    checkout. "" if there is none for that language."""
     here = os.path.dirname(os.path.abspath(__file__))
-    for path in (os.path.join(here, "resources", "CHANGELOG.md"),
-                 os.path.join(here, "..", "..", "CHANGELOG.md")):
-        try:
-            with open(path, encoding="utf-8") as f:
-                return f.read()
-        except OSError:
-            continue
+    name = changelog_file(lang)
+    for path in (os.path.join(here, "resources", name), os.path.join(here, "..", "..", name)):
+        if os.path.isfile(path):
+            return path
     return ""
+
+
+def changelog_text(lang: str = "en") -> str:
+    """The changelog in `lang` ("" if there is no file for it)."""
+    path = _changelog_path(lang)
+    if not path:
+        return ""
+    try:
+        with open(path, encoding="utf-8") as f:
+            return f.read()
+    except OSError:
+        return ""
+
+
+def changelog_url(lang: str = "en") -> str:
+    """The changelog on GitHub: in `lang` when it has been translated, otherwise English."""
+    if lang not in ("", "en") and _changelog_path(lang):
+        return f"https://github.com/{REPO}/blob/main/{changelog_file(lang)}"
+    return CHANGELOG_URL
 
 
 def changelog_sections(text: str) -> list[tuple[str, str]]:
@@ -113,6 +140,37 @@ def notes_since(older: str, current: str = __version__, text: str | None = None)
     text = changelog_text() if text is None else text
     return [(v, _absolute_links(n)) for v, n in changelog_sections(text)
             if is_newer(v, older) and not is_newer(v, current)]
+
+
+@dataclass
+class Notes:
+    """One version's notes as shown: in the user's language, or in English when that version
+    hasn't been translated (translated=False)."""
+    version: str
+    text: str
+    translated: bool
+
+
+def whats_new(lang: str = "en", older: str | None = None, current: str = __version__,
+              en_text: str | None = None, lang_text: str | None = None) -> list[Notes]:
+    """The notes for "What's new", newest first, in `lang` with English per version as fallback.
+
+    older=None: only the `current` version (the "What's new" menu item). Otherwise every version
+    newer than `older` up to `current` (the window shown once after an update)."""
+    en_text = changelog_text() if en_text is None else en_text
+    if older is None:
+        wanted = [(v, n) for v, n in changelog_sections(en_text) if v == current]
+    else:
+        wanted = [(v, n) for v, n in changelog_sections(en_text)
+                  if is_newer(v, older) and not is_newer(v, current)]
+    local: dict[str, str] = {}
+    if lang not in ("", "en"):
+        local = dict(changelog_sections(changelog_text(lang) if lang_text is None else lang_text))
+    out = []
+    for version, english in wanted:
+        text = local.get(version, "").strip()
+        out.append(Notes(version, _absolute_links(text or english), bool(text) or lang in ("", "en")))
+    return out
 
 
 def just_updated(settings, current: str = __version__) -> str:

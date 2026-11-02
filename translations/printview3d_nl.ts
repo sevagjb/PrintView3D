@@ -539,6 +539,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>What&apos;s new</source>
+        <translation>Wat is er nieuw</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drop a 3D model or G-code file here, or open one.</source>
         <translation>Sleep een 3D-model of G-codebestand hierheen, of open er een.</translation>
     </message>
@@ -913,6 +919,31 @@
         <source>Bottom</source>
         <extracomment>Label on the view cube: camera view from below.</extracomment>
         <translation>Onder</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn left 45°</source>
+        <translation>45° naar links draaien</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn right 45°</source>
+        <translation>45° naar rechts draaien</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt up 45° (towards Top)</source>
+        <translation>45° omhoog kantelen (richting Boven)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt down 45° (towards Bottom)</source>
+        <translation>45° omlaag kantelen (richting Onder)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Home: Iso view, fitted</source>
+        <translation>Startweergave: Iso, passend</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1487,11 +1518,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>What&apos;s new</source>
-        <translation>Wat is er nieuw</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation>Deze versie overslaan</translation>
@@ -1926,13 +1952,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>PrintView3D was updated to {version}.</source>
-        <translation>PrintView3D is bijgewerkt naar {version}.</translation>
+        <source>Not translated yet, shown in English.</source>
+        <translation>Nog niet vertaald, getoond in het Engels.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>All changes</source>
-        <translation>Alle wijzigingen</translation>
+        <source>The notes for this version are not included in this build.</source>
+        <translation>De notities voor deze versie zitten niet in deze build.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>All changes on GitHub</source>
+        <translation>Alle wijzigingen op GitHub</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>PrintView3D was updated to {version}.</source>
+        <translation>PrintView3D is bijgewerkt naar {version}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1968,6 +2004,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>Update downloaden</translation>
+    </message>
+    <message>
+        <source>All changes</source>
+        <translation type="vanished">Alle wijzigingen</translation>
     </message>
     <message>
         <source>Next theme</source>

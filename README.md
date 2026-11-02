@@ -240,7 +240,7 @@ menu or applications menu, without a file, always opens a new window.
 | **Left-drag** | Rotate. Press *on the model* to rotate around that exact point; press on empty space to rotate around the model's centre. The plate always stays level. |
 | **Right-drag** (or middle-drag, or Shift + left-drag) | Move (pan) |
 | **Mouse wheel** | Zoom towards the mouse pointer |
-| **View cube** (top-right corner) | Click a face to jump to that view (Top, Front, Right, Back, Left or Bottom). Drag the cube to rotate, or drag the ring under it to turn without tilting. Because Top, Front and Right are on the cube, the toolbar keeps only Fit, Iso and Plate; hide the cube in Settings → Viewer and those three buttons come back. The keys `2` `3` `4` work either way. |
+| **View cube** (top-right corner) | A see-through cube with a dashed ring. Click a face to jump to that view (Top, Front, Right, Back, Left or Bottom). Drag the cube to rotate, or drag the ring under it to turn without tilting. With the mouse over the cube, **arrows** and a **Home** icon appear: ◀ ▶ turn the model to the next 45° stop, ▲ ▼ tilt it 45° towards Top or Bottom, and Home goes back to the fitted Iso view. The arrows always land on one of the cube's 26 views (faces, edges, corners), so after a free drag the first click lines the view up again. View changes turn smoothly; click or drag to stop one. The part under the mouse lights up in the theme's main colour (amber in Ember). Because Top, Front and Right are on the cube and its Home icon is the Iso view, the toolbar keeps only Fit (handy when you have zoomed far away from the model) and Plate; hide the cube in Settings → Viewer and the Iso, Top, Front and Right buttons come back. The keys `1` `2` `3` `4` work either way. |
 
 Looking from underneath? The plate gets out of the way so you can see the bottom of the part.
 
@@ -425,7 +425,7 @@ The styles:
   on the eyes at night.
 - **Ember**: orange and teal. By day warm cream: the slicer button, OK and the chosen
   Settings page are orange; the toolbar tiles, sliders and focus are teal; Export STL and the view
-  buttons (Fit, Iso, Plate) are filled with a deep teal with white text; text is
+  buttons (Fit and Plate; Iso too when the view cube is off) are filled with a deep teal with white text; text is
   a soft slate grey instead of black, and the 3D view a deeper sand colour, so white and yellow
   toolpaths stay visible. At night the same orange and teal on deep lagoon greens, with a teal-lit
   build plate.
@@ -484,9 +484,13 @@ When a new version exists, the version in the bottom-right corner shows a **red 
   starts such a tool.
 - **Skip this version** hides that version; the next one is shown again.
 
-After an update, the first start shows **What's new** for the version you now have, once, however
-you updated (installer, winget, zip or AppImage). It is read from the changelog that comes with the
-program, so it needs no connection. A fresh install doesn't show it.
+After an update, the first start shows **What's new** since the version you had, once, however
+you updated (installer, winget, zip or AppImage). Any time later, **Menu → What's new** shows the
+notes of the version you have, with a button to every change on GitHub. Both are read from the
+changelog that comes with the program, so they need no connection; a fresh install doesn't show the
+window by itself. The notes are in your language where the changelog is translated (Arabic and
+Dutch: [`CHANGELOG.ar.md`](CHANGELOG.ar.md), [`CHANGELOG.nl.md`](CHANGELOG.nl.md)); otherwise, or
+for a version not translated yet, they are shown in English.
 
 ![Settings → Updates when a new version is available](docs/screenshot-updates.png)
 

@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 
 from .. import __version__
 from .. import updates as up
-from ..i18n import tr
+from ..i18n import RIGHT_TO_LEFT, current_language, tr
 
 
 class UpdateChecker(QObject):
@@ -70,30 +70,66 @@ def show_whats_new(parent, rel: up.Release):
     dlg.exec()
 
 
-def show_updated(parent, previous: str) -> None:
-    """Once after an update: what changed since `previous`, from the bundled changelog."""
-    sections = up.notes_since(previous)
-    if not sections:
-        return
-    shown = sections[: up.MAX_NOTES_SHOWN]
-    notes = "\n\n".join(f"## {version}\n\n{text}" for version, text in shown)
+def _notes_markdown(notes: list[up.Notes], lang: str) -> str:
+    """The notes as Markdown. Versions shown in English because they aren't translated yet get a
+    short note: once at the top when none is translated, otherwise at each of them."""
+    untranslated = [n for n in notes if not n.translated]
+    note = "*" + tr("Not translated yet, shown in English.") + "*"
+    every = bool(untranslated) and len(untranslated) == len(notes)
+    parts = [note] if every else []
+    for n in notes:
+        parts.append(f"## {n.version}")
+        if not n.translated and not every:
+            parts.append(note)
+        parts.append(n.text)
+    return "\n\n".join(parts)
+
+
+def _notes_window(parent, title: str, head: str, notes: list[up.Notes], lang: str) -> None:
+    """The "What's new" window: an optional line on top, the notes, and at the bottom a button to
+    every change on GitHub (in this language when the changelog is translated) and Close."""
     dlg = QDialog(parent)
-    dlg.setWindowTitle(tr("What's new in {version}").format(version=__version__))
+    dlg.setWindowTitle(title)
     v = QVBoxLayout(dlg)
-    head = QLabel(tr("PrintView3D was updated to {version}.").format(version=f"<b>{__version__}</b>"))
-    v.addWidget(head)
+    if head:
+        v.addWidget(QLabel(head))
     text = QTextBrowser()
     text.setOpenExternalLinks(True)
-    text.setMarkdown(notes)
+    if lang in RIGHT_TO_LEFT:
+        # Whole document right-to-left, so also a heading that is only a version number ("## 0.22.0")
+        # sits on the right instead of following its digits to the left.
+        opt = text.document().defaultTextOption()
+        opt.setTextDirection(Qt.RightToLeft)
+        text.document().setDefaultTextOption(opt)
+    text.setMarkdown(_notes_markdown(notes, lang) if notes else
+                     tr("The notes for this version are not included in this build."))
     v.addWidget(text, 1)
-    more = QLabel(f'<a href="{up.CHANGELOG_URL}">{tr("All changes")}</a>')
-    more.setOpenExternalLinks(True)
-    v.addWidget(more)
-    bb = QDialogButtonBox(QDialogButtonBox.Close)
+    bb = QDialogButtonBox(QDialogButtonBox.Close)          # Qt translates Close itself
+    all_btn = bb.addButton(tr("All changes on GitHub"), QDialogButtonBox.ActionRole)
+    all_btn.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(up.changelog_url(lang))))
     bb.rejected.connect(dlg.reject)
     v.addWidget(bb)
     dlg.resize(620, 520)
+    dlg._notes = notes              # for the tests
     dlg.exec()
+
+
+def show_updated(parent, previous: str) -> None:
+    """Once after an update: what changed since `previous`, from the bundled changelog."""
+    lang = current_language()
+    notes = up.whats_new(lang, older=previous)
+    if not notes:
+        return
+    _notes_window(parent, tr("What's new in {version}").format(version=__version__),
+                  tr("PrintView3D was updated to {version}.").format(version=f"<b>{__version__}</b>"),
+                  notes[: up.MAX_NOTES_SHOWN], lang)
+
+
+def show_current(parent) -> None:
+    """The "What's new" menu item: this version's notes, any time."""
+    lang = current_language()
+    _notes_window(parent, tr("What's new in {version}").format(version=__version__), "",
+                  up.whats_new(lang), lang)
 
 
 class _Download(QObject):

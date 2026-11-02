@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.23.0
+- **View cube, new look**: see-through faces, thin edges and a dashed ring. The part under the
+  mouse lights up in the theme's main colour (amber in Ember, teal in the other themes).
+- **Arrows and Home on the view cube**: with the mouse over the cube, ◀ ▶ turn the model to the next
+  45° stop and ▲ ▼ tilt it 45° towards Top or Bottom; **Home** goes back to the fitted Iso view.
+  View changes now turn smoothly instead of jumping; a click or drag stops a turn.
+- **An even calmer toolbar**: with the view cube on, Iso is on the cube too (Home), so the toolbar
+  keeps Fit and Plate. The key `1` still works, and Iso comes back with Top, Front and Right when the
+  cube is switched off in **Settings → Viewer**.
+- **What's new in the menu**: **Menu → What's new** shows this version's notes any time, with a
+  button to every change on GitHub.
+- **What's new in Arabic and Dutch**: the notes are shown in your language where they are
+  translated, otherwise in English. Translators: see [docs/TRANSLATING.md](docs/TRANSLATING.md).
+- **Fixed**: a double-click in the 3D view (for example two quick clicks on the view cube) could
+  take the mouse controls away: the view cube stopped working and rotating felt different until
+  PrintView3D was restarted.
+
 ## 0.22.0
 - **Themes: four styles, each light and dark.** Choose **Default**, **Gray**, **Graphite** or
   **Ember**, and **Light**, **Dark** or **System** (follows your computer and switches along with it).

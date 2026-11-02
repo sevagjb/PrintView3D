@@ -539,6 +539,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>What&apos;s new</source>
+        <translation type="unfinished">Nouveautés</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drop a 3D model or G-code file here, or open one.</source>
         <translation type="unfinished">Déposez un modèle 3D ou un fichier G-code ici, ou ouvrez-en un.</translation>
     </message>
@@ -913,6 +919,31 @@
         <source>Bottom</source>
         <extracomment>Label on the view cube: camera view from below.</extracomment>
         <translation type="unfinished">Dessous</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn left 45°</source>
+        <translation>Tourner de 45° à gauche</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn right 45°</source>
+        <translation>Tourner de 45° à droite</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt up 45° (towards Top)</source>
+        <translation>Incliner de 45° vers le haut (vers Dessus)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt down 45° (towards Bottom)</source>
+        <translation>Incliner de 45° vers le bas (vers Dessous)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Home: Iso view, fitted</source>
+        <translation>Vue d’origine : Iso, ajustée</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1487,11 +1518,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>What&apos;s new</source>
-        <translation type="unfinished">Nouveautés</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation type="unfinished">Ignorer cette version</translation>
@@ -1926,13 +1952,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>PrintView3D was updated to {version}.</source>
-        <translation type="unfinished">PrintView3D a été mis à jour vers {version}.</translation>
+        <source>Not translated yet, shown in English.</source>
+        <translation>Pas encore traduit, affiché en anglais.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>All changes</source>
-        <translation type="unfinished">Tous les changements</translation>
+        <source>The notes for this version are not included in this build.</source>
+        <translation>Les notes de cette version ne sont pas incluses dans cette compilation.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>All changes on GitHub</source>
+        <translation>Toutes les modifications sur GitHub</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>PrintView3D was updated to {version}.</source>
+        <translation type="unfinished">PrintView3D a été mis à jour vers {version}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1968,6 +2004,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation type="unfinished">Télécharger la mise à jour</translation>
+    </message>
+    <message>
+        <source>All changes</source>
+        <translation type="vanished">Tous les changements</translation>
     </message>
     <message>
         <source>Next theme</source>

@@ -539,6 +539,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>What&apos;s new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drop a 3D model or G-code file here, or open one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -912,6 +918,31 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Bottom</source>
         <extracomment>Label on the view cube: camera view from below.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn left 45°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn right 45°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt up 45° (towards Top)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt down 45° (towards Bottom)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Home: Iso view, fitted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1487,11 +1518,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>What&apos;s new</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation type="unfinished"></translation>
@@ -1926,12 +1952,22 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>PrintView3D was updated to {version}.</source>
+        <source>Not translated yet, shown in English.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>All changes</source>
+        <source>The notes for this version are not included in this build.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>All changes on GitHub</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>PrintView3D was updated to {version}.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

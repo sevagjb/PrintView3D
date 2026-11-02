@@ -539,6 +539,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>What&apos;s new</source>
+        <translation>ما الجديد</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drop a 3D model or G-code file here, or open one.</source>
         <translation>اسحب نموذجًا ثلاثي الأبعاد أو ملف G-code وأفلته هنا، أو افتح ملفًا.</translation>
     </message>
@@ -913,6 +919,31 @@
         <source>Bottom</source>
         <extracomment>Label on the view cube: camera view from below.</extracomment>
         <translation>أسفل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn left 45°</source>
+        <translation>استدارة 45° لليسار</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn right 45°</source>
+        <translation>استدارة 45° لليمين</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt up 45° (towards Top)</source>
+        <translation>إمالة 45° للأعلى (نحو أعلى)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tilt down 45° (towards Bottom)</source>
+        <translation>إمالة 45° للأسفل (نحو أسفل)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Home: Iso view, fitted</source>
+        <translation>العرض الأساسي: متساوي القياس مع الملاءمة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1487,11 +1518,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>What&apos;s new</source>
-        <translation>ما الجديد</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation>تخطي هذا الإصدار</translation>
@@ -1926,13 +1952,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>PrintView3D was updated to {version}.</source>
-        <translation type="unfinished">تم تحديث PrintView3D إلى الإصدار {version}.</translation>
+        <source>Not translated yet, shown in English.</source>
+        <translation>لم تُترجم بعد، معروضة بالإنجليزية.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
-        <source>All changes</source>
-        <translation type="unfinished">كل التغييرات</translation>
+        <source>The notes for this version are not included in this build.</source>
+        <translation>ملاحظات هذا الإصدار غير مضمّنة في هذا البناء.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>All changes on GitHub</source>
+        <translation>كل التغييرات على GitHub</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/update_ui.py"></location>
+        <source>PrintView3D was updated to {version}.</source>
+        <translation type="unfinished">تم تحديث PrintView3D إلى الإصدار {version}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
@@ -1968,6 +2004,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>تنزيل التحديث</translation>
+    </message>
+    <message>
+        <source>All changes</source>
+        <translation type="vanished">كل التغييرات</translation>
     </message>
     <message>
         <source>Next theme</source>
