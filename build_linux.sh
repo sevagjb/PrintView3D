@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
 #  PrintView3D - build the Linux program (AppImage)
-#  Requires Python 3.10-3.14 (3.12 recommended) with the venv module.
+#  Requires Python 3.12-3.14 (3.12 recommended) with the venv module.
 #  Result: dist/PrintView3D-x86_64.AppImage
 #  Options: --no-appimage   only build the folder dist/PrintView3D/
 # ============================================================
@@ -11,20 +11,25 @@ cd "$(dirname "$(readlink -f "$0")")"
 MAKE_APPIMAGE=1
 [[ "${1:-}" == "--no-appimage" ]] && MAKE_APPIMAGE=0
 
-# The 3D engine (VTK) only supports certain Python versions, so pick one of
-# those explicitly instead of whatever "python3" happens to be.
+# Pick a supported Python explicitly instead of whatever "python3" happens to be.
+# 3.12 is the oldest: the exact library versions the releases are built with
+# (requirements-build-lock.txt, e.g. NumPy 2.5) need it. 3.14 is the newest:
+# the 3D engine (VTK) has no version for 3.15 yet.
+SUPPORTED='import sys; sys.exit(0 if (3,12) <= sys.version_info[:2] <= (3,14) else 1)'
 PY=""
-for v in 3.12 3.13 3.14 3.11 3.10; do
+for v in 3.12 3.13 3.14; do
     if command -v "python$v" >/dev/null 2>&1; then PY="python$v"; break; fi
 done
 if [[ -z "$PY" ]] && command -v python3 >/dev/null 2>&1; then
-    if python3 -c 'import sys; sys.exit(0 if (3,10) <= sys.version_info[:2] <= (3,14) else 1)'; then
+    if python3 -c "$SUPPORTED"; then
         PY=python3
     fi
 fi
 if [[ -z "$PY" ]]; then
     echo "[ERROR] No supported Python version was found."
-    echo "        PrintView3D needs Python 3.10 to 3.14 (3.12 recommended)."
+    echo "        Building PrintView3D needs Python 3.12 to 3.14 (3.12 recommended)."
+    echo "        Older versions such as 3.11 are too old for the libraries it is built with,"
+    echo "        newer versions such as 3.15 are not supported yet by the VTK 3D engine."
     echo "        Ubuntu/Debian: sudo apt install python3.12 python3.12-venv"
     echo "        Fedora:        sudo dnf install python3.12"
     echo "        Arch:          use pyenv or the python312 AUR package"
@@ -33,6 +38,12 @@ fi
 echo "Using Python: $PY ($($PY --version))"
 
 echo "[1/5] Creating virtual environment (.venv) ..."
+# A .venv made earlier by an unsupported Python (or one that was removed since)
+# would make step 2 fail, so make a new one.
+if [[ -e .venv ]] && ! .venv/bin/python -c "$SUPPORTED" >/dev/null 2>&1; then
+    echo "      The existing .venv uses an unsupported Python - making a new one."
+    rm -rf .venv
+fi
 if [[ ! -x .venv/bin/python ]]; then
     "$PY" -m venv .venv || {
         echo "[ERROR] Could not create a virtual environment."
