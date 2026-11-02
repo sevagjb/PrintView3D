@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.23.0
+- **Weergavekubus in een nieuw jasje**: doorzichtige vlakken, dunne randen en een gestippelde ring.
+  Het deel onder de muis licht op in de hoofdkleur van het thema (amber in Ember, cyaan in de andere thema's).
+- **Pijlen en Startweergave op de weergavekubus**: met de muis boven de kubus draaien ◀ ▶ het model naar de
+  volgende stand van 45° en kantelen ▲ ▼ het 45° richting **Boven** of **Onder**; **Startweergave** (het huisje) gaat terug
+  naar de passende Iso-weergave. Weergavewissels draaien nu vloeiend in plaats van te springen; een klik
+  of sleepbeweging stopt het draaien.
+- **Een nog rustigere werkbalk**: met de weergavekubus aan zit Iso ook op de kubus (Startweergave), dus de
+  werkbalk houdt **Passend** en **Plaat**. De toets `1` werkt nog steeds, en Iso komt samen met Boven,
+  Voor en Rechts terug wanneer de kubus wordt uitgeschakeld in **Instellingen → Weergave**.
+- **Wat is er nieuw in het menu**: **Menu → Wat is er nieuw** toont op elk moment de notities van deze
+  versie, met een knop naar alle wijzigingen op GitHub.
+- **Wat is er nieuw in het Arabisch en Nederlands**: de notities worden in je eigen taal getoond waar ze
+  vertaald zijn, anders in het Engels. Vertalers: zie [docs/TRANSLATING.md](docs/TRANSLATING.md).
+- **Opgelost**: een dubbelklik in de 3D-weergave (bijvoorbeeld twee snelle klikken op de weergavekubus)
+  kon de muisbediening uitschakelen: de weergavekubus werkte niet meer en draaien voelde anders aan
+  totdat PrintView3D opnieuw werd gestart.
+
 ## 0.22.0
 - **Thema's: vier stijlen, elk licht en donker.** Kies **Standaard**, **Grijs**, **Grafiet** of
   **Ember**, en **Licht**, **Donker** of **Systeem** (volgt je computer en schakelt mee).
