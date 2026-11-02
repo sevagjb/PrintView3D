@@ -12,6 +12,10 @@ from ..loaders import FEATURES, GcodeData, ModelData
 from ..loaders.gcode import TRAVEL
 from . import theme
 
+PLATE_MODES = ("printer", "fit", "custom", "infinite")
+INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
+INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
+
 MODEL_COLORS = ["#4aa3df", "#f59f4c", "#69c66b", "#b98cff", "#ff6b6b", "#ffd166", "#3cc8c8", "#e88fc7"]
 
 
@@ -59,6 +63,12 @@ class Scene:
         self._real_bed = True
         self._bed_from_below = None
         self._view = "iso"
+        # Which plate to draw (Plate menu / Settings -> Viewer), and what it is drawn for.
+        self.plate_mode = "printer"
+        self.custom_plate = (300.0, 300.0)
+        self._file_bed: Optional[tuple] = None      # the printer's plate saved in the file
+        self._plate_for: Optional[tuple] = None     # (bounds, z) of what is shown
+        self._infinite = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
         self._color_axes()
@@ -71,6 +81,10 @@ class Scene:
         toolpaths keep their colours)."""
         self.c = c
         self.p.set_background(c["bg_bottom"], top=c["bg_top"])
+        if self._infinite:
+            self.apply_plate()          # its lines carry their colours per point: draw them again
+            self._color_axes()
+            return
         for name, key in self._BED_COLOR_KEYS.items():
             a = self.p.actors.get(name)
             if a is not None:
@@ -113,16 +127,145 @@ class Scene:
         self._bed_actor_names = []
         self.focus_bounds = None
         self.bed_bounds = None
+        self._file_bed = None
+        self._plate_for = None
+        self._infinite = False
 
     def render(self):
         self.p.render()
 
+    # --------------------------------------------------------------- plate mode
+    def set_plate_source(self, file_bed: Optional[tuple], bounds: Optional[tuple], z: float):
+        """What the plate is drawn for: the printer's plate from the file (or None), the
+        bounds of the model / toolpaths and the height the plate sits at."""
+        self._file_bed = file_bed
+        self._plate_for = (bounds, z)
+        self.apply_plate()
+
+    def set_plate_mode(self, mode: str, custom: Optional[tuple] = None):
+        """Plate menu / Settings: draw the plate again in the new way (when a file is open)."""
+        self.plate_mode = mode if mode in PLATE_MODES else "printer"
+        if custom:
+            self.custom_plate = (float(custom[0]), float(custom[1]))
+        if self._plate_for is not None:
+            self.apply_plate()
+
+    def plate_rect(self) -> Optional[tuple]:
+        """The plate to draw for the current mode: ((xmin, xmax, ymin, ymax), z, real plate?),
+        or None (nothing open). Not used for the infinite grid."""
+        if self._plate_for is None:
+            return None
+        b, z = self._plate_for
+        fb = self._file_bed
+        if self.plate_mode == "custom":
+            w, d = self.custom_plate
+            if fb:                                    # the printer's origin, the size you chose
+                x0, y0 = fb[0], fb[2]
+            elif b:                                   # centred under the model
+                x0, y0 = (b[0] + b[1] - w) / 2, (b[2] + b[3] - d) / 2
+            else:
+                x0, y0 = 0.0, 0.0
+            return (x0, x0 + w, y0, y0 + d), z, True
+        if fb:
+            if self.plate_mode == "fit" and b and not self._fits(b, fb):
+                a = self._auto_bed(b)
+                return (min(fb[0], a[0]), max(fb[1], a[1]), min(fb[2], a[2]), max(fb[3], a[3])), z, False
+            return fb, z, True
+        if b:
+            return self._auto_bed(b), z, False
+        return None
+
+    @staticmethod
+    def _fits(b: tuple, plate: tuple) -> bool:
+        """Is the model's footprint inside the plate?"""
+        return b[0] >= plate[0] and b[1] <= plate[1] and b[2] >= plate[2] and b[3] <= plate[3]
+
+    def apply_plate(self):
+        if self._plate_for is None:
+            return
+        b, z = self._plate_for
+        if self.plate_mode == "infinite" and b:
+            self.draw_infinite_grid(b, z)
+            return
+        r = self.plate_rect()
+        self.draw_bed(r[0] if r else None, r[1] if r else 0.0, r[2] if r else True)
+
     # --------------------------------------------------------------- bed/grid
-    def draw_bed(self, bounds: Optional[tuple], z: float = 0.0, has_real_bed: bool = True):
+    def _remove_bed(self):
         for n in self._bed_actor_names:
             self.p.remove_actor(n, render=False)
         self._bed_actor_names = []
         self.bed_bounds = None
+        self._infinite = False
+
+    @staticmethod
+    def _grid_step(size: float) -> float:
+        if size > 600:
+            return 50.0
+        if size < 60:
+            return 5.0
+        return 10.0
+
+    def draw_infinite_grid(self, b: tuple, z: float):
+        """Grid lines far around the model that fade out, like an endless floor. Only lines are
+        see-through (as the travel moves always were), there is no plate surface: a see-through
+        surface is what looked different on different graphics drivers (see _update_plate_side)."""
+        self._remove_bed()
+        size = max(b[1] - b[0], b[3] - b[2], 10.0)
+        half = max(INFINITE_MIN, INFINITE_FACTOR * size) / 2
+        auto = self._auto_bed(b)
+        step = self._grid_step(max(auto[1] - auto[0], auto[3] - auto[2]))
+        major = step * 5
+        # Centred under the model, on the grid of world coordinates (lines at multiples of the
+        # step, like the normal plate).
+        cx = round((b[0] + b[1]) / 2 / major) * major
+        cy = round((b[2] + b[3]) / 2 / major) * major
+        # Grid lines on the same world positions as the normal plate (multiples of the step).
+        gz = z - 0.02
+        def lines(spacing: float, reach: float, color: str, skip_major: bool):
+            vals = np.arange(math.ceil((-reach) / spacing), math.floor(reach / spacing) + 1) * spacing
+            if skip_major:                           # those are drawn by the major grid
+                vals = vals[np.abs(np.round(vals / major) * major - vals) > 1e-6]
+            if not len(vals):
+                return None
+            # Each line in pieces, so the colour can fade along it.
+            seg = np.arange(-reach, reach + 1e-6, min(major, reach / 4))
+            u, s = np.meshgrid(vals, seg, indexing="ij")              # line position, along it
+            pts_x = np.stack([u, s], axis=-1)                         # lines along Y (x = const)
+            pts_y = np.stack([s, u], axis=-1)                         # lines along X (y = const)
+            pts = np.concatenate([pts_x, pts_y]).reshape(-1, 2)
+            n_lines, n_pts = 2 * len(vals), len(seg)
+            dist = np.hypot(pts[:, 0], pts[:, 1])
+            t = np.clip(dist / reach, 0, 1)
+            t = (t * t * (3 - 2 * t))[:, None]                        # smooth fade
+            rgba = np.empty((len(pts), 4), np.uint8)
+            rgba[:, :3] = _hex_to_rgb(color)
+            rgba[:, 3] = ((1 - t[:, 0]) * 255).round()
+            xyz = np.column_stack([pts[:, 0] + cx, pts[:, 1] + cy, np.full(len(pts), gz)]).astype(np.float32)
+            idx = np.arange(n_lines * n_pts).reshape(n_lines, n_pts)
+            cells = np.column_stack([np.full(n_lines * (n_pts - 1), 2),
+                                     idx[:, :-1].ravel(), idx[:, 1:].ravel()]).ravel()
+            poly = pv.PolyData(xyz, lines=cells)
+            poly.point_data["rgba"] = rgba
+            return poly
+
+        # Fine lines near the model only (at most 200 on each side), main lines to the horizon.
+        minor = lines(step, min(half, max(size * 4, major * 8), step * 200), self.c["grid_minor"], True)
+        major_poly = lines(major, half, self.c["grid_major"], False)
+        for name, poly in (("bed_minor", minor), ("bed_major", major_poly)):
+            if poly is not None:
+                self.p.add_mesh(poly, scalars="rgba", rgba=True, line_width=1, name=name, lighting=False,
+                                pickable=False, reset_camera=False, show_scalar_bar=False)
+                self._bed_actor_names.append(name)
+        self.bed_bounds = (auto[0], auto[1], auto[2], auto[3], z, z)
+        self._bed_z = z
+        self._real_bed = False
+        self._infinite = True
+        self._bed_from_below = None
+        self.set_bed_visible(self.bed_visible)
+
+    def draw_bed(self, bounds: Optional[tuple], z: float = 0.0, has_real_bed: bool = True):
+        self._remove_bed()
         if bounds is None:
             return
         xmin, xmax, ymin, ymax = bounds
@@ -134,12 +277,7 @@ class Scene:
         self.p.add_mesh(plate, color=self.c["plate"], name="bed_plate", lighting=False,
                         pickable=False, reset_camera=False)
 
-        step = 10.0
-        big = max(w, h)
-        if big > 600:
-            step = 50.0
-        elif big < 60:
-            step = 5.0
+        step = self._grid_step(max(w, h))
         major_every = 5
         # Grid sits just under z so it never flickers against the model's bottom face.
         gz = z - 0.02
@@ -259,10 +397,8 @@ class Scene:
 
         b = model.bounds()
         self.focus_bounds = b
-        if model.bed:
-            self.draw_bed(model.bed, 0.0, True)
-        elif b:
-            self.draw_bed(self._auto_bed(b), b[4], False)
+        if model.bed or b:
+            self.set_plate_source(model.bed, b, 0.0 if model.bed else b[4])
         return self.model_actors
 
     @staticmethod
@@ -286,10 +422,8 @@ class Scene:
         self.gcode = g
         b = g.extrusion_bounds
         self.focus_bounds = b
-        if g.bed:
-            self.draw_bed(g.bed, 0.0, True)
-        elif b:
-            self.draw_bed(self._auto_bed(b), 0.0, False)
+        if g.bed or b:
+            self.set_plate_source(g.bed, b, 0.0)
 
     def update_gcode(self, max_layer: int, only_layer: bool, visible: np.ndarray):
         """Redraw toolpaths up to `max_layer`. `visible` is a bool per FEATURES entry."""

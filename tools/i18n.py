@@ -231,7 +231,7 @@ def _lrelease() -> list[str]:
     found = shutil.which("pyside6-lrelease") or shutil.which("lrelease")
     if found:
         return [found]
-    raise SystemExit("pyside6-lrelease not found (it comes with PySide6: pip install PySide6)")
+    raise SystemExit("pyside6-lrelease not found (it comes with PySide6: pip install PySide6-Essentials)")
 
 
 def cmd_compile() -> None:

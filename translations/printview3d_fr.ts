@@ -169,6 +169,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Printer&apos;s plate (from the file)</source>
+        <translation type="unfinished">Plateau de l&apos;imprimante (du fichier)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Grow to fit the model</source>
+        <translation type="unfinished">Agrandir pour contenir le modèle</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Custom size…</source>
+        <translation type="unfinished">Taille personnalisée…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Infinite grid</source>
+        <translation type="unfinished">Grille infinie</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
         <source>Print time</source>
         <translation type="unfinished">Durée d&apos;impression</translation>
     </message>
@@ -372,6 +392,37 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show less</source>
+        <translation type="unfinished">Afficher moins</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show more</source>
+        <translation type="unfinished">Afficher plus</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate size</source>
+        <translation type="unfinished">Taille du plateau</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Width (X)</source>
+        <translation type="unfinished">Largeur (X)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth (Y)</source>
+        <translation type="unfinished">Profondeur (Y)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>The plate starts at the printer&apos;s origin (0, 0) when the file has one, otherwise it is centred under the model.</source>
+        <translation type="unfinished">Le plateau commence à l&apos;origine de l&apos;imprimante (0, 0) si le fichier en a une, sinon il est centré sous le modèle.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished">Style de thème suivant</translation>
@@ -511,8 +562,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show / hide the build plate grid</source>
-        <translation type="unfinished">Afficher / masquer la grille du plateau</translation>
+        <source>Show / hide the build plate grid (arrow: plate size)</source>
+        <translation type="unfinished">Afficher / masquer la grille du plateau (flèche : taille du plateau)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1478,6 +1529,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate</source>
+        <translation type="unfinished">Plateau</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation type="unfinished">Graphisme</translation>
     </message>
@@ -2004,6 +2060,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation type="unfinished">Télécharger la mise à jour</translation>
+    </message>
+    <message>
+        <source>Show / hide the build plate grid</source>
+        <translation type="vanished">Afficher / masquer la grille du plateau</translation>
     </message>
     <message>
         <source>All changes</source>

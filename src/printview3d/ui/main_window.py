@@ -12,7 +12,7 @@ import numpy as np
 from PySide6.QtCore import QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
 from PySide6.QtGui import QAction, QActionGroup, QColor, QDesktopServices, QGuiApplication, QIcon, QKeySequence, QPixmap, QShortcut
 from PySide6.QtWidgets import (
-    QAbstractItemView, QApplication, QCheckBox, QDialog, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QAbstractItemView, QApplication, QCheckBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QScrollArea,
     QSizePolicy, QSlider, QSpinBox, QSplitter, QStackedWidget, QToolBar,
     QToolButton, QVBoxLayout, QWidget,
@@ -31,11 +31,11 @@ from ..loaders import (
 )
 from ..loaders.gcode import FEATURE_INDEX
 from ..settings import EXPORT_MODES, Settings
-from .labels import feature_label, meta_label, meta_value
+from .labels import feature_label, meta_label, meta_value, plate_mode_label
 from . import theme, update_ui
 from .. import updates as up
 from .export_stl import ExportStlDialog
-from .scene import Scene
+from .scene import PLATE_MODES, Scene
 from .settings_dialog import SettingsDialog
 from . import send_dialog as sd
 
@@ -145,6 +145,53 @@ class _ElidedLabel(QLabel):
         self.setText(self.fontMetrics().elidedText(self._full, Qt.ElideRight, max(10, self.width())))
 
 
+class _LongValue(QWidget):
+    """A long detail value (such as a project's description): the first lines, and a
+    "Show more" / "Show less" link when there is more. A description of a few paragraphs
+    made the Details box so tall that the Objects box ended up below the window (issue #62)."""
+
+    LINES = 4
+
+    def __init__(self, text: str, parent=None):
+        super().__init__(parent)
+        self.expanded = False
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(2)
+        self.label = QLabel(text)
+        self.label.setWordWrap(True)
+        self.label.setAlignment(Qt.AlignTop | Qt.AlignLeading)
+        self.label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        lay.addWidget(self.label)
+        self.toggle = QLabel()
+        self.toggle.setObjectName("moreLink")
+        self.toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        self.toggle.linkActivated.connect(lambda _=None: self.set_expanded(not self.expanded))
+        lay.addWidget(self.toggle)
+        self._update()
+
+    def collapsed_height(self) -> int:
+        return self.label.fontMetrics().lineSpacing() * self.LINES
+
+    def is_clamped(self) -> bool:
+        """True when the text is longer than the first lines (so the link is shown)."""
+        return self.label.heightForWidth(max(1, self.label.width())) > self.collapsed_height()
+
+    def set_expanded(self, on: bool):
+        self.expanded = on
+        self._update()
+
+    def _update(self):
+        long_text = self.is_clamped()
+        self.label.setMaximumHeight(16777215 if (self.expanded or not long_text) else self.collapsed_height())
+        self.toggle.setVisible(long_text)
+        self.toggle.setText('<a href="#">{}</a>'.format(tr("Show less") if self.expanded else tr("Show more")))
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        self._update()           # a narrower panel wraps into more lines
+
+
 class _RowList(QListWidget):
     """A list of row widgets that follow the list's width. (A plain QListWidget keeps a row
     widget at its first width: when the panel's scroll bar appeared, the rows stayed 14 px
@@ -162,6 +209,38 @@ class _KeySwallower(QObject):
         if ev.type() in (QEvent.KeyPress, QEvent.KeyRelease):
             return True
         return False
+
+
+class PlateSizeDialog(QDialog):
+    """Plate menu -> Custom size: width and depth of the plate in millimetres."""
+
+    MIN, MAX = 10, 5000
+
+    def __init__(self, size: tuple, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(tr("Plate size"))
+        form = QFormLayout(self)
+        self.width_spin = QSpinBox()
+        self.depth_spin = QSpinBox()
+        for spin, value in ((self.width_spin, size[0]), (self.depth_spin, size[1])):
+            spin.setRange(self.MIN, self.MAX)
+            spin.setSingleStep(10)
+            spin.setSuffix(" mm")
+            spin.setValue(int(round(float(value))))
+        form.addRow(tr("Width (X)"), self.width_spin)
+        form.addRow(tr("Depth (Y)"), self.depth_spin)
+        note = QLabel(tr("The plate starts at the printer's origin (0, 0) when the file has one, "
+                         "otherwise it is centred under the model."))
+        note.setObjectName("muted")
+        note.setWordWrap(True)
+        form.addRow(note)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        form.addRow(buttons)
+
+    def plate_size(self) -> tuple:
+        return (self.width_spin.value(), self.depth_spin.value())
 
 
 def _return_free_memory() -> None:
@@ -436,6 +515,20 @@ class MainWindow(QMainWindow):
         # Named, so a theme can style them on their own (Ember Light fills them with teal).
         for act in [a for a, _, _ in self.view_actions] + [self.act_bed]:
             tb.widgetForAction(act).setObjectName("viewButton")
+        # The Plate button's arrow: which plate to draw (issue #61). A click still shows / hides it.
+        self.plate_menu = QMenu(self)
+        self.plate_group = QActionGroup(self)
+        self.plate_actions = {}
+        for mode in PLATE_MODES:
+            a = QAction(self, checkable=True)
+            a.triggered.connect(lambda _=False, m=mode: self.choose_plate_mode(m))
+            self.plate_group.addAction(a)
+            self.plate_menu.addAction(a)
+            self.plate_actions[mode] = a
+        self.plate_menu.aboutToShow.connect(self._mark_plate_mode)
+        self.plate_btn = tb.widgetForAction(self.act_bed)
+        self.plate_btn.setMenu(self.plate_menu)
+        self.plate_btn.setPopupMode(QToolButton.MenuButtonPopup)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -595,6 +688,7 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
         # The view cube in the top-right corner (Settings -> Viewer can hide it).
         from .view_cube import ViewCube
         self.view_cube = ViewCube(self.plotter, theme.colors(), self._cube_labels())
@@ -640,23 +734,45 @@ class MainWindow(QMainWindow):
         self.kind_label.setObjectName("muted")
         L.addWidget(self.kind_label)
 
+        # The picture the slicer saved in the file. Next to the 3D view it mostly shows the same
+        # thing, so a click on the link above it folds it away (remembered); it still helps while
+        # a big file loads or when the 3D view can't show the file (issue #62).
+        self.thumb_toggle = QLabel()
+        self.thumb_toggle.setObjectName("moreLink")
+        self.thumb_toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        self.thumb_toggle.linkActivated.connect(lambda _=None: self.set_thumbnail_open(not self._thumbnail_open()))
+        L.addWidget(self.thumb_toggle)
         self.thumb_label = QLabel()
         self.thumb_label.setAlignment(Qt.AlignCenter)
         self.thumb_label.setObjectName("thumbnail")
         L.addWidget(self.thumb_label)
+        self._has_thumbnail = False
 
         # ZIP files: the 3D files inside, to pick one or show them all.
         self.zip_box = QGroupBox()
         self.zip_layout = QVBoxLayout(self.zip_box)
         L.addWidget(self.zip_box)
 
+        # Objects above Details: the object checkboxes are something you use, the details only
+        # something you read, and a long description no longer pushes them off the screen (#62).
+        self.objects_box = QGroupBox()
+        box_layout = QVBoxLayout(self.objects_box)
+        box_layout.setContentsMargins(0, 0, 0, 0)
+        self.objects_scroll = QScrollArea()
+        self.objects_scroll.setObjectName("objectsScroll")
+        self.objects_scroll.setWidgetResizable(True)
+        self.objects_scroll.setFrameShape(QScrollArea.NoFrame)
+        self.objects_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        objects_list = QWidget()
+        objects_list.setObjectName("objectsList")
+        self.objects_layout = QVBoxLayout(objects_list)
+        self.objects_scroll.setWidget(objects_list)
+        box_layout.addWidget(self.objects_scroll)
+        L.addWidget(self.objects_box)
+
         self.details_box = QGroupBox()
         self.details_form = QFormLayout(self.details_box)
         L.addWidget(self.details_box)
-
-        self.objects_box = QGroupBox()
-        self.objects_layout = QVBoxLayout(self.objects_box)
-        L.addWidget(self.objects_box)
 
         self.embedded_box = QGroupBox()
         self.embedded_layout = QVBoxLayout(self.embedded_box)
@@ -769,7 +885,8 @@ class MainWindow(QMainWindow):
         self.act_export_choose.setText(tr("Choose objects…"))
         self.act_export_setting.setText(tr("Change what a click does…"))
         self.act_bed.setText(tr("Plate"))
-        self.act_bed.setToolTip(tr("Show / hide the build plate grid"))
+        self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
+        self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
         self.act_settings.setText(tr("Settings"))
         self.act_updates.setText(tr("Updates"))
@@ -826,7 +943,7 @@ class MainWindow(QMainWindow):
     def _reset_side_panel(self):
         self.name_label.setText("")
         self.kind_label.setText("")
-        self.thumb_label.hide()
+        self._show_thumbnail(False)
         while self.details_form.rowCount():
             self.details_form.removeRow(0)
         self._clear_layout(self.zip_layout)
@@ -868,21 +985,62 @@ class MainWindow(QMainWindow):
     def _add_detail(self, key: str, value: str):
         k = QLabel(key)
         k.setObjectName("formKey")
-        v = QLabel(str(value))
+        text = str(value)
+        if len(text) > self.LONG_DETAIL_CHARS or "\n" in text:
+            self.details_form.addRow(k, _LongValue(text))
+            return
+        v = QLabel(text)
         v.setWordWrap(True)
         v.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.details_form.addRow(k, v)
 
-    def _set_thumbnail(self, data: Optional[bytes]):
-        if not data:
-            self.thumb_label.hide()
+    # Values longer than this (or with line breaks) start folded to their first lines.
+    LONG_DETAIL_CHARS = 160
+    # More objects than this: the Objects list scrolls on its own, so Details stays in reach.
+    OBJECTS_VISIBLE_ROWS = 10
+
+    def _fit_objects_list(self):
+        """Show the Objects list in full up to OBJECTS_VISIBLE_ROWS objects, longer lists
+        scroll inside the box."""
+        n = self.objects_layout.count()
+        inner = self.objects_scroll.widget()
+        if n <= self.OBJECTS_VISIBLE_ROWS:
+            self.objects_scroll.setFixedHeight(inner.sizeHint().height())
+            self.objects_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             return
+        row = self.objects_layout.itemAt(0).widget().sizeHint().height() + self.objects_layout.spacing()
+        m = self.objects_layout.contentsMargins()
+        self.objects_scroll.setFixedHeight(row * self.OBJECTS_VISIBLE_ROWS + m.top())
+        self.objects_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+
+    def _set_thumbnail(self, data: Optional[bytes]):
         pm = QPixmap()
-        if pm.loadFromData(data) and not pm.isNull() and pm.width() > 8:
+        if data and pm.loadFromData(data) and not pm.isNull() and pm.width() > 8:
             self.thumb_label.setPixmap(pm.scaled(220, 220, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-            self.thumb_label.show()
+            self._show_thumbnail(True)
         else:
-            self.thumb_label.hide()
+            self._show_thumbnail(False)
+
+    def _thumbnail_open(self) -> bool:
+        return bool(self.settings.get("thumbnail_open", True))
+
+    def set_thumbnail_open(self, on: bool):
+        """Fold the preview picture away or show it again; remembered for the next files."""
+        self.settings.set("thumbnail_open", bool(on))
+        self._show_thumbnail(self._has_thumbnail)
+
+    def _show_thumbnail(self, has: bool):
+        """`has`: this file has a preview picture. The link is shown with it, the picture only
+        when it isn't folded away."""
+        self._has_thumbnail = has
+        is_open = self._thumbnail_open()
+        # ▸ points to where the text goes: to the left in right-to-left languages such as Arabic.
+        closed = "◂" if self.layoutDirection() == Qt.RightToLeft else "▸"
+        self.thumb_toggle.setText('<a href="#">{} {}</a>'.format("▾" if is_open else closed,
+                                                                 tr("Preview picture")))
+        self.thumb_toggle.setToolTip(tr("Show less") if is_open else tr("Show more"))
+        self.thumb_toggle.setVisible(has)
+        self.thumb_label.setVisible(has and is_open)
 
     def _kind_text(self) -> str:
         if self.showing_embedded:
@@ -1358,7 +1516,7 @@ class MainWindow(QMainWindow):
         self.kind_label.setText(self._kind_text())
         self._add_zip_detail()
         if m.freecad is not None and not m.parts:
-            self.thumb_label.hide()                 # shown large on the preview page
+            self._show_thumbnail(False)             # shown large on the preview page
         else:
             self._set_thumbnail(m.thumbnail)
         actors = getattr(self, "_model_actors", [])
@@ -1390,6 +1548,7 @@ class MainWindow(QMainWindow):
                 cb.toggled.connect(lambda on, a=actor: (a.SetVisibility(on), self.plotter.render()))
                 self.objects_layout.addWidget(cb)
             self.objects_box.setTitle(tr("Objects ({n})").format(n=len(m.parts)))
+            self._fit_objects_list()
             self.objects_box.show()
 
         if m.freecad:
@@ -1714,6 +1873,44 @@ class MainWindow(QMainWindow):
         self.settings.set("show_bed", on)
         self.plotter.render()
 
+    def _plate_size(self) -> tuple:
+        size = self.settings.get("plate_size", [300, 300])
+        try:
+            w, d = (min(PlateSizeDialog.MAX, max(PlateSizeDialog.MIN, float(v))) for v in size)
+        except (TypeError, ValueError):
+            w, d = 300.0, 300.0
+        return (w, d)
+
+    def _mark_plate_mode(self):
+        """Tick the plate in use in the Plate menu (with the custom size in its name)."""
+        mode = self.settings.get("plate_mode", "printer")
+        for key, a in self.plate_actions.items():
+            text = plate_mode_label(key)
+            if key == "custom":
+                w, d = self._plate_size()
+                text += "  ({w} × {d} mm)".format(w=num(w, 0), d=num(d, 0))
+            a.setText(text)
+            a.setChecked(key == mode)
+
+    def choose_plate_mode(self, mode: str, ask: bool = True):
+        """Plate menu: draw the printer's plate, a plate that grows to fit the model, a plate of
+        your own size (asks for it) or an endless grid. Shows the plate if it was hidden."""
+        if mode not in PLATE_MODES:
+            mode = "printer"
+        if mode == "custom" and ask:
+            dlg = PlateSizeDialog(self._plate_size(), self)
+            if not dlg.exec():
+                self._mark_plate_mode()             # keep the tick where it was
+                return
+            self.settings.set("plate_size", list(dlg.plate_size()))
+        self.settings.set("plate_mode", mode)
+        self.scene.set_plate_mode(mode, self._plate_size())
+        self._mark_plate_mode()
+        if not self.act_bed.isChecked():
+            self.act_bed.setChecked(True)           # choosing a plate means you want to see it
+        elif self.stack.currentIndex() == 1:
+            self.plotter.render()
+
     # ------------------------------------------------------------ slicer
     def _slicer_name(self, sid: str, name: str) -> str:
         return tr("custom slicer") if (sid == sl.CUSTOM and name == "custom slicer") else name
@@ -1996,6 +2193,12 @@ class MainWindow(QMainWindow):
             if (self.current_kind in ("freecad", "step") and self.current_path and self.model is not None
                     and not self.model.parts and self.settings.get("freecad_path", "") != freecad_before):
                 self.load(self.current_path)
+            if (self.scene.plate_mode, self.scene.custom_plate) != (
+                    self.settings.get("plate_mode", "printer"), self._plate_size()):
+                self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
+                self._mark_plate_mode()
+                if self.stack.currentIndex() == 1:
+                    self.plotter.render()
             show_bed = bool(self.settings.get("show_bed", True))
             if self.act_bed.isChecked() != show_bed:
                 self.act_bed.setChecked(show_bed)

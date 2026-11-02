@@ -64,7 +64,7 @@ which languages are reviewed.
 ## Bigger work: Qt Linguist
 
 For a whole language, a desktop editor is more comfortable. **Qt Linguist** comes with PySide6
-(`pip install PySide6`, then run `pyside6-linguist`). Open the `.ts` file, translate, mark each
+(`pip install PySide6-Essentials`, then run `pyside6-linguist`). Open the `.ts` file, translate, mark each
 finished text with ✓, save, and open a pull request with the file. Any text editor works too.
 
 ## What's new: translating the changelog

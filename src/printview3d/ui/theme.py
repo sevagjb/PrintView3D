@@ -359,6 +359,8 @@ MICA_CSS = """
     QStatusBar#mainStatusBar {{ background: {bar}; }}
     QStackedWidget#centralStack QScrollArea > QWidget > QWidget {{ background: {panel}; }}
     QStackedWidget#centralStack QGroupBox {{ background: {box}; }}
+    /* The Objects list scrolls inside its box: it must not get the panel's layer a second time. */
+    QStackedWidget#centralStack QWidget#objectsList {{ background: transparent; }}
     QStackedWidget#centralStack QGroupBox::title {{ color: {title}; }}
     QStackedWidget#centralStack QLabel#muted, QStackedWidget#centralStack QLabel#formKey {{ color: {muted}; }}
 """
@@ -433,6 +435,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QToolBar QToolButton#viewButton:hover, QToolBar QToolButton#exportButton:hover {{
             background: {t['view_bg_hover']}; border-color: {t['view_border_hover']}; }}
         QToolBar QToolButton#viewButton:checked {{ background: {t['view_bg_checked']}; border-color: {accent}; }}
+        QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
+        QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
+            border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
         QToolButton#slicerButton {{ background: {primary}; color: white; font-weight: 600; padding: 2px 14px 2px 3px; }}
         QToolButton#slicerButton:hover {{ background: {primary_hover}; }}
         QToolButton#slicerButton[popupMode="1"] {{ padding-right: 28px; }}
@@ -450,6 +455,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QPushButton#link {{ color: {t['link']}; border: none; background: transparent; }}
         QPushButton#link:hover {{ text-decoration: underline; }}
         QScrollArea {{ border: none; }}
+        QScrollArea#objectsScroll, QScrollArea#objectsScroll > QWidget, QWidget#objectsList {{ background: transparent; }}
         QSlider::groove:horizontal {{ height: 6px; background: {t['groove']}; border-radius: 3px; }}
         QSlider::sub-page:horizontal {{ background: {accent}; border-radius: 3px; }}
         QSlider::handle:horizontal {{ background: {t['handle']}; border: 1px solid {t['handle_border']};

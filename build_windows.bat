@@ -1,24 +1,27 @@
 @echo off
 REM ============================================================
 REM  PrintView3D - build the Windows program (PrintView3D.exe)
-REM  Requires Python 3.10-3.14 from python.org (3.12 recommended).
+REM  Requires Python 3.12-3.14 from python.org (3.12 recommended).
 REM  Result: dist\PrintView3D\PrintView3D.exe
 REM ============================================================
 setlocal
 cd /d "%~dp0"
 
-REM The 3D engine (VTK) only supports certain Python versions, so pick one
-REM of those explicitly instead of whatever Python is newest on this PC.
+REM Pick a supported Python explicitly instead of whatever is newest on this PC.
+REM 3.12 is the oldest: the exact library versions the releases are built with
+REM (requirements-build-lock.txt, e.g. NumPy 2.5) need it. 3.14 is the newest:
+REM the 3D engine (VTK) has no version for 3.15 yet.
 set "PY="
-for %%V in (3.12 3.13 3.14 3.11 3.10) do (
+for %%V in (3.12 3.13 3.14) do (
     if not defined PY (
         py -%%V -c "import sys" >nul 2>nul && set "PY=py -%%V"
     )
 )
 if not defined PY (
     echo [ERROR] No supported Python version was found.
-    echo         PrintView3D needs Python 3.10 to 3.14 ^(3.12 recommended^).
-    echo         Newer versions such as 3.15 are not supported yet by the VTK 3D engine.
+    echo         Building PrintView3D needs Python 3.12 to 3.14 ^(3.12 recommended^).
+    echo         Older versions such as 3.11 are too old for the libraries it is built with,
+    echo         newer versions such as 3.15 are not supported yet by the VTK 3D engine.
     echo         Install Python 3.12 from https://www.python.org/downloads/
     echo         It can be installed next to your existing Python - both keep working.
     pause
@@ -27,6 +30,19 @@ if not defined PY (
 echo Using Python: %PY%
 
 echo [1/4] Creating virtual environment (.venv) ...
+REM A .venv made earlier by an unsupported Python (or one that was uninstalled since)
+REM would make step 2 fail, so make a new one.
+if exist ".venv" (
+    ".venv\Scripts\python.exe" -c "import sys; sys.exit(0 if (3,12) <= sys.version_info[:2] <= (3,14) else 1)" >nul 2>nul
+    if errorlevel 1 (
+        echo       The existing .venv uses an unsupported Python - making a new one.
+        rmdir /s /q ".venv"
+        if exist ".venv" (
+            echo [ERROR] Could not delete the old .venv folder. Close programs using it and try again.
+            goto :fail
+        )
+    )
+)
 if not exist ".venv\Scripts\python.exe" (
     %PY% -m venv .venv || goto :fail
 )

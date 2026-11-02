@@ -528,7 +528,7 @@ gives you the newest one.
 
 | Python version | Works? |
 |---|---|
-| 3.10, 3.11 | ✅ Yes |
+| 3.10, 3.11 | ❌ No (too old for the library versions the builds use, such as NumPy 2.5) |
 | **3.12** | ✅ **Yes, recommended** (what the official builds use) |
 | 3.13, 3.14 | ✅ Yes |
 | 3.15 and newer | ❌ Not yet (no VTK version for it) |
@@ -549,12 +549,12 @@ gives you the newest one.
 
 #### Linux
 
-Check with `python3 --version`. If it says 3.15 or newer, install 3.12 next to it:
+Check with `python3 --version`. If it says 3.11 or older, or 3.15 or newer, install 3.12 next to it:
 
 | Distribution | Command |
 |---|---|
 | Ubuntu / Mint / Pop!_OS | `sudo apt install python3.12 python3.12-venv` (on older Ubuntu first: `sudo add-apt-repository ppa:deadsnakes/ppa`) |
-| Debian | `sudo apt install python3 python3-venv` (Debian 12/13 ship a supported version) |
+| Debian | `sudo apt install python3 python3-venv` (Debian 13 ships 3.13; Debian 12 ships 3.11, which is too old: use [pyenv](https://github.com/pyenv/pyenv)) |
 | Fedora | `sudo dnf install python3.12` |
 | Arch / Manjaro | `yay -S python312`, or use [pyenv](https://github.com/pyenv/pyenv) |
 
@@ -591,18 +591,19 @@ The first build takes a few minutes (it downloads about 300 MB of libraries); la
 
 ```mermaid
 flowchart LR
-    A["Find a supported Python<br/>(3.12 → 3.13 → 3.14 → 3.11 → 3.10)"] --> B["Create a private<br/>environment (.venv)"]
+    A["Find a supported Python<br/>(3.12 → 3.13 → 3.14)"] --> B["Create a private<br/>environment (.venv)"]
     B --> C["Install libraries<br/>(Qt, VTK, PyVista, NumPy)"]
     C --> D["Run the tests"]
     D --> E["PyInstaller packs everything<br/>into dist/PrintView3D"]
     E --> F["Windows: zip folder<br/>Linux: AppImage"]
 ```
 
-1. **Find Python.** It looks for 3.12, then 3.13, 3.14, 3.11, 3.10 (Windows: through the `py`
+1. **Find Python.** It looks for 3.12, then 3.13 and 3.14 (Windows: through the `py`
    launcher; Linux: `python3.12`, `python3.13`, …) and uses the first one it finds. If none is
    installed, it stops and tells you what to install.
 2. **Create `.venv`.** A private folder with its own copy of the libraries, so nothing is installed
-   into your system Python and nothing else on your PC is affected. Delete `.venv` to start fresh.
+   into your system Python and nothing else on your PC is affected. Delete `.venv` to start fresh. A `.venv` made earlier by an
+   unsupported Python is replaced automatically.
 3. **Install libraries** listed in `requirements.txt` (the app) and `requirements-build.txt`
    (PyInstaller and pytest).
 4. **Run the tests** in `tests/`. The build stops if any test fails.
@@ -622,7 +623,8 @@ flowchart LR
 | `Python was not found` / `'py' is not recognized` | Install Python from python.org or with winget (Step 1); both include the `py` launcher. |
 | Linux: `Could not create a virtual environment` | Install the venv module, e.g. `sudo apt install python3.12-venv`. |
 | Linux: `qt.qpa.plugin: Could not load the Qt platform plugin "xcb"` when running from source | Install Qt's X11 helper: `sudo apt install libxcb-cursor0` (Fedora: `xcb-util-cursor`). The AppImage already includes it. |
-| Build fails while installing `vtk` | You are on an unsupported Python. Delete the `.venv` folder, install 3.12, run the build again. |
+| `Cannot install numpy` … `conflicting dependencies` / `ResolutionImpossible` | Your Python is older than 3.12 (an older build script accepted 3.10 and 3.11). Install 3.12 (Step 1) and run the build again; the script replaces the old `.venv` by itself. |
+| Build fails while installing `vtk` | You are on an unsupported Python. Install 3.12 and run the build again; the script replaces the old `.venv` by itself. |
 | Tests fail | Please [open an issue](../../issues) and paste the output. |
 | Windows Defender deletes or blocks the `.exe` | A known false alarm with PyInstaller programs. Allow it in *Windows Security → Protection history*. |
 
