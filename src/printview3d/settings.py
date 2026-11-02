@@ -34,6 +34,8 @@ DEFAULTS = {
     "recent_files": [],
     "show_travel": False,
     "show_bed": True,
+    "plate_mode": "printer",    # Plate menu: "printer" (from the file), "fit", "custom" or "infinite"
+    "plate_size": [300, 300],   # Plate menu -> Custom size: width and depth in mm
     "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
     "max_recent": 10,
 }

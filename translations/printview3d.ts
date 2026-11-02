@@ -169,6 +169,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Printer&apos;s plate (from the file)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Grow to fit the model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Custom size…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Infinite grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
         <source>Print time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -373,6 +393,27 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Width (X)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth (Y)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>The plate starts at the printer&apos;s origin (0, 0) when the file has one, otherwise it is centred under the model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished"></translation>
     </message>
@@ -511,7 +552,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show / hide the build plate grid</source>
+        <source>Show / hide the build plate grid (arrow: plate size)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1474,6 +1515,11 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show the view cube (top-right corner of the 3D view)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -25,6 +25,14 @@ FEATURE_LABELS = {
     "travel": tr_noop("Travel moves"),
 }
 
+# Plate menu and Settings -> Viewer (keys from ui.scene.PLATE_MODES)
+PLATE_MODE_LABELS = {
+    "printer": tr_noop("Printer's plate (from the file)"),
+    "fit": tr_noop("Grow to fit the model"),
+    "custom": tr_noop("Custom size…"),
+    "infinite": tr_noop("Infinite grid"),
+}
+
 # Detail names read from files (keys used by the loaders' meta dictionaries)
 META_LABELS = {
     "Print time": tr_noop("Print time"),
@@ -64,6 +72,10 @@ VALUE_WORDS = {
 
 def feature_label(key: str) -> str:
     return tr(FEATURE_LABELS.get(key, key))
+
+
+def plate_mode_label(key: str) -> str:
+    return tr(PLATE_MODE_LABELS.get(key, key))
 
 
 def meta_label(key: str) -> str:

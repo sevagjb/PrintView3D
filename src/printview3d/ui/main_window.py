@@ -12,7 +12,7 @@ import numpy as np
 from PySide6.QtCore import QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
 from PySide6.QtGui import QAction, QActionGroup, QColor, QDesktopServices, QGuiApplication, QIcon, QKeySequence, QPixmap, QShortcut
 from PySide6.QtWidgets import (
-    QAbstractItemView, QApplication, QCheckBox, QDialog, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QAbstractItemView, QApplication, QCheckBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QScrollArea,
     QSizePolicy, QSlider, QSpinBox, QSplitter, QStackedWidget, QToolBar,
     QToolButton, QVBoxLayout, QWidget,
@@ -31,11 +31,11 @@ from ..loaders import (
 )
 from ..loaders.gcode import FEATURE_INDEX
 from ..settings import EXPORT_MODES, Settings
-from .labels import feature_label, meta_label, meta_value
+from .labels import feature_label, meta_label, meta_value, plate_mode_label
 from . import theme, update_ui
 from .. import updates as up
 from .export_stl import ExportStlDialog
-from .scene import Scene
+from .scene import PLATE_MODES, Scene
 from .settings_dialog import SettingsDialog
 from . import send_dialog as sd
 
@@ -143,6 +143,38 @@ class _ElidedLabel(QLabel):
     def resizeEvent(self, e):
         super().resizeEvent(e)
         self.setText(self.fontMetrics().elidedText(self._full, Qt.ElideRight, max(10, self.width())))
+
+
+class PlateSizeDialog(QDialog):
+    """Plate menu -> Custom size: width and depth of the plate in millimetres."""
+
+    MIN, MAX = 10, 5000
+
+    def __init__(self, size: tuple, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(tr("Plate size"))
+        form = QFormLayout(self)
+        self.width_spin = QSpinBox()
+        self.depth_spin = QSpinBox()
+        for spin, value in ((self.width_spin, size[0]), (self.depth_spin, size[1])):
+            spin.setRange(self.MIN, self.MAX)
+            spin.setSingleStep(10)
+            spin.setSuffix(" mm")
+            spin.setValue(int(round(float(value))))
+        form.addRow(tr("Width (X)"), self.width_spin)
+        form.addRow(tr("Depth (Y)"), self.depth_spin)
+        note = QLabel(tr("The plate starts at the printer's origin (0, 0) when the file has one, "
+                         "otherwise it is centred under the model."))
+        note.setObjectName("muted")
+        note.setWordWrap(True)
+        form.addRow(note)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        form.addRow(buttons)
+
+    def plate_size(self) -> tuple:
+        return (self.width_spin.value(), self.depth_spin.value())
 
 
 class _RowList(QListWidget):
@@ -436,6 +468,20 @@ class MainWindow(QMainWindow):
         # Named, so a theme can style them on their own (Ember Light fills them with teal).
         for act in [a for a, _, _ in self.view_actions] + [self.act_bed]:
             tb.widgetForAction(act).setObjectName("viewButton")
+        # The Plate button's arrow: which plate to draw (issue #61). A click still shows / hides it.
+        self.plate_menu = QMenu(self)
+        self.plate_group = QActionGroup(self)
+        self.plate_actions = {}
+        for mode in PLATE_MODES:
+            a = QAction(self, checkable=True)
+            a.triggered.connect(lambda _=False, m=mode: self.choose_plate_mode(m))
+            self.plate_group.addAction(a)
+            self.plate_menu.addAction(a)
+            self.plate_actions[mode] = a
+        self.plate_menu.aboutToShow.connect(self._mark_plate_mode)
+        self.plate_btn = tb.widgetForAction(self.act_bed)
+        self.plate_btn.setMenu(self.plate_menu)
+        self.plate_btn.setPopupMode(QToolButton.MenuButtonPopup)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -595,6 +641,7 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
         # The view cube in the top-right corner (Settings -> Viewer can hide it).
         from .view_cube import ViewCube
         self.view_cube = ViewCube(self.plotter, theme.colors(), self._cube_labels())
@@ -769,7 +816,8 @@ class MainWindow(QMainWindow):
         self.act_export_choose.setText(tr("Choose objects…"))
         self.act_export_setting.setText(tr("Change what a click does…"))
         self.act_bed.setText(tr("Plate"))
-        self.act_bed.setToolTip(tr("Show / hide the build plate grid"))
+        self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
+        self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
         self.act_settings.setText(tr("Settings"))
         self.act_updates.setText(tr("Updates"))
@@ -1714,6 +1762,44 @@ class MainWindow(QMainWindow):
         self.settings.set("show_bed", on)
         self.plotter.render()
 
+    def _plate_size(self) -> tuple:
+        size = self.settings.get("plate_size", [300, 300])
+        try:
+            w, d = (min(PlateSizeDialog.MAX, max(PlateSizeDialog.MIN, float(v))) for v in size)
+        except (TypeError, ValueError):
+            w, d = 300.0, 300.0
+        return (w, d)
+
+    def _mark_plate_mode(self):
+        """Tick the plate in use in the Plate menu (with the custom size in its name)."""
+        mode = self.settings.get("plate_mode", "printer")
+        for key, a in self.plate_actions.items():
+            text = plate_mode_label(key)
+            if key == "custom":
+                w, d = self._plate_size()
+                text += "  ({w} × {d} mm)".format(w=num(w, 0), d=num(d, 0))
+            a.setText(text)
+            a.setChecked(key == mode)
+
+    def choose_plate_mode(self, mode: str, ask: bool = True):
+        """Plate menu: draw the printer's plate, a plate that grows to fit the model, a plate of
+        your own size (asks for it) or an endless grid. Shows the plate if it was hidden."""
+        if mode not in PLATE_MODES:
+            mode = "printer"
+        if mode == "custom" and ask:
+            dlg = PlateSizeDialog(self._plate_size(), self)
+            if not dlg.exec():
+                self._mark_plate_mode()             # keep the tick where it was
+                return
+            self.settings.set("plate_size", list(dlg.plate_size()))
+        self.settings.set("plate_mode", mode)
+        self.scene.set_plate_mode(mode, self._plate_size())
+        self._mark_plate_mode()
+        if not self.act_bed.isChecked():
+            self.act_bed.setChecked(True)           # choosing a plate means you want to see it
+        elif self.stack.currentIndex() == 1:
+            self.plotter.render()
+
     # ------------------------------------------------------------ slicer
     def _slicer_name(self, sid: str, name: str) -> str:
         return tr("custom slicer") if (sid == sl.CUSTOM and name == "custom slicer") else name
@@ -1996,6 +2082,12 @@ class MainWindow(QMainWindow):
             if (self.current_kind in ("freecad", "step") and self.current_path and self.model is not None
                     and not self.model.parts and self.settings.get("freecad_path", "") != freecad_before):
                 self.load(self.current_path)
+            if (self.scene.plate_mode, self.scene.custom_plate) != (
+                    self.settings.get("plate_mode", "printer"), self._plate_size()):
+                self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
+                self._mark_plate_mode()
+                if self.stack.currentIndex() == 1:
+                    self.plotter.render()
             show_bed = bool(self.settings.get("show_bed", True))
             if self.act_bed.isChecked() != show_bed:
                 self.act_bed.setChecked(show_bed)

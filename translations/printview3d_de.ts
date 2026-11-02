@@ -169,6 +169,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Printer&apos;s plate (from the file)</source>
+        <translation type="unfinished">Druckbett des Druckers (aus der Datei)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Grow to fit the model</source>
+        <translation type="unfinished">An das Modell anpassen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Custom size…</source>
+        <translation type="unfinished">Eigene Größe…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Infinite grid</source>
+        <translation type="unfinished">Unendliches Raster</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
         <source>Print time</source>
         <translation type="unfinished">Druckzeit</translation>
     </message>
@@ -373,6 +393,27 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate size</source>
+        <translation type="unfinished">Druckbettgröße</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Width (X)</source>
+        <translation type="unfinished">Breite (X)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth (Y)</source>
+        <translation type="unfinished">Tiefe (Y)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>The plate starts at the printer&apos;s origin (0, 0) when the file has one, otherwise it is centred under the model.</source>
+        <translation type="unfinished">Das Druckbett beginnt am Nullpunkt des Druckers (0, 0), wenn die Datei einen hat, sonst liegt es mittig unter dem Modell.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished">Nächster Designstil</translation>
     </message>
@@ -511,8 +552,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show / hide the build plate grid</source>
-        <translation type="unfinished">Raster des Druckbetts ein- / ausblenden</translation>
+        <source>Show / hide the build plate grid (arrow: plate size)</source>
+        <translation type="unfinished">Raster des Druckbetts ein- / ausblenden (Pfeil: Druckbettgröße)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1478,6 +1519,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate</source>
+        <translation type="unfinished">Druckbett</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation type="unfinished">Grafik</translation>
     </message>
@@ -2004,6 +2050,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation type="unfinished">Update herunterladen</translation>
+    </message>
+    <message>
+        <source>Show / hide the build plate grid</source>
+        <translation type="vanished">Raster des Druckbetts ein- / ausblenden</translation>
     </message>
     <message>
         <source>All changes</source>
