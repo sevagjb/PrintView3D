@@ -109,25 +109,28 @@ def test_long_object_names_do_not_widen_the_panel(window, app):
 
 
 @pytest.fixture
-def font_pt(app, request):
-    """The app's font size for one test (None: the platform's own). Restored afterwards."""
+def font_px(app, request):
+    """The app's font size for one test, in pixels (None: the platform's own); restored
+    afterwards. Pixels, not points: points are turned into pixels with the screen's DPI, and
+    on a Windows PC with display scaling the test fonts are scaled already, so "16 pt" came
+    out near 28 pt there and the test asked for something no screen shows."""
     old = app.font()
     if request.param:
         f = app.font()
-        f.setPointSizeF(request.param)
+        f.setPixelSize(request.param)
         app.setFont(f)
     yield request.param
     app.setFont(old)
 
 
-@pytest.mark.parametrize("font_pt", [None, 16], indirect=True, ids=["platform-font", "16pt"])
+@pytest.mark.parametrize("font_px", [None, 21], indirect=True, ids=["platform-font", "21px"])
 @pytest.mark.parametrize("code", ["en", "ar", "nl", "de", "fr", "es", "ro"])
-def test_side_panel_fits_its_view_in_every_language(app, tmp_path, code, font_pt):
+def test_side_panel_fits_its_view_in_every_language(app, tmp_path, code, font_px):
     """In 0.24.0 the Arabic panel was 345 px wide in a 294 px view: the long field name
     "ملف تعريف الخيط (الفلمنت)" did not wrap, and right-to-left cut the overflow off on the left.
     Compound words ("Filamentprofiel") and bigger fonts (Windows display scaling: the first
     version of this fix failed there) did the same, until long Details rows could wrap. The
-    16 pt runs check that on every platform."""
+    21 px runs (16 pt at 100 %) check that the same way on every platform."""
     import sys
     from PySide6.QtCore import QEvent
     from printview3d import i18n
@@ -143,8 +146,13 @@ def test_side_panel_fits_its_view_in_every_language(app, tmp_path, code, font_pt
         w.load_sync(BUSY)
         _settle(app)
         view = w.side.parentWidget().width()
-        assert w.side.width() <= view
-        assert w.side.minimumSizeHint().width() <= view
+        screen = app.primaryScreen()
+        from PySide6.QtGui import QFontMetrics
+        where = (f"panel {w.side.width()} px (needs {w.side.minimumSizeHint().width()}) in a {view} px view; "
+                 f"screen {screen.logicalDotsPerInch():.0f} dpi, scale {screen.devicePixelRatio():g}, "
+                 f"font {QFontMetrics(app.font()).height()} px high")
+        assert w.side.width() <= view, where
+        assert w.side.minimumSizeHint().width() <= view, where
     finally:
         i18n.apply_language(app, "en")
         w.close()
