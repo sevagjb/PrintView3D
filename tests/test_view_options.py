@@ -1,4 +1,4 @@
-"""View menu: wireframe, X-ray and clip from the top for models (issue #60)."""
+"""View menu: wireframe, X-ray, clip from the top and clip facing you for models (issue #60)."""
 
 import os
 
@@ -63,9 +63,10 @@ def test_view_menu_on_for_models_off_for_gcode(window):
 def test_menu_and_shortcuts(window):
     w = window
     assert w.view_btn.menu() is w.view_menu
-    assert [a for a in w.view_menu.actions() if not a.isSeparator()] == [w.act_wireframe, w.act_xray, w.act_clip]
-    assert [a.shortcut().toString() for a in (w.act_wireframe, w.act_xray, w.act_clip)] == ["W", "X", "C"]
-    for a in (w.act_wireframe, w.act_xray, w.act_clip):
+    actions = [w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face]
+    assert [a for a in w.view_menu.actions() if not a.isSeparator()] == actions
+    assert [a.shortcut().toString() for a in actions] == ["W", "X", "C", "V"]
+    for a in actions:
         assert a in w.actions()                           # work wherever the focus is
 
 
@@ -174,10 +175,109 @@ def test_hiding_an_object_keeps_the_view_options(window, app):
 def test_shortcuts_on_the_about_page(app):
     from printview3d.ui.settings_dialog import shortcut_rows
     keys = [k for row, _ in shortcut_rows() for k in row]
-    for k in ("W", "X", "C"):
+    for k in ("W", "X", "C", "V"):
         assert k in keys
 
 
 def test_arabic_keeps_the_slider_left_to_right(window, app):
     from PySide6.QtCore import Qt
     assert window.clip_slider.layoutDirection() == Qt.LeftToRight
+
+
+# ---------------------------------------------------------------- Clip facing you
+
+def _face_normal_after(w, view):
+    w.scene.set_view(view, render=False)
+    w.scene._update_face_plane()             # what happens before every frame
+    return w.scene._clip_plane.GetNormal()
+
+
+def test_clip_facing_you_starts_through_the_centre_and_follows_the_slider(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip_face.trigger()
+    assert w.clip_box.isVisible() and w.clip_hint.isVisible()
+    assert w.clip_box.title() == "Clip facing you"
+    assert w.scene.clip_face == pytest.approx(0.0) and w.scene.clip_z is None
+    assert _planes(w) == [1, 1, 1]
+    assert all(a.GetBackfaceProperty() is not None for a in w.scene.model_actors)
+    reach = w.scene.model_face_reach()
+    w.clip_slider.setValue(w.CLIP_STEPS)                     # all the way: further away
+    assert w.scene.clip_face == pytest.approx(reach)
+    w.clip_slider.setValue(0)                                # nearer
+    assert w.scene.clip_face == pytest.approx(-reach)
+    assert "−" in w.clip_info.text()
+
+
+def test_clip_facing_you_turns_with_the_view_and_stays_upright(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip_face.trigger()
+    # The plane keeps the half away from the viewer: its normal points away from the camera.
+    assert _face_normal_after(w, "front") == pytest.approx((0, 1, 0), abs=1e-6)   # camera at -Y
+    assert _face_normal_after(w, "right") == pytest.approx((-1, 0, 0), abs=1e-6)  # camera at +X
+    n = _face_normal_after(w, "iso")
+    assert n[2] == pytest.approx(0) and (n[0] ** 2 + n[1] ** 2) == pytest.approx(1)
+    # Straight from above the screen's up stands in for the view direction.
+    n = _face_normal_after(w, "top")
+    assert n[2] == pytest.approx(0) and (n[0] ** 2 + n[1] ** 2) == pytest.approx(1)
+
+
+def test_clip_facing_you_goes_through_the_centre_of_the_view(window):
+    """Moving (panning) the view moves the model across the cut."""
+    import numpy as np
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip_face.trigger()
+    w.scene.set_view("front", render=False)
+    cam = w.plotter.camera
+    cam.focal_point = tuple(np.array(cam.focal_point) + (25.0, 7.0, 0.0))
+    cam.position = tuple(np.array(cam.position) + (25.0, 7.0, 0.0))
+    w.scene._update_face_plane()
+    origin = np.array(w.scene._clip_plane.GetOrigin())
+    assert origin[:2] == pytest.approx(np.array(cam.focal_point)[:2])
+    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.75))         # further away: along +Y here
+    w.scene._update_face_plane()
+    d = w.scene.clip_face
+    assert d > 0
+    assert w.scene._clip_plane.GetOrigin()[1] == pytest.approx(cam.focal_point[1] + d)
+
+
+def test_one_cut_at_a_time(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    w.clip_slider.setValue(100)
+    w.act_clip_face.trigger()                                 # the other cut: top goes off
+    assert w.act_clip_face.isChecked() and not w.act_clip.isChecked()
+    assert w.scene.clip_z is None and w.scene.clip_face == pytest.approx(0.0)
+    assert w.clip_slider.value() == w.CLIP_STEPS // 2         # starts in the middle
+    assert w.clip_box.isVisible() and _planes(w) == [1, 1, 1]
+    w.act_clip.trigger()                                      # and back
+    assert w.act_clip.isChecked() and not w.act_clip_face.isChecked()
+    assert w.scene.clip_face is None and w.scene.clip_z == pytest.approx(20.0)
+    assert w.scene._clip_plane.GetNormal() == pytest.approx((0, 0, -1))
+    assert w.clip_box.title() == "Clip from the top" and not w.clip_hint.isVisible()
+
+
+def test_clip_facing_you_turn_off(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip_face.trigger()
+    w.clip_off_btn.click()
+    assert not w.act_clip_face.isChecked() and w.clip_box.isHidden()
+    assert w.scene.clip_face is None and _planes(w) == [0, 0, 0]
+    w.act_clip_face.trigger()
+    w.act_clip_face.trigger()                                 # V twice: off again
+    assert w.scene.clip_face is None and _planes(w) == [0, 0, 0]
+
+
+def test_clip_facing_you_stays_on_for_the_next_model(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip_face.trigger()
+    w.load_sync(GCODE)
+    assert w.clip_box.isHidden()
+    w.load_sync(CUBE)
+    assert w.clip_box.isVisible() and w.clip_box.title() == "Clip facing you"
+    assert w.scene.clip_face is not None and _planes(w) == [1]

@@ -563,7 +563,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -578,8 +578,19 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you</source>
+        <extracomment>An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip from the top</source>
         <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cut.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1026,6 +1037,12 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth {d} mm</source>
+        <extracomment>Clip facing you: how far the cut is behind (+) or in front of (−) the centre of the view.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1928,6 +1945,11 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Clip from the top on / off (models)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Clip facing you on / off (models)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

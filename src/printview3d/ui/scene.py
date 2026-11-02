@@ -78,6 +78,9 @@ class Scene:
         self.wireframe = False
         self.xray = False
         self.clip_z: Optional[float] = None          # height of the cut; None = no cut
+        # Clip facing you: an upright cut that faces the camera, this far (mm) behind the centre
+        # of the view; None = off. Only one of clip_z / clip_face is set at a time.
+        self.clip_face: Optional[float] = None
         self._clip_plane = vtkPlane()
         self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
         self._cut_prop = vtkProperty()
@@ -87,6 +90,8 @@ class Scene:
         self._peeling = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
+        # ... and turn the "Clip facing you" cut to the camera.
+        self.p.renderer.AddObserver("StartEvent", self._update_face_plane)
         self._color_axes()
 
     # ------------------------------------------------------------------ theme
@@ -437,13 +442,68 @@ class Scene:
     def set_clip(self, z: Optional[float]):
         """Cut the parts at height z (mm) and hide what is above; None: no cut."""
         self.clip_z = None if z is None else float(z)
+        if self.clip_z is not None:
+            self.clip_face = None
         self.apply_view_options()
+
+    def model_face_reach(self) -> Optional[float]:
+        """How far the "Clip facing you" cut can move from the centre of the view, either way:
+        half the model's diagonal seen from above, so the slider reaches through the whole
+        model from every side. None without a model."""
+        if not self.model_actors or not self.focus_bounds:
+            return None
+        b = self.focus_bounds
+        return max(0.5 * float(np.hypot(b[1] - b[0], b[3] - b[2])), 1.0)
+
+    def set_face_clip(self, offset: Optional[float]):
+        """Clip facing you (issue #60): an upright cut, perpendicular to the plate, that always
+        faces the camera and hides the part of the model in front of it. It goes through the
+        centre of the view, `offset` mm further away (negative: nearer). Turning the view turns
+        the model through the cut and moving (panning) it slides the model across, as if the
+        model were held up to a scanner. None: no cut."""
+        self.clip_face = None if offset is None else float(offset)
+        if self.clip_face is not None:
+            self.clip_z = None
+        self.apply_view_options()
+
+    def face_clip_direction(self) -> np.ndarray:
+        """Unit vector on the plate (z = 0) pointing away from the viewer: the "Clip facing you"
+        cut's normal. Seen straight from above or below, where the view direction has no
+        sideways part, the screen's up stands in for it (it points away from the camera's side,
+        as on the view cube)."""
+        cam = self.p.renderer.GetActiveCamera()
+        pos, foc, up = (np.array(v, dtype=float) for v in
+                        (cam.GetPosition(), cam.GetFocalPoint(), cam.GetViewUp()))
+        away = foc - pos
+        h = away[:2]
+        if np.hypot(*h) < 1e-6 * max(np.linalg.norm(away), 1e-9):
+            h = up[:2]
+        n = np.hypot(*h)
+        if n < 1e-12:
+            return np.array([0.0, 1.0, 0.0])
+        return np.array([h[0] / n, h[1] / n, 0.0])
+
+    def _update_face_plane(self, *_):
+        """Before every frame: turn the "Clip facing you" cut to the camera."""
+        if self.clip_face is None:
+            return
+        n = self.face_clip_direction()
+        foc = np.array(self.p.renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
+        o = foc + n * self.clip_face
+        # A plane keeps what its normal points to: here the half away from the viewer.
+        if tuple(self._clip_plane.GetNormal()) != tuple(n) or tuple(self._clip_plane.GetOrigin()) != tuple(o):
+            self._clip_plane.SetNormal(*n)
+            self._clip_plane.SetOrigin(*o)
 
     def apply_view_options(self):
         """Wireframe, X-ray and the cut on every part of the model (G-code toolpaths keep
         their look: they are lines already, and the layer slider is their cut)."""
         if self.clip_z is not None:
+            self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
             self._clip_plane.SetOrigin(0.0, 0.0, self.clip_z)
+        elif self.clip_face is not None:
+            self._update_face_plane()
+        cut = self.clip_z is not None or self.clip_face is not None
         for actor in self.model_actors:
             prop = actor.GetProperty()
             if self.wireframe:
@@ -456,7 +516,7 @@ class Scene:
             self._cut_prop.SetOpacity(XRAY_OPACITY if self.xray else 1.0)
             mapper = actor.GetMapper()
             mapper.RemoveAllClippingPlanes()
-            if self.clip_z is not None:
+            if cut:
                 mapper.AddClippingPlane(self._clip_plane)
                 # Through the cut you look at the inside of the walls: their back faces.
                 actor.SetBackfaceProperty(self._cut_prop)

@@ -34,7 +34,7 @@ Dezelfde lijst staat in het programma onder **Instellingen → Over → Toetsenb
 | `Ctrl+E` | STL exporteren (3MF-projecten, FreeCAD- en STEP-bestanden) |
 | `Ctrl+T` | Volgend thema (Donker → Grijs → Grafiet → Licht) |
 | `F` · `1` · `2` · `3` · `4` | Passend · Iso · Boven · Voor · Rechts |
-| `W` · `X` · `C` | Draadmodel · Röntgen · Van boven afsnijden, aan / uit (modellen) |
+| `W` · `X` · `C` · `V` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
 | `↑` / `↓` | Volgende / vorige laag (G-code), of het vorige / volgende bestand in een ZIP |
 | `Page Up` / `Page Down` | 10 lagen omhoog / omlaag |
 | `Home` / `End` | Eerste / laatste laag |
@@ -50,6 +50,11 @@ andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
 - **Van boven afsnijden** (`C`): verbergt alles boven een hoogte. Een schuifregelaar in het
   zijpaneel verschuift de snede; de binnenkant van de wanden die de snede openlegt is rood.
   **Uitzetten** of `C` toont het hele model weer.
+- **Afsnijden vanaf jouw kant** (`V`): een rechtopstaande snede die altijd naar je toe gericht is en
+  het deel van het model ervoor verbergt. Draai de weergave en het model draait door de snede;
+  verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
+  Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
+  zet de snede dichterbij of verder weg. Eén snede tegelijk: `C` en `V` wisselen ertussen.
 
 De opties blijven aan als je het volgende model opent, en werken samen (bijvoorbeeld röntgen en afsnijden).
 

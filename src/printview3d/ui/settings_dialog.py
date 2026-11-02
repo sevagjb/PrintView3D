@@ -873,6 +873,7 @@ def shortcut_rows() -> list[tuple[list[str], str]]:
         (["W"], tr("Wireframe on / off (models)")),
         (["X"], tr("X-ray (see-through) on / off (models)")),
         (["C"], tr("Clip from the top on / off (models)")),
+        (["V"], tr("Clip facing you on / off (models)")),
         (["↑", "↓"], tr("Next / previous layer (G-code), or file (ZIP)")),
         ([_key("PgUp"), _key("PgDown")], tr("10 layers up / down")),
         ([_key("Home"), _key("End")], tr("First / last layer")),

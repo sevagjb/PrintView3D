@@ -563,8 +563,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
-        <translation type="unfinished">Cómo se dibuja el modelo: malla de alambre, rayos X, cortar desde arriba</translation>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
+        <translation type="unfinished">Cómo se dibuja el modelo: alambre, rayos X, corte</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -578,9 +578,20 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you</source>
+        <extracomment>An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.</extracomment>
+        <translation type="unfinished">Cortar desde tu lado</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip from the top</source>
         <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
         <translation type="unfinished">Cortar desde arriba</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="unfinished">Gira o mueve la vista para pasar el modelo por el corte.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1027,6 +1038,12 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
         <translation>Vista inicial: Iso, ajustada</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth {d} mm</source>
+        <extracomment>Clip facing you: how far the cut is behind (+) or in front of (−) the centre of the view.</extracomment>
+        <translation type="unfinished">Profundidad {d} mm</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1932,6 +1949,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Clip facing you on / off (models)</source>
+        <translation type="unfinished">Cortar desde tu lado activar / desactivar (modelos)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next / previous layer (G-code), or file (ZIP)</source>
         <translation type="unfinished">Capa siguiente / anterior (G-code) o archivo (ZIP)</translation>
     </message>
@@ -2113,6 +2135,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation type="unfinished">Descargar actualización</translation>
+    </message>
+    <message>
+        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
+        <translation type="vanished">Cómo se dibuja el modelo: malla de alambre, rayos X, cortar desde arriba</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>
