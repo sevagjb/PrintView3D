@@ -169,6 +169,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Printer&apos;s plate (from the file)</source>
+        <translation type="unfinished">Placa imprimantei (din fișier)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Grow to fit the model</source>
+        <translation type="unfinished">Mărește placa după model</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Custom size…</source>
+        <translation type="unfinished">Dimensiune personalizată…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Infinite grid</source>
+        <translation type="unfinished">Grilă infinită</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
         <source>Print time</source>
         <translation>Timp de printare</translation>
     </message>
@@ -383,6 +403,27 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate size</source>
+        <translation type="unfinished">Dimensiunea plăcii</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Width (X)</source>
+        <translation type="unfinished">Lățime (X)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth (Y)</source>
+        <translation type="unfinished">Adâncime (Y)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>The plate starts at the printer&apos;s origin (0, 0) when the file has one, otherwise it is centred under the model.</source>
+        <translation type="unfinished">Placa pornește din originea imprimantei (0, 0) dacă fișierul are una, altfel este centrată sub model.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished">Stilul de temă următor</translation>
     </message>
@@ -521,8 +562,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show / hide the build plate grid</source>
-        <translation>Arată / ascunde grila plăcii</translation>
+        <source>Show / hide the build plate grid (arrow: plate size)</source>
+        <translation type="unfinished">Arată / ascunde grila plăcii (săgeată: dimensiunea plăcii)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1488,6 +1529,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate</source>
+        <translation type="unfinished">Placa de imprimare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafică</translation>
     </message>
@@ -2014,6 +2060,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>Descarcă actualizarea</translation>
+    </message>
+    <message>
+        <source>Show / hide the build plate grid</source>
+        <translation type="vanished">Arată / ascunde grila plăcii</translation>
     </message>
     <message>
         <source>All changes</source>

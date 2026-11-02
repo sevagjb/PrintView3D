@@ -169,6 +169,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Printer&apos;s plate (from the file)</source>
+        <translation>Plaat van de printer (uit het bestand)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Grow to fit the model</source>
+        <translation>Meegroeien met het model</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Custom size…</source>
+        <translation>Eigen formaat…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
+        <source>Infinite grid</source>
+        <translation>Oneindig raster</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/labels.py"></location>
         <source>Print time</source>
         <translation>Printtijd</translation>
     </message>
@@ -383,6 +403,27 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate size</source>
+        <translation>Plaatformaat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Width (X)</source>
+        <translation>Breedte (X)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth (Y)</source>
+        <translation>Diepte (Y)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>The plate starts at the printer&apos;s origin (0, 0) when the file has one, otherwise it is centred under the model.</source>
+        <translation>De plaat begint bij het nulpunt van de printer (0, 0) als het bestand dat heeft, anders staat hij gecentreerd onder het model.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next theme style</source>
         <translation>Volgende themastijl</translation>
     </message>
@@ -521,8 +562,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show / hide the build plate grid</source>
-        <translation>Raster van de printplaat tonen / verbergen</translation>
+        <source>Show / hide the build plate grid (arrow: plate size)</source>
+        <translation>Raster van de printplaat tonen / verbergen (pijltje: plaatformaat)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1488,6 +1529,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate</source>
+        <translation>Printplaat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafische kaart</translation>
     </message>
@@ -2014,6 +2060,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>Update downloaden</translation>
+    </message>
+    <message>
+        <source>Show / hide the build plate grid</source>
+        <translation type="vanished">Raster van de printplaat tonen / verbergen</translation>
     </message>
     <message>
         <source>All changes</source>

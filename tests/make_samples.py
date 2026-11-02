@@ -364,6 +364,39 @@ def write_gltf(path):
         _json.dump(doc, fh, indent=1, sort_keys=True)
 
 
+def _box_xml(oid, name, lx, ly, lz):
+    v = [(0, 0, 0), (lx, 0, 0), (lx, ly, 0), (0, ly, 0), (0, 0, lz), (lx, 0, lz), (lx, ly, lz), (0, ly, lz)]
+    f = [(0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4),
+         (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)]
+    vs = "".join(f'<vertex x="{x}" y="{y}" z="{z}"/>' for x, y, z in v)
+    ts = "".join(f'<triangle v1="{a}" v2="{b}" v3="{c}"/>' for a, b, c in f)
+    return (f'<object id="{oid}" name="{name}" type="model"><mesh><vertices>{vs}</vertices>'
+            f'<triangles>{ts}</triangles></mesh></object>')
+
+
+def write_3mf_larger_than_plate(path):
+    """A 420 mm shelf rail in a project for a 220 x 220 mm printer: it sticks out of the
+    printer's plate on both sides (issue #61, adjustable / infinite build plate)."""
+    core = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"
+    objs = _box_xml(1, "Long shelf rail", 420, 40, 12) + _box_xml(2, "Bracket", 60, 60, 30)
+    items = ('<item objectid="1" transform="1 0 0 0 1 0 0 0 1 -100 60 0"/>'
+             '<item objectid="2" transform="1 0 0 0 1 0 0 0 1 80 150 0"/>')
+    model = (f'<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xmlns="{core}">'
+             f'<metadata name="Application">OrcaSlicer-2.3.1</metadata>'
+             f'<metadata name="Title">Shelf rail, longer than the plate</metadata>'
+             f'<resources>{objs}</resources><build>{items}</build></model>')
+    rels = ('<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Target="/3D/3dmodel.model" Id="rel0" '
+            'Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
+    settings = ('{"printer_model": "Creality K1C", "layer_height": "0.2", "nozzle_diameter": ["0.4"], '
+                '"filament_type": ["PLA"], "printable_area": ["0x0", "220x0", "220x220", "0x220"]}')
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        _fixed_writestr(z, "[Content_Types].xml", '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>')
+        _fixed_writestr(z, "_rels/.rels", rels)
+        _fixed_writestr(z, "3D/3dmodel.model", model)
+        _fixed_writestr(z, "Metadata/project_settings.config", settings)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     write_stl_binary(os.path.join(OUT, "cube_binary.stl"))
@@ -378,6 +411,7 @@ def main():
     write_off(os.path.join(OUT, "cube_colors.off"))
     write_glb(os.path.join(OUT, "two_nodes.glb"))
     write_gltf(os.path.join(OUT, "embedded.gltf"))
+    write_3mf_larger_than_plate(os.path.join(OUT, "larger_than_plate.3mf"))   # issue #61
     print("Sample files written to", OUT)
 
 

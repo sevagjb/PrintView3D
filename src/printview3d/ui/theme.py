@@ -435,6 +435,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QToolBar QToolButton#viewButton:hover, QToolBar QToolButton#exportButton:hover {{
             background: {t['view_bg_hover']}; border-color: {t['view_border_hover']}; }}
         QToolBar QToolButton#viewButton:checked {{ background: {t['view_bg_checked']}; border-color: {accent}; }}
+        QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
+        QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
+            border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
         QToolButton#slicerButton {{ background: {primary}; color: white; font-weight: 600; padding: 2px 14px 2px 3px; }}
         QToolButton#slicerButton:hover {{ background: {primary_hover}; }}
         QToolButton#slicerButton[popupMode="1"] {{ padding-right: 28px; }}

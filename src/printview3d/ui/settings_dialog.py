@@ -14,7 +14,7 @@ from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
     QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMessageBox,
-    QPushButton, QScrollArea, QSizePolicy, QStackedWidget, QToolButton, QVBoxLayout, QWidget,
+    QPushButton, QScrollArea, QSizePolicy, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout, QWidget,
 )
 
 from .. import APP_NAME, __version__, file_assoc, gpu, i18n
@@ -24,7 +24,7 @@ from .. import slicer as sl
 from ..i18n import tr
 from . import theme
 from . import update_ui
-from .labels import assoc_status
+from .labels import assoc_status, plate_mode_label
 
 PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "updates", "about"]
 
@@ -303,6 +303,40 @@ class SettingsDialog(QDialog):
         self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
         l3.addWidget(self.travel_cb)
         l3.addWidget(self.bed_cb)
+        # Which plate (also in the Plate button's menu), issue #61.
+        from .scene import PLATE_MODES
+        plate_form = QFormLayout()
+        self.plate_combo = QComboBox()
+        for mode in PLATE_MODES:
+            self.plate_combo.addItem(plate_mode_label(mode).rstrip("…"), mode)
+        self.plate_combo.setCurrentIndex(max(0, self.plate_combo.findData(settings.get("plate_mode", "printer"))))
+        kp = QLabel(tr("Build plate"))
+        kp.setObjectName("formKey")
+        plate_form.addRow(kp, self.plate_combo)
+        size = settings.get("plate_size", [300, 300])
+        self.plate_size_row = QWidget()
+        size_layout = QHBoxLayout(self.plate_size_row)
+        size_layout.setContentsMargins(0, 0, 0, 0)
+        self.plate_w_spin, self.plate_d_spin = QSpinBox(), QSpinBox()
+        for spin, value in ((self.plate_w_spin, size[0]), (self.plate_d_spin, size[1])):
+            spin.setRange(10, 5000)
+            spin.setSingleStep(10)
+            spin.setSuffix(" mm")
+            try:
+                spin.setValue(int(round(float(value))))
+            except (TypeError, ValueError):
+                spin.setValue(300)
+        size_layout.addWidget(self.plate_w_spin)
+        size_layout.addWidget(QLabel("×"))
+        size_layout.addWidget(self.plate_d_spin)
+        size_layout.addStretch(1)
+        ks = QLabel(tr("Plate size"))
+        ks.setObjectName("formKey")
+        plate_form.addRow(ks, self.plate_size_row)
+        self.plate_combo.currentIndexChanged.connect(
+            lambda _=0: self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom"))
+        self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom")
+        l3.addLayout(plate_form)
         l3.addWidget(self.cube_cb)
 
         # ---------------- Graphics ----------------
@@ -758,6 +792,8 @@ class SettingsDialog(QDialog):
         self.settings.set("freecad_path", self.freecad_edit.text().strip())
         self.settings.set("show_travel", self.travel_cb.isChecked())
         self.settings.set("show_bed", self.bed_cb.isChecked())
+        self.settings.set("plate_mode", self.plate_combo.currentData())
+        self.settings.set("plate_size", [self.plate_w_spin.value(), self.plate_d_spin.value()])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
         if sys.platform != "darwin":        # not on the Mac's Files page (its box is never shown)
             self.settings.set("new_window", self.new_window_cb.isChecked())
