@@ -528,7 +528,9 @@ def test_smooth_turn_runs_and_ends_on_the_view(app):
         scene.set_view("right", render=False)
         end = c.camera_state()
         c._set_state(start)
-        c.animate_to(end, ms=60)
+        # 1 s, not shorter: on a slow CI machine (software OpenGL) the first frame alone can take
+        # longer than a short turn, which then ends before the check below.
+        c.animate_to(end, ms=1000)
         assert c.animating
         middle = c.blend(start, end, 0.5)
         back = middle[0] - middle[1]
@@ -536,7 +538,7 @@ def test_smooth_turn_runs_and_ends_on_the_view(app):
         assert az == pytest.approx(-45) and el == pytest.approx(0, abs=1e-6)   # halfway round
         import time
         t0 = time.monotonic()
-        while c.animating and time.monotonic() - t0 < 2:
+        while c.animating and time.monotonic() - t0 < 5:
             app.processEvents()
         assert not c.animating
         assert all(np.allclose(a, b) for a, b in zip(c.camera_state()[:3], end[:3]))
