@@ -386,19 +386,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{x} × {y} × {z} mm</source>
+        <translation>{x} × {y} × {z} مم</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation>اللوحة {n}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show less</source>
-        <translation>عرض أقل</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show more</source>
-        <translation>عرض المزيد</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -656,6 +651,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show less</source>
+        <translation>عرض أقل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show more</source>
+        <translation>عرض المزيد</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Sliced toolpaths · {plate}</source>
         <translation>مسارات الطباعة المقطّعة · {plate}</translation>
     </message>
@@ -782,11 +787,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{x} × {y} × {z} mm</source>
-        <translation>{x} × {y} × {z} مم</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Note</source>
         <translation>ملاحظة</translation>
     </message>
@@ -807,8 +807,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{name}  ({n} triangles)</source>
-        <translation>{name}  ({n} مثلث)</translation>
+        <source>{n} triangles</source>
+        <translation>{n} مثلث</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2060,6 +2060,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>تنزيل التحديث</translation>
+    </message>
+    <message>
+        <source>{name}  ({n} triangles)</source>
+        <translation type="vanished">{name}  ({n} مثلث)</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>
