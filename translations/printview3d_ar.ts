@@ -38,17 +38,17 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Export STL</source>
-        <translation type="unfinished">تصدير STL</translation>
+        <translation>تصدير STL</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>Choose the objects to export.</source>
-        <translation type="unfinished">اختر الأجسام المراد تصديرها.</translation>
+        <translation>اختر الأجسام المراد تصديرها.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>Object</source>
-        <translation type="unfinished">الجسم</translation>
+        <translation>الجسم</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
@@ -59,33 +59,33 @@
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>Save as</source>
-        <translation type="unfinished">الحفظ كـ</translation>
+        <translation>الحفظ كـ</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>One combined STL</source>
-        <translation type="unfinished">ملف STL واحد يجمع الكل</translation>
+        <translation>ملف STL واحد يجمع الكل</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>One STL per object</source>
-        <translation type="unfinished">ملف STL لكل جسم</translation>
+        <translation>ملف STL لكل جسم</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>Each file is named after its object and saved in a folder you choose.</source>
-        <translation type="unfinished">يُسمّى كل ملف باسم جسمه ويُحفظ في مجلد تختاره.</translation>
+        <translation>يُسمّى كل ملف باسم جسمه ويُحفظ في مجلد تختاره.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>Raw geometry only: no modifiers, negative parts, or support blockers and enforcers, and no colours, materials or print settings. Sizes in millimetres, saved as binary STL.</source>
-        <translation type="unfinished">الشكل الهندسي الخام فقط: بدون المُعدِّلات أو الأجزاء السالبة أو مانعات الدعامات ومُفرِضاتها، وبدون الألوان أو المواد أو إعدادات الطباعة. الأبعاد بالمليمتر، ويُحفظ بصيغة STL الثنائية.</translation>
+        <translation>الشكل الهندسي الخام فقط: بدون المُعدِّلات أو الأجزاء السالبة أو مانعات الدعامات ومُفرِضاتها، وبدون الألوان أو المواد أو إعدادات الطباعة. الأبعاد بالمليمتر، ويُحفظ بصيغة STL الثنائية.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/export_stl.py"></location>
         <source>Export…</source>
-        <translation type="unfinished">تصدير…</translation>
+        <translation>تصدير…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
@@ -473,13 +473,13 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home</source>
         <extracomment>Toolbar button with a house icon: closes the open file and goes back to the start page.</extracomment>
-        <translation type="unfinished">الرئيسية</translation>
+        <translation>الرئيسية</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close the file and go back to the start page ({key})</source>
         <extracomment>Tooltip of the Home button. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
-        <translation type="unfinished">إغلاق الملف والعودة إلى صفحة البداية ‏({key})</translation>
+        <translation>إغلاق الملف والعودة إلى صفحة البداية ‏({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -531,28 +531,28 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
-        <translation type="unfinished">حفظ أجسام ملف CAD هذا كملفات STL ‏(Ctrl+E)</translation>
+        <translation>حفظ أجسام ملف CAD هذا كملفات STL ‏(Ctrl+E)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
-        <translation type="unfinished">حفظ أجسام مشروع 3MF هذا كملفات STL (Ctrl+E)</translation>
+        <translation>حفظ أجسام مشروع 3MF هذا كملفات STL (Ctrl+E)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>All objects as one STL</source>
-        <translation type="unfinished">كل الأجسام في ملف STL واحد</translation>
+        <translation>كل الأجسام في ملف STL واحد</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Choose objects…</source>
-        <translation type="unfinished">اختيار الأجسام…</translation>
+        <translation>اختيار الأجسام…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Change what a click does…</source>
         <extracomment>Last item in the menu of the Export STL button: opens the setting that decides what clicking the button itself does.</extracomment>
-        <translation type="unfinished">تغيير ما تفعله النقرة…</translation>
+        <translation>تغيير ما تفعله النقرة…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1102,17 +1102,17 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Reading the objects of {name}…</source>
-        <translation type="unfinished">جارٍ قراءة أجسام {name}…</translation>
+        <translation>جارٍ قراءة أجسام {name}…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Could not export STL</source>
-        <translation type="unfinished">تعذّر تصدير STL</translation>
+        <translation>تعذّر تصدير STL</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>This 3MF file contains no printable objects to export.</source>
-        <translation type="unfinished">لا يحتوي ملف 3MF هذا على أجسام قابلة للطباعة لتصديرها.</translation>
+        <translation>لا يحتوي ملف 3MF هذا على أجسام قابلة للطباعة لتصديرها.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1122,22 +1122,22 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Choose a folder for the STL files</source>
-        <translation type="unfinished">اختر مجلدًا لملفات STL</translation>
+        <translation>اختر مجلدًا لملفات STL</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>These files already exist in this folder:</source>
-        <translation type="unfinished">هذه الملفات موجودة مسبقًا في هذا المجلد:</translation>
+        <translation>هذه الملفات موجودة مسبقًا في هذا المجلد:</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Replace</source>
-        <translation type="unfinished">استبدال</translation>
+        <translation>استبدال</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Saved {n} STL files in {folder}</source>
-        <translation type="unfinished">تم حفظ ملفات STL ({n}) في {folder}</translation>
+        <translation>تم حفظ ملفات STL ({n}) في {folder}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1172,23 +1172,23 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Thanks for installing PrintView3D</source>
-        <translation type="unfinished">شكرًا لتثبيت PrintView3D</translation>
+        <translation>شكرًا لتثبيت PrintView3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>PrintView3D is free and open source.</source>
-        <translation type="unfinished">PrintView3D برنامج مجاني ومفتوح المصدر.</translation>
+        <translation>PrintView3D برنامج مجاني ومفتوح المصدر.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>If you like it, please give it a star on GitHub. Stars help other people find PrintView3D and show that the project is alive.</source>
-        <translation type="unfinished">إذا أعجبك البرنامج، امنحه نجمة على GitHub. النجوم تساعد الآخرين على العثور على PrintView3D وتُظهر أن المشروع نشط.</translation>
+        <translation>إذا أعجبك البرنامج، امنحه نجمة على GitHub. النجوم تساعد الآخرين على العثور على PrintView3D وتُظهر أن المشروع نشط.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Star on GitHub</source>
         <extracomment>Button: opens the project page on GitHub, where people can &apos;star&apos; (like) it.</extracomment>
-        <translation type="unfinished">امنحه نجمة على GitHub</translation>
+        <translation>امنحه نجمة على GitHub</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1239,7 +1239,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>PrintView3D could not restart by itself. Close it and start it again.</source>
-        <translation type="unfinished">تعذّر على PrintView3D إعادة التشغيل تلقائيًا. أغلقه ثم شغّله من جديد.</translation>
+        <translation>تعذّر على PrintView3D إعادة التشغيل تلقائيًا. أغلقه ثم شغّله من جديد.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/send_dialog.py"></location>
@@ -1304,13 +1304,13 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How to translate on GitHub</source>
-        <translation type="unfinished">طريقة الترجمة على GitHub</translation>
+        <translation>طريقة الترجمة على GitHub</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Missing or wrong translation? Anyone can correct it on GitHub: {guide}</source>
         <extracomment>Settings → Language. {guide} becomes the link &apos;How to translate on GitHub&apos;.</extracomment>
-        <translation type="unfinished">ترجمة ناقصة أو خاطئة؟ يمكن لأي شخص تصحيحها على GitHub: {guide}</translation>
+        <translation>ترجمة ناقصة أو خاطئة؟ يمكن لأي شخص تصحيحها على GitHub: {guide}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1426,43 +1426,43 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Opening files</source>
-        <translation type="unfinished">فتح الملفات</translation>
+        <translation>فتح الملفات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open each file in a new window</source>
-        <translation type="unfinished">فتح كل ملف في نافذة جديدة</translation>
+        <translation>فتح كل ملف في نافذة جديدة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: a file you double-click while PrintView3D is open is shown in the window that is already open. On: every file gets its own window. Starting PrintView3D without a file always opens a new window.</source>
-        <translation type="unfinished">عند الإيقاف: يُعرض الملف الذي تنقر عليه نقرًا مزدوجًا أثناء فتح PrintView3D في النافذة المفتوحة بالفعل. عند التشغيل: يحصل كل ملف على نافذة خاصة به. تشغيل PrintView3D بدون ملف يفتح دائمًا نافذة جديدة.</translation>
+        <translation>عند الإيقاف: يُعرض الملف الذي تنقر عليه نقرًا مزدوجًا أثناء فتح PrintView3D في النافذة المفتوحة بالفعل. عند التشغيل: يحصل كل ملف على نافذة خاصة به. تشغيل PrintView3D بدون ملف يفتح دائمًا نافذة جديدة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show the list of objects</source>
-        <translation type="unfinished">عرض قائمة الأجسام</translation>
+        <translation>عرض قائمة الأجسام</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Save everything as one STL</source>
-        <translation type="unfinished">حفظ الكل في ملف STL واحد</translation>
+        <translation>حفظ الكل في ملف STL واحد</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Save one STL per object</source>
-        <translation type="unfinished">حفظ ملف STL لكل جسم</translation>
+        <translation>حفظ ملف STL لكل جسم</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>When I click Export STL</source>
-        <translation type="unfinished">عند النقر على تصدير STL</translation>
+        <translation>عند النقر على تصدير STL</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
         <extracomment>Settings → Files → Export STL. {key} is the keyboard shortcut (Ctrl+E).</extracomment>
-        <translation type="unfinished">يفعل {key} الشيء نفسه. يعرض السهم بجانب الزر دائمًا الطرق الثلاث كلها. الملف الذي يحتوي على جسم واحد فقط يُحفظ مباشرةً دائمًا.</translation>
+        <translation>يفعل {key} الشيء نفسه. يعرض السهم بجانب الزر دائمًا الطرق الثلاث كلها. الملف الذي يحتوي على جسم واحد فقط يُحفظ مباشرةً دائمًا.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1668,13 +1668,13 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Like PrintView3D? {star} It helps other people find it.</source>
         <extracomment>Settings → About. {star} becomes the link &apos;Give it a star on GitHub.&apos;</extracomment>
-        <translation type="unfinished">أعجبك PrintView3D؟ {star} فهذا يساعد الآخرين على العثور عليه.</translation>
+        <translation>أعجبك PrintView3D؟ {star} فهذا يساعد الآخرين على العثور عليه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Give it a star on GitHub.</source>
         <extracomment>Link text. A &apos;star&apos; on GitHub is like a &apos;like&apos; or bookmark.</extracomment>
-        <translation type="unfinished">امنحه نجمة على GitHub.</translation>
+        <translation>امنحه نجمة على GitHub.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1825,32 +1825,32 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>The new window transparency is used after PrintView3D restarts.</source>
-        <translation type="unfinished">تُطبَّق شفافية النافذة الجديدة بعد إعادة تشغيل PrintView3D.</translation>
+        <translation>تُطبَّق شفافية النافذة الجديدة بعد إعادة تشغيل PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>The new graphics card setting is used after PrintView3D restarts.</source>
-        <translation type="unfinished">يُطبَّق إعداد بطاقة الرسوميات الجديد بعد إعادة تشغيل PrintView3D.</translation>
+        <translation>يُطبَّق إعداد بطاقة الرسوميات الجديد بعد إعادة تشغيل PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>The new window transparency and graphics card setting are used after PrintView3D restarts.</source>
-        <translation type="unfinished">تُطبَّق شفافية النافذة وإعداد بطاقة الرسوميات الجديدان بعد إعادة تشغيل PrintView3D.</translation>
+        <translation>تُطبَّق شفافية النافذة وإعداد بطاقة الرسوميات الجديدان بعد إعادة تشغيل PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>The open file opens again after the restart.</source>
-        <translation type="unfinished">يُفتح الملف المفتوح مرة أخرى بعد إعادة التشغيل.</translation>
+        <translation>يُفتح الملف المفتوح مرة أخرى بعد إعادة التشغيل.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Restart now</source>
-        <translation type="unfinished">إعادة التشغيل الآن</translation>
+        <translation>إعادة التشغيل الآن</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Later</source>
-        <translation type="unfinished">لاحقًا</translation>
+        <translation>لاحقًا</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1865,7 +1865,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Close the file (back to the start page)</source>
-        <translation type="unfinished">إغلاق الملف (العودة إلى صفحة البداية)</translation>
+        <translation>إغلاق الملف (العودة إلى صفحة البداية)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1875,7 +1875,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Export STL (3MF, FreeCAD and STEP)</source>
-        <translation type="unfinished">تصدير STL ‏(3MF وFreeCAD وSTEP)</translation>
+        <translation>تصدير STL ‏(3MF وFreeCAD وSTEP)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2024,7 +2024,7 @@
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>PrintView3D was updated to {version}.</source>
-        <translation type="unfinished">تم تحديث PrintView3D إلى الإصدار {version}.</translation>
+        <translation>تم تحديث PrintView3D إلى الإصدار {version}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/update_ui.py"></location>
