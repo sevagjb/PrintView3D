@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.24.0
+- **Plate menu, for models bigger than the plate** ([#61](https://github.com/sevagjb/PrintView3D/issues/61)): the **Plate** button has a small arrow
+  with four choices, also in **Settings → Viewer → Build plate**:
+  **Printer's plate (from the file)**, the default; **Grow to fit the model**: the printer's plate,
+  made bigger only when the model sticks out of it; **Custom size…**: your own width × depth in mm;
+  **Infinite grid**: an endless floor that fades out into the distance. A click on the button itself
+  still shows or hides the plate, and your choice is remembered.
+- **Objects higher up** ([#62](https://github.com/sevagjb/PrintView3D/issues/62)): the **Objects** box now comes right after the picture, before
+  **Details**. Long details, such as a MakerWorld or Printables description, show their first
+  4 lines and a **Show more** link. With more than 10 objects the list scrolls inside its own box.
+- **Fold the preview picture away** ([#62](https://github.com/sevagjb/PrintView3D/issues/62)): a click on **▾ Preview picture** above the picture
+  folds it away and back; it stays that way for the next files.
+- **Building from source** now needs Python 3.12 to 3.14: the build scripts say so clearly and
+  replace a `.venv` made by an older Python. They also install only the parts of Qt that PrintView3D
+  uses (PySide6-Essentials), about 175 MB less to download.
+- **Thanks to [@covrig](https://github.com/covrig)** for both ideas, the quick testing on Windows and the build fixes.
+
 ## 0.23.0
 - **View cube, new look**: see-through faces, thin edges and a dashed ring. The part under the
   mouse lights up in the theme's main colour (amber in Ember, teal in the other themes).

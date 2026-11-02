@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.24.0
+- **Plaatmenu, voor modellen groter dan de plaat** ([#61](https://github.com/sevagjb/PrintView3D/issues/61)): de knop **Plaat** heeft een klein pijltje
+  met vier keuzes, ook in **Instellingen → Weergave → Printplaat**:
+  **Plaat van de printer (uit het bestand)**, de standaard; **Meegroeien met het model**: de plaat van de
+  printer, alleen groter als het model erbuiten steekt; **Eigen formaat…**: je eigen breedte × diepte in mm;
+  **Oneindig raster**: een eindeloze vloer die in de verte vervaagt. Een klik op de knop zelf toont of
+  verbergt de plaat nog steeds, en je keuze wordt onthouden.
+- **Objecten hoger in het paneel** ([#62](https://github.com/sevagjb/PrintView3D/issues/62)): het vak **Objecten** staat nu direct onder de afbeelding, vóór
+  **Details**. Lange details, zoals de beschrijving van een MakerWorld- of Printables-project, tonen hun
+  eerste 4 regels en een link **Meer tonen**. Met meer dan 10 objecten scrolt de lijst in zijn eigen vak.
+- **Voorbeeldafbeelding inklappen** ([#62](https://github.com/sevagjb/PrintView3D/issues/62)): een klik op **▾ Voorbeeldafbeelding** boven de afbeelding
+  klapt hem in en weer uit; zo blijft het ook bij de volgende bestanden.
+- **Zelf bouwen** vraagt nu Python 3.12 tot 3.14: de bouwscripts zeggen dat duidelijk en vervangen een
+  `.venv` die met een oudere Python is gemaakt. Ze installeren ook alleen de delen van Qt die PrintView3D
+  gebruikt (PySide6-Essentials), zo'n 175 MB minder downloaden.
+- **Met dank aan [@covrig](https://github.com/covrig)** voor beide ideeën, het snelle testen op Windows en de bouwoplossingen.
+
 ## 0.23.0
 - **Weergavekubus in een nieuw jasje**: doorzichtige vlakken, dunne randen en een gestippelde ring.
   Het deel onder de muis licht op in de hoofdkleur van het thema (amber in Ember, cyaan in de andere thema's).
