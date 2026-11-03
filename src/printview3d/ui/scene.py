@@ -526,14 +526,25 @@ class Scene:
         # several drawing passes per frame, so it is only on while X-ray is.
         want = self.xray and bool(self.model_actors)
         if want != self._peeling:
-            try:
-                if want:
-                    self.p.enable_depth_peeling(number_of_peels=4, occlusion_ratio=0.0)
-                else:
-                    self.p.disable_depth_peeling()
-                self._peeling = want
-            except Exception:       # a renderer without depth peeling: X-ray still works, less exact
-                self._peeling = want
+            self._set_depth_peeling(want)
+            self._peeling = want
+
+    def _set_depth_peeling(self, on: bool):
+        """Depth peeling on our own renderer, directly. pyvista's enable_depth_peeling() first
+        tests for it in a separate, hidden render window with its own OpenGL context; on a PC
+        without a proper graphics driver (the Windows CI machine, a VM, remote desktop) creating
+        that context crashed the whole program (access violation), which no try/except catches.
+        The view's own window already works, and VTK quietly draws without peeling where it
+        isn't supported: X-ray then still works, only less exact where parts overlap."""
+        ren = self.p.renderer
+        try:
+            if on:                   # the same settings pyvista makes after its test
+                ren.SetMaximumNumberOfPeels(4)
+                ren.SetOcclusionRatio(0.0)
+            ren.SetUseDepthPeeling(bool(on))
+            ren.Modified()
+        except Exception:
+            pass
 
     @staticmethod
     def model_color(i: int, n: int) -> str:
