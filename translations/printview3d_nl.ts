@@ -473,13 +473,13 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home</source>
         <extracomment>Toolbar button with a house icon: closes the open file and goes back to the start page.</extracomment>
-        <translation type="unfinished">Start</translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close the file and go back to the start page ({key})</source>
         <extracomment>Tooltip of the Home button. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
-        <translation type="unfinished">Het bestand sluiten en teruggaan naar de startpagina ({key})</translation>
+        <translation>Het bestand sluiten en teruggaan naar de startpagina ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -531,7 +531,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
-        <translation type="unfinished">De objecten van dit CAD-bestand als STL-bestanden opslaan (Ctrl+E)</translation>
+        <translation>De objecten van dit CAD-bestand als STL-bestanden opslaan (Ctrl+E)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -541,18 +541,18 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>All objects as one STL</source>
-        <translation type="unfinished">Alle objecten als één STL</translation>
+        <translation>Alle objecten als één STL</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Choose objects…</source>
-        <translation type="unfinished">Objecten kiezen…</translation>
+        <translation>Objecten kiezen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Change what a click does…</source>
         <extracomment>Last item in the menu of the Export STL button: opens the setting that decides what clicking the button itself does.</extracomment>
-        <translation type="unfinished">Wijzigen wat een klik doet…</translation>
+        <translation>Wijzigen wat een klik doet…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1441,28 +1441,28 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show the list of objects</source>
-        <translation type="unfinished">De lijst met objecten tonen</translation>
+        <translation>De lijst met objecten tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Save everything as one STL</source>
-        <translation type="unfinished">Alles opslaan als één STL</translation>
+        <translation>Alles opslaan als één STL</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Save one STL per object</source>
-        <translation type="unfinished">Eén STL per object opslaan</translation>
+        <translation>Eén STL per object opslaan</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>When I click Export STL</source>
-        <translation type="unfinished">Als ik op STL exporteren klik</translation>
+        <translation>Als ik op STL exporteren klik</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
         <extracomment>Settings → Files → Export STL. {key} is the keyboard shortcut (Ctrl+E).</extracomment>
-        <translation type="unfinished">{key} doet hetzelfde. Het pijltje naast de knop biedt altijd alle drie de manieren. Een bestand met maar één object wordt altijd direct opgeslagen.</translation>
+        <translation>{key} doet hetzelfde. Het pijltje naast de knop biedt altijd alle drie de manieren. Een bestand met maar één object wordt altijd direct opgeslagen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1865,7 +1865,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Close the file (back to the start page)</source>
-        <translation type="unfinished">Het bestand sluiten (terug naar de startpagina)</translation>
+        <translation>Het bestand sluiten (terug naar de startpagina)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1875,7 +1875,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Export STL (3MF, FreeCAD and STEP)</source>
-        <translation type="unfinished">STL exporteren (3MF, FreeCAD en STEP)</translation>
+        <translation>STL exporteren (3MF, FreeCAD en STEP)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
