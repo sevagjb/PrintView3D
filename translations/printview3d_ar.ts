@@ -602,12 +602,12 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show the cut-away part</source>
         <extracomment>Checkbox under the clip slider: keep the part the cut hides visible as a faint, see-through &apos;ghost&apos; copy.</extracomment>
-        <translation type="unfinished">عرض الجزء المقطوع</translation>
+        <translation>عرض الجزء المقطوع</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Shows what the cut hides as a see-through ghost, and the cutting plane.</source>
-        <translation type="unfinished">يعرض ما يخفيه القطع كشبح شفاف، مع مستوى القطع.</translation>
+        <translation>يعرض ما يخفيه القطع كشبح شفاف، مع مستوى القطع.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
