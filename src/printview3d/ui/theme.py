@@ -458,10 +458,14 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QPushButton#link:hover {{ text-decoration: underline; }}
         QScrollArea {{ border: none; }}
         QScrollArea#objectsScroll, QScrollArea#objectsScroll > QWidget, QWidget#objectsList {{ background: transparent; }}
+        /* The handle (16 x 16 with its border: a round thumb) sticks out 5 px above and below the
+           6 px groove. Qt sizes a slider by its groove, so without the min-height the handle's
+           top and bottom were cut off (issue #66). */
+        QSlider:horizontal {{ min-height: 20px; }}
         QSlider::groove:horizontal {{ height: 6px; background: {t['groove']}; border-radius: 3px; }}
         QSlider::sub-page:horizontal {{ background: {accent}; border-radius: 3px; }}
         QSlider::handle:horizontal {{ background: {t['handle']}; border: 1px solid {t['handle_border']};
-            width: 14px; margin: -6px 0; border-radius: 8px; }}
+            width: 14px; margin: -5px 0; border-radius: 8px; }}
         QStatusBar {{ background: {t['bar']}; color: {t['group_title']}; }}
         QListWidget {{ border: 1px solid {t['border']}; border-radius: 6px; }}
         QListWidget#zipList {{ background: {t['base']}; outline: none; }}

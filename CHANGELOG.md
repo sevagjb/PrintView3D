@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.25.1
+- **Fixed**: the round handle of the clip and layer sliders was cut off at the top and bottom
+  ([#66](https://github.com/sevagjb/PrintView3D/issues/66)); it is now a full circle, in every theme.
+- **Website**: in the Ember theme the tabs at the top turn teal when you point at them, like the
+  buttons.
+- **Thanks to [@covrig](https://github.com/covrig)** for spotting the slider.
+
 ## 0.25.0
 - **Look inside your models: the View button** ([#60](https://github.com/sevagjb/PrintView3D/issues/60)), for models (STL, 3MF, OBJ, …; G-code keeps
   its layer slider): **Wireframe** (`W`), **X-ray** (`X`, see-through), **Clip from the top** (`C`)

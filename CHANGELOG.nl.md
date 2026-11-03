@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.25.1
+- **Opgelost**: de ronde knop van de afsnij- en laagschuif werd aan de boven- en onderkant afgesneden
+  ([#66](https://github.com/sevagjb/PrintView3D/issues/66)); hij is nu een hele cirkel, in elk thema.
+- **Website**: in het thema Ember kleuren de tabbladen bovenaan blauwgroen als je ze aanwijst, net
+  als de knoppen.
+- **Met dank aan [@covrig](https://github.com/covrig)** voor het opmerken van de schuif.
+
 ## 0.25.0
 - **In je modellen kijken: de knop Weergave** ([#60](https://github.com/sevagjb/PrintView3D/issues/60)), voor modellen (STL, 3MF, OBJ, …; G-code houdt
   de laagschuif): **Draadmodel** (`W`), **Röntgen** (`X`, doorzichtig), **Van boven afsnijden** (`C`)
