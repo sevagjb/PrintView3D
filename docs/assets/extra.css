@@ -54,11 +54,22 @@
 /* Header: a thin line under it, like the program's toolbar. */
 [data-md-color-scheme="ember"] .md-header { box-shadow: 0 1px 0 var(--pv-ember-bar); }
 [data-md-color-scheme="ember"] .md-tabs { border-bottom: 1px solid var(--pv-ember-bar); }
-/* Tabs: orange words, the current one an orange tile with white text (as in the picture). */
-[data-md-color-scheme="ember"] .md-tabs__link { color: var(--pv-ember-orange); opacity: 1; font-weight: 600; }
-[data-md-color-scheme="ember"] .md-tabs__link:hover { color: var(--pv-ember-orange-hover); }
+/* Tabs: orange words, the current one an orange tile with white text (as in the picture). On
+   hover (or tab to it) every tab becomes a teal tile with white text, like the buttons. All tabs
+   have the tile's padding, so the tile appears without moving the words. */
+[data-md-color-scheme="ember"] .md-tabs__link {
+  color: var(--pv-ember-orange); opacity: 1; font-weight: 600;
+  border-radius: 4px; padding: 0.15rem 0.45rem;
+  transition: background-color 0.2s, color 0.2s;
+}
 [data-md-color-scheme="ember"] .md-tabs__item--active .md-tabs__link {
-  background: var(--pv-ember-orange); color: #ffffff; border-radius: 4px; padding: 0.15rem 0.45rem;
+  background: var(--pv-ember-orange); color: #ffffff;
+}
+[data-md-color-scheme="ember"] .md-tabs__link:hover,
+[data-md-color-scheme="ember"] .md-tabs__link:focus-visible,
+[data-md-color-scheme="ember"] .md-tabs__item--active .md-tabs__link:hover,
+[data-md-color-scheme="ember"] .md-tabs__item--active .md-tabs__link:focus-visible {
+  background: var(--pv-ember-teal); color: #ffffff;
 }
 /* Search field on the light header. */
 [data-md-color-scheme="ember"] .md-search__input { background-color: #ffffff; color: var(--pv-ember-text); }
