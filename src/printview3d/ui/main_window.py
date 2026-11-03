@@ -333,6 +333,7 @@ class MainWindow(QMainWindow):
         self._retranslate_timer.timeout.connect(self._on_language_changed)
 
         self.retranslate_ui()
+        self._update_view_menu()            # nothing open yet: View is greyed out
 
         # "Automatic" theme: follow the system when it switches dark/light.
         try:
@@ -547,6 +548,31 @@ class MainWindow(QMainWindow):
         self.plate_btn = tb.widgetForAction(self.act_bed)
         self.plate_btn.setMenu(self.plate_menu)
         self.plate_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        # View: how the model is drawn (issue #60). Models only; G-code toolpaths are lines
+        # already and have the layer slider as their cut.
+        self.act_wireframe = QAction(self, checkable=True, shortcut=QKeySequence("W"))
+        self.act_wireframe.toggled.connect(self.set_wireframe)
+        self.act_xray = QAction(self, checkable=True, shortcut=QKeySequence("X"))
+        self.act_xray.toggled.connect(self.set_xray)
+        self.act_clip = QAction(self, checkable=True, shortcut=QKeySequence("C"))
+        self.act_clip.toggled.connect(self.set_clip_on)
+        # Clip facing you: an upright cut that turns with the view; one cut at a time.
+        self.act_clip_face = QAction(self, checkable=True, shortcut=QKeySequence("V"))
+        self.act_clip_face.toggled.connect(self.set_clip_face_on)
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+            self.addAction(a)                   # the shortcuts work wherever the focus is
+        self.view_menu = QMenu(self)
+        self.view_menu.addAction(self.act_wireframe)
+        self.view_menu.addAction(self.act_xray)
+        self.view_menu.addSeparator()
+        self.view_menu.addAction(self.act_clip)
+        self.view_menu.addAction(self.act_clip_face)
+        self.view_btn = QToolButton()
+        self.view_btn.setObjectName("viewButton")
+        self.view_btn.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.view_btn.setMenu(self.view_menu)
+        self.view_btn.setPopupMode(QToolButton.InstantPopup)
+        tb.addWidget(self.view_btn)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -772,6 +798,30 @@ class MainWindow(QMainWindow):
         self.zip_layout = QVBoxLayout(self.zip_box)
         L.addWidget(self.zip_box)
 
+        # View -> Clip from the top: the height of the cut (issue #60). Like the layer slider it
+        # always runs left-to-right, low on the left.
+        self.clip_box = QGroupBox()
+        cl = QVBoxLayout(self.clip_box)
+        self.clip_info = QLabel()
+        cl.addWidget(self.clip_info)
+        self.clip_slider = QSlider(Qt.Horizontal)
+        self.clip_slider.setLayoutDirection(Qt.LeftToRight)
+        self.clip_slider.setRange(0, self.CLIP_STEPS)
+        self.clip_slider.setValue(self.CLIP_STEPS // 2)
+        self.clip_slider.valueChanged.connect(self._on_clip_changed)
+        cl.addWidget(self.clip_slider)
+        self.clip_hint = QLabel()                 # Clip facing you: how to use it
+        self.clip_hint.setObjectName("muted")
+        self.clip_hint.setWordWrap(True)
+        cl.addWidget(self.clip_hint)
+        self.clip_off_btn = QPushButton()
+        self.clip_off_btn.clicked.connect(self._clip_off)
+        off_row = QHBoxLayout()
+        off_row.addStretch(1)
+        off_row.addWidget(self.clip_off_btn)
+        cl.addLayout(off_row)
+        L.addWidget(self.clip_box)
+
         # Objects above Details: the object checkboxes are something you use, the details only
         # something you read, and a long description no longer pushes them off the screen (#62).
         self.objects_box = QGroupBox()
@@ -910,6 +960,16 @@ class MainWindow(QMainWindow):
         self.act_export_setting.setText(tr("Change what a click does…"))
         self.act_bed.setText(tr("Plate"))
         self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
+        self.view_btn.setText(tr("View"))
+        self.view_btn.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
+        self.act_wireframe.setText(tr("Wireframe") + "\t" + "W")
+        self.act_xray.setText(tr("X-ray (see-through)") + "\t" + "X")
+        self.act_clip.setText(tr("Clip from the top") + "\t" + "C")
+        self.act_clip_face.setText(tr("Clip facing you") + "\t" + "V")
+        self.clip_box.setTitle(tr("Clip facing you") if self._clip_mode() == "face" else tr("Clip from the top"))
+        self.clip_hint.setText(tr("Turn or move the view to pass the model through the cut."))
+        self.clip_off_btn.setText(tr("Turn off"))
+        self._update_clip_label()
         self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
         self.act_settings.setText(tr("Settings"))
@@ -1495,6 +1555,7 @@ class MainWindow(QMainWindow):
         if kind in ("freecad", "step") and not getattr(data, "parts", None):
             msg = self._freecad_status_text(data)
         self.statusBar().showMessage(msg, 10000)
+        self._update_view_menu()
 
     # -------------------------------------------------------------- home
     def go_home(self):
@@ -1528,6 +1589,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(APP_NAME)
         self._refresh_recent_menu()         # the file just closed is at the top of the list
         self.stack.setCurrentIndex(0)
+        self._update_view_menu()
         self.statusBar().clearMessage()
         self.plotter.render()               # the 3D view lets go of its drawn copy too
         gc.collect()                        # big arrays go back now, not at some later moment
@@ -1744,6 +1806,7 @@ class MainWindow(QMainWindow):
         self.controls.stop_animation()
         self.scene.set_view("iso")
         self.statusBar().clearMessage()
+        self._update_view_menu()
 
     # ------------------------------------------------------------- gcode
     def _show_gcode(self, g: GcodeData):
@@ -1922,6 +1985,138 @@ class MainWindow(QMainWindow):
         self.scene.set_bed_visible(on)
         self.settings.set("show_bed", on)
         self.plotter.render()
+
+    # ------------------------------------------------------------ view (#60)
+    CLIP_STEPS = 1000            # the clip slider's steps from the model's bottom to its top
+
+    def _view_options_apply(self) -> bool:
+        """The View menu works on a model shown in 3D (not on G-code or a preview picture)."""
+        return (self.stack.currentIndex() == 1 and self.model is not None and self.gcode is None
+                and bool(getattr(self.model, "parts", None)) and self.view_stack.currentIndex() == 0)
+
+    def _update_view_menu(self):
+        """After a file opens or closes: the View options on or off for it, the clip box with it."""
+        ok = self._view_options_apply()
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+            a.setEnabled(ok)
+        self.view_btn.setEnabled(ok)
+        self.clip_box.setVisible(ok and self._clip_mode() is not None)
+        if ok and self._clip_mode() is not None:
+            self._on_clip_changed(self.clip_slider.value(), render=False)
+        self._update_clip_label()
+
+    def set_wireframe(self, on: bool):
+        self.scene.set_wireframe(on)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_xray(self, on: bool):
+        self.scene.set_xray(on)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def _clip_mode(self) -> Optional[str]:
+        """"top" (Clip from the top), "face" (Clip facing you) or None."""
+        if not hasattr(self, "act_clip_face"):
+            return None
+        if self.act_clip.isChecked():
+            return "top"
+        if self.act_clip_face.isChecked():
+            return "face"
+        return None
+
+    def _clip_off(self):
+        self.act_clip.setChecked(False)
+        self.act_clip_face.setChecked(False)
+
+    def set_clip_face_on(self, on: bool):
+        """View -> Clip facing you: starts through the centre of the view; the slider moves the
+        cut nearer or further. Clip from the top goes off: one cut at a time."""
+        if on and self.act_clip.isChecked():
+            self.act_clip.setChecked(False)          # hides the box: the slider starts in the middle
+        self._start_clip(on)
+
+    def set_clip_on(self, on: bool):
+        """View -> Clip from the top: starts halfway up the model; the slider in the side panel
+        moves the cut. Clip facing you goes off: one cut at a time."""
+        if on and self.act_clip_face.isChecked():
+            self.act_clip_face.setChecked(False)
+        self._start_clip(on)
+
+    def _start_clip(self, on: bool):
+        self._retitle_clip_box()
+        if on and self._view_options_apply():
+            # A cut that is turned on, or the other cut, starts in the middle of the slider.
+            if not self.clip_box.isVisible() or getattr(self, "_slider_mode", None) != self._clip_mode():
+                self.clip_slider.blockSignals(True)
+                self.clip_slider.setValue(self.CLIP_STEPS // 2)
+                self.clip_slider.blockSignals(False)
+            self._slider_mode = self._clip_mode()
+            self.clip_box.show()
+            self._on_clip_changed(self.clip_slider.value())
+        else:
+            if self._clip_mode() is not None:     # the other cut is (still) on
+                return
+            self.clip_box.hide()
+            self.scene.set_clip(None)
+            self.scene.set_face_clip(None)
+            self._update_clip_label()
+            if self.stack.currentIndex() == 1:
+                self.plotter.render()
+
+    def _clip_height(self, value: int) -> Optional[float]:
+        r = self.scene.model_z_range()
+        if r is None:
+            return None
+        return r[0] + (r[1] - r[0]) * value / self.CLIP_STEPS
+
+    def _retitle_clip_box(self):
+        face = self._clip_mode() == "face"
+        self.clip_box.setTitle(tr("Clip facing you") if face else tr("Clip from the top"))
+        self.clip_hint.setVisible(face)
+
+    def _clip_offset(self, value: int) -> Optional[float]:
+        """Clip facing you: the slider's middle is the centre of the view."""
+        reach = self.scene.model_face_reach()
+        if reach is None:
+            return None
+        return reach * (2.0 * value / self.CLIP_STEPS - 1.0)
+
+    def _on_clip_changed(self, value: int, render: bool = True):
+        mode = self._clip_mode()
+        if mode == "face":
+            d = self._clip_offset(value)
+            if d is None:
+                return
+            self.scene.set_face_clip(d)
+            self._update_clip_label()
+            if render and self.stack.currentIndex() == 1:
+                self.plotter.render()
+            return
+        if mode != "top":
+            return
+        z = self._clip_height(value)
+        if z is None:
+            return
+        # Exactly at the top the cut would hide the top faces: keep them (nothing is cut).
+        self.scene.set_clip(None if value >= self.CLIP_STEPS else z)
+        self._update_clip_label()
+        if render and self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def _update_clip_label(self):
+        r = self.scene.model_z_range() if hasattr(self, "scene") else None
+        if r is None:
+            self.clip_info.setText("")
+            return
+        if self._clip_mode() == "face":
+            d = self._clip_offset(self.clip_slider.value())
+            # "+" further away, "−" nearer than the centre of the view
+            sign = "+" if d > 0.05 else ("−" if d < -0.05 else "")
+            self.clip_info.setText(ltr(tr("Depth {d} mm").format(d=sign + num(abs(d), 1))))
+            return
+        z = self._clip_height(self.clip_slider.value())
+        self.clip_info.setText(ltr(tr("Height {z} of {top} mm").format(z=num(z - r[0], 1), top=num(r[1] - r[0], 1))))
 
     def _plate_size(self) -> tuple:
         size = self.settings.get("plate_size", [300, 300])

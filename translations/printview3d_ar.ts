@@ -562,6 +562,49 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>العرض</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
+        <translation>طريقة رسم النموذج: الإطار السلكي، الأشعة السينية، القطع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Wireframe</source>
+        <translation>الإطار السلكي</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>X-ray (see-through)</source>
+        <translation>الأشعة السينية (شفاف)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you</source>
+        <extracomment>An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.</extracomment>
+        <translation>القطع المواجه لك</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip from the top</source>
+        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
+        <translation>القطع من الأعلى</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation>أدِر العرض أو حرّكه لتمرير النموذج عبر القطع.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn off</source>
+        <translation>إيقاف</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation>لقطة شاشة</translation>
     </message>
@@ -995,6 +1038,18 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
         <translation>العرض الأساسي: متساوي القياس مع الملاءمة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth {d} mm</source>
+        <extracomment>Clip facing you: how far the cut is behind (+) or in front of (−) the centre of the view.</extracomment>
+        <translation>العمق {d} مم</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height {z} of {top} mm</source>
+        <extracomment>Clip slider: {z} is the height of the cut above the model&apos;s bottom, {top} its full height.</extracomment>
+        <translation>الارتفاع {z} من {top} مم</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1879,6 +1934,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Wireframe on / off (models)</source>
+        <translation>الإطار السلكي تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>X-ray (see-through) on / off (models)</source>
+        <translation>الأشعة السينية (شفاف) تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Clip from the top on / off (models)</source>
+        <translation>القطع من الأعلى تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Clip facing you on / off (models)</source>
+        <translation>القطع المواجه لك تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next / previous layer (G-code), or file (ZIP)</source>
         <translation>الطبقة التالية / السابقة (G-code)، أو الملف (ZIP)</translation>
     </message>
@@ -2064,6 +2139,8 @@
     <message>
         <source>{name}  ({n} triangles)</source>
         <translation type="vanished">{name}  ({n} مثلث)</translation>
+        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
+        <translation type="vanished">طريقة رسم النموذج: الإطار السلكي، الأشعة السينية، القطع من الأعلى</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>

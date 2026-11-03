@@ -55,6 +55,7 @@ without exporting an STL first.
 | **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
+| **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, to check meshes, hidden parts and hollow walls. [Details](#view-wireframe-x-ray-and-clip). |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, screenshots. |
 
 <table>
@@ -257,9 +258,29 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
+| `W` · `X` · `C` · `V` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
+
+### View: wireframe, X-ray and clip
+
+The **View** button in the toolbar changes how a model is drawn (STL, 3MF, OBJ and the other
+model formats; G-code has its layer slider instead):
+
+- **Wireframe** (`W`): the triangles of the mesh, to see how fine it is or spot broken geometry.
+- **X-ray** (`X`): the parts become see-through, so parts inside other parts, cavities and
+  hollow walls show.
+- **Clip from the top** (`C`): hides everything above a height. A slider in the side panel moves
+  the cut; the inside of the walls that the cut lays open is drawn in red. **Turn off** or `C`
+  shows the whole model again.
+- **Clip facing you** (`V`): an upright cut that always faces you and hides the part of the model
+  in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
+  slides across, as if you held the model up to a scanner. For a cut from the front or the side,
+  click that face on the view cube. The slider moves the cut nearer or further. One cut at a time:
+  `C` and `V` switch between them.
+
+The options stay on when you open the next model, and work together (X-ray and clip, for example).
 
 ### Choosing your slicer
 
