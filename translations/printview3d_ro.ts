@@ -2139,8 +2139,6 @@
     <message>
         <source>{name}  ({n} triangles)</source>
         <translation type="vanished">{name}  ({n} triunghiuri)</translation>
-        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
-        <translation type="vanished">Cum este desenat modelul: cadru de sârmă, raze X, tăiere de sus</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>

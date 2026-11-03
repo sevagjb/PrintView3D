@@ -2139,8 +2139,6 @@
     <message>
         <source>{name}  ({n} triangles)</source>
         <translation type="vanished">{name}  ({n} Dreiecke)</translation>
-        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
-        <translation type="vanished">Wie das Modell gezeichnet wird: Drahtgitter, Röntgen, von oben abschneiden</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>

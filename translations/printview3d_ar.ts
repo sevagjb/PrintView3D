@@ -2139,8 +2139,6 @@
     <message>
         <source>{name}  ({n} triangles)</source>
         <translation type="vanished">{name}  ({n} مثلث)</translation>
-        <source>How the model is drawn: wireframe, X-ray, clip from the top</source>
-        <translation type="vanished">طريقة رسم النموذج: الإطار السلكي، الأشعة السينية، القطع من الأعلى</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>
