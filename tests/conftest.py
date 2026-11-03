@@ -7,6 +7,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "src"))
 sys.path.insert(0, HERE)
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+# Qt's offscreen mode does not use the system's fonts on Windows: it looks in PySide6\lib\fonts,
+# which doesn't exist ("Qt no longer ships fonts"), and then measures text with a stand-in that
+# makes "3MF · 0.0 MB" 252 px wide. Point it at the Windows fonts, so text in the tests has the
+# same sizes as in the program. (Linux and macOS find their fonts through fontconfig / CoreText.)
+if sys.platform == "win32":
+    os.environ.setdefault("QT_QPA_FONTDIR", os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts"))
 
 
 def _escape(text: str) -> str:

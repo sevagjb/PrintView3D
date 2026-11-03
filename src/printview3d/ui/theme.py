@@ -362,7 +362,8 @@ MICA_CSS = """
     /* The Objects list scrolls inside its box: it must not get the panel's layer a second time. */
     QStackedWidget#centralStack QWidget#objectsList {{ background: transparent; }}
     QStackedWidget#centralStack QGroupBox::title {{ color: {title}; }}
-    QStackedWidget#centralStack QLabel#muted, QStackedWidget#centralStack QLabel#formKey {{ color: {muted}; }}
+    QStackedWidget#centralStack QLabel#muted, QStackedWidget#centralStack QLabel#formKey,
+    QStackedWidget#centralStack QLabel#objectSize {{ color: {muted}; }}
 """
 
 # How strong the frosted layer is: (toolbar/status bar, side panel, boxes in the side panel)
@@ -446,7 +447,8 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QGroupBox {{ border: 1px solid {t['border']}; border-radius: 6px; margin-top: 14px; padding: 8px 8px 6px 8px; font-weight: 600; }}
         QGroupBox::title {{ subcontrol-origin: margin; left: 10px; padding: 0 4px; color: {t['group_title']}; }}
         QLabel#fileName {{ font-size: 15px; font-weight: 600; }}
-        QLabel#muted, QLabel#formKey {{ color: {t['muted']}; }}
+        QLabel#muted, QLabel#formKey, QLabel#objectSize {{ color: {t['muted']}; }}
+        QLabel#objectSize {{ font-weight: 400; }}
         QLabel#thumbnail {{ background: {t['thumb']}; border-radius: 6px; padding: 6px; }}
         QPushButton {{ padding: 5px 12px; border-radius: 5px; background: {t['button']}; border: 1px solid {t['button_border']}; }}
         QPushButton:hover {{ background: {t['button_hover']}; }}

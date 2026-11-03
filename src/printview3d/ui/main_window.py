@@ -105,10 +105,27 @@ def _wrappable(name: str) -> str:
     return name
 
 
+def _breakable(text: str, longer_than: int = 16) -> str:
+    """Words longer than `longer_than` letters (BambuStudio-02.03.00.70, profile names joined
+    with _ or @) get invisible break chances like file names, so a narrow side panel can wrap
+    them instead of cutting them off at its edge."""
+    return " ".join(_wrappable(w) if len(w) > longer_than else w for w in text.split(" "))
+
+
 def _size_text(size: int) -> str:
     if size >= 1024 * 1024:
         return tr("{n} MB").format(n=num(size / (1024 * 1024), 1))
     return tr("{n} KB").format(n=num(max(1, round(size / 1024)), 0))
+
+
+def _short_mm(v: float) -> str:
+    """A length for the Objects list: whole millimetres without decimals, otherwise one."""
+    return num(v, 0 if abs(v - round(v)) < 0.05 else 1)
+
+
+def _size_mm(size: tuple) -> str:
+    """'20 × 12.5 × 3 mm': an object's size in the Objects list (issue #59)."""
+    return tr("{x} × {y} × {z} mm").format(x=_short_mm(size[0]), y=_short_mm(size[1]), z=_short_mm(size[2]))
 
 
 def _plate_name(member: str) -> str:
@@ -165,6 +182,7 @@ class _LongValue(QWidget):
         lay.addWidget(self.label)
         self.toggle = QLabel()
         self.toggle.setObjectName("moreLink")
+        self.toggle.setWordWrap(True)
         self.toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
         self.toggle.linkActivated.connect(lambda _=None: self.set_expanded(not self.expanded))
         lay.addWidget(self.toggle)
@@ -739,6 +757,7 @@ class MainWindow(QMainWindow):
         # a big file loads or when the 3D view can't show the file (issue #62).
         self.thumb_toggle = QLabel()
         self.thumb_toggle.setObjectName("moreLink")
+        self.thumb_toggle.setWordWrap(True)      # "▾ Imagine de previzualizare" at a big font
         self.thumb_toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
         self.thumb_toggle.linkActivated.connect(lambda _=None: self.set_thumbnail_open(not self._thumbnail_open()))
         L.addWidget(self.thumb_toggle)
@@ -772,6 +791,11 @@ class MainWindow(QMainWindow):
 
         self.details_box = QGroupBox()
         self.details_form = QFormLayout(self.details_box)
+        # Side by side, a row needs its name AND its value next to each other: with a compound
+        # word ("Filamentprofiel") and an unbreakable value, or a bigger font (Windows display
+        # scaling), that made the panel wider than its view. A row that doesn't fit puts the
+        # value under its name instead; rows that fit stay side by side.
+        self.details_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
         L.addWidget(self.details_box)
 
         self.embedded_box = QGroupBox()
@@ -985,11 +1009,15 @@ class MainWindow(QMainWindow):
     def _add_detail(self, key: str, value: str):
         k = QLabel(key)
         k.setObjectName("formKey")
+        # Field names may wrap: a long one (Arabic "ملف تعريف الخيط (الفلمنت)") next to a value
+        # that can't wrap (BambuStudio-02.03.00.70) made the panel wider than its view, and in
+        # right-to-left the overflow was cut off on the left.
+        k.setWordWrap(True)
         text = str(value)
         if len(text) > self.LONG_DETAIL_CHARS or "\n" in text:
             self.details_form.addRow(k, _LongValue(text))
             return
-        v = QLabel(text)
+        v = QLabel(_breakable(text))
         v.setWordWrap(True)
         v.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.details_form.addRow(k, v)
@@ -1538,15 +1566,37 @@ class MainWindow(QMainWindow):
 
         if len(m.parts) > 1:
             for i, (part, actor) in enumerate(zip(m.parts, actors)):
-                cb = QCheckBox(tr("{name}  ({n} triangles)").format(name=part.name, n=count(part.n_triangles)))
+                # One row per object: its checkbox with the name, and its size on the right (#59).
+                # The triangle count is in the tooltip.
+                row = QWidget()
+                row.setObjectName("objectRow")
+                rl = QHBoxLayout(row)
+                rl.setContentsMargins(0, 0, 0, 0)
+                rl.setSpacing(8)
+                cb = QCheckBox(part.name)
                 # A long name is cut at the panel's edge (full name in the tooltip) instead of
                 # making the whole panel wider than the window.
                 cb.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-                cb.setToolTip(cb.text())
                 cb.setIcon(_swatch(Scene.part_color(part, i, len(m.parts))))
                 cb.setChecked(bool(actor.GetVisibility()))
                 cb.toggled.connect(lambda on, a=actor: (a.SetVisibility(on), self.plotter.render()))
-                self.objects_layout.addWidget(cb)
+                rl.addWidget(cb, 1)
+                size = part.size()
+                size_text = ltr(_size_mm(size)) if size else ""
+                if size_text:
+                    # Full width when there is room; in a very narrow panel (big font) it ends
+                    # in "…" instead of pushing the panel wider than its view. Tooltip: all of it.
+                    lbl = _ElidedLabel(size_text)
+                    lbl.setObjectName("objectSize")
+                    lbl.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+                    rl.addWidget(lbl)
+                tip = [part.name]
+                if size_text:
+                    tip.append(size_text)
+                tip.append(tr("{n} triangles").format(n=count(part.n_triangles)))
+                row.setToolTip("\n".join(tip))
+                cb.setToolTip(row.toolTip())
+                self.objects_layout.addWidget(row)
             self.objects_box.setTitle(tr("Objects ({n})").format(n=len(m.parts)))
             self._fit_objects_list()
             self.objects_box.show()

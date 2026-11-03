@@ -386,19 +386,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{x} × {y} × {z} mm</source>
+        <translation>{x} × {y} × {z} mm</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation>Placa {n}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show less</source>
-        <translation type="unfinished">Afișează mai puțin</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Show more</source>
-        <translation type="unfinished">Afișează mai mult</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -656,6 +651,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show less</source>
+        <translation type="unfinished">Afișează mai puțin</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show more</source>
+        <translation type="unfinished">Afișează mai mult</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Sliced toolpaths · {plate}</source>
         <translation>Trasee feliate · {plate}</translation>
     </message>
@@ -782,11 +787,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{x} × {y} × {z} mm</source>
-        <translation>{x} × {y} × {z} mm</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Note</source>
         <translation>Notă</translation>
     </message>
@@ -807,8 +807,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{name}  ({n} triangles)</source>
-        <translation>{name}  ({n} triunghiuri)</translation>
+        <source>{n} triangles</source>
+        <translation type="unfinished">{n} triunghiuri</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2060,6 +2060,10 @@
         <location filename="../src/printview3d/ui/update_ui.py"></location>
         <source>Download update</source>
         <translation>Descarcă actualizarea</translation>
+    </message>
+    <message>
+        <source>{name}  ({n} triangles)</source>
+        <translation type="vanished">{name}  ({n} triunghiuri)</translation>
     </message>
     <message>
         <source>Show / hide the build plate grid</source>

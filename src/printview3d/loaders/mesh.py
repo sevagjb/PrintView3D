@@ -40,6 +40,13 @@ class MeshPart:
     def n_triangles(self) -> int:
         return int(len(self.faces))
 
+    def size(self) -> Optional[tuple]:
+        """(X, Y, Z) of the part's bounding box in mm, as placed in the file (issue #59)."""
+        if not len(self.vertices):
+            return None
+        mn, mx = self.vertices.min(axis=0), self.vertices.max(axis=0)
+        return (float(mx[0] - mn[0]), float(mx[1] - mn[1]), float(mx[2] - mn[2]))
+
 
 @dataclass
 class ModelData:
