@@ -4,3 +4,5 @@
 /* Arabic: commands, paths and file names stay left-to-right inside right-to-left text. */
 [dir="rtl"] .md-typeset code { direction: ltr; unicode-bidi: isolate; }
 [dir="rtl"] .md-typeset pre, [dir="rtl"] .md-typeset pre code { direction: ltr; text-align: left; }
+/* "Look inside your models": short looping videos of the program. */
+.pv-video { display: block; width: 100%; max-width: 960px; border-radius: 6px; margin: 0.6em 0 1em; background: #1d2026; }
