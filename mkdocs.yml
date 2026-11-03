@@ -19,6 +19,9 @@ theme:
   favicon: assets/icon.png
   icon:
     repo: material/github
+  # Light, Dark and Ember, as in the program. The button in the header goes to the next one (its
+  # icon and name are those of the next theme); the choice is remembered. Ember is a custom scheme
+  # with the exact colours of the program's Ember theme (docs/assets/extra.css).
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -29,6 +32,10 @@ theme:
       scheme: slate
       primary: blue
       accent: green
+      toggle: {icon: material/fire, name: Ember theme}
+    - scheme: ember
+      primary: custom
+      accent: custom
       toggle: {icon: material/weather-sunny, name: Light theme}
   features:
     - navigation.tabs
@@ -63,6 +70,7 @@ plugins:
             Home: الرئيسية
             Install: التثبيت
             Using PrintView3D: استخدام PrintView3D
+            Look inside your models: انظر داخل نماذجك
             FreeCAD, STEP and other formats: FreeCAD و STEP وصيغ أخرى
             Build it yourself: البناء بنفسك
             Translate and contribute: الترجمة والمساهمة
@@ -75,6 +83,7 @@ plugins:
             Home: Start
             Install: Installeren
             Using PrintView3D: PrintView3D gebruiken
+            Look inside your models: In je modellen kijken
             FreeCAD, STEP and other formats: FreeCAD, STEP en andere formaten
             Build it yourself: Zelf bouwen
             Translate and contribute: Vertalen en meedoen
@@ -84,6 +93,7 @@ nav:
   - Home: index.md
   - Install: install.md
   - Using PrintView3D: use.md
+  - Look inside your models: inspect.md
   - FreeCAD, STEP and other formats: cad.md
   - Build it yourself: build.md
   - Translate and contribute:

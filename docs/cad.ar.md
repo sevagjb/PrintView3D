@@ -23,8 +23,8 @@
 
 <table>
 <tr>
-<td width="50%"><img src="screenshot-freecad.png" alt="قطعة FreeCAD معروضة ثلاثية الأبعاد"><br><sub>مع تثبيت FreeCAD: القطعة ثلاثية الأبعاد.</sub></td>
-<td width="50%"><img src="screenshot-freecad-preview.png" alt="الملف نفسه دون FreeCAD: صورة المعاينة"><br><sub>دون FreeCAD: صورة المعاينة المحفوظة في الملف.</sub></td>
+<td width="50%"><img src="../screenshot-freecad.png" alt="قطعة FreeCAD معروضة ثلاثية الأبعاد"><br><sub>مع تثبيت FreeCAD: القطعة ثلاثية الأبعاد.</sub></td>
+<td width="50%"><img src="../screenshot-freecad-preview.png" alt="الملف نفسه دون FreeCAD: صورة المعاينة"><br><sub>دون FreeCAD: صورة المعاينة المحفوظة في الملف.</sub></td>
 </tr>
 </table>
 
