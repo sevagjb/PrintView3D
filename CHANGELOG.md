@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.25.0
+- **Look inside your models: the View button** ([#60](https://github.com/sevagjb/PrintView3D/issues/60)), for models (STL, 3MF, OBJ, …; G-code keeps
+  its layer slider): **Wireframe** (`W`), **X-ray** (`X`, see-through), **Clip from the top** (`C`)
+  with a height slider in the side panel, and **Clip facing you** (`V`): an upright cut that always
+  faces you. Turn the view and the model turns through the cut; move (pan) it and the model slides
+  across. The walls a cut lays open are drawn in red. The options work together and stay on for
+  the next model. [See it in action](https://sevagjb.github.io/PrintView3D/inspect.html).
+- **The size of every object** ([#59](https://github.com/sevagjb/PrintView3D/issues/59)): the **Objects** list shows each object's size (X × Y × Z)
+  next to its name; the triangle count is in the tooltip.
+- **Fixed**: the side panel could be cut off on the left in Arabic, and with long words or large
+  fonts in Dutch, German and Romanian.
+- **Dutch and Arabic** are now completely checked by a native speaker.
+- **Website**: a new page, [Look inside your models](https://sevagjb.github.io/PrintView3D/inspect.html), with short videos, and a choice of
+  Light, Dark and Ember, as in the program.
+- **Thanks to [@covrig](https://github.com/covrig)** for both ideas and for testing them on Windows.
+
 ## 0.24.0
 - **Plate menu, for models bigger than the plate** ([#61](https://github.com/sevagjb/PrintView3D/issues/61)): the **Plate** button has a small arrow
   with four choices, also in **Settings → Viewer → Build plate**:
