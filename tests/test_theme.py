@@ -404,3 +404,21 @@ def test_unknown_scheme_on_windows_and_macos_stays_dark(app, monkeypatch):
     for platform in ("win32", "darwin"):
         monkeypatch.setattr(theme.sys, "platform", platform)
         assert theme.system_theme() == "dark"
+
+
+@pytest.mark.parametrize("name", ["dark", "light", "ember", "ember_dark"])
+def test_slider_handle_is_round_and_not_cut_off(app, name):
+    """The slider is tall enough for its round handle (issue #66: the top and bottom were cut)."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtWidgets import QSlider, QStyle, QStyleOptionSlider
+
+    theme.apply_theme(app, name)
+    s = QSlider(Qt.Horizontal)
+    s.setRange(0, 100)
+    s.resize(200, s.sizeHint().height())
+    s.ensurePolished()
+    opt = QStyleOptionSlider()
+    s.initStyleOption(opt)
+    handle = s.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, s)
+    assert handle.width() == handle.height()                    # round, not a pill
+    assert s.rect().contains(handle)                            # all of it inside the slider
