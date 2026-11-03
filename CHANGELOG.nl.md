@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.25.0
+- **In je modellen kijken: de knop Weergave** ([#60](https://github.com/sevagjb/PrintView3D/issues/60)), voor modellen (STL, 3MF, OBJ, …; G-code houdt
+  de laagschuif): **Draadmodel** (`W`), **Röntgen** (`X`, doorzichtig), **Van boven afsnijden** (`C`)
+  met een hoogteschuif in het zijpaneel, en **Afsnijden vanaf jouw kant** (`V`): een rechtopstaande
+  snede die altijd naar je toe gericht is. Draai de weergave en het model draait door de snede;
+  verschuif (pan) de weergave en het model schuift erlangs. De wanden die een snede openlegt zijn rood.
+  De opties werken samen en blijven aan voor het volgende model. [Bekijk het in actie](https://sevagjb.github.io/PrintView3D/nl/inspect.html).
+- **De maat van elk object** ([#59](https://github.com/sevagjb/PrintView3D/issues/59)): de lijst **Objecten** toont van elk object de maat (X × Y × Z)
+  naast de naam; het aantal driehoeken staat in de tooltip.
+- **Opgelost**: het zijpaneel kon links worden afgesneden in het Arabisch, en bij lange woorden of grote
+  letters in het Nederlands, Duits en Roemeens.
+- **Nederlands en Arabisch** zijn nu helemaal nagekeken door een moedertaalspreker.
+- **Website**: een nieuwe pagina, [In je modellen kijken](https://sevagjb.github.io/PrintView3D/nl/inspect.html),
+  met korte video's, en een keuze uit Licht, Donker en Ember, zoals in het programma.
+- **Met dank aan [@covrig](https://github.com/covrig)** voor beide ideeën en voor het testen op Windows.
+
 ## 0.24.0
 - **Plaatmenu, voor modellen groter dan de plaat** ([#61](https://github.com/sevagjb/PrintView3D/issues/61)): de knop **Plaat** heeft een klein pijltje
   met vier keuzes, ook in **Instellingen → Weergave → Printplaat**:

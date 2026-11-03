@@ -21,6 +21,16 @@ printtijd en het filamentverbruik, en stuurt het bestand met één klik naar Cre
 Bambu Studio, PrusaSlicer, Cura en andere. Ontwerp je in FreeCAD? Open het `.FCStd`-bestand en stuur het
 direct als model naar je slicer, zonder eerst een STL te exporteren.
 
+## Nieuw in 0.25: in je modellen kijken
+
+Draai een model door een snede die altijd naar je toe gericht is, snijd het van boven af, maak het
+doorzichtig en zie de maat van elk object.
+
+<video class="pv-video" src="../assets/inside/clip-facing.mp4" poster="../assets/inside/clip-facing.jpg"
+       autoplay loop muted playsinline preload="metadata" aria-label="Een pomphuis draait door een rechtopstaande snede en laat zijn binnenkant zien"></video>
+
+[Bekijk hoe het werkt](inspect.md){ .md-button .md-button--primary }
+
 ## Mogelijkheden
 
 | | |
@@ -28,6 +38,7 @@ direct als model naar je slicer, zonder eerst een STL te exporteren.
 | **STL** | Een vloeiend belicht model op een printplaat, met afmetingen, aantal driehoeken en volume. |
 | **3MF** | Elk object op de plaat, ook projecten uit Creality Print, OrcaSlicer en Bambu Studio. Toon of verberg elk object, bekijk de printer- en filamentinstellingen van het project en de miniatuur. Is het project al gesliceerd, dan zie je de printbanen zonder opnieuw te slicen. **STL exporteren**: bewaar de objecten als gewone STL-bestanden, samen of één per object. |
 | **G-code** | Printbanen gekleurd per soort (wanden, vulling, boven/onder, support, bruggen, verplaatsingen…), een laagschuif, "Alleen deze laag tonen", printtijd, filamentverbruik en de voorbeeldafbeelding van de slicer. |
+| **In je model kijken** | **Weergave** → draadmodel, röntgen, van boven afsnijden en een snede die meedraait met de weergave, plus de maat van elk object. [Details](inspect.md). |
 | **FreeCAD** | Open `.FCStd`-documenten om ze te bekijken: in 3D, precies zoals FreeCAD ze toont (alleen zichtbare bodies), met één klik om ze in FreeCAD te openen of als STL naar je slicer te sturen. Gebruikt je geïnstalleerde FreeCAD; zonder FreeCAD zie je nog steeds de voorbeeldafbeelding. [Meer](cad.md#freecad-files). |
 | **STEP** | Open CAD-bestanden `.step` / `.stp`: in 3D met hulp van je geïnstalleerde FreeCAD (op de achtergrond omgezet en daarna onthouden), met het CAD-programma, de auteur en de datum uit het bestand. OrcaSlicer, PrusaSlicer en Bambu Studio krijgen het STEP-bestand zelf; andere slicers een STL. [Meer](cad.md#step-files). |
 | **OBJ, PLY, OFF, glTF / GLB** | Andere gangbare 3D-formaten, met de kleuren uit het bestand (texturen worden niet getoond). Objecten in OBJ en scènes in glTF worden als losse objecten getoond. OBJ gaat zoals het is naar je slicer; PLY, OFF en glTF worden als STL verstuurd, omdat niet elke slicer ze leest. [Meer](cad.md#other-3d-formats). |
@@ -43,12 +54,12 @@ direct als model naar je slicer, zonder eerst een STL te exporteren.
 
 <table>
 <tr>
-<td width="50%"><img src="screenshot-3mf.png" alt="Een 3MF-plaat met vier objecten"><br><sub>3MF-project: elk object in de lijst, elk kan verborgen worden.</sub></td>
-<td width="50%"><img src="screenshot-layer.png" alt="Eén G-code-laag van boven gezien"><br><sub>"Alleen deze laag tonen": wanden en vulling van één laag.</sub></td>
+<td width="50%"><img src="../screenshot-3mf.png" alt="Een 3MF-plaat met vier objecten"><br><sub>3MF-project: elk object in de lijst, elk kan verborgen worden.</sub></td>
+<td width="50%"><img src="../screenshot-layer.png" alt="Eén G-code-laag van boven gezien"><br><sub>"Alleen deze laag tonen": wanden en vulling van één laag.</sub></td>
 </tr>
 <tr>
-<td width="50%"><img src="screenshot-model.png" alt="Een STL-model op de printplaat"><br><sub>STL-model met afmetingen en volume.</sub></td>
-<td width="50%"><img src="screenshot-slicer-menu.png" alt="De slicerknop met zijn menu"><br><sub>Het pijltje ▾ stuurt het bestand één keer naar een andere slicer.</sub></td>
+<td width="50%"><img src="../screenshot-model.png" alt="Een STL-model op de printplaat"><br><sub>STL-model met afmetingen en volume.</sub></td>
+<td width="50%"><img src="../screenshot-slicer-menu.png" alt="De slicerknop met zijn menu"><br><sub>Het pijltje ▾ stuurt het bestand één keer naar een andere slicer.</sub></td>
 </tr>
 </table>
 

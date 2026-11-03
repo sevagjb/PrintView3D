@@ -8,11 +8,16 @@ from typing import Optional
 import numpy as np
 import pyvista as pv
 
+from vtkmodules.vtkCommonDataModel import vtkPlane
+from vtkmodules.vtkRenderingCore import vtkProperty
+
 from ..loaders import FEATURES, GcodeData, ModelData
 from ..loaders.gcode import TRAVEL
 from . import theme
 
 PLATE_MODES = ("printer", "fit", "custom", "infinite")
+XRAY_OPACITY = 0.3            # View -> X-ray: how solid the parts stay
+CUT_COLOR = "#e0604f"         # View -> Clip: inside faces that the cut lays open
 INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
 INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
 
@@ -69,8 +74,24 @@ class Scene:
         self._file_bed: Optional[tuple] = None      # the printer's plate saved in the file
         self._plate_for: Optional[tuple] = None     # (bounds, z) of what is shown
         self._infinite = False
+        # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
+        self.wireframe = False
+        self.xray = False
+        self.clip_z: Optional[float] = None          # height of the cut; None = no cut
+        # Clip facing you: an upright cut that faces the camera, this far (mm) behind the centre
+        # of the view; None = off. Only one of clip_z / clip_face is set at a time.
+        self.clip_face: Optional[float] = None
+        self._clip_plane = vtkPlane()
+        self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
+        self._cut_prop = vtkProperty()
+        self._cut_prop.SetColor(*(v / 255 for v in _hex_to_rgb(CUT_COLOR)))
+        self._cut_prop.SetAmbient(0.25)
+        self._cut_prop.SetDiffuse(0.75)
+        self._peeling = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
+        # ... and turn the "Clip facing you" cut to the camera.
+        self.p.renderer.AddObserver("StartEvent", self._update_face_plane)
         self._color_axes()
 
     # ------------------------------------------------------------------ theme
@@ -130,6 +151,7 @@ class Scene:
         self._file_bed = None
         self._plate_for = None
         self._infinite = False
+        self.apply_view_options()            # no parts: turns depth peeling off
 
     def render(self):
         self.p.render()
@@ -399,7 +421,130 @@ class Scene:
         self.focus_bounds = b
         if model.bed or b:
             self.set_plate_source(model.bed, b, 0.0 if model.bed else b[4])
+        self.apply_view_options()
         return self.model_actors
+
+    # ------------------------------------------------------ view options (#60)
+    def model_z_range(self) -> Optional[tuple]:
+        """(bottom, top) of the model, for the clip slider; None without a model."""
+        if not self.model_actors or not self.focus_bounds:
+            return None
+        return (float(self.focus_bounds[4]), float(self.focus_bounds[5]))
+
+    def set_wireframe(self, on: bool):
+        self.wireframe = bool(on)
+        self.apply_view_options()
+
+    def set_xray(self, on: bool):
+        self.xray = bool(on)
+        self.apply_view_options()
+
+    def set_clip(self, z: Optional[float]):
+        """Cut the parts at height z (mm) and hide what is above; None: no cut."""
+        self.clip_z = None if z is None else float(z)
+        if self.clip_z is not None:
+            self.clip_face = None
+        self.apply_view_options()
+
+    def model_face_reach(self) -> Optional[float]:
+        """How far the "Clip facing you" cut can move from the centre of the view, either way:
+        half the model's diagonal seen from above, so the slider reaches through the whole
+        model from every side. None without a model."""
+        if not self.model_actors or not self.focus_bounds:
+            return None
+        b = self.focus_bounds
+        return max(0.5 * float(np.hypot(b[1] - b[0], b[3] - b[2])), 1.0)
+
+    def set_face_clip(self, offset: Optional[float]):
+        """Clip facing you (issue #60): an upright cut, perpendicular to the plate, that always
+        faces the camera and hides the part of the model in front of it. It goes through the
+        centre of the view, `offset` mm further away (negative: nearer). Turning the view turns
+        the model through the cut and moving (panning) it slides the model across, as if the
+        model were held up to a scanner. None: no cut."""
+        self.clip_face = None if offset is None else float(offset)
+        if self.clip_face is not None:
+            self.clip_z = None
+        self.apply_view_options()
+
+    def face_clip_direction(self) -> np.ndarray:
+        """Unit vector on the plate (z = 0) pointing away from the viewer: the "Clip facing you"
+        cut's normal. Seen straight from above or below, where the view direction has no
+        sideways part, the screen's up stands in for it (it points away from the camera's side,
+        as on the view cube)."""
+        cam = self.p.renderer.GetActiveCamera()
+        pos, foc, up = (np.array(v, dtype=float) for v in
+                        (cam.GetPosition(), cam.GetFocalPoint(), cam.GetViewUp()))
+        away = foc - pos
+        h = away[:2]
+        if np.hypot(*h) < 1e-6 * max(np.linalg.norm(away), 1e-9):
+            h = up[:2]
+        n = np.hypot(*h)
+        if n < 1e-12:
+            return np.array([0.0, 1.0, 0.0])
+        return np.array([h[0] / n, h[1] / n, 0.0])
+
+    def _update_face_plane(self, *_):
+        """Before every frame: turn the "Clip facing you" cut to the camera."""
+        if self.clip_face is None:
+            return
+        n = self.face_clip_direction()
+        foc = np.array(self.p.renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
+        o = foc + n * self.clip_face
+        # A plane keeps what its normal points to: here the half away from the viewer.
+        if tuple(self._clip_plane.GetNormal()) != tuple(n) or tuple(self._clip_plane.GetOrigin()) != tuple(o):
+            self._clip_plane.SetNormal(*n)
+            self._clip_plane.SetOrigin(*o)
+
+    def apply_view_options(self):
+        """Wireframe, X-ray and the cut on every part of the model (G-code toolpaths keep
+        their look: they are lines already, and the layer slider is their cut)."""
+        if self.clip_z is not None:
+            self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
+            self._clip_plane.SetOrigin(0.0, 0.0, self.clip_z)
+        elif self.clip_face is not None:
+            self._update_face_plane()
+        cut = self.clip_z is not None or self.clip_face is not None
+        for actor in self.model_actors:
+            prop = actor.GetProperty()
+            if self.wireframe:
+                prop.SetRepresentationToWireframe()
+                prop.LightingOff()           # lit lines come out dark and broken: full colour instead
+            else:
+                prop.SetRepresentationToSurface()
+                prop.LightingOn()
+            prop.SetOpacity(XRAY_OPACITY if self.xray else 1.0)
+            self._cut_prop.SetOpacity(XRAY_OPACITY if self.xray else 1.0)
+            mapper = actor.GetMapper()
+            mapper.RemoveAllClippingPlanes()
+            if cut:
+                mapper.AddClippingPlane(self._clip_plane)
+                # Through the cut you look at the inside of the walls: their back faces.
+                actor.SetBackfaceProperty(self._cut_prop)
+            else:
+                actor.SetBackfaceProperty(None)
+        # See-through parts are only drawn in the right order with depth peeling. It costs
+        # several drawing passes per frame, so it is only on while X-ray is.
+        want = self.xray and bool(self.model_actors)
+        if want != self._peeling:
+            self._set_depth_peeling(want)
+            self._peeling = want
+
+    def _set_depth_peeling(self, on: bool):
+        """Depth peeling on our own renderer, directly. pyvista's enable_depth_peeling() first
+        tests for it in a separate, hidden render window with its own OpenGL context; on a PC
+        without a proper graphics driver (the Windows CI machine, a VM, remote desktop) creating
+        that context crashed the whole program (access violation), which no try/except catches.
+        The view's own window already works, and VTK quietly draws without peeling where it
+        isn't supported: X-ray then still works, only less exact where parts overlap."""
+        ren = self.p.renderer
+        try:
+            if on:                   # the same settings pyvista makes after its test
+                ren.SetMaximumNumberOfPeels(4)
+                ren.SetOcclusionRatio(0.0)
+            ren.SetUseDepthPeeling(bool(on))
+            ren.Modified()
+        except Exception:
+            pass
 
     @staticmethod
     def model_color(i: int, n: int) -> str:

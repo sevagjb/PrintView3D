@@ -34,9 +34,29 @@ Dezelfde lijst staat in het programma onder **Instellingen → Over → Toetsenb
 | `Ctrl+E` | STL exporteren (3MF-projecten, FreeCAD- en STEP-bestanden) |
 | `Ctrl+T` | Volgend thema (Donker → Grijs → Grafiet → Licht) |
 | `F` · `1` · `2` · `3` · `4` | Passend · Iso · Boven · Voor · Rechts |
+| `W` · `X` · `C` · `V` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
 | `↑` / `↓` | Volgende / vorige laag (G-code), of het vorige / volgende bestand in een ZIP |
 | `Page Up` / `Page Down` | 10 lagen omhoog / omlaag |
 | `Home` / `End` | Eerste / laatste laag |
+
+## Weergave: draadmodel, röntgen en afsnijden {#view-wireframe-x-ray-and-clip}
+
+De knop **Weergave** in de werkbalk verandert hoe een model getekend wordt (STL, 3MF, OBJ en de
+andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
+
+- **Draadmodel** (`W`): de driehoeken van het mesh, om te zien hoe fijn het is of kapotte geometrie te vinden.
+- **Röntgen** (`X`): de onderdelen worden doorzichtig, zodat onderdelen in andere onderdelen,
+  holtes en holle wanden zichtbaar worden.
+- **Van boven afsnijden** (`C`): verbergt alles boven een hoogte. Een schuifregelaar in het
+  zijpaneel verschuift de snede; de binnenkant van de wanden die de snede openlegt is rood.
+  **Uitzetten** of `C` toont het hele model weer.
+- **Afsnijden vanaf jouw kant** (`V`): een rechtopstaande snede die altijd naar je toe gericht is en
+  het deel van het model ervoor verbergt. Draai de weergave en het model draait door de snede;
+  verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
+  Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
+  zet de snede dichterbij of verder weg. Eén snede tegelijk: `C` en `V` wisselen ertussen.
+
+De opties blijven aan als je het volgende model opent, en werken samen (bijvoorbeeld röntgen en afsnijden).
 
 ## Je slicer kiezen {#choosing-your-slicer}
 
@@ -76,8 +96,8 @@ venster); uitpakken hoeft niet.
 
 <table>
 <tr>
-<td width="50%"><img src="screenshot-zip-showall.png" alt="Vier modellen uit een ZIP naast elkaar, met de lijst van bestanden"><br><sub><b>Alles naast elkaar tonen</b>: vink elk model aan of uit; de G-code opent apart.</sub></td>
-<td width="50%"><img src="screenshot-zip-gcode.png" alt="De gesliceerde G-code uit dezelfde ZIP, met de lijst van bestanden"><br><sub>Klik op een bestand in de lijst, of gebruik ↑ / ↓: hier de gesliceerde G-code uit dezelfde ZIP.</sub></td>
+<td width="50%"><img src="../screenshot-zip-showall.png" alt="Vier modellen uit een ZIP naast elkaar, met de lijst van bestanden"><br><sub><b>Alles naast elkaar tonen</b>: vink elk model aan of uit; de G-code opent apart.</sub></td>
+<td width="50%"><img src="../screenshot-zip-gcode.png" alt="De gesliceerde G-code uit dezelfde ZIP, met de lijst van bestanden"><br><sub>Klik op een bestand in de lijst, of gebruik ↑ / ↓: hier de gesliceerde G-code uit dezelfde ZIP.</sub></td>
 </tr>
 </table>
 
@@ -98,7 +118,7 @@ venster); uitpakken hoeft niet.
   en instellingen), de andere modellen op één plaat, of **alles als STL** (de objecten van het project worden
   een gewone STL, zodat alle modellen op één plaat komen).
 
-    <img src="screenshot-zip-send.png" alt="Het venster Naar slicer sturen: het 3MF-project, de andere modellen, of alles als STL" width="520">
+    <img src="../screenshot-zip-send.png" alt="Het venster Naar slicer sturen: het 3MF-project, de andere modellen, of alles als STL" width="520">
 
 De 3D-bestanden worden uitgepakt in de eigen cachemap van PrintView3D (slicers hebben echte bestanden nodig);
 de groottes worden eerst gecontroleerd, zodat een beschadigde of kwaadaardige ZIP je schijf niet kan vullen.
