@@ -25,8 +25,8 @@ het in FreeCAD opent: open bestanden van mensen en sites die je vertrouwt.
 
 <table>
 <tr>
-<td width="50%"><img src="screenshot-freecad.png" alt="Een FreeCAD-beugel in 3D"><br><sub>Met FreeCAD geïnstalleerd: de beugel in 3D.</sub></td>
-<td width="50%"><img src="screenshot-freecad-preview.png" alt="Hetzelfde bestand zonder FreeCAD: de voorbeeldafbeelding"><br><sub>Zonder FreeCAD: de voorbeeldafbeelding uit het bestand.</sub></td>
+<td width="50%"><img src="../screenshot-freecad.png" alt="Een FreeCAD-beugel in 3D"><br><sub>Met FreeCAD geïnstalleerd: de beugel in 3D.</sub></td>
+<td width="50%"><img src="../screenshot-freecad-preview.png" alt="Hetzelfde bestand zonder FreeCAD: de voorbeeldafbeelding"><br><sub>Zonder FreeCAD: de voorbeeldafbeelding uit het bestand.</sub></td>
 </tr>
 </table>
 

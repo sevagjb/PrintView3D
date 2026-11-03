@@ -76,8 +76,8 @@ venster); uitpakken hoeft niet.
 
 <table>
 <tr>
-<td width="50%"><img src="screenshot-zip-showall.png" alt="Vier modellen uit een ZIP naast elkaar, met de lijst van bestanden"><br><sub><b>Alles naast elkaar tonen</b>: vink elk model aan of uit; de G-code opent apart.</sub></td>
-<td width="50%"><img src="screenshot-zip-gcode.png" alt="De gesliceerde G-code uit dezelfde ZIP, met de lijst van bestanden"><br><sub>Klik op een bestand in de lijst, of gebruik ↑ / ↓: hier de gesliceerde G-code uit dezelfde ZIP.</sub></td>
+<td width="50%"><img src="../screenshot-zip-showall.png" alt="Vier modellen uit een ZIP naast elkaar, met de lijst van bestanden"><br><sub><b>Alles naast elkaar tonen</b>: vink elk model aan of uit; de G-code opent apart.</sub></td>
+<td width="50%"><img src="../screenshot-zip-gcode.png" alt="De gesliceerde G-code uit dezelfde ZIP, met de lijst van bestanden"><br><sub>Klik op een bestand in de lijst, of gebruik ↑ / ↓: hier de gesliceerde G-code uit dezelfde ZIP.</sub></td>
 </tr>
 </table>
 
@@ -98,7 +98,7 @@ venster); uitpakken hoeft niet.
   en instellingen), de andere modellen op één plaat, of **alles als STL** (de objecten van het project worden
   een gewone STL, zodat alle modellen op één plaat komen).
 
-    <img src="screenshot-zip-send.png" alt="Het venster Naar slicer sturen: het 3MF-project, de andere modellen, of alles als STL" width="520">
+    <img src="../screenshot-zip-send.png" alt="Het venster Naar slicer sturen: het 3MF-project, de andere modellen, of alles als STL" width="520">
 
 De 3D-bestanden worden uitgepakt in de eigen cachemap van PrintView3D (slicers hebben echte bestanden nodig);
 de groottes worden eerst gecontroleerd, zodat een beschadigde of kwaadaardige ZIP je schijf niet kan vullen.
