@@ -64,14 +64,20 @@
 [data-md-color-scheme="ember"] .md-search__input { background-color: #ffffff; color: var(--pv-ember-text); }
 [data-md-color-scheme="ember"] .md-search__input::placeholder,
 [data-md-color-scheme="ember"] .md-search__icon { color: #484d52b3; }
-/* Buttons: orange, the main one filled. */
-[data-md-color-scheme="ember"] .md-typeset .md-button { color: var(--pv-ember-orange); border-color: var(--pv-ember-orange); }
-[data-md-color-scheme="ember"] .md-typeset .md-button--primary,
-[data-md-color-scheme="ember"] .md-typeset .md-button:hover {
+/* Buttons: orange, the main one filled; on hover every button turns teal (#2cc1b2), the
+   program's other Ember colour. */
+[data-md-color-scheme="ember"] .md-typeset .md-button {
+  color: var(--pv-ember-orange); border-color: var(--pv-ember-orange);
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+[data-md-color-scheme="ember"] .md-typeset .md-button--primary {
   background-color: var(--pv-ember-orange); border-color: var(--pv-ember-orange); color: #ffffff;
 }
-[data-md-color-scheme="ember"] .md-typeset .md-button--primary:hover {
-  background-color: var(--pv-ember-orange-hover); border-color: var(--pv-ember-orange-hover);
+[data-md-color-scheme="ember"] .md-typeset .md-button:hover,
+[data-md-color-scheme="ember"] .md-typeset .md-button:focus,
+[data-md-color-scheme="ember"] .md-typeset .md-button--primary:hover,
+[data-md-color-scheme="ember"] .md-typeset .md-button--primary:focus {
+  background-color: var(--pv-ember-teal); border-color: var(--pv-ember-teal); color: #ffffff;
 }
 /* Headings in the text colour, the current page in the side menus in teal. */
 [data-md-color-scheme="ember"] .md-typeset h1,
