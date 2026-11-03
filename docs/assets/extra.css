@@ -6,3 +6,77 @@
 [dir="rtl"] .md-typeset pre, [dir="rtl"] .md-typeset pre code { direction: ltr; text-align: left; }
 /* "Look inside your models": short looping videos of the program. */
 .pv-video { display: block; width: 100%; max-width: 960px; border-radius: 6px; margin: 0.6em 0 1em; background: #1d2026; }
+
+/* ---------------------------------------------------------------- Ember theme
+   The program's Ember theme (src/printview3d/ui/theme.py, Ember light), colour for colour:
+   window #edebe4, text #484d52, primary orange #ef791b, accent teal #2cc1b2, lines #e4decb,
+   links the deep teal #14736a (the program's Ember link colour; plain teal is too light on white). */
+[data-md-color-scheme="ember"] {
+  --pv-ember-window: #edebe4;
+  --pv-ember-bar: #e4decb;
+  --pv-ember-alt: #f3f1eb;
+  --pv-ember-text: #484d52;
+  --pv-ember-orange: #ef791b;
+  --pv-ember-orange-hover: #f48f3e;
+  --pv-ember-teal: #2cc1b2;
+  --pv-ember-teal-deep: #14736a;
+
+  --md-primary-fg-color: var(--pv-ember-window);          /* header and tabs */
+  --md-primary-fg-color--light: var(--pv-ember-alt);
+  --md-primary-fg-color--dark: var(--pv-ember-bar);
+  --md-primary-bg-color: var(--pv-ember-text);            /* text and icons on the header */
+  --md-primary-bg-color--light: #484d52b3;
+  --md-accent-fg-color: var(--pv-ember-orange);           /* hover, focus */
+  --md-accent-fg-color--transparent: #ef791b1a;
+  --md-accent-bg-color: #ffffff;
+  --md-accent-bg-color--light: #ffffffb3;
+
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: var(--pv-ember-text);
+  --md-default-fg-color--light: #484d52b3;
+  --md-default-fg-color--lighter: #484d5266;
+  --md-default-fg-color--lightest: #484d521a;
+  --md-typeset-color: var(--pv-ember-text);
+  --md-typeset-a-color: var(--pv-ember-teal-deep);
+  --md-typeset-kbd-color: var(--pv-ember-alt);
+  --md-typeset-kbd-accent-color: #ffffff;
+  --md-typeset-kbd-border-color: var(--pv-ember-bar);
+  --md-typeset-table-color: var(--pv-ember-bar);
+  --md-typeset-table-color--light: #e4decb66;
+  --md-code-bg-color: var(--pv-ember-alt);
+  --md-code-fg-color: var(--pv-ember-text);
+  --md-footer-bg-color: var(--pv-ember-text);
+  --md-footer-bg-color--dark: #3c4045;
+  --md-footer-fg-color: #ffffff;
+  --md-footer-fg-color--light: #ffffffb3;
+  --md-footer-fg-color--lighter: #ffffff73;
+}
+/* Header: a thin line under it, like the program's toolbar. */
+[data-md-color-scheme="ember"] .md-header { box-shadow: 0 1px 0 var(--pv-ember-bar); }
+[data-md-color-scheme="ember"] .md-tabs { border-bottom: 1px solid var(--pv-ember-bar); }
+/* Tabs: orange words, the current one an orange tile with white text (as in the picture). */
+[data-md-color-scheme="ember"] .md-tabs__link { color: var(--pv-ember-orange); opacity: 1; font-weight: 600; }
+[data-md-color-scheme="ember"] .md-tabs__link:hover { color: var(--pv-ember-orange-hover); }
+[data-md-color-scheme="ember"] .md-tabs__item--active .md-tabs__link {
+  background: var(--pv-ember-orange); color: #ffffff; border-radius: 4px; padding: 0.15rem 0.45rem;
+}
+/* Search field on the light header. */
+[data-md-color-scheme="ember"] .md-search__input { background-color: #ffffff; color: var(--pv-ember-text); }
+[data-md-color-scheme="ember"] .md-search__input::placeholder,
+[data-md-color-scheme="ember"] .md-search__icon { color: #484d52b3; }
+/* Buttons: orange, the main one filled. */
+[data-md-color-scheme="ember"] .md-typeset .md-button { color: var(--pv-ember-orange); border-color: var(--pv-ember-orange); }
+[data-md-color-scheme="ember"] .md-typeset .md-button--primary,
+[data-md-color-scheme="ember"] .md-typeset .md-button:hover {
+  background-color: var(--pv-ember-orange); border-color: var(--pv-ember-orange); color: #ffffff;
+}
+[data-md-color-scheme="ember"] .md-typeset .md-button--primary:hover {
+  background-color: var(--pv-ember-orange-hover); border-color: var(--pv-ember-orange-hover);
+}
+/* Headings in the text colour, the current page in the side menus in teal. */
+[data-md-color-scheme="ember"] .md-typeset h1,
+[data-md-color-scheme="ember"] .md-typeset h2 { color: var(--pv-ember-text); }
+[data-md-color-scheme="ember"] .md-nav__link--active,
+[data-md-color-scheme="ember"] .md-nav__link--active code { color: var(--pv-ember-teal-deep); }
+/* Tables: header row in the window colour. */
+[data-md-color-scheme="ember"] .md-typeset table:not([class]) th { background-color: var(--pv-ember-window); }

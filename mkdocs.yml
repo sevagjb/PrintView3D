@@ -19,6 +19,9 @@ theme:
   favicon: assets/icon.png
   icon:
     repo: material/github
+  # Light, Dark and Ember, as in the program. The button in the header goes to the next one (its
+  # icon and name are those of the next theme); the choice is remembered. Ember is a custom scheme
+  # with the exact colours of the program's Ember theme (docs/assets/extra.css).
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -29,6 +32,10 @@ theme:
       scheme: slate
       primary: blue
       accent: green
+      toggle: {icon: material/fire, name: Ember theme}
+    - scheme: ember
+      primary: custom
+      accent: custom
       toggle: {icon: material/weather-sunny, name: Light theme}
   features:
     - navigation.tabs
