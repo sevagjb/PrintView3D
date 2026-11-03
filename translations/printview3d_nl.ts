@@ -600,6 +600,17 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show the cut-away part</source>
+        <extracomment>Checkbox under the clip slider: keep the part the cut hides visible as a faint, see-through &apos;ghost&apos; copy.</extracomment>
+        <translation type="unfinished">Weggesneden deel tonen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Shows what the cut hides as a see-through ghost, and the cutting plane.</source>
+        <translation type="unfinished">Toont wat de snede verbergt als een doorzichtige schim, met het snijvlak.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Turn off</source>
         <translation>Uitzetten</translation>
     </message>

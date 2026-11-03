@@ -57,6 +57,7 @@ NOTES = {
     "Height {z} of {top} mm": "Clip slider: {z} is the height of the cut above the model's bottom, {top} its full height.",
     "Clip facing you": "An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.",
     "Depth {d} mm": "Clip facing you: how far the cut is behind (+) or in front of (−) the centre of the view.",
+    "Show the cut-away part": "Checkbox under the clip slider: keep the part the cut hides visible as a faint, see-through 'ghost' copy.",
     "Recent": "Toolbar menu with recently opened files.",
     "All": "Button: show all print feature types.",
     "None": "Button: hide all print feature types.",

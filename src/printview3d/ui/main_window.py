@@ -732,6 +732,7 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        self.scene.show_ghost = bool(self.settings.get("clip_ghost", True))
         self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
         # The view cube in the top-right corner (Settings -> Viewer can hide it).
         from .view_cube import ViewCube
@@ -810,6 +811,12 @@ class MainWindow(QMainWindow):
         self.clip_slider.setValue(self.CLIP_STEPS // 2)
         self.clip_slider.valueChanged.connect(self._on_clip_changed)
         cl.addWidget(self.clip_slider)
+        # What the cut hides, as a see-through ghost, and the cutting plane (#66). Here, under
+        # the slider, where you look while cutting (3D Builder's Split puts it there too).
+        self.clip_ghost_cb = QCheckBox()
+        self.clip_ghost_cb.setChecked(bool(self.settings.get("clip_ghost", True)))
+        self.clip_ghost_cb.toggled.connect(self.set_clip_ghost)
+        cl.addWidget(self.clip_ghost_cb)
         self.clip_hint = QLabel()                 # Clip facing you: how to use it
         self.clip_hint.setObjectName("muted")
         self.clip_hint.setWordWrap(True)
@@ -968,6 +975,8 @@ class MainWindow(QMainWindow):
         self.act_clip_face.setText(tr("Clip facing you") + "\t" + "V")
         self.clip_box.setTitle(tr("Clip facing you") if self._clip_mode() == "face" else tr("Clip from the top"))
         self.clip_hint.setText(tr("Turn or move the view to pass the model through the cut."))
+        self.clip_ghost_cb.setText(tr("Show the cut-away part"))
+        self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost, and the cutting plane."))
         self.clip_off_btn.setText(tr("Turn off"))
         self._update_clip_label()
         self._mark_plate_mode()
@@ -2012,6 +2021,13 @@ class MainWindow(QMainWindow):
 
     def set_xray(self, on: bool):
         self.scene.set_xray(on)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_clip_ghost(self, on: bool):
+        """Clip box: the cut-away part as a ghost, with the cutting plane (#66). Remembered."""
+        self.settings.set("clip_ghost", bool(on))
+        self.scene.set_ghost(on)
         if self.stack.currentIndex() == 1:
             self.plotter.render()
 
