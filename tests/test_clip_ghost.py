@@ -105,7 +105,7 @@ def test_checkbox_turns_it_off_and_is_remembered(app, tmp_path):
     w.act_clip.trigger()
     w.clip_ghost_cb.setChecked(False)
     assert _ghosts_visible(w) == [False, False, False]
-    assert _plane_visible(w) == [False, False]
+    assert _plane_visible(w) == [True, True]                            # the plane has its own box
     assert w.scene._clip_plane is not None and w.scene.clip_z is not None   # the cut itself stays
     w.close()
     w.deleteLater()
@@ -197,3 +197,88 @@ def test_ghosts_are_plain_colours_without_a_colour_bar(window):
         assert not outline.GetMapper().GetScalarVisibility()
     assert all(not a.GetMapper().GetScalarVisibility() for a in w.scene._cut_plane_actors)
     assert not w.scene.p.scalar_bars
+
+
+def test_plane_and_ghost_each_have_their_own_checkbox(app, tmp_path):
+    """covrig's suggestion on #66: the plane and the ghost turn on and off separately."""
+    from PySide6.QtCore import QEvent
+    path = str(tmp_path / "settings.json")
+    w = _window(app, path)
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    assert w.clip_plane_cb.isVisible() and w.clip_plane_cb.isChecked()
+    w.clip_plane_cb.setChecked(False)
+    assert _plane_visible(w) == [False, False]
+    assert _ghosts_visible(w) == [True, True, True]
+    w.clip_ghost_cb.setChecked(False)
+    w.clip_plane_cb.setChecked(True)
+    assert _plane_visible(w) == [True, True] and _ghosts_visible(w) == [False, False, False]
+    w.clip_plane_cb.setChecked(False)
+    w.close()
+    w.deleteLater()
+    app.sendPostedEvents(None, QEvent.DeferredDelete)
+    app.processEvents()
+    w2 = _window(app, path)                                             # both remembered
+    assert not w2.clip_plane_cb.isChecked() and not w2.clip_ghost_cb.isChecked()
+    w2.load_sync(INSIDE)
+    w2.act_clip.trigger()
+    assert w2.scene._cut_plane_actors == [] or _plane_visible(w2) == [False, False]
+    w2.close()
+
+
+def test_plane_alone_without_any_ghosts(window):
+    w = window
+    w.clip_ghost_cb.setChecked(False)
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    assert w.scene._ghosts == []                                        # never made
+    assert _plane_visible(w) == [True, True]
+
+
+def test_strength_makes_everything_fainter_or_stronger_together():
+    from printview3d.ui.scene import ghost_factor
+    assert ghost_factor(50) == pytest.approx(1.0)
+    assert ghost_factor(0) == pytest.approx(0.25)
+    assert ghost_factor(100) == pytest.approx(4.0)
+    assert ghost_factor("bad") == pytest.approx(1.0)
+    assert ghost_factor(25) < ghost_factor(50) < ghost_factor(75)
+
+
+def test_default_is_a_bit_fainter_than_the_first_try(window, app):
+    from printview3d.ui import scene as sc
+    assert sc.GHOST_OPACITY["dark"] < 0.30 and sc.GHOST_OPACITY["light"] < 0.35
+    assert sc.CUT_PLANE_OPACITY < 0.16
+
+
+def test_strength_setting(window):
+    from printview3d.ui.scene import CUT_PLANE_OPACITY, GHOST_OPACITY
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    mode = w.scene._ghost_mode()
+    g = w.scene._ghosts[0][0].GetProperty()
+    sheet = w.scene._cut_plane_actors[0].GetProperty()
+    assert g.GetOpacity() == pytest.approx(GHOST_OPACITY[mode])
+    w.set_ghost_strength(0)
+    assert g.GetOpacity() == pytest.approx(GHOST_OPACITY[mode] / 4)
+    assert sheet.GetOpacity() == pytest.approx(CUT_PLANE_OPACITY / 4)
+    w.set_ghost_strength(100)
+    assert g.GetOpacity() == pytest.approx(min(1.0, GHOST_OPACITY[mode] * 4))
+
+
+def test_settings_slider_is_live_and_cancel_puts_it_back(window):
+    from printview3d.ui.settings_dialog import SettingsDialog
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    dlg = SettingsDialog(w.settings, w, {}, page="viewer")
+    assert dlg.ghost_slider.value() == 50
+    dlg.ghost_slider.setValue(10)
+    assert w.scene.ghost_strength == 10                                 # seen while dragging
+    dlg.reject()
+    assert w.scene.ghost_strength == 50 and w.settings.get("ghost_strength") == 50
+
+    dlg = SettingsDialog(w.settings, w, {}, page="viewer")
+    dlg.ghost_slider.setValue(20)
+    dlg._save()                                                         # OK
+    assert w.settings.get("ghost_strength") == 20 and w.scene.ghost_strength == 20

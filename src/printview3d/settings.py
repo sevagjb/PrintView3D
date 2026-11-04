@@ -38,7 +38,9 @@ DEFAULTS = {
     "plate_size": [300, 300],   # Plate menu -> Custom size: width and depth in mm
     "thumbnail_open": True,     # side panel: the file's preview picture shown (False: folded away)
     "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
-    "clip_ghost": True,         # View -> Clip: show the cut-away part as a ghost, with the plane (#66)
+    "clip_ghost": True,         # View -> Clip: show the cut-away part as a see-through ghost (#66)
+    "clip_plane": True,         # View -> Clip: show the cutting plane as a faint sheet (#66)
+    "ghost_strength": 50,       # Settings -> Viewer: ghost and plane, 0 faintest .. 100 strongest
     "max_recent": 10,
 }
 

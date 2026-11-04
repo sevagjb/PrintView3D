@@ -14,7 +14,8 @@ from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
     QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMessageBox,
-    QPushButton, QScrollArea, QSizePolicy, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout, QWidget,
+    QPushButton, QScrollArea, QSizePolicy, QSlider, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout,
+    QWidget,
 )
 
 from .. import APP_NAME, __version__, file_assoc, gpu, i18n
@@ -337,6 +338,32 @@ class SettingsDialog(QDialog):
             lambda _=0: self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom"))
         self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom")
         l3.addLayout(plate_form)
+        # View -> Clip: how strongly the cut-away part (ghost and outline) and the cutting plane
+        # are drawn (#66). Changes the 3D view while you drag; Cancel puts it back.
+        from .scene import GHOST_STRENGTH_DEFAULT
+        try:
+            self._ghost_at_open = min(100, max(0, int(settings.get("ghost_strength", GHOST_STRENGTH_DEFAULT))))
+        except (TypeError, ValueError):
+            self._ghost_at_open = GHOST_STRENGTH_DEFAULT
+        ghost_row = QWidget()
+        gl = QHBoxLayout(ghost_row)
+        gl.setContentsMargins(0, 0, 0, 0)
+        faint, strong = QLabel(tr("Fainter")), QLabel(tr("Stronger"))
+        for lab in (faint, strong):
+            lab.setObjectName("muted")
+        self.ghost_slider = QSlider(Qt.Horizontal)
+        self.ghost_slider.setLayoutDirection(Qt.LeftToRight)    # fainter on the left, also in Arabic
+        self.ghost_slider.setRange(0, 100)
+        self.ghost_slider.setValue(self._ghost_at_open)
+        self.ghost_slider.setToolTip(tr("How strongly the cut-away part and the cutting plane are "
+                                        "drawn when you use Clip in the View menu."))
+        self.ghost_slider.valueChanged.connect(self._preview_ghost_strength)
+        gl.addWidget(faint)
+        gl.addWidget(self.ghost_slider, 1)
+        gl.addWidget(strong)
+        kg = QLabel(tr("Cut-away part"))
+        kg.setObjectName("formKey")
+        plate_form.addRow(kg, ghost_row)           # same columns as Build plate and Plate size
         l3.addWidget(self.cube_cb)
 
         # ---------------- Graphics ----------------
@@ -543,10 +570,18 @@ class SettingsDialog(QDialog):
         """The theme chosen on the Appearance page."""
         return self._theme_choice
 
+    def _preview_ghost_strength(self, value: int):
+        parent = self.parent()
+        if hasattr(parent, "set_ghost_strength"):
+            parent.set_ghost_strength(value)
+
     def reject(self):
-        """Cancel, Esc or the window's cross: back to the theme from when Settings opened."""
+        """Cancel, Esc or the window's cross: back to the theme and the cut-away part's strength
+        from when Settings opened."""
         if self._theme_choice != self._theme_at_open:
             self._choose_theme(self._theme_at_open)
+        if self.ghost_slider.value() != self._ghost_at_open:
+            self._preview_ghost_strength(self._ghost_at_open)
         super().reject()
 
     @staticmethod
@@ -795,6 +830,7 @@ class SettingsDialog(QDialog):
         self.settings.set("plate_mode", self.plate_combo.currentData())
         self.settings.set("plate_size", [self.plate_w_spin.value(), self.plate_d_spin.value()])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
+        self.settings.set("ghost_strength", self.ghost_slider.value())
         if sys.platform != "darwin":        # not on the Mac's Files page (its box is never shown)
             self.settings.set("new_window", self.new_window_cb.isChecked())
         self.settings.set("export_mode", self.export_combo.currentData())

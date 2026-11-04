@@ -22,12 +22,24 @@ CUT_COLOR = "#e0604f"         # View -> Clip: inside faces that the cut lays ope
 # see-through ghost with outlined edges, as in Microsoft 3D Builder's Split. The same white on
 # every theme; the outline is light on dark themes and dark on light ones, and the light themes
 # get a slightly stronger ghost so it still stands out from the light background.
+# These are the strengths at the default setting; Settings -> Viewer -> Cut-away part makes all of
+# them fainter or stronger together (ghost_factor).
 GHOST_COLOR = "#ffffff"
-GHOST_OPACITY = {"dark": 0.30, "light": 0.35}
-GHOST_EDGE = {"dark": ("#e8eeed", 0.65), "light": (None, 0.75)}   # None: the theme's plate edge
+GHOST_OPACITY = {"dark": 0.22, "light": 0.28}
+GHOST_EDGE = {"dark": ("#e8eeed", 0.55), "light": (None, 0.65)}   # None: the theme's plate edge
 GHOST_EDGE_ANGLE = 40         # degrees between faces that makes an outlined edge
-CUT_PLANE_OPACITY = 0.16      # the cutting plane: a faint sheet in the theme's teal ...
-CUT_PLANE_EDGE_OPACITY = 0.85  # ... with a clear outline
+CUT_PLANE_OPACITY = 0.12      # the cutting plane: a faint sheet in the theme's teal ...
+CUT_PLANE_EDGE_OPACITY = 0.75  # ... with a clearer outline
+GHOST_STRENGTH_DEFAULT = 50   # the setting, 0 (faintest) .. 100 (strongest)
+
+
+def ghost_factor(strength) -> float:
+    """Setting 0..100 -> how much stronger than the default: 0.25x at 0, 1x at 50, 4x at 100."""
+    try:
+        v = min(100.0, max(0.0, float(strength)))
+    except (TypeError, ValueError):
+        v = GHOST_STRENGTH_DEFAULT
+    return 2.0 ** ((v - GHOST_STRENGTH_DEFAULT) / 25.0)
 INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
 INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
 
@@ -100,6 +112,8 @@ class Scene:
         # The ghost of the cut-away part (#66): a copy of each part, cut by the opposite plane,
         # so it keeps exactly the half the cut hides. Made the first time it is needed.
         self.show_ghost = True
+        self.show_cut_plane = True
+        self.ghost_strength = GHOST_STRENGTH_DEFAULT
         self._ghost_plane = vtkPlane()
         self._ghosts: list = []                      # per part: (ghost, outline or None)
         self._cut_plane = None                       # the cutting plane, a model-sized sheet
@@ -425,6 +439,7 @@ class Scene:
     def show_model(self, model: ModelData) -> list:
         """Draw all parts of a model. Returns the list of actors (one per part)."""
         self._remove_ghosts()
+        self._remove_cut_plane()
         self.model_actors = []
         for i, part in enumerate(model.parts):
             faces = np.hstack([np.full((len(part.faces), 1), 3, dtype=np.int64), part.faces]).ravel()
@@ -557,23 +572,37 @@ class Scene:
 
     # ------------------------------------------- the cut-away part (#66)
     def set_ghost(self, on: bool):
-        """View -> Clip: show the part the cut hides as a see-through ghost, with the cutting
-        plane as a faint sheet the size of the model."""
+        """View -> Clip: show the part the cut hides as a see-through ghost."""
         self.show_ghost = bool(on)
         self.apply_view_options()
+
+    def set_cut_plane(self, on: bool):
+        """View -> Clip: show the cutting plane as a faint sheet the size of the model."""
+        self.show_cut_plane = bool(on)
+        self.apply_view_options()
+
+    def set_ghost_strength(self, strength):
+        """Settings -> Viewer: how strongly the ghost, its outline and the plane are drawn."""
+        try:
+            self.ghost_strength = min(100, max(0, int(round(float(strength)))))
+        except (TypeError, ValueError):
+            self.ghost_strength = GHOST_STRENGTH_DEFAULT
+        self._color_ghosts()
 
     def _ghost_mode(self) -> str:
         return "dark" if theme.is_dark() else "light"
 
     def _apply_ghost(self, cut: bool):
-        on = cut and self.show_ghost and bool(self.model_actors)
-        if on and len(self._ghosts) != len(self.model_actors):
+        cut = cut and bool(self.model_actors)
+        if cut and self.show_ghost and len(self._ghosts) != len(self.model_actors):
             self._make_ghosts()
-        if on:
+        if cut and self.show_cut_plane and self._cut_plane is None:
+            self._make_cut_plane()
+        if cut:
             self._follow_clip_plane()
         self._sync_ghosts()
         for a in self._cut_plane_actors:
-            a.SetVisibility(on)
+            a.SetVisibility(cut and self.show_cut_plane)
 
     def _make_ghosts(self):
         """One ghost per part: the same mesh in white, see-through, cut by the opposite plane;
@@ -603,7 +632,6 @@ class Scene:
                     a.GetMapper().AddClippingPlane(self._ghost_plane)
                     a.SetUseBounds(False)                # Fit and the camera ignore the ghosts
             self._ghosts.append((g, outline))
-        self._make_cut_plane()
         self._color_ghosts()
 
     def _make_cut_plane(self):
@@ -617,35 +645,41 @@ class Scene:
             a.SetUseBounds(False)
         self._cut_plane = quad
         self._cut_plane_actors = [sheet, frame]
+        self._color_ghosts()
 
     def _remove_ghosts(self):
         names = [f"ghost_{i}" for i in range(len(self._ghosts))]
         names += [f"ghost_edges_{i}" for i in range(len(self._ghosts))]
-        names += ["cut_plane", "cut_plane_edge"]
         for name in names:
             if name in self.p.actors:
                 self.p.remove_actor(name, render=False)
         self._ghosts = []
+
+    def _remove_cut_plane(self):
+        for name in ("cut_plane", "cut_plane_edge"):
+            if name in self.p.actors:
+                self.p.remove_actor(name, render=False)
         self._cut_plane = None
         self._cut_plane_actors = []
 
     def _color_ghosts(self):
         mode = self._ghost_mode()
+        k = ghost_factor(self.ghost_strength)
         edge, edge_opacity = GHOST_EDGE[mode]
         edge = edge or self.c["plate_edge"]
         for g, outline in self._ghosts:
-            g.GetProperty().SetOpacity(GHOST_OPACITY[mode])
+            g.GetProperty().SetOpacity(min(1.0, GHOST_OPACITY[mode] * k))
             if outline is not None:
                 prop = outline.GetProperty()
                 prop.SetColor(*(v / 255 for v in _hex_to_rgb(edge)))
-                prop.SetOpacity(edge_opacity)
+                prop.SetOpacity(min(1.0, edge_opacity * k))
         teal = tuple(v / 255 for v in _hex_to_rgb(self.c["accent_ink"]))
         if len(self._cut_plane_actors) == 2:
             sheet, frame = self._cut_plane_actors
             sheet.GetProperty().SetColor(*teal)
-            sheet.GetProperty().SetOpacity(CUT_PLANE_OPACITY)
+            sheet.GetProperty().SetOpacity(min(1.0, CUT_PLANE_OPACITY * k))
             frame.GetProperty().SetColor(*teal)
-            frame.GetProperty().SetOpacity(CUT_PLANE_EDGE_OPACITY)
+            frame.GetProperty().SetOpacity(min(1.0, CUT_PLANE_EDGE_OPACITY * k))
 
     def _sync_ghosts(self, *_):
         """A ghost is shown while its part is, the cut is on and the ghost is wanted."""

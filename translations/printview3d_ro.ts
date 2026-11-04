@@ -606,8 +606,19 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Shows what the cut hides as a see-through ghost, and the cutting plane.</source>
-        <translation type="unfinished">Arată ce ascunde tăietura ca o fantomă transparentă, împreună cu planul de tăiere.</translation>
+        <source>Shows what the cut hides as a see-through ghost.</source>
+        <translation type="unfinished">Arată ce ascunde tăietura ca o fantomă transparentă.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show the cutting plane</source>
+        <extracomment>Checkbox under the clip slider: show where the cut is, as a faint flat sheet.</extracomment>
+        <translation type="unfinished">Arată planul de tăiere</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Shows where the cut is, as a faint sheet the size of the model.</source>
+        <translation type="unfinished">Arată unde este tăietura, ca o foaie palidă de mărimea modelului.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1597,6 +1608,29 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Build plate</source>
         <translation type="unfinished">Placa de imprimare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Fainter</source>
+        <extracomment>Left end of the Cut-away part slider: more see-through.</extracomment>
+        <translation type="unfinished">Mai slab</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Stronger</source>
+        <extracomment>Right end of the Cut-away part slider: less see-through, easier to see.</extracomment>
+        <translation type="unfinished">Mai puternic</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cut-away part and the cutting plane are drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">Cât de vizibil sunt desenate partea tăiată și planul de tăiere când folosești o tăiere din meniul Vizualizare.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cut-away part</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
+        <translation type="unfinished">Partea tăiată</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
