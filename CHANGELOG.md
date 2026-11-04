@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.27.0
+- **Both cuts at once** ([#70](https://github.com/sevagjb/PrintView3D/issues/70)): **Clip from the top** (`C`) and **Clip facing you** (`V`)
+  can now be on together, for a corner cut away. Each key turns its own cut on and off, and the side
+  panel has a slider for each, **Height** and **Depth**. The cut-away part stays one even ghost, never
+  darker where the cuts overlap, and each cutting plane stops where the other cut is. **Turn off** and
+  **Reset view** end both.
+- **Thanks to [@covrig](https://github.com/covrig)** for the idea and for asking for an even ghost.
+
 ## 0.26.0
 - **See what a cut takes away** ([#66](https://github.com/sevagjb/PrintView3D/issues/66)): with **Clip from the top** or **Clip facing you**, the part
   the cut hides stays as a white, see-through ghost with outlined edges, and the cutting plane shows as

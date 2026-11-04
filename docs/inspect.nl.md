@@ -29,8 +29,14 @@ het zijpaneel om laag voor laag door het model omlaag te gaan.
        autoplay loop muted playsinline preload="metadata"
        aria-label="Een snede gaat omlaag door het pomphuis en weer omhoog"></video>
 
-Eén snede tegelijk: <kbd>C</kbd> en <kbd>V</kbd> wisselen ertussen. **Uitzetten** in het zijpaneel, of
-dezelfde toets nog eens, toont het hele model weer.
+## Beide sneden tegelijk
+
+<kbd>C</kbd> en <kbd>V</kbd> zetten elk hun eigen snede aan en uit, dus beide kunnen tegelijk aan
+staan: het model houdt dan alleen over wat beide sneden overlaten, een hoek eruit gesneden. Het
+zijpaneel heeft voor elk een schuif, **Hoogte** en **Diepte**. Wat de sneden verbergen blijft
+zichtbaar als één gelijkmatige, doorzichtige schim, en elk snijvlak stopt waar de andere snede is.
+**Uitzetten** in het zijpaneel zet beide sneden uit; dezelfde toets nog eens alleen die ene.
+*Nieuw in PrintView3D 0.27.*
 
 ## Röntgen
 

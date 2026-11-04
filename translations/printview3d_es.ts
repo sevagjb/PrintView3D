@@ -583,9 +583,9 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Reset view</source>
-        <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
-        <translation type="unfinished">Restablecer la vista</translation>
+        <source>Clip from the top</source>
+        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
+        <translation type="unfinished">Cortar desde arriba</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -595,9 +595,9 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip from the top</source>
-        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
-        <translation type="unfinished">Cortar desde arriba</translation>
+        <source>Reset view</source>
+        <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
+        <translation type="unfinished">Restablecer la vista</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1066,6 +1066,12 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
         <translation>Vista inicial: Iso, ajustada</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Corte</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>

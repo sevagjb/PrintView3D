@@ -29,8 +29,13 @@ side panel to go down through the model, layer by layer.
        autoplay loop muted playsinline preload="metadata"
        aria-label="A cut moving down through the pump housing and back up"></video>
 
-One cut at a time: <kbd>C</kbd> and <kbd>V</kbd> switch between them. **Turn off** in the side
-panel, or the same key again, shows the whole model.
+## Both cuts at once
+
+<kbd>C</kbd> and <kbd>V</kbd> each turn their own cut on and off, so both can be on together: the
+model then keeps only what both cuts keep, a corner cut away. The side panel has a slider for each,
+**Height** and **Depth**. What the cuts hide still shows as one even, see-through ghost, and each
+cutting plane stops where the other cut is. **Turn off** in the side panel ends both cuts; the same
+key again ends just that one. *New in PrintView3D 0.27.*
 
 ## X-ray
 

@@ -583,8 +583,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Reset view</source>
-        <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
+        <source>Clip from the top</source>
+        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -595,8 +595,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip from the top</source>
-        <extracomment>Hide everything above a chosen height, to look inside the model (a cut).</extracomment>
+        <source>Reset view</source>
+        <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1065,6 +1065,12 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home: Iso view, fitted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
