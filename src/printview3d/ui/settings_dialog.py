@@ -339,31 +339,17 @@ class SettingsDialog(QDialog):
         self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom")
         l3.addLayout(plate_form)
         # View -> Clip: how strongly the cut-away part (ghost and outline) and the cutting plane
-        # are drawn (#66). Changes the 3D view while you drag; Cancel puts it back.
-        from .scene import GHOST_STRENGTH_DEFAULT
-        try:
-            self._ghost_at_open = min(100, max(0, int(settings.get("ghost_strength", GHOST_STRENGTH_DEFAULT))))
-        except (TypeError, ValueError):
-            self._ghost_at_open = GHOST_STRENGTH_DEFAULT
-        ghost_row = QWidget()
-        gl = QHBoxLayout(ghost_row)
-        gl.setContentsMargins(0, 0, 0, 0)
-        faint, strong = QLabel(tr("Fainter")), QLabel(tr("Stronger"))
-        for lab in (faint, strong):
-            lab.setObjectName("muted")
-        self.ghost_slider = QSlider(Qt.Horizontal)
-        self.ghost_slider.setLayoutDirection(Qt.LeftToRight)    # fainter on the left, also in Arabic
-        self.ghost_slider.setRange(0, 100)
-        self.ghost_slider.setValue(self._ghost_at_open)
-        self.ghost_slider.setToolTip(tr("How strongly the cut-away part and the cutting plane are "
-                                        "drawn when you use Clip in the View menu."))
-        self.ghost_slider.valueChanged.connect(self._preview_ghost_strength)
-        gl.addWidget(faint)
-        gl.addWidget(self.ghost_slider, 1)
-        gl.addWidget(strong)
-        kg = QLabel(tr("Cut-away part"))
-        kg.setObjectName("formKey")
-        plate_form.addRow(kg, ghost_row)           # same columns as Build plate and Plate size
+        # are drawn, each with its own slider (#66). They change the 3D view while you drag;
+        # Cancel puts them back. Same columns as Build plate and Plate size.
+        from .scene import Scene
+        self._ghost_at_open = Scene._strength(settings.get("ghost_strength"))
+        self._plane_at_open = Scene._strength(settings.get("plane_strength"))
+        self.ghost_slider = self._strength_row(
+            plate_form, tr("Cut-away part"), self._ghost_at_open, self._preview_ghost_strength,
+            tr("How strongly the cut-away part is drawn when you use Clip in the View menu."))
+        self.plane_slider = self._strength_row(
+            plate_form, tr("Cutting plane"), self._plane_at_open, self._preview_plane_strength,
+            tr("How strongly the cutting plane is drawn when you use Clip in the View menu."))
         l3.addWidget(self.cube_cb)
 
         # ---------------- Graphics ----------------
@@ -570,18 +556,47 @@ class SettingsDialog(QDialog):
         """The theme chosen on the Appearance page."""
         return self._theme_choice
 
+    def _strength_row(self, form, label: str, value: int, on_change, tooltip: str) -> QSlider:
+        """A "label  Fainter ━━●━━ Stronger" row; returns its slider."""
+        row = QWidget()
+        rl = QHBoxLayout(row)
+        rl.setContentsMargins(0, 0, 0, 0)
+        faint, strong = QLabel(tr("Fainter")), QLabel(tr("Stronger"))
+        for lab in (faint, strong):
+            lab.setObjectName("muted")
+        slider = QSlider(Qt.Horizontal)
+        slider.setLayoutDirection(Qt.LeftToRight)       # fainter on the left, also in Arabic
+        slider.setRange(0, 100)
+        slider.setValue(value)
+        slider.setToolTip(tooltip)
+        slider.valueChanged.connect(on_change)
+        rl.addWidget(faint)
+        rl.addWidget(slider, 1)
+        rl.addWidget(strong)
+        key = QLabel(label)
+        key.setObjectName("formKey")
+        form.addRow(key, row)
+        return slider
+
     def _preview_ghost_strength(self, value: int):
         parent = self.parent()
         if hasattr(parent, "set_ghost_strength"):
             parent.set_ghost_strength(value)
 
+    def _preview_plane_strength(self, value: int):
+        parent = self.parent()
+        if hasattr(parent, "set_plane_strength"):
+            parent.set_plane_strength(value)
+
     def reject(self):
-        """Cancel, Esc or the window's cross: back to the theme and the cut-away part's strength
-        from when Settings opened."""
+        """Cancel, Esc or the window's cross: back to the theme and the strengths of the cut-away
+        part and the cutting plane from when Settings opened."""
         if self._theme_choice != self._theme_at_open:
             self._choose_theme(self._theme_at_open)
         if self.ghost_slider.value() != self._ghost_at_open:
             self._preview_ghost_strength(self._ghost_at_open)
+        if self.plane_slider.value() != self._plane_at_open:
+            self._preview_plane_strength(self._plane_at_open)
         super().reject()
 
     @staticmethod
@@ -831,6 +846,7 @@ class SettingsDialog(QDialog):
         self.settings.set("plate_size", [self.plate_w_spin.value(), self.plate_d_spin.value()])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
         self.settings.set("ghost_strength", self.ghost_slider.value())
+        self.settings.set("plane_strength", self.plane_slider.value())
         if sys.platform != "darwin":        # not on the Mac's Files page (its box is never shown)
             self.settings.set("new_window", self.new_window_cb.isChecked())
         self.settings.set("export_mode", self.export_combo.currentData())

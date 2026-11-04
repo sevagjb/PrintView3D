@@ -1611,25 +1611,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Fainter</source>
-        <extracomment>Left end of the Cut-away part slider: more see-through.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Stronger</source>
-        <extracomment>Right end of the Cut-away part slider: less see-through, easier to see.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How strongly the cut-away part and the cutting plane are drawn when you use Clip in the View menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cut-away part</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cut-away part is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cutting plane</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the faint sheet that shows where a cut is, is drawn.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1741,6 +1740,18 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not checked yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Fainter</source>
+        <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Stronger</source>
+        <extracomment>Right end of the Cut-away part and Cutting plane sliders: less see-through, easier to see.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -261,9 +261,14 @@ def test_strength_setting(window):
     assert g.GetOpacity() == pytest.approx(GHOST_OPACITY[mode])
     w.set_ghost_strength(0)
     assert g.GetOpacity() == pytest.approx(GHOST_OPACITY[mode] / 4)
-    assert sheet.GetOpacity() == pytest.approx(CUT_PLANE_OPACITY / 4)
+    assert sheet.GetOpacity() == pytest.approx(CUT_PLANE_OPACITY)       # the plane has its own
     w.set_ghost_strength(100)
     assert g.GetOpacity() == pytest.approx(min(1.0, GHOST_OPACITY[mode] * 4))
+    w.set_plane_strength(100)
+    assert sheet.GetOpacity() == pytest.approx(CUT_PLANE_OPACITY * 4)
+    assert g.GetOpacity() == pytest.approx(min(1.0, GHOST_OPACITY[mode] * 4))   # ghost unchanged
+    w.set_plane_strength(0)
+    assert sheet.GetOpacity() == pytest.approx(CUT_PLANE_OPACITY / 4)
 
 
 def test_settings_slider_is_live_and_cancel_puts_it_back(window):
@@ -279,6 +284,14 @@ def test_settings_slider_is_live_and_cancel_puts_it_back(window):
     assert w.scene.ghost_strength == 50 and w.settings.get("ghost_strength") == 50
 
     dlg = SettingsDialog(w.settings, w, {}, page="viewer")
+    dlg.plane_slider.setValue(80)
+    assert w.scene.plane_strength == 80 and w.scene.ghost_strength == 50
+    dlg.reject()
+    assert w.scene.plane_strength == 50
+
+    dlg = SettingsDialog(w.settings, w, {}, page="viewer")
     dlg.ghost_slider.setValue(20)
+    dlg.plane_slider.setValue(70)
     dlg._save()                                                         # OK
     assert w.settings.get("ghost_strength") == 20 and w.scene.ghost_strength == 20
+    assert w.settings.get("plane_strength") == 70 and w.scene.plane_strength == 70

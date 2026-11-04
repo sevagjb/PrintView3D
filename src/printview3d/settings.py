@@ -40,7 +40,8 @@ DEFAULTS = {
     "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
     "clip_ghost": True,         # View -> Clip: show the cut-away part as a see-through ghost (#66)
     "clip_plane": True,         # View -> Clip: show the cutting plane as a faint sheet (#66)
-    "ghost_strength": 50,       # Settings -> Viewer: ghost and plane, 0 faintest .. 100 strongest
+    "ghost_strength": 50,       # Settings -> Viewer: the cut-away part, 0 faintest .. 100 strongest
+    "plane_strength": 50,       # Settings -> Viewer: the cutting plane, 0 faintest .. 100 strongest
     "max_recent": 10,
 }
 

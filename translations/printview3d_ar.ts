@@ -1611,26 +1611,25 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Fainter</source>
-        <extracomment>Left end of the Cut-away part slider: more see-through.</extracomment>
-        <translation>أخفت</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Stronger</source>
-        <extracomment>Right end of the Cut-away part slider: less see-through, easier to see.</extracomment>
-        <translation>أقوى</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How strongly the cut-away part and the cutting plane are drawn when you use Clip in the View menu.</source>
-        <translation>مدى وضوح الجزء المقطوع ومستوى القطع عند استخدام القطع من قائمة العرض.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cut-away part</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
         <translation>الجزء المقطوع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cut-away part is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">مدى وضوح الجزء المقطوع عند استخدام القطع من قائمة العرض.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cutting plane</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the faint sheet that shows where a cut is, is drawn.</extracomment>
+        <translation type="unfinished">مستوى القطع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">مدى وضوح مستوى القطع عند استخدام القطع من قائمة العرض.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1742,6 +1741,18 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not checked yet.</source>
         <translation>لم يتم التحقق بعد.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Fainter</source>
+        <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
+        <translation>أخفت</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Stronger</source>
+        <extracomment>Right end of the Cut-away part and Cutting plane sliders: less see-through, easier to see.</extracomment>
+        <translation>أقوى</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

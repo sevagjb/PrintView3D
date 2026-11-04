@@ -735,6 +735,7 @@ class MainWindow(QMainWindow):
         self.scene.show_ghost = bool(self.settings.get("clip_ghost", True))
         self.scene.show_cut_plane = bool(self.settings.get("clip_plane", True))
         self.scene.set_ghost_strength(self.settings.get("ghost_strength", 50))
+        self.scene.set_plane_strength(self.settings.get("plane_strength", 50))
         self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
         # The view cube in the top-right corner (Settings -> Viewer can hide it).
         from .view_cube import ViewCube
@@ -2051,6 +2052,12 @@ class MainWindow(QMainWindow):
         """Settings -> Viewer -> Cut-away part: drawn fainter or stronger. Shown at once, so the
         slider in Settings can be tried live (Cancel puts the old value back)."""
         self.scene.set_ghost_strength(strength)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_plane_strength(self, strength: int):
+        """Settings -> Viewer -> Cutting plane: the same, for the plane."""
+        self.scene.set_plane_strength(strength)
         if self.stack.currentIndex() == 1:
             self.plotter.render()
 

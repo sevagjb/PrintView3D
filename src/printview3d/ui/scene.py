@@ -22,8 +22,8 @@ CUT_COLOR = "#e0604f"         # View -> Clip: inside faces that the cut lays ope
 # see-through ghost with outlined edges, as in Microsoft 3D Builder's Split. The same white on
 # every theme; the outline is light on dark themes and dark on light ones, and the light themes
 # get a slightly stronger ghost so it still stands out from the light background.
-# These are the strengths at the default setting; Settings -> Viewer -> Cut-away part makes all of
-# them fainter or stronger together (ghost_factor).
+# These are the strengths at the default setting. Settings -> Viewer has a Fainter ... Stronger
+# slider for the ghost (with its outline) and one for the plane (ghost_factor).
 GHOST_COLOR = "#ffffff"
 GHOST_OPACITY = {"dark": 0.22, "light": 0.28}
 GHOST_EDGE = {"dark": ("#e8eeed", 0.55), "light": (None, 0.65)}   # None: the theme's plate edge
@@ -114,6 +114,7 @@ class Scene:
         self.show_ghost = True
         self.show_cut_plane = True
         self.ghost_strength = GHOST_STRENGTH_DEFAULT
+        self.plane_strength = GHOST_STRENGTH_DEFAULT
         self._ghost_plane = vtkPlane()
         self._ghosts: list = []                      # per part: (ghost, outline or None)
         self._cut_plane = None                       # the cutting plane, a model-sized sheet
@@ -581,12 +582,21 @@ class Scene:
         self.show_cut_plane = bool(on)
         self.apply_view_options()
 
-    def set_ghost_strength(self, strength):
-        """Settings -> Viewer: how strongly the ghost, its outline and the plane are drawn."""
+    @staticmethod
+    def _strength(value) -> int:
         try:
-            self.ghost_strength = min(100, max(0, int(round(float(strength)))))
+            return min(100, max(0, int(round(float(value)))))
         except (TypeError, ValueError):
-            self.ghost_strength = GHOST_STRENGTH_DEFAULT
+            return GHOST_STRENGTH_DEFAULT
+
+    def set_ghost_strength(self, strength):
+        """Settings -> Viewer -> Cut-away part: how strongly the ghost and its outline are drawn."""
+        self.ghost_strength = self._strength(strength)
+        self._color_ghosts()
+
+    def set_plane_strength(self, strength):
+        """Settings -> Viewer -> Cutting plane: how strongly the plane is drawn."""
+        self.plane_strength = self._strength(strength)
         self._color_ghosts()
 
     def _ghost_mode(self) -> str:
@@ -677,9 +687,10 @@ class Scene:
         if len(self._cut_plane_actors) == 2:
             sheet, frame = self._cut_plane_actors
             sheet.GetProperty().SetColor(*teal)
-            sheet.GetProperty().SetOpacity(min(1.0, CUT_PLANE_OPACITY * k))
+            kp = ghost_factor(self.plane_strength)
+            sheet.GetProperty().SetOpacity(min(1.0, CUT_PLANE_OPACITY * kp))
             frame.GetProperty().SetColor(*teal)
-            frame.GetProperty().SetOpacity(min(1.0, CUT_PLANE_EDGE_OPACITY * k))
+            frame.GetProperty().SetOpacity(min(1.0, CUT_PLANE_EDGE_OPACITY * kp))
 
     def _sync_ghosts(self, *_):
         """A ghost is shown while its part is, the cut is on and the ghost is wanted."""
