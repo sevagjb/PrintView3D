@@ -1618,18 +1618,18 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cut-away part is drawn when you use Clip in the View menu.</source>
-        <translation type="unfinished">Hoe sterk het weggesneden deel getekend wordt als je Afsnijden in het menu Weergave gebruikt.</translation>
+        <translation>Hoe sterk het weggesneden deel getekend wordt als je Afsnijden in het menu Weergave gebruikt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cutting plane</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the faint sheet that shows where a cut is, is drawn.</extracomment>
-        <translation type="unfinished">Snijvlak</translation>
+        <translation>Snijvlak</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
-        <translation type="unfinished">Hoe sterk het snijvlak getekend wordt als je Afsnijden in het menu Weergave gebruikt.</translation>
+        <translation>Hoe sterk het snijvlak getekend wordt als je Afsnijden in het menu Weergave gebruikt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

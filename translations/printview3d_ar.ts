@@ -1618,18 +1618,18 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cut-away part is drawn when you use Clip in the View menu.</source>
-        <translation type="unfinished">مدى وضوح الجزء المقطوع عند استخدام القطع من قائمة العرض.</translation>
+        <translation>مدى وضوح الجزء المقطوع عند استخدام القطع من قائمة العرض.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cutting plane</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the faint sheet that shows where a cut is, is drawn.</extracomment>
-        <translation type="unfinished">مستوى القطع</translation>
+        <translation>مستوى القطع</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
-        <translation type="unfinished">مدى وضوح مستوى القطع عند استخدام القطع من قائمة العرض.</translation>
+        <translation>مدى وضوح مستوى القطع عند استخدام القطع من قائمة العرض.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
