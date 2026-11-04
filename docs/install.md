@@ -136,3 +136,22 @@ From then on it opens normally.
 found automatically. **Updates:** *Download update* opens the release page; drag the new version
 into Applications to replace the old one. Older Macs that can't run macOS 14:
 [let us know](https://github.com/sevagjb/PrintView3D/issues/new?template=mac_build.md) if you need a version for them.
+
+
+### Quick Look (Finder previews) {#quick-look}
+
+PrintView3D brings Quick Look support for 3D printing files (beta):
+
+- **Thumbnails in Finder** for 3MF, STL, G-code, FreeCAD, OBJ and PLY files. 3MF, G-code and FreeCAD
+  files show the picture your slicer or FreeCAD saved in them; STL files (and 3MF files without a
+  picture) are drawn, like on Windows.
+- **Space bar preview:** select a file and press the space bar. STL, 3MF, OBJ and PLY models are shown
+  in 3D (drag to turn, scroll or pinch to zoom) with their size in millimetres. G-code and FreeCAD files
+  show their saved picture. For everything else (layers, objects, settings) open the file in PrintView3D.
+
+It works once PrintView3D is in **Applications** and has been started once (steps 1–4 above). If no
+previews appear, open **System Settings → General → Login Items & Extensions**, click **Quick Look**
+(the ⓘ next to it) and switch on **PrintView3D**. Finder keeps old thumbnails for a while; files you
+copy or save afterwards show the new ones. STEP files are not previewed: reading them needs FreeCAD,
+which Quick Look can't use. If another app (a slicer, FreeCAD) also offers previews for one of these
+file types, macOS may use that app's preview instead.
