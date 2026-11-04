@@ -259,6 +259,7 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
 | `W` · `X` · `C` · `V` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
+| `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (models) |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
@@ -284,6 +285,7 @@ model formats; G-code has its layer slider instead):
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
+- **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
 
 The options stay on when you open the next model, and work together (X-ray and clip, for example).
 
