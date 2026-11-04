@@ -583,6 +583,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Reset view</source>
+        <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
+        <translation type="unfinished">Weergave herstellen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip facing you</source>
         <extracomment>An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.</extracomment>
         <translation>Afsnijden vanaf jouw kant</translation>
@@ -1951,6 +1957,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Clip facing you on / off (models)</source>
         <translation>Afsnijden vanaf jouw kant aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset view: all of the above off, model fitted (models)</source>
+        <translation type="unfinished">Weergave herstellen: alles hierboven uit, model passend (modellen)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

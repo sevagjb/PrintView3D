@@ -63,9 +63,9 @@ def test_view_menu_on_for_models_off_for_gcode(window):
 def test_menu_and_shortcuts(window):
     w = window
     assert w.view_btn.menu() is w.view_menu
-    actions = [w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face]
+    actions = [w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face, w.act_reset_view]
     assert [a for a in w.view_menu.actions() if not a.isSeparator()] == actions
-    assert [a.shortcut().toString() for a in actions] == ["W", "X", "C", "V"]
+    assert [a.shortcut().toString() for a in actions] == ["W", "X", "C", "V", "R"]
     for a in actions:
         assert a in w.actions()                           # work wherever the focus is
 
@@ -281,3 +281,42 @@ def test_clip_facing_you_stays_on_for_the_next_model(window):
     w.load_sync(CUBE)
     assert w.clip_box.isVisible() and w.clip_box.title() == "Clip facing you"
     assert w.scene.clip_face is not None and _planes(w) == [1]
+
+
+# ---------------------------------------------------------------- Reset view (#66)
+
+def test_reset_view_turns_everything_off_and_fits(window, monkeypatch):
+    w = window
+    w.load_sync(INSIDE)
+    for a in (w.act_wireframe, w.act_xray, w.act_clip):
+        a.trigger()
+    fitted = []
+    monkeypatch.setattr(w, "set_view", lambda view, animate=False: fitted.append(view))
+    assert w.act_reset_view.isEnabled() and w.act_reset_view in w.view_menu.actions()
+    w.act_reset_view.trigger()
+    assert not any(a.isChecked() for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face))
+    assert w.clip_box.isHidden() and _planes(w) == [0, 0, 0]
+    p = _props(w)[0]
+    assert p.GetRepresentation() == 2 and p.GetOpacity() == 1.0          # surface, solid
+    assert fitted == [None]                                              # like Fit
+
+
+def test_reset_view_also_ends_clip_facing_you(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip_face.trigger()
+    w.reset_view()
+    assert not w.act_clip_face.isChecked() and w.scene.clip_face is None
+
+
+def test_reset_view_key_and_shortcut_list(window, app):
+    from printview3d.ui.settings_dialog import shortcut_rows
+    assert window.act_reset_view.shortcut().toString() == "R"
+    assert "R" in [k for row, _ in shortcut_rows() for k in row]
+
+
+def test_reset_view_off_for_gcode(window):
+    w = window
+    w.load_sync(GCODE)
+    assert not w.act_reset_view.isEnabled()
+    w.reset_view()                                                      # harmless anyway

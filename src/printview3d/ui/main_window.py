@@ -559,7 +559,9 @@ class MainWindow(QMainWindow):
         # Clip facing you: an upright cut that turns with the view; one cut at a time.
         self.act_clip_face = QAction(self, checkable=True, shortcut=QKeySequence("V"))
         self.act_clip_face.toggled.connect(self.set_clip_face_on)
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+        # Reset view (#66): all of the above off and the model fitted, in one go.
+        self.act_reset_view = QAction(self, shortcut=QKeySequence("R"), triggered=self.reset_view)
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view):
             self.addAction(a)                   # the shortcuts work wherever the focus is
         self.view_menu = QMenu(self)
         self.view_menu.addAction(self.act_wireframe)
@@ -567,6 +569,8 @@ class MainWindow(QMainWindow):
         self.view_menu.addSeparator()
         self.view_menu.addAction(self.act_clip)
         self.view_menu.addAction(self.act_clip_face)
+        self.view_menu.addSeparator()
+        self.view_menu.addAction(self.act_reset_view)
         self.view_btn = QToolButton()
         self.view_btn.setObjectName("viewButton")
         self.view_btn.setToolButtonStyle(Qt.ToolButtonTextOnly)
@@ -966,6 +970,7 @@ class MainWindow(QMainWindow):
         self.act_xray.setText(tr("X-ray (see-through)") + "\t" + "X")
         self.act_clip.setText(tr("Clip from the top") + "\t" + "C")
         self.act_clip_face.setText(tr("Clip facing you") + "\t" + "V")
+        self.act_reset_view.setText(tr("Reset view") + "\t" + "R")
         self.clip_box.setTitle(tr("Clip facing you") if self._clip_mode() == "face" else tr("Clip from the top"))
         self.clip_hint.setText(tr("Turn or move the view to pass the model through the cut."))
         self.clip_off_btn.setText(tr("Turn off"))
@@ -1997,7 +2002,7 @@ class MainWindow(QMainWindow):
     def _update_view_menu(self):
         """After a file opens or closes: the View options on or off for it, the clip box with it."""
         ok = self._view_options_apply()
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view):
             a.setEnabled(ok)
         self.view_btn.setEnabled(ok)
         self.clip_box.setVisible(ok and self._clip_mode() is not None)
@@ -2014,6 +2019,16 @@ class MainWindow(QMainWindow):
         self.scene.set_xray(on)
         if self.stack.currentIndex() == 1:
             self.plotter.render()
+
+    def reset_view(self):
+        """View -> Reset view (R, #66): wireframe, X-ray and both cuts off, and the model fitted,
+        like Fit. Nothing else changes (the plate, the objects shown, the theme)."""
+        if not self._view_options_apply():
+            return
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+            if a.isChecked():
+                a.setChecked(False)
+        self.set_view(None, animate=True)
 
     def _clip_mode(self) -> Optional[str]:
         """"top" (Clip from the top), "face" (Clip facing you) or None."""

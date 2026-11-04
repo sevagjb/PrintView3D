@@ -56,6 +56,7 @@ NOTES = {
     "Clip from the top": "Hide everything above a chosen height, to look inside the model (a cut).",
     "Height {z} of {top} mm": "Clip slider: {z} is the height of the cut above the model's bottom, {top} its full height.",
     "Clip facing you": "An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.",
+    "Reset view": "View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).",
     "Depth {d} mm": "Clip facing you: how far the cut is behind (+) or in front of (−) the centre of the view.",
     "Recent": "Toolbar menu with recently opened files.",
     "All": "Button: show all print feature types.",
