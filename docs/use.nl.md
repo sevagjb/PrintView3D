@@ -55,7 +55,15 @@ andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
   het deel van het model ervoor verbergt. Draai de weergave en het model draait door de snede;
   verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
   Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
-  zet de snede dichterbij of verder weg. Eén snede tegelijk: `C` en `V` wisselen ertussen.
+  zet de snede dichterbij of verder weg.
+- **Beide sneden tegelijk**: `C` en `V` zetten elk hun eigen snede aan en uit, dus beide kunnen
+  samen aan voor een hoek eruit gesneden, met een schuif **Hoogte** en **Diepte** in het zijpaneel.
+  **Uitzetten** zet beide uit.
+- **Weggesneden deel tonen** en **Snijvlak tonen** (onder de schuiven, standaard allebei aan): wat
+  de snede verbergt blijft zichtbaar als een witte, doorzichtige schim met omlijnde randen, en het
+  snijvlak verschijnt als een vaag vlak zo groot als het model. Je keuze wordt onthouden. In
+  **Instellingen → Weergave** hebben **Weggesneden deel** en **Snijvlak** elk een schuif
+  Vager … Sterker; de 3D-weergave verandert terwijl je sleept.
 - **Weergave herstellen** (`R`): zet alles hierboven uit en past het model in beeld, zoals **Passend**,
   in één keer.
 

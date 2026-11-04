@@ -29,6 +29,15 @@ het zijpaneel om laag voor laag door het model omlaag te gaan.
        autoplay loop muted playsinline preload="metadata"
        aria-label="Een snede gaat omlaag door het pomphuis en weer omhoog"></video>
 
+## Zie wat de snede wegneemt
+
+Wat een snede verbergt blijft zichtbaar als een witte, doorzichtige **schim** met omlijnde randen,
+en het **snijvlak** verschijnt als een vaag vlak zo groot als het model, zodat je ziet wat de snede
+wegneemt en waar. Onder de schuiven zetten **Weggesneden deel tonen** en **Snijvlak tonen** elk aan
+of uit (eerst allebei aan; je keuze wordt onthouden). In **Instellingen → Weergave** hebben
+**Weggesneden deel** en **Snijvlak** elk een schuif Vager … Sterker, en de 3D-weergave verandert
+terwijl je sleept. *Nieuw in PrintView3D 0.26.*
+
 ## Beide sneden tegelijk
 
 <kbd>C</kbd> en <kbd>V</kbd> zetten elk hun eigen snede aan en uit, dus beide kunnen tegelijk aan
@@ -72,6 +81,7 @@ staat bij **Details**. Vink een object uit om het te verbergen.
 | <kbd>X</kbd> | Röntgen aan / uit |
 | <kbd>C</kbd> | Van boven afsnijden aan / uit |
 | <kbd>V</kbd> | Afsnijden vanaf jouw kant aan / uit |
+| <kbd>R</kbd> | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend |
 
 De opties blijven aan als je het volgende model opent.
 

@@ -29,6 +29,15 @@ side panel to go down through the model, layer by layer.
        autoplay loop muted playsinline preload="metadata"
        aria-label="A cut moving down through the pump housing and back up"></video>
 
+## See what the cut takes away
+
+What a cut hides stays as a white, see-through **ghost** with outlined edges, and the **cutting
+plane** shows as a faint sheet the size of the model, so you see what the cut takes away and where.
+Under the sliders, **Show the cut-away part** and **Show the cutting plane** turn each on or off
+(both on at first; your choice is remembered). In **Settings → Viewer**, **Cut-away part** and
+**Cutting plane** each have a Fainter … Stronger slider, and the 3D view changes while you drag.
+*New in PrintView3D 0.26.*
+
 ## Both cuts at once
 
 <kbd>C</kbd> and <kbd>V</kbd> each turn their own cut on and off, so both can be on together: the
@@ -71,6 +80,7 @@ whole model is in **Details**. Untick an object to hide it.
 | <kbd>X</kbd> | X-ray on / off |
 | <kbd>C</kbd> | Clip from the top on / off |
 | <kbd>V</kbd> | Clip facing you on / off |
+| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted |
 
 The options stay on when you open the next model.
 

@@ -21,9 +21,10 @@ file to Creality Print, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura and others w
 Designing in FreeCAD? Open the `.FCStd` file and send it to your slicer as a model directly,
 without exporting an STL first.
 
-## New in 0.25: look inside your models
+## New: look inside your models
 
-Turn a model through a cut that always faces you, slice it from the top, make it see-through, and see
+Turn a model through a cut that always faces you, slice it from the top, or use both cuts at once to
+cut a corner away. What the cut takes away stays as a see-through ghost. Make it see-through, and see
 the size of every object.
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"
@@ -38,7 +39,7 @@ the size of every object.
 | **STL** | Smooth-shaded model on a build plate, with size, triangle count and volume. |
 | **3MF** | Every object on the plate, including projects from Creality Print, OrcaSlicer and Bambu Studio. Show or hide each object, see the project's printer and filament settings and its thumbnail. If the project is already sliced, view its toolpaths without re-slicing. **Export STL**: save the objects as plain STL files, combined or one per object. |
 | **G-code** | Toolpaths coloured by type (walls, infill, top/bottom, supports, bridges, travel…), a layer slider, "show only this layer", print time, filament use and the slicer's preview picture. |
-| **Look inside** | **View** → wireframe, X-ray, clip from the top and a cut that turns with the view, plus the size of every object. [Details](inspect.md). |
+| **Look inside** | **View** → wireframe, X-ray, clip from the top and a cut that turns with the view, on their own or both at once, with the cut-away part as a see-through ghost; plus the size of every object. [Details](inspect.md). |
 | **FreeCAD** | Open `.FCStd` documents to look at them: shown in 3D exactly as FreeCAD displays them (visible bodies only), with one click to open in FreeCAD or send to your slicer as STL. Uses your installed FreeCAD; without it you still see the preview picture. [Details](cad.md#freecad-files). |
 | **STEP** | Open `.step` / `.stp` CAD files: shown in 3D with the help of your installed FreeCAD (converted in the background, remembered afterwards), with the CAD program, author and date from the file. OrcaSlicer, PrusaSlicer and Bambu Studio get the STEP file itself; other slicers get an STL. [Details](cad.md#step-files). |
 | **OBJ, PLY, OFF, glTF / GLB** | Other common 3D formats, with the colours saved in the file (textures are not shown). OBJ objects and glTF scenes are listed as separate objects. OBJ goes to your slicer as it is; PLY, OFF and glTF are sent as STL, because not every slicer reads them. [Details](cad.md#other-3d-formats). |
@@ -47,7 +48,7 @@ the size of every object.
 | **Default app** | Optional: make PrintView3D open `.stl`, `.3mf` and `.gcode` files when you double-click them. Fully reversible. |
 | **Your language** | English, العربية (Arabic, right-to-left), Nederlands, Deutsch, Français, Español and Română; switch any time in Settings, no restart needed. [Help translate](contribute.md#translations). |
 | **Themes** | Four styles — Default, Gray, Graphite (warm, easy on the eyes) and Ember (orange and teal) — each light or dark, or following your system, for the window and the 3D view. Switch with the palette icon, `Ctrl+T` (next style) or `Ctrl+Shift+T` (light ↔ dark). Toolpath colours stay the same in every theme. |
-| **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). |
+| **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). On macOS (beta), Finder shows thumbnails of 3MF, STL, G-code, FreeCAD, OBJ and PLY files, and **Quick Look** (space bar) shows STL, 3MF, OBJ and PLY models in 3D. [Details](install.md#quick-look). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](use.md#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, screenshots. |

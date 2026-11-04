@@ -55,8 +55,15 @@ model formats; G-code has its layer slider instead):
 - **Clip facing you** (`V`): an upright cut that always faces you and hides the part of the model
   in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
-  click that face on the view cube. The slider moves the cut nearer or further. One cut at a time:
-  `C` and `V` switch between them.
+  click that face on the view cube. The slider moves the cut nearer or further.
+- **Both cuts at once**: `C` and `V` each turn their own cut on and off, so both can be on together
+  for a corner cut away, with a **Height** and a **Depth** slider in the side panel. **Turn off**
+  ends both.
+- **Show the cut-away part** and **Show the cutting plane** (under the sliders, both on by
+  default): what the cut hides stays as a white, see-through ghost with outlined edges, and the
+  cutting plane shows as a faint sheet the size of the model. Your choice is remembered. In
+  **Settings → Viewer**, **Cut-away part** and **Cutting plane** each have a Fainter … Stronger
+  slider; the 3D view changes while you drag.
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
 
 The options stay on when you open the next model, and work together (X-ray and clip, for example).

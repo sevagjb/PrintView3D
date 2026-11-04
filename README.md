@@ -55,7 +55,7 @@ without exporting an STL first.
 | **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). On macOS (beta), Finder shows thumbnails of 3MF, STL, G-code, FreeCAD, OBJ and PLY files, and **Quick Look** (space bar) shows STL, 3MF, OBJ and PLY models in 3D. [Details](#quick-look-finder-previews). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
-| **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, to check meshes, hidden parts and hollow walls. [Details](#view-wireframe-x-ray-and-clip). |
+| **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, on their own or both at once, with the cut-away part as a see-through ghost, to check meshes, hidden parts and hollow walls. [Details](#view-wireframe-x-ray-and-clip). |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, screenshots. |
 
 <table>
@@ -296,9 +296,12 @@ model formats; G-code has its layer slider instead):
 - **Clip facing you** (`V`): an upright cut that always faces you and hides the part of the model
   in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
-  click that face on the view cube. The slider moves the cut nearer or further. One cut at a time:
-  `C` and `V` switch between them.
-- **Show the cut-away part** and **Show the cutting plane** (under the slider, both on by
+  click that face on the view cube. The slider moves the cut nearer or further.
+- **Both cuts at once**: `C` and `V` each turn their own cut on and off, so both can be on together
+  for a corner cut away, with a **Height** and a **Depth** slider in the side panel. What the cuts
+  hide stays one even ghost, and each cutting plane stops where the other cut is. **Turn off** ends
+  both.
+- **Show the cut-away part** and **Show the cutting plane** (under the sliders, both on by
   default): what the cut hides stays as a white, see-through ghost with outlined edges, and the
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and

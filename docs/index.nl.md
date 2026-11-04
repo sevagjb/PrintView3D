@@ -21,10 +21,11 @@ printtijd en het filamentverbruik, en stuurt het bestand met één klik naar Cre
 Bambu Studio, PrusaSlicer, Cura en andere. Ontwerp je in FreeCAD? Open het `.FCStd`-bestand en stuur het
 direct als model naar je slicer, zonder eerst een STL te exporteren.
 
-## Nieuw in 0.25: in je modellen kijken
+## Nieuw: in je modellen kijken
 
-Draai een model door een snede die altijd naar je toe gericht is, snijd het van boven af, maak het
-doorzichtig en zie de maat van elk object.
+Draai een model door een snede die altijd naar je toe gericht is, snijd het van boven af, of gebruik
+beide sneden tegelijk om er een hoek uit te snijden. Wat de snede wegneemt blijft zichtbaar als een
+doorzichtige schim. Maak het doorzichtig en zie de maat van elk object.
 
 <video class="pv-video" src="../assets/inside/clip-facing.mp4" poster="../assets/inside/clip-facing.jpg"
        autoplay loop muted playsinline preload="metadata" aria-label="Een pomphuis draait door een rechtopstaande snede en laat zijn binnenkant zien"></video>
@@ -38,7 +39,7 @@ doorzichtig en zie de maat van elk object.
 | **STL** | Een vloeiend belicht model op een printplaat, met afmetingen, aantal driehoeken en volume. |
 | **3MF** | Elk object op de plaat, ook projecten uit Creality Print, OrcaSlicer en Bambu Studio. Toon of verberg elk object, bekijk de printer- en filamentinstellingen van het project en de miniatuur. Is het project al gesliceerd, dan zie je de printbanen zonder opnieuw te slicen. **STL exporteren**: bewaar de objecten als gewone STL-bestanden, samen of één per object. |
 | **G-code** | Printbanen gekleurd per soort (wanden, vulling, boven/onder, support, bruggen, verplaatsingen…), een laagschuif, "Alleen deze laag tonen", printtijd, filamentverbruik en de voorbeeldafbeelding van de slicer. |
-| **In je model kijken** | **Weergave** → draadmodel, röntgen, van boven afsnijden en een snede die meedraait met de weergave, plus de maat van elk object. [Details](inspect.md). |
+| **In je model kijken** | **Weergave** → draadmodel, röntgen, van boven afsnijden en een snede die meedraait met de weergave, elk apart of beide tegelijk, met het weggesneden deel als doorzichtige schim; plus de maat van elk object. [Details](inspect.md). |
 | **FreeCAD** | Open `.FCStd`-documenten om ze te bekijken: in 3D, precies zoals FreeCAD ze toont (alleen zichtbare bodies), met één klik om ze in FreeCAD te openen of als STL naar je slicer te sturen. Gebruikt je geïnstalleerde FreeCAD; zonder FreeCAD zie je nog steeds de voorbeeldafbeelding. [Meer](cad.md#freecad-files). |
 | **STEP** | Open CAD-bestanden `.step` / `.stp`: in 3D met hulp van je geïnstalleerde FreeCAD (op de achtergrond omgezet en daarna onthouden), met het CAD-programma, de auteur en de datum uit het bestand. OrcaSlicer, PrusaSlicer en Bambu Studio krijgen het STEP-bestand zelf; andere slicers een STL. [Meer](cad.md#step-files). |
 | **OBJ, PLY, OFF, glTF / GLB** | Andere gangbare 3D-formaten, met de kleuren uit het bestand (texturen worden niet getoond). Objecten in OBJ en scènes in glTF worden als losse objecten getoond. OBJ gaat zoals het is naar je slicer; PLY, OFF en glTF worden als STL verstuurd, omdat niet elke slicer ze leest. [Meer](cad.md#other-3d-formats). |
@@ -47,7 +48,7 @@ doorzichtig en zie de maat van elk object.
 | **Standaard-app** | Optioneel: laat PrintView3D `.stl`-, `.3mf`- en `.gcode`-bestanden openen als je erop dubbelklikt. Volledig terug te draaien. |
 | **Jouw taal** | English, العربية (Arabisch, van rechts naar links), Nederlands, Deutsch, Français, Español en Română; altijd te wisselen in Instellingen, zonder herstart. [Help vertalen](contribute.md#translations). |
 | **Thema's** | Vier stijlen — Standaard, Grijs, Grafiet (warm, rustig voor de ogen) en Ember (oranje en teal) — elk licht of donker, of volgend op je systeem, voor het venster en de 3D-weergave. Wissel met het palet-icoon, `Ctrl+T` (volgende stijl) of `Ctrl+Shift+T` (licht ↔ donker). De kleuren van de printbanen blijven in elk thema hetzelfde. |
-| **Miniaturen** | Windows Verkenner toont voorbeelden van 3MF-, STL-, G-code- en FreeCAD-bestanden (geïnstalleerd met PrintView3D, optioneel). |
+| **Miniaturen** | Windows Verkenner toont voorbeelden van 3MF-, STL-, G-code- en FreeCAD-bestanden (geïnstalleerd met PrintView3D, optioneel). Op macOS (bèta) toont de Finder miniaturen van 3MF-, STL-, G-code-, FreeCAD-, OBJ- en PLY-bestanden, en **Quick Look** (spatiebalk) toont STL-, 3MF-, OBJ- en PLY-modellen in 3D. [Details](install.md#quick-look). |
 | **Updates** | **Controleren op updates** in Instellingen, of één keer per dag als je dat toestaat. Op Windows downloadt, controleert en installeert één klik de nieuwe versie. De versie in de hoek krijgt een rode stip als er een update klaarstaat. [Wat er verstuurd wordt](use.md#updates-and-privacy). |
 | **Eén venster** | Een bestand waarop je dubbelklikt terwijl PrintView3D open is, verschijnt in dat venster in plaats van in een nieuw venster. Liever een venster per bestand? **Instellingen → Bestanden → Elk bestand in een nieuw venster openen**. |
 | **Prettig in gebruik** | Camera zoals in een slicer, slepen en neerzetten, recente bestanden, schermafbeeldingen. |
