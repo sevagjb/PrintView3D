@@ -426,13 +426,18 @@ jobs:
           sleep 3
           pluginkit -m -v -A -D -i io.github.sevagjb.printview3d.thumbnail || true
           pluginkit -m -v -A -D -i io.github.sevagjb.printview3d.preview || true
+          # Which file type macOS gives each extension now (the extensions are listed for these).
+          echo 'import UniformTypeIdentifiers
+          for e in ["3mf", "gcode", "gco", "fcstd", "stl", "obj", "ply"] {
+              print(e, UTType(filenameExtension: e)?.identifier ?? "-") }' | swift - || true
           mkdir -p ql-system
           for f in examples/demo_plate.3mf examples/demo_bracket.FCStd examples/demo_vase.gcode examples/demo_vase.stl tests/data/two_parts.obj; do
-            mdls -name kMDItemContentType -name kMDItemContentTypeTree "$f" || true
             cp "$f" ql-system/
           done
           qlmanage -r cache || true
-          cd ql-system && for f in *; do timeout 60 qlmanage -t -s 256 -o . "$f" || true; done; ls -la
+          cd ql-system
+          for f in *; do perl -e 'alarm 60; exec @ARGV' qlmanage -t -s 256 -o . "$f" || true; done
+          ls -la
 
       - name: Smoke test (render a sample to an image)
         continue-on-error: true
