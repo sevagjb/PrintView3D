@@ -142,8 +142,8 @@ bool read_central_directory(Source& src, std::vector<ZipEntry>& out) {
     return !out.empty();
 }
 
-bool extract(Source& src, const ZipEntry& z, std::vector<uint8_t>& out) {
-    if (z.usize > kMaxImage || z.csize > kMaxImage) return false;
+bool extract(Source& src, const ZipEntry& z, std::vector<uint8_t>& out, uint64_t max_size = kMaxImage) {
+    if (z.usize > max_size || z.csize > max_size || max_size > 0xffffffffu) return false;
     uint8_t lh[30];
     if (!src.read(z.local, lh, sizeof lh) || le32(lh) != 0x04034b50) return false;
     uint64_t data = z.local + 30 + le16(lh + 26) + le16(lh + 28);
@@ -178,6 +178,23 @@ bool zip_thumbnail(Source& src, std::vector<uint8_t>& image) {
             extract(src, z, image) && is_image(image))
             return true;
     }
+    return false;
+}
+
+bool zip_names(Source& src, std::vector<std::string>& names) {
+    std::vector<ZipEntry> entries;
+    if (!read_central_directory(src, entries)) return false;
+    for (const auto& z : entries) names.push_back(z.name);
+    return true;
+}
+
+bool zip_read(Source& src, const std::string& name, std::vector<uint8_t>& out, uint64_t max_size) {
+    std::vector<ZipEntry> entries;
+    if (!read_central_directory(src, entries)) return false;
+    std::string want = lower(name);
+    while (!want.empty() && want[0] == '/') want.erase(0, 1);
+    for (const auto& z : entries)
+        if (lower(z.name) == want) return extract(src, z, out, max_size);
     return false;
 }
 
@@ -319,12 +336,41 @@ bool load_stl(Source& src, std::vector<V3>& tri) {
     tri.resize(tri.size() - tri.size() % 3);
     return !tri.empty();
 }
+
+bool render_v3(std::vector<V3>& t, int size, std::vector<uint8_t>& rgba);
 }  // namespace
 
 bool render_stl(Source& src, int size, std::vector<uint8_t>& rgba) {
     if (size < 16 || size > 2048) return false;
     std::vector<V3> t;
     if (!load_stl(src, t)) return false;
+    return render_v3(t, size, rgba);
+}
+
+bool stl_triangles(Source& src, std::vector<float>& xyz) {
+    std::vector<V3> t;
+    if (!load_stl(src, t)) return false;
+    xyz.resize(t.size() * 3);
+    std::memcpy(xyz.data(), t.data(), xyz.size() * sizeof(float));
+    return true;
+}
+
+bool render_triangles(const float* xyz, size_t triangles, int size, std::vector<uint8_t>& rgba) {
+    if (size < 16 || size > 2048 || !xyz || triangles == 0) return false;
+    size_t step = triangles > kMaxTriangles ? (triangles + kMaxTriangles - 1) / kMaxTriangles : 1;
+    std::vector<V3> t;
+    t.reserve(triangles / step * 3);
+    for (size_t i = 0; i < triangles; i += step)
+        for (int v = 0; v < 3; ++v) {
+            const float* p = xyz + i * 9 + v * 3;
+            t.push_back({p[0], p[1], p[2]});
+        }
+    return render_v3(t, size, rgba);
+}
+
+namespace {
+bool render_v3(std::vector<V3>& t, int size, std::vector<uint8_t>& rgba) {
+    if (size < 16 || size > 2048 || t.empty()) return false;
 
     // View like PrintView3D's Iso camera: turned 45 degrees, looking down ~30 degrees.
     const float az = 0.7853982f, el = 0.5235988f;
@@ -413,5 +459,6 @@ bool render_stl(Source& src, int size, std::vector<uint8_t>& rgba) {
         }
     return true;
 }
+}  // namespace
 
 }  // namespace pv3d

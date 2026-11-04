@@ -321,12 +321,38 @@ jobs:
       - name: Build PrintView3D.app
         run: pyinstaller --noconfirm --clean printview3d.spec
 
+      - name: Build the Quick Look extensions (Finder thumbnails and space-bar preview) and test them
+        # Same C++ picture code as the Windows thumbnails; ql_test runs the extensions' code on
+        # the samples (thumbnail, 3D model, broken copies) without needing Quick Look itself.
+        run: |
+          v=$(python3 -c "import re;print(re.search(r'__version__ = \"(.+?)\"', open('src/printview3d/__init__.py').read())[1])")
+          packaging/macos/quicklook/build.sh "$v" "${{ matrix.arch }}"
+          packaging/macos/quicklook/out/ql_test ql-test examples/demo_plate.3mf examples/demo_housing.3mf \
+            examples/demo_bracket.FCStd examples/demo_vase.gcode examples/demo_vase.stl \
+            tests/data/cube_ascii.stl tests/data/cube_binary.stl tests/data/two_parts.3mf \
+            tests/data/busy_project.3mf tests/data/inside_view.3mf tests/data/larger_than_plate.3mf \
+            tests/data/two_parts.obj tests/data/cube_binary.ply tests/data/quads_ascii.ply
+          mkdir -p dist/PrintView3D.app/Contents/PlugIns
+          cp -R packaging/macos/quicklook/out/*.appex dist/PrintView3D.app/Contents/PlugIns/
+
       - name: Sign (ad-hoc) and check the signature
         # A broken signature makes macOS say "the app is damaged" with no way round it,
-        # so the build fails here instead.
+        # so the build fails here instead. The Quick Look extensions are signed again on their
+        # own with their sandbox entitlements (--deep would leave those out), then the app is
+        # sealed again around them.
         run: |
-          codesign --force --deep --sign - dist/PrintView3D.app
-          codesign --verify --deep --strict --verbose=2 dist/PrintView3D.app
+          app=dist/PrintView3D.app
+          codesign --force --deep --sign - "$app"
+          for x in "$app"/Contents/PlugIns/*.appex; do
+            codesign --force --sign - --entitlements packaging/macos/quicklook/QuickLook.entitlements "$x"
+          done
+          codesign --force --sign - "$app"
+          codesign --verify --deep --strict --verbose=2 "$app"
+          for x in "$app"/Contents/PlugIns/*.appex; do
+            codesign -d --entitlements - "$x" 2>/dev/null | grep -q com.apple.security.app-sandbox \
+              || { echo "::error title=Quick Look extension::$x is not sandboxed"; exit 1; }
+            echo "$(basename "$x"): signed and sandboxed"
+          done
           /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" dist/PrintView3D.app/Contents/Info.plist
 
       - name: Check the processor type and the oldest macOS it runs on
@@ -383,6 +409,31 @@ jobs:
           raise SystemExit(1 if bad else 0)
           PY
 
+      - name: Quick Look test (ask macOS itself; never blocks the build)
+        # Installs the app, lets macOS find its extensions and asks Quick Look for thumbnails.
+        # GitHub's Macs have no logged-in Finder, so this can fail for reasons that have nothing
+        # to do with the extensions; it reports what macOS says (file types, extensions found).
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          set -x
+          cp -R dist/PrintView3D.app /Applications/
+          lsr=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+          $lsr -f -R -trusted /Applications/PrintView3D.app
+          for x in /Applications/PrintView3D.app/Contents/PlugIns/*.appex; do pluginkit -a "$x"; done
+          pluginkit -e use -i io.github.sevagjb.printview3d.thumbnail || true
+          pluginkit -e use -i io.github.sevagjb.printview3d.preview || true
+          sleep 3
+          pluginkit -m -v -A -D -i io.github.sevagjb.printview3d.thumbnail || true
+          pluginkit -m -v -A -D -i io.github.sevagjb.printview3d.preview || true
+          mkdir -p ql-system
+          for f in examples/demo_plate.3mf examples/demo_bracket.FCStd examples/demo_vase.gcode examples/demo_vase.stl tests/data/two_parts.obj; do
+            mdls -name kMDItemContentType -name kMDItemContentTypeTree "$f" || true
+            cp "$f" ql-system/
+          done
+          qlmanage -r cache || true
+          cd ql-system && for f in *; do timeout 60 qlmanage -t -s 256 -o . "$f" || true; done; ls -la
+
       - name: Smoke test (render a sample to an image)
         continue-on-error: true
         timeout-minutes: 3
@@ -428,6 +479,15 @@ jobs:
         with:
           name: smoke-test-macos-${{ matrix.kind }}
           path: smoke-mac.png
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: quicklook-test-macos-${{ matrix.kind }}
+          path: |
+            ql-test
+            ql-system
           if-no-files-found: ignore
 
   release:
