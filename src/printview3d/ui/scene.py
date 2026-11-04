@@ -33,6 +33,17 @@ CUT_PLANE_EDGE_OPACITY = 0.75  # ... with a clearer outline
 GHOST_STRENGTH_DEFAULT = 50   # the setting, 0 (faintest) .. 100 (strongest)
 
 
+def _set_planes(mapper, planes):
+    """Give a mapper exactly these clipping planes (it keeps what all of them keep)."""
+    current = mapper.GetClippingPlanes()
+    have = [current.GetItem(i) for i in range(current.GetNumberOfItems())] if current is not None else []
+    if have == list(planes):
+        return
+    mapper.RemoveAllClippingPlanes()
+    for plane in planes:
+        mapper.AddClippingPlane(plane)
+
+
 def ghost_factor(strength) -> float:
     """Setting 0..100 -> how much stronger than the default: 0.25x at 0, 1x at 50, 4x at 100."""
     try:
@@ -101,24 +112,31 @@ class Scene:
         self.xray = False
         self.clip_z: Optional[float] = None          # height of the cut; None = no cut
         # Clip facing you: an upright cut that faces the camera, this far (mm) behind the centre
-        # of the view; None = off. Only one of clip_z / clip_face is set at a time.
+        # of the view; None = off. Both cuts can be on together (issue #70): the model then keeps
+        # only what both keep, a corner cut away.
         self.clip_face: Optional[float] = None
-        self._clip_plane = vtkPlane()
-        self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
+        self._top_plane = vtkPlane()
+        self._top_plane.SetNormal(0.0, 0.0, -1.0)    # keeps what is below the plane
+        self._face_plane = vtkPlane()                # keeps the half away from the viewer
+        self._face_plane.SetNormal(0.0, 1.0, 0.0)
         self._cut_prop = vtkProperty()
         self._cut_prop.SetColor(*(v / 255 for v in _hex_to_rgb(CUT_COLOR)))
         self._cut_prop.SetAmbient(0.25)
         self._cut_prop.SetDiffuse(0.75)
-        # The ghost of the cut-away part (#66): a copy of each part, cut by the opposite plane,
-        # so it keeps exactly the half the cut hides. Made the first time it is needed.
+        # The ghost of the cut-away part (#66): copies of each part that keep exactly what the
+        # cuts hide. With both cuts on that is two pieces that never overlap (#70): "top" is
+        # everything above the height cut, "face" what is in front of the upright cut *and*
+        # below the height cut. So every hidden spot is drawn once and the ghost looks the same
+        # with one cut or two. Made the first time they are needed.
         self.show_ghost = True
         self.show_cut_plane = True
         self.ghost_strength = GHOST_STRENGTH_DEFAULT
         self.plane_strength = GHOST_STRENGTH_DEFAULT
-        self._ghost_plane = vtkPlane()
-        self._ghosts: list = []                      # per part: (ghost, outline or None)
-        self._cut_plane = None                       # the cutting plane, a model-sized sheet
-        self._cut_plane_actors: list = []
+        self._ghost_top_plane = vtkPlane()           # keeps what is above the height cut
+        self._ghost_face_plane = vtkPlane()          # keeps what is in front of the upright cut
+        self._ghosts: dict = {"top": [], "face": []}     # per cut, per part: (ghost, outline or None)
+        # The cutting planes: a model-sized sheet per cut, each stopping where the other cut is.
+        self._sheets: dict = {}                      # cut -> (quad, [sheet, frame])
         self._peeling = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
@@ -179,9 +197,8 @@ class Scene:
                 except (AttributeError, TypeError):
                     pass
         self.model_actors = []
-        self._ghosts = []
-        self._cut_plane = None
-        self._cut_plane_actors = []
+        self._ghosts = {"top": [], "face": []}
+        self._sheets = {}
         self.gcode = None
         self._bed_actor_names = []
         self.focus_bounds = None
@@ -480,10 +497,9 @@ class Scene:
         self.apply_view_options()
 
     def set_clip(self, z: Optional[float]):
-        """Cut the parts at height z (mm) and hide what is above; None: no cut."""
+        """Cut the parts at height z (mm) and hide what is above; None: no cut. Clip facing you
+        stays as it is: both cuts can be on together (#70)."""
         self.clip_z = None if z is None else float(z)
-        if self.clip_z is not None:
-            self.clip_face = None
         self.apply_view_options()
 
     def model_face_reach(self) -> Optional[float]:
@@ -500,10 +516,8 @@ class Scene:
         faces the camera and hides the part of the model in front of it. It goes through the
         centre of the view, `offset` mm further away (negative: nearer). Turning the view turns
         the model through the cut and moving (panning) it slides the model across, as if the
-        model were held up to a scanner. None: no cut."""
+        model were held up to a scanner. None: no cut. Clip from the top stays as it is (#70)."""
         self.clip_face = None if offset is None else float(offset)
-        if self.clip_face is not None:
-            self.clip_z = None
         self.apply_view_options()
 
     def face_clip_direction(self) -> np.ndarray:
@@ -531,21 +545,29 @@ class Scene:
         foc = np.array(self.p.renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
         o = foc + n * self.clip_face
         # A plane keeps what its normal points to: here the half away from the viewer.
-        if tuple(self._clip_plane.GetNormal()) != tuple(n) or tuple(self._clip_plane.GetOrigin()) != tuple(o):
-            self._clip_plane.SetNormal(*n)
-            self._clip_plane.SetOrigin(*o)
+        if tuple(self._face_plane.GetNormal()) != tuple(n) or tuple(self._face_plane.GetOrigin()) != tuple(o):
+            self._face_plane.SetNormal(*n)
+            self._face_plane.SetOrigin(*o)
             self._follow_clip_plane()
 
+    def _cuts(self) -> list:
+        """The cuts that are on: "top", "face", both or none."""
+        return [k for k, v in (("top", self.clip_z), ("face", self.clip_face)) if v is not None]
+
+    def _model_planes(self) -> list:
+        """The planes every part is cut by: it keeps only what all of them keep."""
+        return [{"top": self._top_plane, "face": self._face_plane}[k] for k in self._cuts()]
+
     def apply_view_options(self):
-        """Wireframe, X-ray and the cut on every part of the model (G-code toolpaths keep
+        """Wireframe, X-ray and the cuts on every part of the model (G-code toolpaths keep
         their look: they are lines already, and the layer slider is their cut)."""
         if self.clip_z is not None:
-            self._clip_plane.SetNormal(0.0, 0.0, -1.0)   # keeps what is below the plane
-            self._clip_plane.SetOrigin(0.0, 0.0, self.clip_z)
-        elif self.clip_face is not None:
+            self._top_plane.SetNormal(0.0, 0.0, -1.0)    # keeps what is below the plane
+            self._top_plane.SetOrigin(0.0, 0.0, self.clip_z)
+        if self.clip_face is not None:
             self._update_face_plane()
-        cut = self.clip_z is not None or self.clip_face is not None
-        self._apply_ghost(cut)
+        planes = self._model_planes()
+        self._apply_ghost()
         for actor in self.model_actors:
             prop = actor.GetProperty()
             if self.wireframe:
@@ -558,12 +580,10 @@ class Scene:
             self._cut_prop.SetOpacity(XRAY_OPACITY if self.xray else 1.0)
             mapper = actor.GetMapper()
             mapper.RemoveAllClippingPlanes()
-            if cut:
-                mapper.AddClippingPlane(self._clip_plane)
-                # Through the cut you look at the inside of the walls: their back faces.
-                actor.SetBackfaceProperty(self._cut_prop)
-            else:
-                actor.SetBackfaceProperty(None)
+            for plane in planes:
+                mapper.AddClippingPlane(plane)
+            # Through a cut you look at the inside of the walls: their back faces.
+            actor.SetBackfaceProperty(self._cut_prop if planes else None)
         # See-through parts are only drawn in the right order with depth peeling. It costs
         # several drawing passes per frame, so it is only on while X-ray is.
         want = self.xray and bool(self.model_actors)
@@ -602,26 +622,53 @@ class Scene:
     def _ghost_mode(self) -> str:
         return "dark" if theme.is_dark() else "light"
 
-    def _apply_ghost(self, cut: bool):
-        cut = cut and bool(self.model_actors)
-        if cut and self.show_ghost and len(self._ghosts) != len(self.model_actors):
-            self._make_ghosts()
-        if cut and self.show_cut_plane and self._cut_plane is None:
-            self._make_cut_plane()
-        if cut:
-            self._follow_clip_plane()
-        self._sync_ghosts()
-        for a in self._cut_plane_actors:
-            a.SetVisibility(cut and self.show_cut_plane)
+    def _ghost_planes(self, cut: str) -> list:
+        """What one ghost piece is cut by. "top": keeps what is above the height cut. "face":
+        keeps what is in front of the upright cut, and with the height cut on as well only
+        below it, so it never overlaps the "top" piece (#70)."""
+        if cut == "top":
+            return [self._ghost_top_plane]
+        return [self._ghost_face_plane] + ([self._top_plane] if self.clip_z is not None else [])
 
-    def _make_ghosts(self):
-        """One ghost per part: the same mesh in white, see-through, cut by the opposite plane;
-        and its sharp edges as an outline, so the shape still reads where the ghost is faint."""
-        self._remove_ghosts()
+    def _sheet_planes(self, cut: str) -> list:
+        """Each cutting plane stops where the other cut is: the flat sheet keeps to the part
+        behind the upright cut, the upright sheet to the part below the height cut. Together
+        they meet in a clean corner instead of reaching into what is cut away."""
+        if cut == "top":
+            return [self._face_plane] if self.clip_face is not None else []
+        return [self._top_plane] if self.clip_z is not None else []
+
+    def _apply_ghost(self):
+        cuts = self._cuts() if self.model_actors else []
+        for cut in cuts:
+            if self.show_ghost and len(self._ghosts[cut]) != len(self.model_actors):
+                self._make_ghosts(cut)
+            if self.show_cut_plane and cut not in self._sheets:
+                self._make_cut_plane(cut)
+        if cuts:
+            self._follow_clip_plane()
+        for cut, pieces in self._ghosts.items():
+            planes = self._ghost_planes(cut)
+            for pair in pieces:
+                for a in pair:
+                    if a is not None:
+                        _set_planes(a.GetMapper(), planes)
+        for cut, (_quad, actors) in self._sheets.items():
+            planes = self._sheet_planes(cut)
+            for a in actors:
+                _set_planes(a.GetMapper(), planes)
+                a.SetVisibility(cut in cuts and self.show_cut_plane)
+        self._sync_ghosts()
+
+    def _make_ghosts(self, cut: str):
+        """One ghost per part for one cut: the same mesh in white, see-through, cut to what that
+        cut hides; and its sharp edges as an outline, so the shape still reads where the ghost is
+        faint."""
+        self._remove_ghosts(cut)
         for i, actor in enumerate(self.model_actors):
             mesh = pv.wrap(actor.GetMapper().GetInput())
             # A fixed colour, never the mesh's own data (a painted 3MF's colours, point ids).
-            g = self.p.add_mesh(mesh, color=GHOST_COLOR, name=f"ghost_{i}", reset_camera=False,
+            g = self.p.add_mesh(mesh, color=GHOST_COLOR, name=f"ghost_{cut}_{i}", reset_camera=False,
                                 ambient=0.5, diffuse=0.5, pickable=False, show_scalar_bar=False)
             g.GetMapper().ScalarVisibilityOff()
             outline = None
@@ -632,93 +679,95 @@ class Scene:
                                                    non_manifold_edges=False, manifold_edges=False)
                 if edges.n_cells:
                     edges.clear_data()           # point ids from the extraction: not colours
-                    outline = self.p.add_mesh(edges, color=GHOST_COLOR, name=f"ghost_edges_{i}",
+                    outline = self.p.add_mesh(edges, color=GHOST_COLOR, name=f"ghost_edges_{cut}_{i}",
                                               reset_camera=False, line_width=1.5, lighting=False,
                                               pickable=False, show_scalar_bar=False)
             except Exception:
                 outline = None
             for a in (g, outline):
                 if a is not None:
-                    a.GetMapper().AddClippingPlane(self._ghost_plane)
                     a.SetUseBounds(False)                # Fit and the camera ignore the ghosts
-            self._ghosts.append((g, outline))
+            self._ghosts[cut].append((g, outline))
         self._color_ghosts()
 
-    def _make_cut_plane(self):
+    def _make_cut_plane(self, cut: str):
         quad = pv.PolyData(np.zeros((4, 3), dtype=float), faces=np.array([4, 0, 1, 2, 3]))
-        sheet = self.p.add_mesh(quad, color="white", name="cut_plane", reset_camera=False,
+        sheet = self.p.add_mesh(quad, color="white", name=f"cut_plane_{cut}", reset_camera=False,
                                 lighting=False, pickable=False, show_scalar_bar=False)
-        frame = self.p.add_mesh(quad, color="white", name="cut_plane_edge", reset_camera=False,
+        frame = self.p.add_mesh(quad, color="white", name=f"cut_plane_edge_{cut}", reset_camera=False,
                                 lighting=False, style="wireframe", line_width=2, pickable=False,
                                 show_scalar_bar=False)
         for a in (sheet, frame):
             a.SetUseBounds(False)
-        self._cut_plane = quad
-        self._cut_plane_actors = [sheet, frame]
+        self._sheets[cut] = (quad, [sheet, frame])
         self._color_ghosts()
 
-    def _remove_ghosts(self):
-        names = [f"ghost_{i}" for i in range(len(self._ghosts))]
-        names += [f"ghost_edges_{i}" for i in range(len(self._ghosts))]
-        for name in names:
-            if name in self.p.actors:
-                self.p.remove_actor(name, render=False)
-        self._ghosts = []
+    def _remove_ghosts(self, cut: Optional[str] = None):
+        for c in ([cut] if cut else list(self._ghosts)):
+            n = len(self._ghosts[c])
+            for name in [f"ghost_{c}_{i}" for i in range(n)] + [f"ghost_edges_{c}_{i}" for i in range(n)]:
+                if name in self.p.actors:
+                    self.p.remove_actor(name, render=False)
+            self._ghosts[c] = []
 
     def _remove_cut_plane(self):
-        for name in ("cut_plane", "cut_plane_edge"):
-            if name in self.p.actors:
-                self.p.remove_actor(name, render=False)
-        self._cut_plane = None
-        self._cut_plane_actors = []
+        for cut in list(self._sheets):
+            for name in (f"cut_plane_{cut}", f"cut_plane_edge_{cut}"):
+                if name in self.p.actors:
+                    self.p.remove_actor(name, render=False)
+        self._sheets = {}
 
     def _color_ghosts(self):
         mode = self._ghost_mode()
         k = ghost_factor(self.ghost_strength)
         edge, edge_opacity = GHOST_EDGE[mode]
         edge = edge or self.c["plate_edge"]
-        for g, outline in self._ghosts:
-            g.GetProperty().SetOpacity(min(1.0, GHOST_OPACITY[mode] * k))
-            if outline is not None:
-                prop = outline.GetProperty()
-                prop.SetColor(*(v / 255 for v in _hex_to_rgb(edge)))
-                prop.SetOpacity(min(1.0, edge_opacity * k))
+        for pieces in self._ghosts.values():
+            for g, outline in pieces:
+                g.GetProperty().SetOpacity(min(1.0, GHOST_OPACITY[mode] * k))
+                if outline is not None:
+                    prop = outline.GetProperty()
+                    prop.SetColor(*(v / 255 for v in _hex_to_rgb(edge)))
+                    prop.SetOpacity(min(1.0, edge_opacity * k))
         teal = tuple(v / 255 for v in _hex_to_rgb(self.c["accent_ink"]))
-        if len(self._cut_plane_actors) == 2:
-            sheet, frame = self._cut_plane_actors
+        kp = ghost_factor(self.plane_strength)
+        for _quad, (sheet, frame) in self._sheets.values():
             sheet.GetProperty().SetColor(*teal)
-            kp = ghost_factor(self.plane_strength)
             sheet.GetProperty().SetOpacity(min(1.0, CUT_PLANE_OPACITY * kp))
             frame.GetProperty().SetColor(*teal)
             frame.GetProperty().SetOpacity(min(1.0, CUT_PLANE_EDGE_OPACITY * kp))
 
     def _sync_ghosts(self, *_):
-        """A ghost is shown while its part is, the cut is on and the ghost is wanted."""
-        cut = self.clip_z is not None or self.clip_face is not None
-        on = cut and self.show_ghost
-        for actor, (g, outline) in zip(self.model_actors, self._ghosts):
-            visible = on and bool(actor.GetVisibility())
-            for a in (g, outline):
-                if a is not None and bool(a.GetVisibility()) != visible:
-                    a.SetVisibility(visible)
+        """A ghost is shown while its part is, its cut is on and the ghost is wanted."""
+        cuts = self._cuts()
+        for cut, pieces in self._ghosts.items():
+            on = cut in cuts and self.show_ghost
+            for actor, (g, outline) in zip(self.model_actors, pieces):
+                visible = on and bool(actor.GetVisibility())
+                for a in (g, outline):
+                    if a is not None and bool(a.GetVisibility()) != visible:
+                        a.SetVisibility(visible)
 
     def _follow_clip_plane(self):
-        """The ghosts keep the other half (opposite normal, same place); the sheet sits in the
-        cut, as big as the model is there plus a small margin."""
-        n = np.array(self._clip_plane.GetNormal(), dtype=float)
-        o = np.array(self._clip_plane.GetOrigin(), dtype=float)
-        self._ghost_plane.SetNormal(*(-n))
-        self._ghost_plane.SetOrigin(*o)
-        if self._cut_plane is None or not self.focus_bounds:
+        """The ghosts keep the other side of each cut (opposite normal, same place); each sheet
+        sits in its cut, as big as the model is there plus a small margin."""
+        for plane, ghost in ((self._top_plane, self._ghost_top_plane),
+                             (self._face_plane, self._ghost_face_plane)):
+            ghost.SetNormal(*(-np.array(plane.GetNormal(), dtype=float)))
+            ghost.SetOrigin(*plane.GetOrigin())
+        if not self.focus_bounds:
             return
         b = self.focus_bounds
         pad = max(2.0, 0.04 * max(b[1] - b[0], b[3] - b[2], b[5] - b[4]))
-        if self.clip_z is not None:
+        if "top" in self._sheets and self.clip_z is not None:
             z = self.clip_z
             pts = [(b[0] - pad, b[2] - pad, z), (b[1] + pad, b[2] - pad, z),
                    (b[1] + pad, b[3] + pad, z), (b[0] - pad, b[3] + pad, z)]
-        else:
+            self._set_sheet("top", pts)
+        if "face" in self._sheets and self.clip_face is not None:
             # Upright: as wide as the model seen from this side, as tall as the model.
+            n = np.array(self._face_plane.GetNormal(), dtype=float)
+            o = np.array(self._face_plane.GetOrigin(), dtype=float)
             side = np.array([-n[1], n[0], 0.0])
             corners = np.array([(x, y) for x in (b[0], b[1]) for y in (b[2], b[3])])
             s = (corners - o[:2]) @ side[:2]
@@ -727,8 +776,12 @@ class Scene:
             base = np.array([o[0], o[1], 0.0])
             pts = [base + side * lo + (0, 0, z0), base + side * hi + (0, 0, z0),
                    base + side * hi + (0, 0, z1), base + side * lo + (0, 0, z1)]
-        self._cut_plane.points = np.array(pts, dtype=float)
-        self._cut_plane.Modified()
+            self._set_sheet("face", pts)
+
+    def _set_sheet(self, cut: str, pts):
+        quad = self._sheets[cut][0]
+        quad.points = np.array(pts, dtype=float)
+        quad.Modified()
 
     def _set_depth_peeling(self, on: bool):
         """Depth peeling on our own renderer, directly. pyvista's enable_depth_peeling() first

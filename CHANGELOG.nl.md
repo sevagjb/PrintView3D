@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.27.0
+- **Beide sneden tegelijk** ([#70](https://github.com/sevagjb/PrintView3D/issues/70)): **Van boven afsnijden** (`C`) en **Afsnijden vanaf jouw kant** (`V`)
+  kunnen nu samen aan, voor een hoek eruit gesneden. Elke toets zet zijn eigen snede aan en uit, en het
+  zijpaneel heeft voor elk een schuif, **Hoogte** en **Diepte**. Het weggesneden deel blijft één
+  gelijkmatige schim, nooit donkerder waar de sneden elkaar overlappen, en elk snijvlak stopt waar de
+  andere snede is. **Uitzetten** en **Weergave herstellen** zetten beide uit.
+- **Met dank aan [@covrig](https://github.com/covrig)** voor het idee en de vraag om een gelijkmatige schim.
+
 ## 0.26.0
 - **Zie wat een snede wegneemt** ([#66](https://github.com/sevagjb/PrintView3D/issues/66)): bij **Van boven afsnijden** of **Afsnijden vanaf jouw kant**
   blijft het deel dat de snede verbergt zichtbaar als een witte, doorzichtige schim met omlijnde randen,

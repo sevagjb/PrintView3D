@@ -116,7 +116,7 @@ def test_clip_starts_halfway_and_follows_the_slider(window):
 
     w.clip_slider.setValue(250)
     assert w.scene.clip_z == pytest.approx(10.0)
-    plane = w.scene._clip_plane
+    plane = w.scene._top_plane
     assert plane.GetOrigin()[2] == pytest.approx(10.0)
     assert plane.GetNormal() == pytest.approx((0, 0, -1))           # keeps what is below
 
@@ -189,7 +189,7 @@ def test_arabic_keeps_the_slider_left_to_right(window, app):
 def _face_normal_after(w, view):
     w.scene.set_view(view, render=False)
     w.scene._update_face_plane()             # what happens before every frame
-    return w.scene._clip_plane.GetNormal()
+    return w.scene._face_plane.GetNormal()
 
 
 def test_clip_facing_you_starts_through_the_centre_and_follows_the_slider(window):
@@ -202,11 +202,11 @@ def test_clip_facing_you_starts_through_the_centre_and_follows_the_slider(window
     assert _planes(w) == [1, 1, 1]
     assert all(a.GetBackfaceProperty() is not None for a in w.scene.model_actors)
     reach = w.scene.model_face_reach()
-    w.clip_slider.setValue(w.CLIP_STEPS)                     # all the way: further away
+    w.face_slider.setValue(w.CLIP_STEPS)                     # all the way: further away
     assert w.scene.clip_face == pytest.approx(reach)
-    w.clip_slider.setValue(0)                                # nearer
+    w.face_slider.setValue(0)                                # nearer
     assert w.scene.clip_face == pytest.approx(-reach)
-    assert "−" in w.clip_info.text()
+    assert "−" in w.face_info.text()
 
 
 def test_clip_facing_you_turns_with_the_view_and_stays_upright(window):
@@ -234,30 +234,71 @@ def test_clip_facing_you_goes_through_the_centre_of_the_view(window):
     cam.focal_point = tuple(np.array(cam.focal_point) + (25.0, 7.0, 0.0))
     cam.position = tuple(np.array(cam.position) + (25.0, 7.0, 0.0))
     w.scene._update_face_plane()
-    origin = np.array(w.scene._clip_plane.GetOrigin())
+    origin = np.array(w.scene._face_plane.GetOrigin())
     assert origin[:2] == pytest.approx(np.array(cam.focal_point)[:2])
-    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.75))         # further away: along +Y here
+    w.face_slider.setValue(int(w.CLIP_STEPS * 0.75))         # further away: along +Y here
     w.scene._update_face_plane()
     d = w.scene.clip_face
     assert d > 0
-    assert w.scene._clip_plane.GetOrigin()[1] == pytest.approx(cam.focal_point[1] + d)
+    assert w.scene._face_plane.GetOrigin()[1] == pytest.approx(cam.focal_point[1] + d)
 
 
-def test_one_cut_at_a_time(window):
+def test_both_cuts_at_the_same_time(window):
+    """#70 (covrig): Clip from the top and Clip facing you together, a slider each."""
     w = window
     w.load_sync(INSIDE)
     w.act_clip.trigger()
-    w.clip_slider.setValue(100)
-    w.act_clip_face.trigger()                                 # the other cut: top goes off
-    assert w.act_clip_face.isChecked() and not w.act_clip.isChecked()
-    assert w.scene.clip_z is None and w.scene.clip_face == pytest.approx(0.0)
-    assert w.clip_slider.value() == w.CLIP_STEPS // 2         # starts in the middle
-    assert w.clip_box.isVisible() and _planes(w) == [1, 1, 1]
-    w.act_clip.trigger()                                      # and back
-    assert w.act_clip.isChecked() and not w.act_clip_face.isChecked()
-    assert w.scene.clip_face is None and w.scene.clip_z == pytest.approx(20.0)
-    assert w.scene._clip_plane.GetNormal() == pytest.approx((0, 0, -1))
+    w.clip_slider.setValue(250)                               # 10 mm
+    w.act_clip_face.trigger()                                 # the other cut joins in
+    assert w.act_clip.isChecked() and w.act_clip_face.isChecked()
+    assert w.scene.clip_z == pytest.approx(10.0)              # the height cut stays where it was
+    assert w.scene.clip_face == pytest.approx(0.0)            # the new one starts in the middle
+    assert _planes(w) == [2, 2, 2]                            # keeps what both keep
+    assert w.clip_box.title() == "Clip"
+    assert w.clip_top_row.isVisible() and w.clip_face_row.isVisible() and w.clip_hint.isVisible()
+    assert "10" in w.clip_info.text() and "Depth" in w.face_info.text()
+    w.face_slider.setValue(750)                               # each slider moves its own cut
+    assert w.scene.clip_z == pytest.approx(10.0) and w.scene.clip_face > 0
+    w.clip_slider.setValue(500)
+    assert w.scene.clip_z == pytest.approx(20.0) and w.scene.clip_face > 0
+    w.act_clip.trigger()                                      # C: only the height cut goes off
+    assert not w.act_clip.isChecked() and w.act_clip_face.isChecked()
+    assert w.scene.clip_z is None and w.scene.clip_face is not None and _planes(w) == [1, 1, 1]
+    assert w.clip_box.isVisible() and w.clip_box.title() == "Clip facing you"
+    assert not w.clip_top_row.isVisible() and w.clip_face_row.isVisible()
+    w.act_clip.trigger()                                      # and back, from the middle
+    assert w.scene.clip_z == pytest.approx(20.0) and _planes(w) == [2, 2, 2]
+    w.act_clip_face.trigger()                                 # V: only the upright cut goes off
+    assert w.scene.clip_face is None and w.scene.clip_z is not None and _planes(w) == [1, 1, 1]
+    assert w.scene.model_actors[0].GetMapper().GetClippingPlanes().GetItem(0) is w.scene._top_plane
     assert w.clip_box.title() == "Clip from the top" and not w.clip_hint.isVisible()
+
+
+def test_turn_off_and_reset_view_end_both_cuts(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    w.act_clip_face.trigger()
+    w.clip_off_btn.click()
+    assert not w.act_clip.isChecked() and not w.act_clip_face.isChecked()
+    assert w.clip_box.isHidden() and _planes(w) == [0, 0, 0]
+    w.act_clip.trigger()
+    w.act_clip_face.trigger()
+    w.reset_view()
+    assert not w.act_clip.isChecked() and not w.act_clip_face.isChecked()
+    assert w.scene.clip_z is None and w.scene.clip_face is None and _planes(w) == [0, 0, 0]
+
+
+def test_both_cuts_stay_on_for_the_next_model(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    w.act_clip_face.trigger()
+    w.load_sync(GCODE)
+    assert w.clip_box.isHidden()
+    w.load_sync(CUBE)
+    assert w.clip_box.isVisible() and w.clip_box.title() == "Clip"
+    assert w.scene.clip_z is not None and w.scene.clip_face is not None and _planes(w) == [2]
 
 
 def test_clip_facing_you_turn_off(window):

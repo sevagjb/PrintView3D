@@ -138,7 +138,7 @@ def make_videos(c: Capture):
     c.off()
     c.iso()
     w.act_clip_face.setChecked(True)
-    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.52))
+    w.face_slider.setValue(int(w.CLIP_STEPS * 0.52))
     c.video("clip-facing", c.turn(8.0))
 
     # Clip from the top: the cut moves down through the model and back up, turning slowly.
@@ -152,7 +152,7 @@ def make_videos(c: Capture):
     values += values[::-1]
 
     def step(v):
-        return lambda: (w.clip_slider.setValue(v), cam.Azimuth(40.0 / len(values)))
+        return lambda: (w.face_slider.setValue(v), cam.Azimuth(40.0 / len(values)))
     c.video("clip-top", [step(v) for v in values], poster_at=0.4)   # poster: cut part-way down
 
     # X-ray: see-through, once round.
@@ -179,11 +179,11 @@ def make_stills(c: Capture, lang: str):
     c.iso()
     c.still(f"objects{sfx}.png")                    # Objects list with each object's size
     w.act_clip_face.setChecked(True)
-    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.52))
+    w.face_slider.setValue(int(w.CLIP_STEPS * 0.52))
     c.still(f"clip-facing{sfx}.png")                # the cut and its box in the side panel
     c.off()
     w.act_clip.setChecked(True)
-    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.45))
+    w.face_slider.setValue(int(w.CLIP_STEPS * 0.45))
     w.act_xray.setChecked(True)
     c.still(f"xray-clip{sfx}.png")                  # options work together
     c.off()
