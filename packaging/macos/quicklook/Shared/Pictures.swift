@@ -42,7 +42,9 @@ enum Pictures {
     static func thumbnail(url: URL, maxPixels: Int) -> CGImage? {
         guard let kind = PV3DKind(url: url), let file = MappedFile(url: url) else { return nil }
         let px = min(max(maxPixels, 64), 1024)
-        if let pic = file.embeddedPicture(kind), let img = decode(pic, maxPixels: maxPixels) {
+        // A saved picture is used unless it is a tiny placeholder and the model can be drawn.
+        if let pic = file.embeddedPicture(kind), let img = decode(pic, maxPixels: maxPixels),
+           !kind.hasMesh || max(img.width, img.height) >= 32 {
             return img
         }
         switch kind {
