@@ -585,7 +585,7 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Reset view</source>
         <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
-        <translation type="unfinished">Weergave herstellen</translation>
+        <translation>Weergave herstellen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1961,7 +1961,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Reset view: all of the above off, model fitted (models)</source>
-        <translation type="unfinished">Weergave herstellen: alles hierboven uit, model passend (modellen)</translation>
+        <translation>Weergave herstellen: alles hierboven uit, model passend (modellen)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
