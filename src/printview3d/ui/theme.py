@@ -448,6 +448,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QGroupBox::title {{ subcontrol-origin: margin; left: 10px; padding: 0 4px; color: {t['group_title']}; }}
         QLabel#fileName {{ font-size: 15px; font-weight: 600; }}
         QLabel#muted, QLabel#formKey, QLabel#objectSize {{ color: {t['muted']}; }}
+        QLabel#kindLabel {{ color: {t['muted']}; font-weight: 700; }}
         QLabel#objectSize {{ font-weight: 400; }}
         QLabel#thumbnail {{ background: {t['thumb']}; border-radius: 6px; padding: 6px; }}
         QPushButton {{ padding: 5px 12px; border-radius: 5px; background: {t['button']}; border: 1px solid {t['button_border']}; }}
@@ -498,6 +499,11 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
             background: transparent; color: {t['text']}; font-weight: 600; }}
         QToolButton#segment:hover {{ background: {t['tool_hover']}; }}
         QToolButton#segment:checked {{ background: {segment}; color: white; }}
+        QToolButton#sectionButton {{ background: {t['button']}; border: 1px solid {t['button_border']};
+            border-radius: 6px; padding: 4px 8px; color: {t['text']}; font-weight: 600; }}
+        QToolButton#sectionButton:hover {{ background: {t['button_hover']}; border-color: {t['muted']}; }}
+        QToolButton#sectionButton:checked {{ background: {t['tool_checked']}; border-color: {accent}; }}
+        QToolButton#sectionButton:disabled {{ color: {t['disabled']}; }}
         QToolButton#segment:disabled {{ color: {t['disabled']}; }}
         QToolButton#segment:checked:disabled {{ background: {t['tool_checked']}; }}
     """ + (_mica_css(t, _current) if mica else ""))
@@ -979,6 +985,91 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
             star.quadTo(cx, cy, cx - r, cy)
             star.quadTo(cx, cy, cx, cy - r)
             p.fillPath(star, fg)
+    elif kind == "view":                         # eye
+        eye = QPainterPath()
+        eye.moveTo(6, 32)
+        eye.quadTo(32, 6, 58, 32)
+        eye.quadTo(32, 58, 6, 32)
+        p.drawPath(eye)
+        p.save()
+        p.setPen(Qt.NoPen)
+        p.setBrush(fg)
+        p.drawEllipse(QPointF(32, 32), 7, 7)
+        p.restore()
+    elif kind == "plate":                        # a build plate with its grid, seen from above and aside
+        a, b, c, d = QPointF(6, 47), QPointF(22, 19), QPointF(58, 19), QPointF(42, 47)
+        poly = QPainterPath()
+        poly.moveTo(a)
+        for q in (b, c, d):
+            poly.lineTo(q)
+        poly.closeSubpath()
+        p.drawPath(poly)
+        p.drawLine(QPointF(14, 33), QPointF(50, 33))
+        p.drawLine(QPointF(40, 19), QPointF(24, 47))
+    elif kind == "measure":                      # ruler
+        p.save()
+        p.translate(32, 32)
+        p.rotate(-45)
+        p.drawRoundedRect(QRectF(-27, -9, 54, 18), 3, 3)
+        for x in (-17, -7, 3, 13):
+            p.drawLine(QPointF(x, -9), QPointF(x, 0))
+        p.restore()
+    elif kind == "distance":                     # two points and the line between them
+        p.drawLine(QPointF(14, 48), QPointF(50, 16))
+        p.save()
+        p.setBrush(fg)
+        p.drawEllipse(QPointF(14, 48), 6, 6)
+        p.drawEllipse(QPointF(50, 16), 6, 6)
+        p.restore()
+    elif kind == "angle":                        # two sides and the arc between them
+        p.drawLine(QPointF(10, 50), QPointF(56, 50))
+        p.drawLine(QPointF(10, 50), QPointF(42, 12))
+        p.drawArc(QRectF(10 - 24, 50 - 24, 48, 48), 0, 50 * 16)
+    elif kind == "circle":                       # a circle with its diameter
+        p.drawEllipse(QPointF(32, 32), 24, 24)
+        p.drawLine(QPointF(8, 32), QPointF(56, 32))
+        p.save()
+        p.setPen(Qt.NoPen)
+        p.setBrush(fg)
+        p.drawEllipse(QPointF(32, 32), 4, 4)
+        p.restore()
+    elif kind in ("wireframe", "xray", "clip_top", "clip_face"):
+        # A cube in isometric view; each symbol adds what its option does to it.
+        top, tr_, br, bot = QPointF(32, 7), QPointF(55, 20), QPointF(55, 46), QPointF(32, 59)
+        bl, tl, mid = QPointF(9, 46), QPointF(9, 20), QPointF(32, 33)
+        hexagon = QPainterPath()
+        hexagon.moveTo(top)
+        for q in (tr_, br, bot, bl, tl):
+            hexagon.lineTo(q)
+        hexagon.closeSubpath()
+        p.drawPath(hexagon)
+        if kind in ("wireframe", "xray"):
+            front = ((mid, tl), (mid, tr_), (mid, bot))
+            hidden = ((mid, top), (mid, bl), (mid, br))
+            for q1, q2 in front:
+                p.drawLine(q1, q2)
+            p.save()
+            if kind == "xray":                   # see-through: the back edges are faint
+                faint = QColor(fg)
+                faint.setAlphaF(0.4)
+                p.setPen(QPen(faint, p.pen().widthF(), Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+            for q1, q2 in hidden:
+                p.drawLine(q1, q2)
+            p.restore()
+        elif kind == "clip_top":                 # a flat cut across, from above
+            p.drawLine(QPointF(9, 33), QPointF(32, 46))
+            p.drawLine(QPointF(32, 46), QPointF(55, 33))
+        else:                                    # an upright cut, facing you
+            p.drawLine(QPointF(32, 7), QPointF(32, 59))
+            p.drawLine(QPointF(9, 33), QPointF(32, 46))
+    elif kind == "reset":                        # a circular arrow
+        p.drawArc(QRectF(10, 10, 44, 44), 60 * 16, 290 * 16)
+        head = QPainterPath()
+        head.moveTo(48, 6)
+        head.lineTo(52, 22)
+        head.lineTo(36, 20)
+        head.closeSubpath()
+        p.fillPath(head, fg)
     elif kind == "export":                       # page with an arrow going out
         page = QPainterPath()
         page.moveTo(40, 56)
@@ -996,7 +1087,9 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
 
 
 TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
-              "settings", "updates", "about", "whats_new")
+              "settings", "updates", "about", "whats_new",
+              "view", "plate", "measure", "distance", "angle", "circle",
+              "wireframe", "xray", "clip_top", "clip_face", "reset")
 
 
 def tool_icon(kind: str, on_accent: bool = False, warm: bool = False) -> QIcon:

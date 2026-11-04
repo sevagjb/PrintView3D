@@ -10,9 +10,10 @@ from typing import Optional
 
 import numpy as np
 from PySide6.QtCore import QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
-from PySide6.QtGui import QAction, QActionGroup, QColor, QDesktopServices, QGuiApplication, QIcon, QKeySequence, QPixmap, QShortcut
+from PySide6.QtGui import (QAction, QActionGroup, QColor, QDesktopServices, QFont, QFontMetrics, QGuiApplication, QIcon,
+                           QKeySequence, QPixmap, QShortcut)
 from PySide6.QtWidgets import (
-    QAbstractItemView, QApplication, QCheckBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QAbstractItemView, QApplication, QCheckBox, QColorDialog, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QScrollArea,
     QSizePolicy, QSlider, QSpinBox, QSplitter, QStackedWidget, QToolBar,
     QToolButton, QVBoxLayout, QWidget,
@@ -144,6 +145,188 @@ class _LoadSignals(QObject):
 class _ExportSignals(QObject):
     done = Signal(str, object)      # path, list of MeshPart
     failed = Signal(str, str)       # path, error
+
+
+class _FitButton(QToolButton):
+    """A button of the View or Measure section whose name always shows in full. When the panel is
+    too narrow it first gets a smaller font, then loses its icon and, as a last resort, shows only
+    the icon (the tooltip has the name). Characters are never cut off. The buttons of one group
+    (a row or grid) all take the same step, so they keep looking alike."""
+
+    SCALES = (1.0, 0.92, 0.84)                       # font sizes it tries, of the normal size
+    PAD = 20                                         # the button's padding and border, both sides
+    ICON = 22 + 6                                    # the icon and the space after it
+    LEVELS = len(SCALES) + 2                         # 0..2 icon + smaller font, 3 text only, 4 icon only
+
+    def __init__(self, group: list, parent=None):
+        super().__init__(parent)
+        self.group = group
+        group.append(self)
+        self._base = None
+        self._level = None
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+    def setDefaultAction(self, action):
+        super().setDefaultAction(action)
+        action.changed.connect(self.fit)
+
+    def minimumSizeHint(self):
+        return QSize(self.PAD + 2, super().sizeHint().height())     # never makes the panel wider
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        self.fit()
+
+    def _font(self, scale: float) -> QFont:
+        if self._base is None:
+            self._base = QFont(self.font())
+        f = QFont(self._base)
+        if self._base.pointSizeF() > 0:
+            f.setPointSizeF(self._base.pointSizeF() * scale)
+        else:
+            f.setPixelSize(max(6, int(self._base.pixelSize() * scale)))
+        f.setWeight(QFont.DemiBold)
+        return f
+
+    def level_needed(self) -> int:
+        """The first step at which the whole name fits in the button's width."""
+        action = self.defaultAction()
+        if action is None:
+            return 0
+        text = action.text().replace("&", "")
+        room = self.width() - self.PAD
+        for level, scale in enumerate(self.SCALES):
+            if QFontMetrics(self._font(scale)).horizontalAdvance(text) + self.ICON <= room:
+                return level
+        if QFontMetrics(self._font(self.SCALES[-1])).horizontalAdvance(text) <= room:
+            return len(self.SCALES)                  # no icon
+        return len(self.SCALES) + 1                  # only the icon
+
+    def apply_level(self, level: int):
+        if level == self._level:
+            return
+        self._level = level
+        n = len(self.SCALES)
+        self.setFont(self._font(self.SCALES[min(level, n - 1)]) if level < n + 1 else self._font(1.0))
+        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon if level < n else
+                                Qt.ToolButtonTextOnly if level == n else Qt.ToolButtonIconOnly)
+
+    def fit(self):
+        """Every button of the group takes the step the narrowest one needs."""
+        if self.defaultAction() is None or self.width() <= 1:
+            return
+        level = max(b.level_needed() for b in self.group if b.width() > 1 and b.defaultAction() is not None)
+        for b in self.group:
+            b.apply_level(level)
+
+
+class _FitLabel(QLabel):
+    """A label that always stays on one line: when the panel is too narrow its font gets smaller
+    (down to MIN_SCALE of the normal size) until the whole text fits."""
+
+    MIN_SCALE = 0.7
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWordWrap(False)
+        self._base = None
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+
+    def setText(self, text: str):
+        super().setText(text)
+        self._fit()
+
+    def minimumSizeHint(self):
+        return QSize(0, super().sizeHint().height())
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        self._fit()
+
+    def _fit(self):
+        if self._base is None:
+            self._base = QFont(self.font())
+        room = self.width() - self.contentsMargins().left() - self.contentsMargins().right() - 2
+        if room <= 1 or not self.text():
+            return
+        scale = 1.0
+        while scale > self.MIN_SCALE:
+            f = QFont(self._base)
+            if self._base.pointSizeF() > 0:
+                f.setPointSizeF(self._base.pointSizeF() * scale)
+            else:
+                f.setPixelSize(max(6, int(self._base.pixelSize() * scale)))
+            if QFontMetrics(f).horizontalAdvance(self.text()) <= room:
+                break
+            scale -= 0.05
+        f = QFont(self._base)
+        if self._base.pointSizeF() > 0:
+            f.setPointSizeF(self._base.pointSizeF() * max(scale, self.MIN_SCALE))
+        else:
+            f.setPixelSize(max(6, int(self._base.pixelSize() * max(scale, self.MIN_SCALE))))
+        if f != self.font():
+            self.setFont(f)
+
+
+class _FitRow(QWidget):
+    """Widgets side by side while they fit; when the panel is too narrow, one under the other."""
+
+    def __init__(self, widgets, spacing: int = 16, parent=None):
+        super().__init__(parent)
+        self._widgets = list(widgets)
+        self._spacing = spacing
+        self._stacked = None
+        self._grid = QGridLayout(self)
+        self._grid.setContentsMargins(0, 0, 0, 0)
+        self._grid.setSizeConstraint(QGridLayout.SetNoConstraint)    # free to get narrower than the row
+        self._grid.setHorizontalSpacing(spacing)
+        self._grid.setVerticalSpacing(4)
+        self._arrange(False)
+
+    @property
+    def stacked(self) -> bool:
+        return bool(self._stacked)
+
+    def _needed(self) -> int:
+        return sum(w.sizeHint().width() for w in self._widgets) + self._spacing * (len(self._widgets) - 1)
+
+    def _arrange(self, stacked: bool):
+        if stacked == self._stacked:
+            return
+        self._stacked = stacked
+        for w in self._widgets:
+            self._grid.removeWidget(w)
+        for i, w in enumerate(self._widgets):
+            self._grid.addWidget(w, i if stacked else 0, 0 if stacked else i)
+        self._grid.setColumnStretch(len(self._widgets), 0 if stacked else 1)
+        self.updateGeometry()
+
+    def minimumSizeHint(self):
+        return QSize(0, self._grid.minimumSize().height())
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        self._arrange(self.width() < self._needed())
+
+
+class _ColorButton(QToolButton):
+    """The colour box of an object: it shows the object's colour, a click picks another one and a
+    right-click goes back to the colour from the file."""
+
+    def __init__(self, color: str, parent=None):
+        super().__init__(parent)
+        self.setObjectName("colorBox")
+        self.setFixedSize(22, 22)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.set_color(color)
+
+    def set_color(self, color: str):
+        self.color = color
+        self.setStyleSheet(
+            "QToolButton#colorBox {{ background: {c}; border: 1px solid rgba(128, 128, 128, 0.7);"
+            " border-radius: 5px; padding: 0; margin: 0; }}"
+            "QToolButton#colorBox:hover {{ border: 2px solid palette(highlight); }}".format(c=color))
 
 
 class _ElidedLabel(QLabel):
@@ -352,6 +535,10 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(200, lambda: self.mica and win_mica.set_dark(int(self.winId()), theme.is_dark()))
         self.scene.set_colors(theme.colors())
         self.view_cube.set_colors(theme.colors())
+        if hasattr(self, "measure"):
+            self.measure.set_colors(theme.colors())
+            self.hints.set_colors(theme.colors())
+            self.grid_labels.set_colors(theme.colors())
         self._update_theme_button()
         self.refresh_update_badge()
         # The ZIP list's type labels take their text colour from the theme when they are made.
@@ -562,22 +749,36 @@ class MainWindow(QMainWindow):
         self.act_clip_face.toggled.connect(self.set_clip_face_on)
         # Reset view (#66): all of the above off and the model fitted, in one go.
         self.act_reset_view = QAction(self, shortcut=QKeySequence("R"), triggered=self.reset_view)
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view):
+        # Measure: distances, angles and circles on the model; a click places a point.
+        self.act_measure = QAction(self, checkable=True, shortcut=QKeySequence("M"))
+        self.act_measure.toggled.connect(self.set_measure_on)
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view,
+                  self.act_measure):
             self.addAction(a)                   # the shortcuts work wherever the focus is
-        self.view_menu = QMenu(self)
-        self.view_menu.addAction(self.act_wireframe)
-        self.view_menu.addAction(self.act_xray)
-        self.view_menu.addSeparator()
-        self.view_menu.addAction(self.act_clip)
-        self.view_menu.addAction(self.act_clip_face)
-        self.view_menu.addSeparator()
-        self.view_menu.addAction(self.act_reset_view)
+        # The View and Measure buttons are switches: each opens its own section in the side panel
+        # (View: how the model is drawn and cut; Measure: distances, angles and circles).
+        self.act_view = QAction(self, checkable=True)
+        self.act_view.toggled.connect(self.set_view_section)
         self.view_btn = QToolButton()
         self.view_btn.setObjectName("viewButton")
-        self.view_btn.setToolButtonStyle(Qt.ToolButtonTextOnly)
-        self.view_btn.setMenu(self.view_menu)
-        self.view_btn.setPopupMode(QToolButton.InstantPopup)
+        self.view_btn.setIconSize(QSize(22, 22))
+        self.view_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.view_btn.setDefaultAction(self.act_view)
         tb.addWidget(self.view_btn)
+        self.measure_group = QActionGroup(self)
+        self.measure_actions = {}
+        for kind in ("distance", "angle", "circle"):
+            a = QAction(self, checkable=True)
+            a.triggered.connect(lambda _=False, k=kind: self.choose_measure_mode(k))
+            self.measure_group.addAction(a)
+            self.measure_actions[kind] = a
+        self.measure_actions[self._measure_mode_setting()].setChecked(True)
+        self.measure_btn = QToolButton()
+        self.measure_btn.setObjectName("viewButton")
+        self.measure_btn.setIconSize(QSize(22, 22))
+        self.measure_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.measure_btn.setDefaultAction(self.act_measure)
+        tb.addWidget(self.measure_btn)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -629,6 +830,16 @@ class MainWindow(QMainWindow):
         self.act_updates.setIcon(theme.tool_icon("updates"))
         self.act_about.setIcon(theme.tool_icon("about"))
         self.act_whats_new.setIcon(theme.tool_icon("whats_new"))
+        # Plate, View and Measure; the buttons of the View and Measure sections.
+        filled = theme.filled_view_buttons()
+        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled))
+        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled))
+        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled))
+        for kind, a in self.measure_actions.items():
+            a.setIcon(theme.tool_icon(kind))
+        for a, kind in ((self.act_wireframe, "wireframe"), (self.act_xray, "xray"), (self.act_clip, "clip_top"),
+                        (self.act_clip_face, "clip_face"), (self.act_reset_view, "reset")):
+            a.setIcon(theme.tool_icon(kind))
 
     def _build_preview_page(self) -> QWidget:
         page = QWidget()
@@ -736,6 +947,7 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        self.scene.on_face_plane = lambda: self._update_clip_label()
         self.scene.show_ghost = bool(self.settings.get("clip_ghost", True))
         self.scene.show_cut_plane = bool(self.settings.get("clip_plane", True))
         self.scene.set_ghost_strength(self.settings.get("ghost_strength", 50))
@@ -747,6 +959,25 @@ class MainWindow(QMainWindow):
         self.view_cube.set_visible(bool(self.settings.get("show_view_cube", True)))
         self.controls.cube = self.view_cube
         self.controls.on_cube_view = self._cube_view
+        from .measure import MeasureTool
+        self.measure = MeasureTool(self.plotter, self.scene, self._update_measure_panel,
+                                   self.controls.request_render)
+        self.measure.set_snap(True)
+        self.measure.set_dotted(bool(self.settings.get("measure_dotted", False)))
+        self.measure.set_deltas(bool(self.settings.get("measure_deltas", False)))
+        self.measure.set_line_width(self.settings.get("measure_line_width", 4))
+        self.measure.set_colors(theme.colors())
+        self.measure.set_mode(self._measure_mode_setting())
+        self.controls.measure = self.measure
+        # Instructions at the bottom of the 3D view, and the millimetre numbers on the plate's grid.
+        from .grid_labels import GridLabels
+        from .overlay_text import HintOverlay
+        self.hints = HintOverlay(self.plotter, self.controls.request_render)
+        self.hints.set_colors(theme.colors())
+        self.grid_labels = GridLabels(self.plotter, self.scene, self.controls.request_render)
+        self.grid_labels.set_colors(theme.colors())
+        self.grid_labels.set_step(self.settings.get("grid_labels_step", 0))
+        self.grid_labels.set_enabled(bool(self.settings.get("show_grid_labels", False)))
         self.view_cube.set_tooltips(self._cube_tooltips())
         self._update_view_buttons()
         # The 3D view, or (FreeCAD file without FreeCAD) a large preview picture.
@@ -765,25 +996,35 @@ class MainWindow(QMainWindow):
         scroll.setWidget(self.side)
         scroll.setMinimumWidth(290)
         scroll.setMaximumWidth(420)
+        self.side_scroll = scroll
+        self._side_width = 310                      # its width before it was dragged shut
         splitter.addWidget(scroll)
         splitter.setStretchFactor(0, 1)
         splitter.setStretchFactor(1, 0)
         splitter.setSizes([1000, 310])
+        splitter.splitterMoved.connect(self._remember_side_width)
         self.stack.addWidget(splitter)
 
         self._build_side_panel()
         self.setCentralWidget(self.stack)
 
+    def _section_button(self, action: QAction, group: list) -> QToolButton:
+        """A button of the View or Measure section: the action's icon and name, lit while it is on.
+        In a narrow panel the name gets a smaller font, then the icon goes (see _FitButton)."""
+        b = _FitButton(group)
+        b.setObjectName("sectionButton")
+        b.setIconSize(QSize(22, 22))
+        b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        b.setDefaultAction(action)
+        return b
+
     def _build_side_panel(self):
         L = self.side_layout
 
-        self.name_label = QLabel()
-        self.name_label.setObjectName("fileName")
-        self.name_label.setWordWrap(True)
-        self.name_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-        L.addWidget(self.name_label)
+        # What the file is. Its name is in the window title already.
         self.kind_label = QLabel()
-        self.kind_label.setObjectName("muted")
+        self.kind_label.setObjectName("kindLabel")
+        self.kind_label.setWordWrap(True)
         L.addWidget(self.kind_label)
 
         # The picture the slicer saved in the file. Next to the 3D view it mostly shows the same
@@ -806,11 +1047,49 @@ class MainWindow(QMainWindow):
         self.zip_layout = QVBoxLayout(self.zip_box)
         L.addWidget(self.zip_box)
 
-        # View -> Clip (issues #60, #70): one box with a row per cut, shown while that cut is
-        # on: the height of Clip from the top and the depth of Clip facing you. Both cuts can be
-        # on together. Like the layer slider the sliders always run left-to-right.
-        self.clip_box = QGroupBox()
+        # The objects come first (what you use most), the details last (something you read). A long
+        # description no longer pushes the objects off the screen (#62). Each object has a colour
+        # box: a click picks another colour for that object (kept until the program closes).
+        self.objects_box = QGroupBox()
+        box_layout = QVBoxLayout(self.objects_box)
+        box_layout.setContentsMargins(0, 0, 0, 0)
+        self.objects_scroll = QScrollArea()
+        self.objects_scroll.setObjectName("objectsScroll")
+        self.objects_scroll.setWidgetResizable(True)
+        self.objects_scroll.setFrameShape(QScrollArea.NoFrame)
+        self.objects_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        objects_list = QWidget()
+        objects_list.setObjectName("objectsList")
+        self.objects_layout = QVBoxLayout(objects_list)
+        self.objects_scroll.setWidget(objects_list)
+        box_layout.addWidget(self.objects_scroll)
+        self.objects_hint = _FitLabel()              # how to change an object's colour: one line
+        self.objects_hint.setObjectName("muted")
+        self.objects_hint.setContentsMargins(10, 0, 10, 6)
+        box_layout.addWidget(self.objects_hint)
+        L.addWidget(self.objects_box)
+
+        self.embedded_box = QGroupBox()
+        self.embedded_layout = QVBoxLayout(self.embedded_box)
+        L.addWidget(self.embedded_box)
+
+        # The View button's section: how the model is drawn and cut, all as buttons. The controls of
+        # a cut (its slider, the ghost and the plane) appear in it while that cut is on.
+        self.view_box = QGroupBox()
+        vl = QVBoxLayout(self.view_box)
+        vg = QGridLayout()
+        vg.setSpacing(6)
+        view_group: list = []                     # these buttons shrink together in a narrow panel
+        for i, act in enumerate((self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face)):
+            vg.addWidget(self._section_button(act, view_group), i // 2, i % 2)
+        vl.addLayout(vg)
+
+        # View -> Clip (issues #60, #70): a row per cut, shown while that cut is on: the height of
+        # Clip from the top and the depth of Clip facing you. Both can be on together. Like the
+        # layer slider the sliders always run left-to-right.
+        self.clip_box = QWidget()
         cl = QVBoxLayout(self.clip_box)
+        cl.setContentsMargins(0, 0, 0, 0)
         self.clip_top_row = QWidget()
         tl = QVBoxLayout(self.clip_top_row)
         tl.setContentsMargins(0, 0, 0, 0)
@@ -826,7 +1105,7 @@ class MainWindow(QMainWindow):
         self.clip_face_row = QWidget()
         fl = QVBoxLayout(self.clip_face_row)
         fl.setContentsMargins(0, 0, 0, 0)
-        self.face_info = QLabel()                 # Depth … mm
+        self.face_info = QLabel()                 # Depth … of … mm
         fl.addWidget(self.face_info)
         self.face_slider = QSlider(Qt.Horizontal)
         self.face_slider.setLayoutDirection(Qt.LeftToRight)
@@ -834,10 +1113,6 @@ class MainWindow(QMainWindow):
         self.face_slider.setValue(self.CLIP_STEPS // 2)
         self.face_slider.valueChanged.connect(self._on_face_changed)
         fl.addWidget(self.face_slider)
-        self.clip_hint = QLabel()                 # Clip facing you: how to use it
-        self.clip_hint.setObjectName("muted")
-        self.clip_hint.setWordWrap(True)
-        fl.addWidget(self.clip_hint)
         cl.addWidget(self.clip_face_row)
         # What the cut hides, as a see-through ghost, and the cutting plane, each on its own (#66).
         # Here, under the slider, where you look while cutting (3D Builder's Split puts it there
@@ -850,43 +1125,61 @@ class MainWindow(QMainWindow):
         self.clip_plane_cb.setChecked(bool(self.settings.get("clip_plane", True)))
         self.clip_plane_cb.toggled.connect(self.set_clip_plane)
         cl.addWidget(self.clip_plane_cb)
-        self.clip_off_btn = QPushButton()
-        self.clip_off_btn.clicked.connect(self._clip_off)
-        off_row = QHBoxLayout()
-        off_row.addStretch(1)
-        off_row.addWidget(self.clip_off_btn)
-        cl.addLayout(off_row)
-        L.addWidget(self.clip_box)
+        # Freezes the "Clip facing you" cut where it is, so you can turn and move the model
+        # without the cut turning along (Clip from the top never moves).
+        self.view_freeze_cb = QCheckBox()
+        self.view_freeze_cb.toggled.connect(self.set_cut_frozen)
+        cl.addWidget(self.view_freeze_cb)
+        self.clip_box.hide()
+        vl.addWidget(self.clip_box)
 
-        # Objects above Details: the object checkboxes are something you use, the details only
-        # something you read, and a long description no longer pushes them off the screen (#62).
-        self.objects_box = QGroupBox()
-        box_layout = QVBoxLayout(self.objects_box)
-        box_layout.setContentsMargins(0, 0, 0, 0)
-        self.objects_scroll = QScrollArea()
-        self.objects_scroll.setObjectName("objectsScroll")
-        self.objects_scroll.setWidgetResizable(True)
-        self.objects_scroll.setFrameShape(QScrollArea.NoFrame)
-        self.objects_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        objects_list = QWidget()
-        objects_list.setObjectName("objectsList")
-        self.objects_layout = QVBoxLayout(objects_list)
-        self.objects_scroll.setWidget(objects_list)
-        box_layout.addWidget(self.objects_scroll)
-        L.addWidget(self.objects_box)
+        vrow = QHBoxLayout()
+        self.view_reset_btn = QPushButton()
+        self.view_reset_btn.clicked.connect(self.reset_view)
+        self.view_close_btn = QPushButton()
+        self.view_close_btn.clicked.connect(lambda: self.act_view.setChecked(False))
+        vrow.addStretch(1)
+        vrow.addWidget(self.view_reset_btn)
+        vrow.addWidget(self.view_close_btn)
+        vl.addLayout(vrow)
+        self.view_box.hide()
+        L.addWidget(self.view_box)
 
-        self.details_box = QGroupBox()
-        self.details_form = QFormLayout(self.details_box)
-        # Side by side, a row needs its name AND its value next to each other: with a compound
-        # word ("Filamentprofiel") and an unbreakable value, or a bigger font (Windows display
-        # scaling), that made the panel wider than its view. A row that doesn't fit puts the
-        # value under its name instead; rows that fit stay side by side.
-        self.details_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
-        L.addWidget(self.details_box)
-
-        self.embedded_box = QGroupBox()
-        self.embedded_layout = QVBoxLayout(self.embedded_box)
-        L.addWidget(self.embedded_box)
+        # The Measure button's section: what to measure, and how. The values themselves are
+        # written next to the measurements in the 3D view.
+        self.measure_box = QGroupBox()
+        ml = QVBoxLayout(self.measure_box)
+        mode_row = QHBoxLayout()
+        mode_row.setSpacing(6)
+        mode_group: list = []
+        for kind in ("distance", "angle", "circle"):
+            mode_row.addWidget(self._section_button(self.measure_actions[kind], mode_group))
+        ml.addLayout(mode_row)
+        # Snapping is on at every start (a choice made last time is not kept: with it off, clicks
+        # land beside the corners you mean).
+        self.measure_snap_cb = QCheckBox()
+        self.measure_snap_cb.setChecked(True)
+        self.measure_snap_cb.toggled.connect(self.set_measure_snap)
+        self.measure_dotted_cb = QCheckBox()
+        self.measure_dotted_cb.setChecked(bool(self.settings.get("measure_dotted", False)))
+        self.measure_dotted_cb.toggled.connect(self.set_measure_dotted)
+        self.measure_deltas_cb = QCheckBox()
+        self.measure_deltas_cb.setChecked(bool(self.settings.get("measure_deltas", False)))
+        self.measure_deltas_cb.toggled.connect(self.set_measure_deltas)
+        # Side by side while they fit, one under the other in a narrow panel.
+        self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb])
+        ml.addWidget(self.measure_opts)
+        mrow = QHBoxLayout()
+        self.measure_clear_btn = QPushButton()
+        self.measure_clear_btn.clicked.connect(self._measure_clear)
+        self.measure_close_btn = QPushButton()
+        self.measure_close_btn.clicked.connect(lambda: self.act_measure.setChecked(False))
+        mrow.addStretch(1)
+        mrow.addWidget(self.measure_clear_btn)
+        mrow.addWidget(self.measure_close_btn)
+        ml.addLayout(mrow)
+        self.measure_box.hide()
+        L.addWidget(self.measure_box)
 
         self.layers_box = QGroupBox()
         ll = QVBoxLayout(self.layers_box)
@@ -931,6 +1224,25 @@ class MainWindow(QMainWindow):
         self.features_layout = QVBoxLayout(self.features_box)
         L.addWidget(self.features_box)
         self.feature_checks: dict[str, QCheckBox] = {}
+
+        # The details, last, and foldable (the choice is remembered): a click on the heading.
+        self.details_box = QGroupBox()
+        dl = QVBoxLayout(self.details_box)
+        self.details_toggle = QLabel()
+        self.details_toggle.setObjectName("moreLink")
+        self.details_toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        self.details_toggle.linkActivated.connect(lambda _=None: self.set_details_open(not self._details_open()))
+        dl.addWidget(self.details_toggle)
+        self.details_body = QWidget()
+        self.details_form = QFormLayout(self.details_body)
+        self.details_form.setContentsMargins(0, 0, 0, 0)
+        # Side by side, a row needs its name AND its value next to each other: with a compound
+        # word ("Filamentprofiel") and an unbreakable value, or a bigger font (Windows display
+        # scaling), that made the panel wider than its view. A row that doesn't fit puts the
+        # value under its name instead; rows that fit stay side by side.
+        self.details_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
+        dl.addWidget(self.details_body)
+        L.addWidget(self.details_box)
 
         L.addStretch(1)
         self._reset_side_panel()
@@ -995,20 +1307,47 @@ class MainWindow(QMainWindow):
         self.act_export_setting.setText(tr("Change what a click does…"))
         self.act_bed.setText(tr("Plate"))
         self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
-        self.view_btn.setText(tr("View"))
-        self.view_btn.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
-        self.act_wireframe.setText(tr("Wireframe") + "\t" + "W")
-        self.act_xray.setText(tr("X-ray (see-through)") + "\t" + "X")
-        self.act_clip.setText(tr("Clip from the top") + "\t" + "C")
-        self.act_clip_face.setText(tr("Clip facing you") + "\t" + "V")
-        self.act_reset_view.setText(tr("Reset view") + "\t" + "R")
+        self.act_view.setText(tr("View"))
+        self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
+        self.view_box.setTitle(tr("View"))
+        # The buttons of the View section are short; the tooltip says it in full.
+        self.act_reset_view.setText(tr("Reset view"))
+        for act, text, tip, key in ((self.act_wireframe, tr("Wireframe"), tr("Wireframe"), "W"),
+                                    (self.act_xray, tr("X-ray"), tr("X-ray (see-through)"), "X"),
+                                    (self.act_clip, tr("Clip from the top"), tr("Clip from the top"), "C"),
+                                    (self.act_clip_face, tr("Clip facing you"), tr("Clip facing you"), "V"),
+                                    (self.act_reset_view, tr("Reset view"), tr("Reset view"), "R")):
+            act.setText(text)
+            act.setToolTip(tip + " (" + key + ")")
+        self.view_reset_btn.setText(tr("Reset view"))
+        self.view_reset_btn.setToolTip(tr("Reset view") + " (R)")
+        self.view_close_btn.setText(tr("Close"))
+        self.view_freeze_cb.setText(tr("Freeze the cutting plane"))
+        self.view_freeze_cb.setToolTip(tr("Keeps the cut of Clip facing you where it is, so you can turn and "
+                                          "move the model without the cut turning along."))
         self._retitle_clip_box()
-        self.clip_hint.setText(tr("Turn or move the view to pass the model through the cut."))
         self.clip_ghost_cb.setText(tr("Show the cut-away part"))
         self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost."))
         self.clip_plane_cb.setText(tr("Show the cutting plane"))
         self.clip_plane_cb.setToolTip(tr("Shows where the cut is, as a faint sheet the size of the model."))
-        self.clip_off_btn.setText(tr("Turn off"))
+        self.act_measure.setText(tr("Measure"))
+        self.act_measure.setToolTip(tr("Measure on the model: distance, angle, circle") + " (M)")
+        self.measure_box.setTitle(tr("Measure"))
+        for kind, a in self.measure_actions.items():
+            a.setText(self._measure_mode_label(kind))
+            a.setToolTip(self._measure_mode_tip(kind))
+        self.objects_hint.setText(tr("Click a colour box to change its colour."))
+        self.measure_snap_cb.setText(tr("Snapping"))
+        self.measure_snap_cb.setToolTip(tr("Jumps to the nearest corner, the middle of an edge or a point on an "
+                                           "edge of the model when the mouse is close to one."))
+        self.measure_dotted_cb.setText(tr("Dotted line"))
+        self.measure_dotted_cb.setToolTip(tr("Draws the measuring lines dotted."))
+        self.measure_deltas_cb.setText(tr("Show ΔX ΔY ΔZ"))
+        self.measure_deltas_cb.setToolTip(tr("Writes the distance along X, Y and Z under the value of every "
+                                             "distance."))
+        self.measure_clear_btn.setText(tr("Clear"))
+        self.measure_close_btn.setText(tr("Close"))
+        self._update_measure_panel()
         self._update_clip_label()
         self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
@@ -1022,7 +1361,7 @@ class MainWindow(QMainWindow):
         self.welcome_sub.setText(tr("Drop a 3D model or G-code file here, or open one."))
         self.welcome_open.setText(tr("Open file…"))
 
-        self.details_box.setTitle(tr("Details"))
+        self._update_details_toggle()
         self.embedded_box.setTitle(tr("Project") if self.showing_embedded else tr("Sliced plates"))
         self.layers_box.setTitle(tr("Layers"))
         self.features_box.setTitle(tr("Features"))
@@ -1065,7 +1404,6 @@ class MainWindow(QMainWindow):
                 MainWindow._clear_layout(item.layout())
 
     def _reset_side_panel(self):
-        self.name_label.setText("")
         self.kind_label.setText("")
         self._show_thumbnail(False)
         while self.details_form.rowCount():
@@ -1087,7 +1425,6 @@ class MainWindow(QMainWindow):
             layer = self.layer_slider.value()
             only = self.only_layer_cb.isChecked()
             self._reset_side_panel()
-            self.name_label.setText(_wrappable(self._display_name()))
             self._fill_gcode_panel(self.gcode)
             for k, on in checks.items():
                 if k in self.feature_checks:
@@ -1100,11 +1437,25 @@ class MainWindow(QMainWindow):
             self._schedule_gcode()
         elif self.model is not None:
             self._reset_side_panel()
-            self.name_label.setText(_wrappable(self._display_name()))
             self._fill_model_panel(self.model)
             if self.view_stack.currentIndex() == 1:
                 self._show_freecad_preview(self.model)
         self._fill_zip_box()
+
+    def _details_open(self) -> bool:
+        return bool(self.settings.get("details_open", True))
+
+    def set_details_open(self, on: bool):
+        """Fold the Details away or show them again; remembered for the next start."""
+        self.settings.set("details_open", bool(on))
+        self._update_details_toggle()
+
+    def _update_details_toggle(self):
+        is_open = self._details_open()
+        closed = "◂" if self.layoutDirection() == Qt.RightToLeft else "▸"
+        self.details_toggle.setText('<a href="#">{} {}</a>'.format("▾" if is_open else closed, tr("Details")))
+        self.details_toggle.setToolTip(tr("Show less") if is_open else tr("Show more"))
+        self.details_body.setVisible(is_open)
 
     def _add_detail(self, key: str, value: str):
         k = QLabel(key)
@@ -1175,8 +1526,18 @@ class MainWindow(QMainWindow):
             return tr("Sliced toolpaths · {plate}").format(plate=_plate_name(self._embedded_member))
         names = {"stl": "STL", "3mf": "3MF", "obj": "OBJ", "ply": "PLY", "off": "OFF", "gltf": "glTF",
                  "gcode": tr("G-code"), "freecad": "FreeCAD", "step": "STEP", "zip": "ZIP"}
-        return tr("{kind} · {size} MB").format(kind=names.get(self.current_kind, self.current_kind.upper()),
-                                               size=num(self._file_size_mb, 1))
+        return tr("Filetype: {kind}  ·  Size: {size}").format(
+            kind=names.get(self.current_kind, self.current_kind.upper()),
+            size=self._size_text(self._file_size_mb * 1024 * 1024))
+
+    @staticmethod
+    def _size_text(nbytes: float) -> str:
+        """A file size in KB, or MB from a megabyte up: 0.35 KB, 12.4 KB, 350 KB, 1.2 MB."""
+        if nbytes < 1024 * 1024:
+            kb = nbytes / 1024
+            return tr("{n} KB").format(n=num(kb, 2 if kb < 10 else 1 if kb < 100 else 0))
+        mb = nbytes / (1024 * 1024)
+        return tr("{n} MB").format(n=num(mb, 2 if mb < 10 else 1))
 
     # ================================================================ ZIP
     def _display_name(self) -> str:
@@ -1570,7 +1931,6 @@ class MainWindow(QMainWindow):
         self.scene.clear()
         self.view_stack.setCurrentIndex(0)
         self._reset_side_panel()
-        self.name_label.setText(_wrappable(self._display_name()))
 
         if isinstance(data, GcodeData):
             self.model = None
@@ -1666,23 +2026,34 @@ class MainWindow(QMainWindow):
         for k, v in m.meta.items():
             self._add_detail(meta_label(k), meta_value(v))
 
-        if len(m.parts) > 1:
+        if m.parts:
+            many = len(m.parts) > 1
             for i, (part, actor) in enumerate(zip(m.parts, actors)):
-                # One row per object: its checkbox with the name, and its size on the right (#59).
-                # The triangle count is in the tooltip.
+                # One row per object: its colour box (a click picks another colour for this object
+                # alone), its name - with a checkbox that shows or hides it when there are several -
+                # and its size on the right (#59). The triangle count is in the tooltip.
                 row = QWidget()
                 row.setObjectName("objectRow")
                 rl = QHBoxLayout(row)
                 rl.setContentsMargins(0, 0, 0, 0)
                 rl.setSpacing(8)
-                cb = QCheckBox(part.name)
+                box = _ColorButton(self._object_color(i, part, len(m.parts)))
+                box.setToolTip(tr("Click to pick another colour (right-click: the original colour)"))
+                box.clicked.connect(lambda _=False, i=i, part=part, b=box: self._pick_object_color(i, part, b))
+                box.customContextMenuRequested.connect(
+                    lambda _pos, i=i, part=part, b=box: self._object_color_menu(i, part, b))
+                rl.addWidget(box)
+                if many:
+                    cb = QCheckBox(part.name)
+                    cb.setChecked(bool(actor.GetVisibility()))
+                    cb.toggled.connect(lambda on, a=actor: (a.SetVisibility(on), self.plotter.render()))
+                    name = cb
+                else:
+                    name = _ElidedLabel(part.name)
                 # A long name is cut at the panel's edge (full name in the tooltip) instead of
                 # making the whole panel wider than the window.
-                cb.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-                cb.setIcon(_swatch(Scene.part_color(part, i, len(m.parts))))
-                cb.setChecked(bool(actor.GetVisibility()))
-                cb.toggled.connect(lambda on, a=actor: (a.SetVisibility(on), self.plotter.render()))
-                rl.addWidget(cb, 1)
+                name.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+                rl.addWidget(name, 1)
                 size = part.size()
                 size_text = ltr(_size_mm(size)) if size else ""
                 if size_text:
@@ -1697,9 +2068,9 @@ class MainWindow(QMainWindow):
                     tip.append(size_text)
                 tip.append(tr("{n} triangles").format(n=count(part.n_triangles)))
                 row.setToolTip("\n".join(tip))
-                cb.setToolTip(row.toolTip())
+                name.setToolTip(row.toolTip())
                 self.objects_layout.addWidget(row)
-            self.objects_box.setTitle(tr("Objects ({n})").format(n=len(m.parts)))
+            self.objects_box.setTitle(tr("Objects ({n})").format(n=len(m.parts)) if many else tr("Object"))
             self._fit_objects_list()
             self.objects_box.show()
 
@@ -1717,6 +2088,30 @@ class MainWindow(QMainWindow):
                 b.clicked.connect(lambda _=False, mem=member: self._show_embedded(mem))
                 self.embedded_layout.addWidget(b)
             self.embedded_box.show()
+
+    def _object_color(self, i: int, part, n: int) -> str:
+        """The colour an object is drawn in now: the one picked for it, else the file's own."""
+        return self.scene.part_color_override(i) or Scene.part_color(part, i, n)
+
+    def _pick_object_color(self, i: int, part, button: "_ColorButton"):
+        """A click on an object's colour box: the colour picker, for this object alone."""
+        n = len(self.model.parts) if self.model is not None else 1
+        c = QColorDialog.getColor(QColor(self._object_color(i, part, n)), self, tr("Colour of the object"))
+        if c.isValid():
+            self.scene.set_part_color(i, c.name())
+            button.set_color(c.name())
+            self.plotter.render()
+
+    def _object_color_menu(self, i: int, part, button: "_ColorButton"):
+        from PySide6.QtGui import QCursor
+        menu = QMenu(self)
+        back = menu.addAction(tr("Original colour"))
+        back.setEnabled(self.scene.part_color_override(i) is not None)
+        if menu.exec(QCursor.pos()) is back:
+            self.scene.set_part_color(i, None)
+            n = len(self.model.parts) if self.model is not None else 1
+            button.set_color(Scene.part_color(part, i, n))
+            self.plotter.render()
 
     # ----------------------------------------------------------- FreeCAD
     def _freecad_status_text(self, m: ModelData) -> str:
@@ -1839,7 +2234,6 @@ class MainWindow(QMainWindow):
         self.model = None
         self.scene.clear()
         self._reset_side_panel()
-        self.name_label.setText(_wrappable(self._display_name()))
         self._show_gcode(g)
         self._fill_zip_box()
         self.scene.set_bed_visible(self.act_bed.isChecked())
@@ -2034,12 +2428,52 @@ class MainWindow(QMainWindow):
         return (self.stack.currentIndex() == 1 and self.model is not None and self.gcode is None
                 and bool(getattr(self.model, "parts", None)) and self.view_stack.currentIndex() == 0)
 
+    def _remember_side_width(self, *_):
+        """Keep how wide the side panel was, for when it has been dragged shut."""
+        w = self.splitter.sizes()[self.splitter.indexOf(self.side_scroll)]
+        if w >= 50:
+            self._side_width = w
+
+    def _open_side_panel(self):
+        """If the side panel was dragged shut, open it again to the width it had."""
+        i = self.splitter.indexOf(self.side_scroll)
+        sizes = self.splitter.sizes()
+        if sizes[i] >= 50:
+            return
+        total = sum(sizes)
+        sizes[i] = self._side_width
+        sizes[1 - i] = max(0, total - self._side_width)
+        self.splitter.setSizes(sizes)
+
+    def set_view_section(self, on: bool):
+        """The View button: shows or hides the View section of the side panel (and opens the side
+        panel if it was dragged shut)."""
+        show = bool(on) and self._view_options_apply()
+        self.view_box.setVisible(show)
+        if show:
+            self._open_side_panel()
+
+    def set_cut_frozen(self, on: bool):
+        """View section: freeze the Clip facing you cut where it is (the other cut never moves)."""
+        self.scene.set_face_frozen(on)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
     def _update_view_menu(self):
-        """After a file opens or closes: the View options on or off for it, the clip box with it."""
+        """After a file opens or closes: the View options on or off for it, the sections with it."""
         ok = self._view_options_apply()
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view):
+        for a in (self.act_view, self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face,
+                  self.act_reset_view, self.act_measure, *self.measure_actions.values()):
             a.setEnabled(ok)
         self.view_btn.setEnabled(ok)
+        self.view_box.setVisible(ok and self.act_view.isChecked())
+        self._update_hints()
+        if not hasattr(self, "measure"):
+            pass                                         # still being built
+        elif not ok and self.act_measure.isChecked():
+            self.act_measure.setChecked(False)           # nothing to measure: off
+        elif ok and self.measure.active and self.measure.refresh_model():
+            self._update_measure_panel()                 # another model: the old points are gone
         self.clip_box.setVisible(ok and bool(self._clip_cuts()))
         if ok and self.act_clip.isChecked():
             self._on_clip_changed(self.clip_slider.value(), render=False)
@@ -2085,25 +2519,114 @@ class MainWindow(QMainWindow):
             self.plotter.render()
 
     def reset_view(self):
-        """View -> Reset view (R, #66): wireframe, X-ray and both cuts off, and the model fitted,
-        like Fit. Nothing else changes (the plate, the objects shown, the theme)."""
+        """View -> Reset view (R, #66): wireframe, X-ray and both cuts off, and the model fitted, like Fit.
+        Nothing else changes (the plate, the objects shown, the theme, the measurements)."""
         if not self._view_options_apply():
             return
         for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
             if a.isChecked():
                 a.setChecked(False)
+        self.view_freeze_cb.setChecked(False)
         self.set_view(None, animate=True)
+
+    # ------------------------------------------------------------ measure
+    def _measure_mode_setting(self) -> str:
+        mode = self.settings.get("measure_mode", "distance")
+        return mode if mode in ("distance", "angle", "circle") else "distance"
+
+    @staticmethod
+    def _measure_mode_label(kind: str) -> str:
+        return {"distance": tr("Distance"), "angle": tr("Angle"), "circle": tr("Circle")}[kind]
+
+    @staticmethod
+    def _measure_mode_tip(kind: str) -> str:
+        return tr("Circle (diameter, radius)") if kind == "circle" else MainWindow._measure_mode_label(kind)
+
+    def set_measure_on(self, on: bool):
+        """The Measure button (M): a click on the model places a point (instead of setting the
+        rotation centre); the side panel shows the value."""
+        on = bool(on) and self._view_options_apply()
+        if on == self.measure.active:
+            return
+        if on:
+            self.measure.start()
+        else:
+            self.measure.stop()
+        self.measure_box.setVisible(on)
+        if on:
+            self._open_side_panel()
+        try:
+            if on:
+                self.plotter.interactor.setCursor(Qt.CrossCursor)
+            else:
+                self.plotter.interactor.unsetCursor()
+        except Exception:   # noqa: BLE001
+            pass
+        self._update_measure_panel()
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def choose_measure_mode(self, kind: str):
+        """The Measure button's menu: a distance, an angle or a circle. Turns Measure on."""
+        self.settings.set("measure_mode", kind)
+        self.measure_actions[kind].setChecked(True)
+        self.measure.set_mode(kind)
+        if not self.act_measure.isChecked() and self.act_measure.isEnabled():
+            self.act_measure.setChecked(True)
+        self._update_measure_panel()
+
+    def set_measure_snap(self, on: bool):
+        self.measure.set_snap(on)
+
+    def set_measure_dotted(self, on: bool):
+        self.settings.set("measure_dotted", bool(on))
+        self.measure.set_dotted(on)
+
+    def _measure_clear(self):
+        self.measure.clear()
+
+    def set_measure_line_width(self, px: int):
+        """Settings -> Viewer -> Measurement lines: how thick the lines are. Shown at once, so the
+        slider in Settings can be tried live (Cancel puts the old value back)."""
+        self.measure.set_line_width(px)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_measure_deltas(self, on: bool):
+        self.settings.set("measure_deltas", bool(on))
+        self.measure.set_deltas(on)
+
+    def _update_measure_panel(self):
+        """Clear on or off, and the hint for the chosen kind of measurement. The values are
+        written next to the measurements in the 3D view, not here: there can be several at once."""
+        if not hasattr(self, "measure") or not hasattr(self, "measure_clear_btn"):
+            return
+        self.measure_clear_btn.setEnabled(self.measure.has_items)
+        self._update_hints()
+
+    def _update_hints(self):
+        """The instructions in the bottom centre of the 3D view: how to use Clip facing you while
+        it is on, and how to use the kind of measurement that is chosen while Measure is on. They
+        are in the 3D view, where you look, instead of in the side panel where they got overlooked."""
+        if not hasattr(self, "hints") or not hasattr(self, "measure"):
+            return
+        texts = []
+        if self._view_options_apply():
+            if self.measure.active:
+                texts.append({
+                    "distance": tr("Click two points on the model."),
+                    "angle": tr("Click three points: one side, the corner, the other side."),
+                    "circle": tr("Click three points on the edge of a circle or hole."),
+                }[self.measure.mode] + " " + tr("Drag a point to move it, drag elsewhere to turn the view."))
+            if "face" in self._clip_cuts():
+                texts.append(tr("Turn or move the view to pass the model through the cut."))
+        self.hints.set_texts(texts)
 
     def _clip_cuts(self) -> list:
         """The cuts that are on: "top" (Clip from the top), "face" (Clip facing you), both or none."""
         if not hasattr(self, "act_clip_face"):
             return []
         return [k for k, a in (("top", self.act_clip), ("face", self.act_clip_face)) if a.isChecked()]
-
-    def _clip_off(self):
-        """The clip box's Turn off: both cuts off."""
-        self.act_clip.setChecked(False)
-        self.act_clip_face.setChecked(False)
 
     def set_clip_face_on(self, on: bool):
         """View -> Clip facing you (V): on or off, whatever Clip from the top does (#70). It starts
@@ -2120,6 +2643,8 @@ class MainWindow(QMainWindow):
         row = self.clip_top_row if cut == "top" else self.clip_face_row
         self._retitle_clip_box()
         if on and self._view_options_apply():
+            if not self.act_view.isChecked():
+                self.act_view.setChecked(True)       # its controls are in the View section
             # A cut that is turned on starts in the middle of its slider.
             slider.blockSignals(True)
             slider.setValue(self.CLIP_STEPS // 2)
@@ -2149,12 +2674,12 @@ class MainWindow(QMainWindow):
         return r[0] + (r[1] - r[0]) * value / self.CLIP_STEPS
 
     def _retitle_clip_box(self):
-        """The box is named after its cut; with both on, just "Clip"."""
+        """Show the rows of the cuts that are on (the freeze choice belongs to Clip facing you)."""
         cuts = self._clip_cuts()
-        title = {("top",): tr("Clip from the top"), ("face",): tr("Clip facing you")}.get(tuple(cuts), tr("Clip"))
-        self.clip_box.setTitle(title)
         self.clip_top_row.setVisible("top" in cuts)
         self.clip_face_row.setVisible("face" in cuts)
+        self.view_freeze_cb.setVisible("face" in cuts)
+        self._update_hints()
 
     def _clip_offset(self, value: int) -> Optional[float]:
         """Clip facing you: the slider's middle is the centre of the view."""
@@ -2192,10 +2717,14 @@ class MainWindow(QMainWindow):
             self.clip_info.setText("")
             self.face_info.setText("")
             return
-        d = self._clip_offset(self.face_slider.value())
-        # "+" further away, "−" nearer than the centre of the view
-        sign = "+" if d > 0.05 else ("−" if d < -0.05 else "")
-        self.face_info.setText(ltr(tr("Depth {d} mm").format(d=sign + num(abs(d), 1))))
+        # How far the cut has gone into the model, seen from where it faces: 0 at the front, the
+        # whole depth of the model at the back. (The slider itself moves the cut away from the
+        # centre of the view; this number does not depend on where that is.)
+        depth = self.scene.face_cut_depth()
+        if depth is None:
+            self.face_info.setText("")
+        else:
+            self.face_info.setText(ltr(tr("Depth {d} of {total} mm").format(d=num(depth[0], 1), total=num(depth[1], 1))))
         z = self._clip_height(self.clip_slider.value())
         self.clip_info.setText(ltr(tr("Height {z} of {top} mm").format(z=num(z - r[0], 1), top=num(r[1] - r[0], 1))))
 
@@ -2531,6 +3060,16 @@ class MainWindow(QMainWindow):
             show_cube = bool(self.settings.get("show_view_cube", True))
             if self.view_cube.visible != show_cube:
                 self.set_view_cube_visible(show_cube)
+            self._apply_grid_label_settings()
+
+    def _apply_grid_label_settings(self):
+        """Settings -> Viewer: the millimetre numbers on the grid, on or off and their spacing."""
+        self.grid_labels.set_step(self.settings.get("grid_labels_step", 0))
+        show_numbers = bool(self.settings.get("show_grid_labels", False))
+        if self.grid_labels.enabled != show_numbers:
+            self.grid_labels.set_enabled(show_numbers)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
 
     # ------------------------------------------------------------ updates
     def start_update_checks(self):

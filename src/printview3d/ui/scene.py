@@ -115,6 +115,15 @@ class Scene:
         # of the view; None = off. Both cuts can be on together (issue #70): the model then keeps
         # only what both keep, a corner cut away.
         self.clip_face: Optional[float] = None
+        # Freeze the Clip facing you cut: it keeps the direction and the centre it had, however the
+        # view turns or moves. freeze_face says it is wanted; _face_frozen is what it froze at
+        # ((normal, centre of the view), taken when the cut is next drawn).
+        self.freeze_face = False
+        self._face_frozen: Optional[tuple] = None
+        self.on_face_plane = None                    # called when the cut moved (the depth label)
+        self.part_overrides: dict = {}               # part index -> the colour picked for it
+        self._part_scalars: list = []                # per part: is it coloured per vertex / face?
+        self._part_colors0: list = []                # per part: its colour from the file
         self._top_plane = vtkPlane()
         self._top_plane.SetNormal(0.0, 0.0, -1.0)    # keeps what is below the plane
         self._face_plane = vtkPlane()                # keeps the half away from the viewer
@@ -197,6 +206,9 @@ class Scene:
                 except (AttributeError, TypeError):
                     pass
         self.model_actors = []
+        self.part_overrides = {}
+        self._part_scalars = []
+        self._part_colors0 = []
         self._ghosts = {"top": [], "face": []}
         self._sheets = {}
         self.gcode = None
@@ -459,6 +471,9 @@ class Scene:
         self._remove_ghosts()
         self._remove_cut_plane()
         self.model_actors = []
+        self.part_overrides = {}
+        self._part_scalars = []
+        self._part_colors0 = [self.part_color(part, i, len(model.parts)) for i, part in enumerate(model.parts)]
         for i, part in enumerate(model.parts):
             faces = np.hstack([np.full((len(part.faces), 1), 3, dtype=np.int64), part.faces]).ravel()
             mesh = pv.PolyData(part.vertices.astype(np.float32), faces=faces)
@@ -467,11 +482,14 @@ class Scene:
             if part.vertex_colors is not None and len(part.vertex_colors) == len(part.vertices):
                 mesh.point_data["rgb"] = part.vertex_colors
                 actor = self.p.add_mesh(mesh, scalars="rgb", rgb=True, **style)
+                self._part_scalars.append(True)
             elif part.face_colors is not None and len(part.face_colors) == len(part.faces):
                 mesh.cell_data["rgb"] = part.face_colors
                 actor = self.p.add_mesh(mesh, scalars="rgb", rgb=True, **style)
+                self._part_scalars.append(True)
             else:
                 actor = self.p.add_mesh(mesh, color=self.part_color(part, i, len(model.parts)), **style)
+                self._part_scalars.append(False)
             self.model_actors.append(actor)
 
         b = model.bounds()
@@ -480,6 +498,30 @@ class Scene:
             self.set_plate_source(model.bed, b, 0.0 if model.bed else b[4])
         self.apply_view_options()
         return self.model_actors
+
+    # ------------------------------------------------------ the colour of one object
+    def part_color_override(self, i: int) -> Optional[str]:
+        """The colour picked for part i (#rrggbb), or None while it has the file's own."""
+        return self.part_overrides.get(i)
+
+    def set_part_color(self, i: int, color: Optional[str]):
+        """Draw part i in `color`, whatever the file says; None goes back to the file's colour.
+        Painted parts (colour per vertex or face) stop using their paint while a colour is set.
+        Not saved: every part has its own colour again after the next start."""
+        if not 0 <= i < len(self.model_actors):
+            return
+        actor = self.model_actors[i]
+        painted = i < len(self._part_scalars) and self._part_scalars[i]
+        if color:
+            self.part_overrides[i] = color
+            actor.GetProperty().SetColor(*(v / 255 for v in _hex_to_rgb(color)))
+            actor.GetMapper().ScalarVisibilityOff()
+        else:
+            self.part_overrides.pop(i, None)
+            if painted:
+                actor.GetMapper().ScalarVisibilityOn()
+            else:
+                actor.GetProperty().SetColor(*(v / 255 for v in _hex_to_rgb(self._part_colors0[i])))
 
     # ------------------------------------------------------ view options (#60)
     def model_z_range(self) -> Optional[tuple]:
@@ -518,7 +560,34 @@ class Scene:
         the model through the cut and moving (panning) it slides the model across, as if the
         model were held up to a scanner. None: no cut. Clip from the top stays as it is (#70)."""
         self.clip_face = None if offset is None else float(offset)
+        if self.clip_face is None:
+            self._face_frozen = None                 # the next time it starts from the view as it is
         self.apply_view_options()
+
+    def set_face_frozen(self, on: bool):
+        """Freeze the Clip facing you cut: from now on it stays where it is, however the view turns
+        or moves, so the model can be turned and moved without the cut turning along. Its slider
+        still moves it. Off: it follows the camera again. Without that cut on, the choice waits and
+        freezes the cut at the view it starts in."""
+        self.freeze_face = bool(on)
+        self._face_frozen = None
+        if self.clip_face is not None:
+            self._update_face_plane()                # freezing takes the view as it is now
+            self.apply_view_options()
+
+    def face_cut_depth(self) -> Optional[tuple]:
+        """(how far the Clip facing you cut is into the model, how deep the model is) in mm, along
+        the direction the cut faces: 0 where the model begins, the second number where it ends.
+        None without that cut or without a model."""
+        if self.clip_face is None or not self.focus_bounds:
+            return None
+        b = self.focus_bounds
+        n = np.array(self._face_plane.GetNormal(), dtype=float)
+        o = np.array(self._face_plane.GetOrigin(), dtype=float)
+        corners = np.array([(x, y, z) for x in b[0:2] for y in b[2:4] for z in b[4:6]], dtype=float)
+        s = corners @ n
+        lo, hi = float(s.min()), float(s.max())
+        return min(max(float(o @ n) - lo, 0.0), hi - lo), hi - lo
 
     def face_clip_direction(self) -> np.ndarray:
         """Unit vector on the plate (z = 0) pointing away from the viewer: the "Clip facing you"
@@ -541,14 +610,21 @@ class Scene:
         """Before every frame: turn the "Clip facing you" cut to the camera."""
         if self.clip_face is None:
             return
-        n = self.face_clip_direction()
-        foc = np.array(self.p.renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
+        if self.freeze_face and self._face_frozen is not None:
+            n, foc = self._face_frozen
+        else:
+            n = self.face_clip_direction()
+            foc = np.array(self.p.renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
+            if self.freeze_face:                     # freezing now: keep this direction and centre
+                self._face_frozen = (n, foc)
         o = foc + n * self.clip_face
         # A plane keeps what its normal points to: here the half away from the viewer.
         if tuple(self._face_plane.GetNormal()) != tuple(n) or tuple(self._face_plane.GetOrigin()) != tuple(o):
             self._face_plane.SetNormal(*n)
             self._face_plane.SetOrigin(*o)
             self._follow_clip_plane()
+            if self.on_face_plane is not None:
+                self.on_face_plane()
 
     def _cuts(self) -> list:
         """The cuts that are on: "top", "face", both or none."""

@@ -128,6 +128,10 @@ class TurntableControls:
         # (called with the face name, or "home" for the Home icon).
         self.cube = None
         self.on_cube_view = None
+        # View -> Measure (measure.py): while it is on, a click on the model places a point
+        # instead of setting the rotation centre; a drag still turns the view.
+        self.measure = None
+        self._grabbed = False
         self._cube_part = None
         self._press = (0, 0)
         self._dragged = False
@@ -345,6 +349,15 @@ class TurntableControls:
             if self.on_start:
                 self.on_start()
             return
+        if self.measure is not None and self.measure.active and not self.iren.GetShiftKey():
+            # Measuring: wait to see whether this is a click (a point) or a drag (turn the view).
+            # A press on a placed point is a grab: a drag from there moves the point.
+            self.stop_animation()
+            self._press = (x, y)
+            self._grabbed = self.measure.grab(x, y)
+            self.mode = "measure"
+            self.last = (x, y)
+            return
         self._begin("pan" if self.iren.GetShiftKey() else "rotate")
 
     def _pan_down(self, *_):
@@ -352,6 +365,16 @@ class TurntableControls:
 
     def _button_up(self, *_):
         if self.mode is None:
+            return
+        if self.mode == "measure":                   # never moved: a click
+            self.mode = None
+            if self.measure is not None and self.measure.active:
+                self.measure.click(*self._press)
+            return
+        if self.mode == "measure_drag":              # a placed point was moved
+            self.mode = None
+            if self.measure is not None:
+                self.measure.drop()
             return
         clicked = self.mode == "cube" and not self._dragged and self._cube_part not in (None, "ring")
         part = self._cube_part
@@ -375,6 +398,22 @@ class TurntableControls:
         x, y = self.iren.GetEventPosition()
         if self.mode is None:
             self._hover(x, y)
+            return
+        if self.mode == "measure":
+            if abs(x - self._press[0]) + abs(y - self._press[1]) < CLICK_SLOP_PX:
+                return                               # still a click
+            if self._grabbed:
+                self.mode = "measure_drag"           # moves the point that was pressed
+            else:
+                # A drag: turn the view, around the point that was pressed, as without Measure.
+                self.mode = "rotate"
+                self.pivot = self._pick_pivot(*self._press)
+                self.last = self._press
+                if self.on_start:
+                    self.on_start()
+        if self.mode == "measure_drag":
+            self.last = (x, y)
+            self.measure.drag_to(x, y)
             return
         dx, dy = x - self.last[0], y - self.last[1]
         self.last = (x, y)
@@ -400,12 +439,20 @@ class TurntableControls:
         if self.cube is None:
             return
         part = self.cube.hit(x, y)
+        if self.measure is not None and self.measure.active:
+            if part is None:
+                self.measure.hover(x, y)             # the point a click would set
+            else:
+                self.measure.leave()
         if self.cube.set_hover(part, self.cube.contains(x, y)):
             try:
                 from PySide6.QtCore import Qt
                 widget = self.p.interactor
                 if part is None:
-                    widget.unsetCursor()
+                    if self.measure is not None and self.measure.active:
+                        widget.setCursor(Qt.CrossCursor)     # Measure: a click places a point
+                    else:
+                        widget.unsetCursor()
                 else:
                     widget.setCursor(Qt.SizeHorCursor if part == "ring" else Qt.PointingHandCursor)
             except Exception:   # noqa: BLE001 - no Qt widget (tests)
@@ -434,6 +481,8 @@ class TurntableControls:
     def leave(self):
         """The mouse left the 3D view: nothing stays lit, the arrows hide."""
         self._hide_tip()
+        if self.measure is not None and self.measure.active:
+            self.measure.leave()
         if self.cube is not None and self.cube.set_hover(None, False):
             self.request_render()
 

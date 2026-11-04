@@ -38,10 +38,17 @@ DEFAULTS = {
     "plate_size": [300, 300],   # Plate menu -> Custom size: width and depth in mm
     "thumbnail_open": True,     # side panel: the file's preview picture shown (False: folded away)
     "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
+    "grid_labels_step": 0,      # Settings -> Viewer: spacing of those numbers in mm (0 = automatic)
+    "show_grid_labels": False,  # Settings -> Viewer: millimetre numbers along the plate's major grid lines
     "clip_ghost": True,         # View -> Clip: show the cut-away part as a see-through ghost (#66)
     "clip_plane": True,         # View -> Clip: show the cutting plane as a faint sheet (#66)
     "ghost_strength": 50,       # Settings -> Viewer: the cut-away part, 0 faintest .. 100 strongest
     "plane_strength": 50,       # Settings -> Viewer: the cutting plane, 0 faintest .. 100 strongest
+    "measure_mode": "distance", # Measure button: "distance", "angle" or "circle"
+    "measure_line_width": 4,    # Settings -> Viewer: thickness of the measuring lines in pixels (1 .. 10)
+    "measure_dotted": False,    # Measure: draw the lines dotted
+    "measure_deltas": False,    # Measure: a distance's value also lists ΔX, ΔY, ΔZ
+    "details_open": True,       # side panel: the Details box unfolded (False: folded away)
     "max_recent": 10,
 }
 
