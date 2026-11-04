@@ -1,7 +1,7 @@
 # PrintView3D gebruiken
 
 **Een bestand openen:** dubbelklik erop (als PrintView3D het standaardprogramma is), sleep het naar het venster,
-gebruik **Openen**, of kies het uit **Recent**. Probeer de bestanden in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) om te beginnen.
+gebruik **Openen**, of kies het uit **Recent** in het menu **☰** of op de startpagina. Probeer de bestanden in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) om te beginnen.
 
 **Start:** de knop met het huisje (`Ctrl+W`) sluit het open bestand en gaat terug naar de startpagina,
 met je recente bestanden. Het geeft ook het geheugen terug dat het bestand gebruikte; dat maakt vooral
@@ -35,6 +35,7 @@ Dezelfde lijst staat in het programma onder **Instellingen → Over → Toetsenb
 | `Ctrl+T` | Volgend thema (Donker → Grijs → Grafiet → Licht) |
 | `F` · `1` · `2` · `3` · `4` | Passend · Iso · Boven · Voor · Rechts |
 | `W` · `X` · `C` · `V` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
+| `R` | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend (modellen) |
 | `↑` / `↓` | Volgende / vorige laag (G-code), of het vorige / volgende bestand in een ZIP |
 | `Page Up` / `Page Down` | 10 lagen omhoog / omlaag |
 | `Home` / `End` | Eerste / laatste laag |
@@ -55,6 +56,8 @@ andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
   verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
   Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
   zet de snede dichterbij of verder weg. Eén snede tegelijk: `C` en `V` wisselen ertussen.
+- **Weergave herstellen** (`R`): zet alles hierboven uit en past het model in beeld, zoals **Passend**,
+  in één keer.
 
 De opties blijven aan als je het volgende model opent, en werken samen (bijvoorbeeld röntgen en afsnijden).
 

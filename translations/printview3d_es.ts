@@ -583,6 +583,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Reset view</source>
+        <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
+        <translation type="unfinished">Restablecer la vista</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip facing you</source>
         <extracomment>An upright cut that always faces the viewer and hides the part of the model in front of it; it turns along when the view turns.</extracomment>
         <translation type="unfinished">Cortar desde tu lado</translation>
@@ -597,6 +603,28 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Turn or move the view to pass the model through the cut.</source>
         <translation type="unfinished">Gira o mueve la vista para pasar el modelo por el corte.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show the cut-away part</source>
+        <extracomment>Checkbox under the clip slider: keep the part the cut hides visible as a faint, see-through &apos;ghost&apos; copy.</extracomment>
+        <translation type="unfinished">Mostrar la parte cortada</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Shows what the cut hides as a see-through ghost.</source>
+        <translation type="unfinished">Muestra lo que oculta el corte como un fantasma transparente.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show the cutting plane</source>
+        <extracomment>Checkbox under the clip slider: show where the cut is, as a faint flat sheet.</extracomment>
+        <translation type="unfinished">Mostrar el plano de corte</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Shows where the cut is, as a faint sheet the size of the model.</source>
+        <translation type="unfinished">Muestra dónde está el corte, como una lámina tenue del tamaño del modelo.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1589,6 +1617,28 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cut-away part</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
+        <translation type="unfinished">Parte cortada</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cut-away part is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">Con qué intensidad se dibuja la parte cortada al usar un corte del menú Vista.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cutting plane</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the faint sheet that shows where a cut is, is drawn.</extracomment>
+        <translation type="unfinished">Plano de corte</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">Con qué intensidad se dibuja el plano de corte al usar un corte del menú Vista.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation type="unfinished">Gráficos</translation>
     </message>
@@ -1697,6 +1747,18 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not checked yet.</source>
         <translation type="unfinished">Aún no comprobado.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Fainter</source>
+        <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
+        <translation type="unfinished">Más tenue</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Stronger</source>
+        <extracomment>Right end of the Cut-away part and Cutting plane sliders: less see-through, easier to see.</extracomment>
+        <translation type="unfinished">Más intenso</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1951,6 +2013,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Clip facing you on / off (models)</source>
         <translation type="unfinished">Cortar desde tu lado activar / desactivar (modelos)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset view: all of the above off, model fitted (models)</source>
+        <translation type="unfinished">Restablecer la vista: todo lo anterior desactivado, modelo ajustado (modelos)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

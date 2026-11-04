@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.26.0
+- **See what a cut takes away** ([#66](https://github.com/sevagjb/PrintView3D/issues/66)): with **Clip from the top** or **Clip facing you**, the part
+  the cut hides stays as a white, see-through ghost with outlined edges, and the cutting plane shows as
+  a faint sheet the size of the model. Two checkboxes under the slider turn each on or off, and
+  **Settings → Viewer** has a Fainter … Stronger slider for each.
+- **Reset view** (`R`, in the **View** menu): turns off Wireframe, X-ray and the cuts and fits the
+  model, in one go.
+- **A calmer toolbar**: **Recent** is in the **☰** menu and on the start page; Home and Open stay.
+- **macOS: Quick Look** (beta, [#68](https://github.com/sevagjb/PrintView3D/issues/68)): Finder shows thumbnails of 3MF, STL, G-code, FreeCAD, OBJ
+  and PLY files, and the space bar shows STL, 3MF, OBJ and PLY models in 3D.
+  [How to switch it on](https://sevagjb.github.io/PrintView3D/install.html).
+- **Thanks to [@covrig](https://github.com/covrig)** for the ghost, toolbar and Reset view ideas and all the testing, and to
+  [@bmorgenthaler](https://github.com/bmorgenthaler) for the Quick Look idea.
+
 ## 0.25.1
 - **Fixed**: the round handle of the clip and layer sliders was cut off at the top and bottom
   ([#66](https://github.com/sevagjb/PrintView3D/issues/66)); it is now a full circle, in every theme.

@@ -474,12 +474,12 @@ class MainWindow(QMainWindow):
         self.menu_btn = icon_button(menu=self.main_menu)
         tb.addWidget(self.menu_btn)
 
+        # Home and Open next to the menu. Recent is in the menu only, and the start page lists the
+        # recent files too (#66).
         self.home_btn = icon_button(action=self.act_home)
         tb.addWidget(self.home_btn)
         self.open_btn = icon_button(action=self.act_open)
         tb.addWidget(self.open_btn)
-        self.recent_btn = icon_button(menu=self.recent_menu)
-        tb.addWidget(self.recent_btn)
 
         tb.addSeparator()
         self.slicer_btn = QToolButton()
@@ -559,7 +559,9 @@ class MainWindow(QMainWindow):
         # Clip facing you: an upright cut that turns with the view; one cut at a time.
         self.act_clip_face = QAction(self, checkable=True, shortcut=QKeySequence("V"))
         self.act_clip_face.toggled.connect(self.set_clip_face_on)
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+        # Reset view (#66): all of the above off and the model fitted, in one go.
+        self.act_reset_view = QAction(self, shortcut=QKeySequence("R"), triggered=self.reset_view)
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view):
             self.addAction(a)                   # the shortcuts work wherever the focus is
         self.view_menu = QMenu(self)
         self.view_menu.addAction(self.act_wireframe)
@@ -567,6 +569,8 @@ class MainWindow(QMainWindow):
         self.view_menu.addSeparator()
         self.view_menu.addAction(self.act_clip)
         self.view_menu.addAction(self.act_clip_face)
+        self.view_menu.addSeparator()
+        self.view_menu.addAction(self.act_reset_view)
         self.view_btn = QToolButton()
         self.view_btn.setObjectName("viewButton")
         self.view_btn.setToolButtonStyle(Qt.ToolButtonTextOnly)
@@ -615,7 +619,6 @@ class MainWindow(QMainWindow):
         self.menu_btn.setIcon(theme.tool_icon("menu"))
         self.act_home.setIcon(theme.tool_icon("home"))
         self.act_open.setIcon(theme.tool_icon("open"))
-        self.recent_btn.setIcon(theme.tool_icon("recent"))
         # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
         self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
         self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons()))
@@ -732,6 +735,10 @@ class MainWindow(QMainWindow):
         self.controls = TurntableControls(self.plotter, self.scene, self.scene.interaction_started,
                                           self.scene.interaction_ended)
         self.scene.bed_visible = self.act_bed.isChecked()
+        self.scene.show_ghost = bool(self.settings.get("clip_ghost", True))
+        self.scene.show_cut_plane = bool(self.settings.get("clip_plane", True))
+        self.scene.set_ghost_strength(self.settings.get("ghost_strength", 50))
+        self.scene.set_plane_strength(self.settings.get("plane_strength", 50))
         self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
         # The view cube in the top-right corner (Settings -> Viewer can hide it).
         from .view_cube import ViewCube
@@ -810,6 +817,17 @@ class MainWindow(QMainWindow):
         self.clip_slider.setValue(self.CLIP_STEPS // 2)
         self.clip_slider.valueChanged.connect(self._on_clip_changed)
         cl.addWidget(self.clip_slider)
+        # What the cut hides, as a see-through ghost, and the cutting plane, each on its own (#66).
+        # Here, under the slider, where you look while cutting (3D Builder's Split puts it there
+        # too). How strong both are drawn is in Settings -> Viewer.
+        self.clip_ghost_cb = QCheckBox()
+        self.clip_ghost_cb.setChecked(bool(self.settings.get("clip_ghost", True)))
+        self.clip_ghost_cb.toggled.connect(self.set_clip_ghost)
+        cl.addWidget(self.clip_ghost_cb)
+        self.clip_plane_cb = QCheckBox()
+        self.clip_plane_cb.setChecked(bool(self.settings.get("clip_plane", True)))
+        self.clip_plane_cb.toggled.connect(self.set_clip_plane)
+        cl.addWidget(self.clip_plane_cb)
         self.clip_hint = QLabel()                 # Clip facing you: how to use it
         self.clip_hint.setObjectName("muted")
         self.clip_hint.setWordWrap(True)
@@ -941,7 +959,6 @@ class MainWindow(QMainWindow):
         self.act_home.setToolTip(tr("Close the file and go back to the start page ({key})").format(
             key=self.act_home.shortcut().toString(QKeySequence.NativeText)))
         self.recent_menu.setTitle(tr("Recent"))
-        self.recent_btn.setToolTip(tr("Recent"))
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:
@@ -966,8 +983,13 @@ class MainWindow(QMainWindow):
         self.act_xray.setText(tr("X-ray (see-through)") + "\t" + "X")
         self.act_clip.setText(tr("Clip from the top") + "\t" + "C")
         self.act_clip_face.setText(tr("Clip facing you") + "\t" + "V")
+        self.act_reset_view.setText(tr("Reset view") + "\t" + "R")
         self.clip_box.setTitle(tr("Clip facing you") if self._clip_mode() == "face" else tr("Clip from the top"))
         self.clip_hint.setText(tr("Turn or move the view to pass the model through the cut."))
+        self.clip_ghost_cb.setText(tr("Show the cut-away part"))
+        self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost."))
+        self.clip_plane_cb.setText(tr("Show the cutting plane"))
+        self.clip_plane_cb.setToolTip(tr("Shows where the cut is, as a faint sheet the size of the model."))
         self.clip_off_btn.setText(tr("Turn off"))
         self._update_clip_label()
         self._mark_plate_mode()
@@ -1997,7 +2019,7 @@ class MainWindow(QMainWindow):
     def _update_view_menu(self):
         """After a file opens or closes: the View options on or off for it, the clip box with it."""
         ok = self._view_options_apply()
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view):
             a.setEnabled(ok)
         self.view_btn.setEnabled(ok)
         self.clip_box.setVisible(ok and self._clip_mode() is not None)
@@ -2014,6 +2036,43 @@ class MainWindow(QMainWindow):
         self.scene.set_xray(on)
         if self.stack.currentIndex() == 1:
             self.plotter.render()
+
+    def set_clip_ghost(self, on: bool):
+        """Clip box: the cut-away part as a see-through ghost (#66). Remembered."""
+        self.settings.set("clip_ghost", bool(on))
+        self.scene.set_ghost(on)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_clip_plane(self, on: bool):
+        """Clip box: the cutting plane as a faint sheet (#66). Remembered."""
+        self.settings.set("clip_plane", bool(on))
+        self.scene.set_cut_plane(on)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_ghost_strength(self, strength: int):
+        """Settings -> Viewer -> Cut-away part: drawn fainter or stronger. Shown at once, so the
+        slider in Settings can be tried live (Cancel puts the old value back)."""
+        self.scene.set_ghost_strength(strength)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def set_plane_strength(self, strength: int):
+        """Settings -> Viewer -> Cutting plane: the same, for the plane."""
+        self.scene.set_plane_strength(strength)
+        if self.stack.currentIndex() == 1:
+            self.plotter.render()
+
+    def reset_view(self):
+        """View -> Reset view (R, #66): wireframe, X-ray and both cuts off, and the model fitted,
+        like Fit. Nothing else changes (the plate, the objects shown, the theme)."""
+        if not self._view_options_apply():
+            return
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+            if a.isChecked():
+                a.setChecked(False)
+        self.set_view(None, animate=True)
 
     def _clip_mode(self) -> Optional[str]:
         """"top" (Clip from the top), "face" (Clip facing you) or None."""

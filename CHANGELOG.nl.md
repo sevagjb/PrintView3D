@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.26.0
+- **Zie wat een snede wegneemt** ([#66](https://github.com/sevagjb/PrintView3D/issues/66)): bij **Van boven afsnijden** of **Afsnijden vanaf jouw kant**
+  blijft het deel dat de snede verbergt zichtbaar als een witte, doorzichtige schim met omlijnde randen,
+  en het snijvlak verschijnt als een vaag vlak zo groot als het model. Twee vinkjes onder de schuif zetten
+  elk aan of uit, en **Instellingen → Weergave** heeft voor elk een schuif Vager … Sterker.
+- **Weergave herstellen** (`R`, in het menu **Weergave**): zet draadmodel, röntgen en de sneden uit en
+  past het model in beeld, in één keer.
+- **Een rustigere werkbalk**: **Recent** staat in het menu **☰** en op de startpagina; Start en Openen blijven.
+- **macOS: Quick Look** (bèta, [#68](https://github.com/sevagjb/PrintView3D/issues/68)): de Finder toont miniaturen van 3MF-, STL-, G-code-, FreeCAD-, OBJ-
+  en PLY-bestanden, en de spatiebalk toont STL-, 3MF-, OBJ- en PLY-modellen in 3D.
+  [Zo zet je het aan](https://sevagjb.github.io/PrintView3D/nl/install.html).
+- **Met dank aan [@covrig](https://github.com/covrig)** voor de ideeën voor de schim, de werkbalk en Weergave herstellen en al het
+  testen, en aan [@bmorgenthaler](https://github.com/bmorgenthaler) voor het idee van Quick Look.
+
 ## 0.25.1
 - **Opgelost**: de ronde knop van de afsnij- en laagschuif werd aan de boven- en onderkant afgesneden
   ([#66](https://github.com/sevagjb/PrintView3D/issues/66)); hij is nu een hele cirkel, in elk thema.
