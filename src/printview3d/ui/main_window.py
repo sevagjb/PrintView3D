@@ -474,12 +474,10 @@ class MainWindow(QMainWindow):
         self.menu_btn = icon_button(menu=self.main_menu)
         tb.addWidget(self.menu_btn)
 
-        self.home_btn = icon_button(action=self.act_home)
-        tb.addWidget(self.home_btn)
+        # Only Open next to the menu: it's what new users look for. Home (Ctrl+W) and Recent are
+        # in the menu, and the start page lists the recent files too (#66).
         self.open_btn = icon_button(action=self.act_open)
         tb.addWidget(self.open_btn)
-        self.recent_btn = icon_button(menu=self.recent_menu)
-        tb.addWidget(self.recent_btn)
 
         tb.addSeparator()
         self.slicer_btn = QToolButton()
@@ -615,7 +613,6 @@ class MainWindow(QMainWindow):
         self.menu_btn.setIcon(theme.tool_icon("menu"))
         self.act_home.setIcon(theme.tool_icon("home"))
         self.act_open.setIcon(theme.tool_icon("open"))
-        self.recent_btn.setIcon(theme.tool_icon("recent"))
         # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
         self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
         self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons()))
@@ -941,7 +938,6 @@ class MainWindow(QMainWindow):
         self.act_home.setToolTip(tr("Close the file and go back to the start page ({key})").format(
             key=self.act_home.shortcut().toString(QKeySequence.NativeText)))
         self.recent_menu.setTitle(tr("Recent"))
-        self.recent_btn.setToolTip(tr("Recent"))
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:

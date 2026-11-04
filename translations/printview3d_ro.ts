@@ -467,13 +467,13 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Home</source>
-        <extracomment>Toolbar button with a house icon: closes the open file and goes back to the start page.</extracomment>
+        <extracomment>Menu item (house icon): closes the open file and goes back to the start page.</extracomment>
         <translation>Acasă</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close the file and go back to the start page ({key})</source>
-        <extracomment>Tooltip of the Home button. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
+        <extracomment>Tooltip of the Home menu item. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
         <translation>Închide fișierul și revino la pagina de start ({key})</translation>
     </message>
     <message>

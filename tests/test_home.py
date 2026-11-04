@@ -50,9 +50,16 @@ def _assert_on_start_page(w):
         assert box.isHidden()
 
 
-def test_home_button_in_toolbar_and_menu(window):
+def test_home_and_recent_in_the_menu_not_the_toolbar(window):
+    """#66: Open stays next to the menu; Home (Ctrl+W) and Recent are in the menu only."""
+    from PySide6.QtWidgets import QToolButton
     w = window
-    assert w.home_btn.defaultAction() is w.act_home
+    in_toolbar = [b.defaultAction() for b in w.findChildren(QToolButton)]
+    menus = [b.menu() for b in w.findChildren(QToolButton)]
+    assert w.act_open in in_toolbar
+    assert w.act_home not in in_toolbar and w.recent_menu not in menus
+    assert not hasattr(w, "home_btn") and not hasattr(w, "recent_btn")
+    assert w.recent_menu.menuAction() in w.main_menu.actions()
     assert w.act_home in w.main_menu.actions()
     assert w.act_home.shortcut().toString() == "Ctrl+W"
     assert w.act_home.text() and "start page" in w.act_home.toolTip()
