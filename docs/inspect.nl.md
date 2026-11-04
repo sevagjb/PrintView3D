@@ -2,7 +2,7 @@
 
 Holle wanden, verborgen onderdelen, kanalen, schroefgaten: met de knop **Weergave** in de werkbalk kijk
 je in een model voordat je het print. Het werkt voor STL, 3MF, OBJ en de andere modelformaten (G-code
-heeft hiervoor de laagschuifregelaar). *Nieuw in PrintView3D 0.25.*
+heeft hiervoor de laagschuifregelaar). *Nieuw in PrintView3D 0.25; de schim van het weggesneden deel is nieuw in 0.26.*
 
 <video class="pv-video" src="../assets/inside/clip-facing.mp4" poster="../assets/inside/clip-facing.jpg"
        autoplay loop muted playsinline preload="metadata"
@@ -31,6 +31,20 @@ het zijpaneel om laag voor laag door het model omlaag te gaan.
 
 Eén snede tegelijk: <kbd>C</kbd> en <kbd>V</kbd> wisselen ertussen. **Uitzetten** in het zijpaneel, of
 dezelfde toets nog eens, toont het hele model weer.
+
+## Zie wat de snede wegneemt
+
+Bij beide sneden blijft het deel dat de snede verbergt zichtbaar als een witte, doorzichtige schim met
+omlijnde randen, en het snijvlak verschijnt als een vaag vlak zo groot als het model. Zo zie je wat de
+snede wegneemt, en waar.
+
+![Van boven afsnijden met de schim van het weggesneden deel en het snijvlak](assets/inside/ghost-top.nl.png)
+
+Twee vinkjes onder de schuif, **Weggesneden deel tonen** en **Snijvlak tonen**, zetten elk aan of uit;
+je keuze wordt onthouden. In **Instellingen → Weergave** hebben **Weggesneden deel** en **Snijvlak**
+elk een schuif **Vager … Sterker**, en de 3D-weergave verandert terwijl je sleept.
+
+![De twee schuiven in Instellingen → Weergave](assets/inside/ghost-settings.nl.png)
 
 ## Röntgen
 
@@ -66,8 +80,10 @@ staat bij **Details**. Vink een object uit om het te verbergen.
 | <kbd>X</kbd> | Röntgen aan / uit |
 | <kbd>C</kbd> | Van boven afsnijden aan / uit |
 | <kbd>V</kbd> | Afsnijden vanaf jouw kant aan / uit |
+| <kbd>R</kbd> | Weergave herstellen: alles hierboven uit, model passend |
 
-De opties blijven aan als je het volgende model opent.
+De opties blijven aan als je het volgende model opent. **Weergave herstellen** (<kbd>R</kbd>, ook in het
+menu **Weergave**) zet ze allemaal uit en past het model in beeld, in één keer.
 
 ## Probeer het zelf
 
@@ -77,5 +93,6 @@ in de broncode: download het en open het in PrintView3D.
 
 Deze functies zijn voorgesteld door [@covrig](https://github.com/covrig)
 ([#59](https://github.com/sevagjb/PrintView3D/issues/59),
-[#60](https://github.com/sevagjb/PrintView3D/issues/60)). Heb je ook een idee?
+[#60](https://github.com/sevagjb/PrintView3D/issues/60),
+[#66](https://github.com/sevagjb/PrintView3D/issues/66)). Heb je ook een idee?
 [Open een issue](https://github.com/sevagjb/PrintView3D/issues/new/choose).

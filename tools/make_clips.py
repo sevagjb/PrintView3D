@@ -187,6 +187,25 @@ def make_stills(c: Capture, lang: str):
     w.act_xray.setChecked(True)
     c.still(f"xray-clip{sfx}.png")                  # options work together
     c.off()
+    # 0.26 (#66): what the cut takes away, as a ghost with the cutting plane, and the two
+    # checkboxes under the slider.
+    w.act_clip.setChecked(True)
+    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.55))
+    c.still(f"ghost-top{sfx}.png")
+    c.off()
+    # Settings -> Viewer with the two strength sliders.
+    from printview3d.ui.settings_dialog import SettingsDialog
+    dlg = SettingsDialog(w.settings, w, {}, page="viewer")
+    dlg.resize(900, 620)
+    dlg.show()
+    c.settle()
+    from PySide6.QtWidgets import QGroupBox
+    from printview3d.i18n import tr
+    box = next(g for g in dlg.findChildren(QGroupBox) if g.title() == tr("Viewer"))
+    box.grab().save(os.path.join(c.out, f"ghost-settings{sfx}.png"))     # just the Viewer box
+    print("  ", f"ghost-settings{sfx}.png")
+    dlg.reject()
+    c.settle()
 
 
 def main():
