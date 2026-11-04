@@ -600,6 +600,28 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show the cut-away part</source>
+        <extracomment>Checkbox under the clip slider: keep the part the cut hides visible as a faint, see-through &apos;ghost&apos; copy.</extracomment>
+        <translation type="unfinished">Arată partea tăiată</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Shows what the cut hides as a see-through ghost.</source>
+        <translation type="unfinished">Arată ce ascunde tăietura ca o fantomă transparentă.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Show the cutting plane</source>
+        <extracomment>Checkbox under the clip slider: show where the cut is, as a faint flat sheet.</extracomment>
+        <translation type="unfinished">Arată planul de tăiere</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Shows where the cut is, as a faint sheet the size of the model.</source>
+        <translation type="unfinished">Arată unde este tăietura, ca o foaie palidă de mărimea modelului.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Turn off</source>
         <translation type="unfinished">Dezactivează</translation>
     </message>
@@ -1589,6 +1611,28 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cut-away part</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
+        <translation type="unfinished">Partea tăiată</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cut-away part is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">Cât de vizibil este desenată partea tăiată când folosești o tăiere din meniul Vizualizare.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Cutting plane</source>
+        <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the faint sheet that shows where a cut is, is drawn.</extracomment>
+        <translation type="unfinished">Planul de tăiere</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
+        <translation type="unfinished">Cât de vizibil este desenat planul de tăiere când folosești o tăiere din meniul Vizualizare.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafică</translation>
     </message>
@@ -1697,6 +1741,18 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not checked yet.</source>
         <translation>Încă neverificat.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Fainter</source>
+        <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
+        <translation type="unfinished">Mai slab</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Stronger</source>
+        <extracomment>Right end of the Cut-away part and Cutting plane sliders: less see-through, easier to see.</extracomment>
+        <translation type="unfinished">Mai puternic</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

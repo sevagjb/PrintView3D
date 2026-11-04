@@ -279,6 +279,11 @@ model formats; G-code has its layer slider instead):
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
   click that face on the view cube. The slider moves the cut nearer or further. One cut at a time:
   `C` and `V` switch between them.
+- **Show the cut-away part** and **Show the cutting plane** (under the slider, both on by
+  default): what the cut hides stays as a white, see-through ghost with outlined edges, and the
+  cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
+  and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
+  **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
 
 The options stay on when you open the next model, and work together (X-ray and clip, for example).
 
