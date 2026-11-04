@@ -84,8 +84,8 @@ NOTES = {
     "Plate {n}": "A build plate inside a slicer project; {n} is its number.",
     "Missing or wrong translation? Anyone can correct it on GitHub: {guide}":
         "Settings → Language. {guide} becomes the link 'How to translate on GitHub'.",
-    "Home": "Menu item (house icon): closes the open file and goes back to the start page.",
-    "Close the file and go back to the start page ({key})": "Tooltip of the Home menu item. {key} is its "
+    "Home": "Toolbar button with a house icon: closes the open file and goes back to the start page.",
+    "Close the file and go back to the start page ({key})": "Tooltip of the Home button. {key} is its "
         "keyboard shortcut (Ctrl+W).",
     "Change what a click does…": "Last item in the menu of the Export STL button: opens the setting "
         "that decides what clicking the button itself does.",

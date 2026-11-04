@@ -474,8 +474,10 @@ class MainWindow(QMainWindow):
         self.menu_btn = icon_button(menu=self.main_menu)
         tb.addWidget(self.menu_btn)
 
-        # Only Open next to the menu: it's what new users look for. Home (Ctrl+W) and Recent are
-        # in the menu, and the start page lists the recent files too (#66).
+        # Home and Open next to the menu. Recent is in the menu only, and the start page lists the
+        # recent files too (#66).
+        self.home_btn = icon_button(action=self.act_home)
+        tb.addWidget(self.home_btn)
         self.open_btn = icon_button(action=self.act_open)
         tb.addWidget(self.open_btn)
 
