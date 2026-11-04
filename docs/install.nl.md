@@ -138,3 +138,23 @@ gevonden. **Updates:** *Update downloaden* opent de pagina van de nieuwe versie;
 te vervangen. Oudere Macs waarop macOS 14 niet draait:
 [laat het ons weten](https://github.com/sevagjb/PrintView3D/issues/new?template=mac_build.md) als je daar een
 versie voor nodig hebt.
+
+
+### Quick Look (voorvertoningen in Finder) {#quick-look}
+
+PrintView3D voegt Quick Look-ondersteuning toe voor 3D-printbestanden (bèta):
+
+- **Miniaturen in Finder** voor 3MF-, STL-, G-code-, FreeCAD-, OBJ- en PLY-bestanden. 3MF-, G-code- en
+  FreeCAD-bestanden tonen de afbeelding die je slicer of FreeCAD erin heeft opgeslagen; STL-bestanden (en
+  3MF-bestanden zonder afbeelding) worden getekend, net als op Windows.
+- **Voorvertoning met de spatiebalk:** selecteer een bestand en druk op de spatiebalk. STL-, 3MF-, OBJ- en
+  PLY-modellen worden in 3D getoond (sleep om te draaien, scrol of knijp om te zoomen), met hun afmetingen in
+  millimeters. G-code- en FreeCAD-bestanden tonen hun opgeslagen afbeelding. Voor al het andere (lagen,
+  objecten, instellingen) open je het bestand in PrintView3D.
+
+Dit werkt zodra PrintView3D in **Apps** staat en één keer is gestart (stap 1–4 hierboven). Verschijnen er
+geen voorvertoningen, open dan **Systeeminstellingen → Algemeen → Inlogonderdelen en extensies**, klik bij
+**Quick Look** op ⓘ en zet **PrintView3D** aan. Finder bewaart oude miniaturen een tijdje; bestanden die je
+daarna kopieert of opslaat, tonen de nieuwe. STEP-bestanden krijgen geen voorvertoning: om ze te lezen is
+FreeCAD nodig, en dat kan Quick Look niet gebruiken. Biedt een andere app (een slicer, FreeCAD) ook
+voorvertoningen voor een van deze bestandstypen, dan kan macOS die van die app gebruiken.

@@ -89,6 +89,13 @@ if sys.platform == "darwin":
         return {"CFBundleTypeName": name, "CFBundleTypeRole": "Viewer", "LSHandlerRank": "Alternate",
                 "CFBundleTypeExtensions": exts, "LSItemContentTypes": utis}
 
+    def _uti(uti, name, exts, conforms, mime):
+        tags = {"public.filename-extension": exts}
+        if mime:
+            tags["public.mime-type"] = mime
+        return {"UTTypeIdentifier": uti, "UTTypeDescription": name, "UTTypeConformsTo": conforms,
+                "UTTypeTagSpecification": tags}
+
     app = BUNDLE(
         coll,
         name="PrintView3D.app",
@@ -113,6 +120,15 @@ if sys.platform == "darwin":
                 _doc("OFF model", ["off"], []),
                 _doc("glTF model", ["glb", "gltf"], []),
                 _doc("STEP model", ["step", "stp"], []),
+            ],
+            # File types macOS doesn't know by itself, so the Quick Look extensions in
+            # Contents/PlugIns (packaging/macos/quicklook) can name them. "Imported": if another
+            # app (a slicer, FreeCAD) declares these files too, macOS uses that declaration.
+            "UTImportedTypeDeclarations": [
+                _uti("public.3mf", "3MF project", ["3mf"], ["public.data", "public.content"], ["model/3mf"]),
+                _uti("io.github.sevagjb.printview3d.gcode", "G-code", ["gcode", "gco"],
+                     ["public.plain-text"], ["text/x-gcode"]),
+                _uti("org.freecad.fcstd", "FreeCAD document", ["fcstd"], ["public.data", "public.content"], []),
             ],
         },
     )

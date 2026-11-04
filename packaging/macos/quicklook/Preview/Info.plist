@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- @VERSION@ is filled in by build.sh. The file types are declared in PrintView3D.app's own
+     Info.plist (printview3d.spec, UTImportedTypeDeclarations). -->
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>PrintView3D Preview</string>
+	<key>CFBundleExecutable</key>
+	<string>PrintView3DPreview</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.sevagjb.printview3d.preview</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>PrintView3DPreview</string>
+	<key>CFBundlePackageType</key>
+	<string>XPC!</string>
+	<key>CFBundleShortVersionString</key>
+	<string>@VERSION@</string>
+	<key>CFBundleVersion</key>
+	<string>@VERSION@</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.4</string>
+	<key>NSExtension</key>
+	<dict>
+		<key>NSExtensionAttributes</key>
+		<dict>
+			<key>QLIsDataBasedPreview</key>
+			<false/>
+			<key>QLSupportsSearchableItems</key>
+			<false/>
+			<key>QLSupportedContentTypes</key>
+			<array>
+				<string>public.standard-tesselated-geometry-format</string>
+				<string>public.3mf</string>
+				<string>io.github.sevagjb.printview3d.gcode</string>
+				<string>org.freecad.fcstd</string>
+				<string>public.geometry-definition-format</string>
+				<string>public.polygon-file-format</string>
+			</array>
+		</dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.quicklook.preview</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>PV3DPreviewViewController</string>
+	</dict>
+</dict>
+</plist>

@@ -52,7 +52,7 @@ without exporting an STL first.
 | **Default app** | Optional: make PrintView3D open `.stl`, `.3mf` and `.gcode` files when you double-click them. Fully reversible. |
 | **Your language** | English, العربية (Arabic, right-to-left), Nederlands, Deutsch, Français, Español and Română; switch any time in Settings, no restart needed. [Help translate](#translations). |
 | **Themes** | Four styles — Default, Gray, Graphite (warm, easy on the eyes) and Ember (warm orange and teal) — each in a light and a dark version, with Light, Dark or System (follows your computer), for the window and the 3D view. Pick from picture cards in Settings, the palette icon, `Ctrl+T` (next style) or `Ctrl+Shift+T` (light ↔ dark). Toolpath colours stay the same in every theme. |
-| **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). |
+| **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). On macOS (beta), Finder shows thumbnails of 3MF, STL, G-code, FreeCAD, OBJ and PLY files, and **Quick Look** (space bar) shows STL, 3MF, OBJ and PLY models in 3D. [Details](#quick-look-finder-previews). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
 | **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, to check meshes, hidden parts and hollow walls. [Details](#view-wireframe-x-ray-and-clip). |
@@ -212,6 +212,24 @@ From then on it opens normally.
 **Open files with PrintView3D:** in Finder, right-click a `.stl`, `.3mf`, `.gcode` or `.FCStd` file →
 **Open With → PrintView3D**. To make it the default: right-click the file → **Get Info** →
 *Open with:* **PrintView3D** → **Change All…**.
+
+#### Quick Look (Finder previews)
+
+PrintView3D brings Quick Look support for 3D printing files (beta):
+
+- **Thumbnails in Finder** for 3MF, STL, G-code, FreeCAD, OBJ and PLY files. 3MF, G-code and FreeCAD
+  files show the picture your slicer or FreeCAD saved in them; STL files (and 3MF files without a
+  picture) are drawn, like on Windows.
+- **Space bar preview:** select a file and press the space bar. STL, 3MF, OBJ and PLY models are shown
+  in 3D (drag to turn, scroll or pinch to zoom) with their size in millimetres. G-code and FreeCAD files
+  show their saved picture. For everything else (layers, objects, settings) open the file in PrintView3D.
+
+It works once PrintView3D is in **Applications** and has been started once (steps 1–4 above). If no
+previews appear, open **System Settings → General → Login Items & Extensions**, click **Quick Look**
+(the ⓘ next to it) and switch on **PrintView3D**. Finder keeps old thumbnails for a while; files you
+copy or save afterwards show the new ones. STEP files are not previewed: reading them needs FreeCAD,
+which Quick Look can't use. If another app (a slicer, FreeCAD) also offers previews for one of these
+file types, macOS may use that app's preview instead.
 
 **Slicers** in Applications (Creality Print, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura, …) are
 found automatically. **Updates:** *Download update* opens the release page; drag the new version
@@ -678,6 +696,7 @@ src/printview3d/
 tests/                automated tests and sample files
 tools/                demo-file and screenshot generators
 packaging/linux/      AppImage launcher and menu entry
+packaging/macos/quicklook/  Finder thumbnails and Quick Look preview (Swift app extensions)
 printview3d.spec      PyInstaller recipe (Windows and Linux)
 ```
 
@@ -738,6 +757,7 @@ Is your slicer missing? It is usually a single entry in `SLICERS` in
   different brand. The model itself loads fine; that's how the slicers behave.
 - Binary G-code (`.bgcode`) is not supported yet.
 - File Explorer thumbnails are made for 3MF, STL, G-code and FreeCAD files; not yet for OBJ, PLY, OFF and glTF.
+  On macOS, Quick Look covers 3MF, STL, G-code, FreeCAD, OBJ and PLY (not STEP, OFF or glTF).
 - FreeCAD documents need an installed FreeCAD for the 3D view (PrintView3D does not include
   FreeCAD's geometry engine). Very old or very new FreeCAD versions may not open each other's files.
 
