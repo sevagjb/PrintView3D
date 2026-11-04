@@ -223,7 +223,7 @@ into Applications to replace the old one. Older Macs that can't run macOS 14:
 ## Using PrintView3D
 
 **Open a file:** double-click it (if PrintView3D is the default), drag it onto the window, use
-**Open**, or pick it from **Recent**. Try the files in [`examples/`](examples) to get started.
+**Open**, or pick it from **Recent** in the **☰** menu or on the start page. Try the files in [`examples/`](examples) to get started.
 
 **Home:** the house button (`Ctrl+W`) closes the open file and goes back to the start page, with
 your recent files. It also gives back the memory the file took, which matters most after a large

@@ -1,7 +1,7 @@
 # PrintView3D gebruiken
 
 **Een bestand openen:** dubbelklik erop (als PrintView3D het standaardprogramma is), sleep het naar het venster,
-gebruik **Openen**, of kies het uit **Recent**. Probeer de bestanden in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) om te beginnen.
+gebruik **Openen**, of kies het uit **Recent** in het menu **☰** of op de startpagina. Probeer de bestanden in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) om te beginnen.
 
 **Start:** de knop met het huisje (`Ctrl+W`) sluit het open bestand en gaat terug naar de startpagina,
 met je recente bestanden. Het geeft ook het geheugen terug dat het bestand gebruikte; dat maakt vooral
