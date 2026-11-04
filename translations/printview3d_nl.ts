@@ -1613,7 +1613,7 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fainter</source>
         <extracomment>Left end of the Cut-away part slider: more see-through.</extracomment>
-        <translation type="unfinished">Vager</translation>
+        <translation>Vager</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
