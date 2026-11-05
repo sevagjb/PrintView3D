@@ -31,6 +31,7 @@ GHOST_EDGE = {"dark": ("#e8eeed", 0.55), "light": (None, 0.65)}   # None: the th
 GHOST_EDGE_ANGLE = 40         # degrees between faces that makes an outlined edge
 CUT_PLANE_OPACITY = 0.12      # the cutting plane: a faint sheet in the theme's teal ...
 CUT_PLANE_EDGE_OPACITY = 0.75  # ... with a clearer outline
+CUT_LINE_OPACITY = 0.55       # where the two whole planes meet (both cuts on, planes not cut): faint
 GHOST_STRENGTH_DEFAULT = 50   # the setting, 0 (faintest) .. 100 (strongest)
 
 
@@ -151,6 +152,7 @@ class Scene:
         self._ghosts: dict = {"top": [], "face": []}     # per cut, per part: (ghost, outline or None)
         # The cutting planes: a model-sized sheet per cut, each stopping where the other cut is.
         self._sheets: dict = {}                      # cut -> (quad, [sheet, frame])
+        self._cut_line = None                        # (line, actor): where the two whole planes meet
         self._peeling = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
@@ -216,6 +218,7 @@ class Scene:
         self._part_colors0 = []
         self._ghosts = {"top": [], "face": []}
         self._sheets = {}
+        self._cut_line = None
         self.gcode = None
         self._bed_actor_names = []
         self.focus_bounds = None
@@ -767,6 +770,7 @@ class Scene:
             for a in actors:
                 _set_planes(a.GetMapper(), planes)
                 a.SetVisibility(cut in cuts and self.show_cut_plane)
+        self._update_cut_line()
         self._sync_ghosts()
 
     def _make_ghosts(self, cut: str):
@@ -820,11 +824,46 @@ class Scene:
             self._ghosts[c] = []
 
     def _remove_cut_plane(self):
+        if "cut_line" in self.p.actors:
+            self.p.remove_actor("cut_line", render=False)
         for cut in list(self._sheets):
             for name in (f"cut_plane_{cut}", f"cut_plane_edge_{cut}"):
                 if name in self.p.actors:
                     self.p.remove_actor(name, render=False)
         self._sheets = {}
+        self._cut_line = None
+
+    def _update_cut_line(self):
+        """Both cuts on and both planes drawn whole (Settings): a faint line where they meet, so it
+        is clear where the corner of the cut is. Otherwise no line."""
+        want = (self.clip_z is not None and self.clip_face is not None and not self.planes_cut_each_other
+                and self.show_cut_plane and bool(self.model_actors) and bool(self.focus_bounds))
+        if self._cut_line is not None and "cut_line" not in self.p.actors:
+            self._cut_line = None                    # removed with the model (clear())
+        if not want:
+            if self._cut_line is not None:
+                self._cut_line[1].SetVisibility(False)
+            return
+        b = self.focus_bounds
+        pad = max(2.0, 0.04 * max(b[1] - b[0], b[3] - b[2], b[5] - b[4]))
+        n = np.array(self._face_plane.GetNormal(), dtype=float)
+        o = np.array(self._face_plane.GetOrigin(), dtype=float)
+        side = np.array([-n[1], n[0], 0.0])
+        corners = np.array([(x, y) for x in (b[0], b[1]) for y in (b[2], b[3])])
+        along = (corners - o[:2]) @ side[:2]
+        base = np.array([o[0], o[1], self.clip_z])
+        pts = np.array([base + side * (along.min() - pad), base + side * (along.max() + pad)], dtype=float)
+        if self._cut_line is None:
+            line = pv.PolyData(pts, lines=np.array([2, 0, 1]))
+            actor = self.p.add_mesh(line, name="cut_line", line_width=2, lighting=False, pickable=False,
+                                    reset_camera=False, show_scalar_bar=False)
+            actor.SetUseBounds(False)
+            self._cut_line = (line, actor)
+            self._color_ghosts()
+        else:
+            self._cut_line[0].points = pts
+            self._cut_line[0].Modified()
+        self._cut_line[1].SetVisibility(True)
 
     def _color_ghosts(self):
         mode = self._ghost_mode()
@@ -845,6 +884,10 @@ class Scene:
             sheet.GetProperty().SetOpacity(min(1.0, CUT_PLANE_OPACITY * kp))
             frame.GetProperty().SetColor(*teal)
             frame.GetProperty().SetOpacity(min(1.0, CUT_PLANE_EDGE_OPACITY * kp))
+        if self._cut_line is not None:
+            prop = self._cut_line[1].GetProperty()
+            prop.SetColor(*teal)
+            prop.SetOpacity(min(1.0, CUT_LINE_OPACITY * kp))
 
     def _sync_ghosts(self, *_):
         """A ghost is shown while its part is, its cut is on and the ghost is wanted."""
@@ -886,6 +929,7 @@ class Scene:
             pts = [base + side * lo + (0, 0, z0), base + side * hi + (0, 0, z0),
                    base + side * hi + (0, 0, z1), base + side * lo + (0, 0, z1)]
             self._set_sheet("face", pts)
+        self._update_cut_line()
 
     def _set_sheet(self, cut: str, pts):
         quad = self._sheets[cut][0]

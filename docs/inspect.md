@@ -5,9 +5,10 @@ inside a model before you print it. It works for STL, 3MF, OBJ and the other mod
 (G-code has its layer slider for this). The button opens a **View** section in the side panel with
 every option as a button: Wireframe, X-ray, Clip from the top and Clip facing you. The controls of a
 cut (its slider, the cut-away part, the cutting plane and Freeze) appear in the same section while
-the cut is on, and the section ends with **Reset view** and **Close**. A button that is on is drawn
-darker, so you see at a glance what is active. In a narrow side panel the buttons get a smaller
-font; the panel never gets so narrow that an icon or a letter has to go.
+the cut is on, and the section ends with **Reset view** and **Close**. Close (or the View button) turns every view
+option off; Reset view does the same and fits the model. A button that is on is drawn darker, so you
+see at a glance what is active. In a narrow side panel the buttons get a smaller font; the panel never
+gets so narrow that an icon or a letter has to go.
 *New in PrintView3D 0.25; the View section is new in 0.28.*
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"
@@ -53,7 +54,7 @@ Under the sliders, **Show the cut-away part** and **Show the cutting plane** tur
 model then keeps only what both cuts keep, a corner cut away. The side panel has a slider for each,
 **Height** and **Depth**. What the cuts hide still shows as one even, see-through ghost, and each
 cutting plane stops where the other cut is (**Settings → Viewer → Don't let the two cutting planes
-cut each other** draws both whole). The cut buttons in the View section, or the keys, end each cut.
+cut each other** draws both whole, with a faint line where they meet). The cut buttons in the View section, or the keys, end each cut.
 *New in PrintView3D 0.27.*
 
 ## X-ray
@@ -125,8 +126,9 @@ trouble when printing:
 - **Mesh**: open edges (holes), non-manifold edges, flipped normals (faces turned the wrong way, or a
   part that is inside out) and loose parts (pieces not connected to the rest).
 
-Each has a colour box (click to change it) and a count. The highlights follow the cuts and the
-objects you hide. Your choices are remembered.
+Each has a colour box (click to change it) and a count; hover over a name to see what it means.
+The highlights follow the cuts and the objects you hide. Which checks are on, the angle and the
+nozzle width are remembered; the colours go back to their defaults when you restart.
 
 ## Open a folder
 

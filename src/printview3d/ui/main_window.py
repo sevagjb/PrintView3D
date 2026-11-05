@@ -1007,7 +1007,6 @@ class MainWindow(QMainWindow):
         self.check.angle = float(self.settings.get("check_angle", 45) or 45)
         self.check.nozzle = float(self.settings.get("check_nozzle", 0.4) or 0.4)
         self.check.show.update({k: bool(v) for k, v in (self.settings.get("check_show", {}) or {}).items()})
-        self.check.colors.update(self.settings.get("check_colors", {}) or {})
         # Instructions at the bottom of the 3D view, and the millimetre numbers on the plate's grid.
         from .grid_labels import GridLabels
         from .overlay_text import HintOverlay
@@ -1122,9 +1121,10 @@ class MainWindow(QMainWindow):
         self.check_box = QGroupBox()
         ckl = QVBoxLayout(self.check_box)
         self.check_rows: dict = {}
+        self._count_labels: list = []
         shown = dict(self.settings.get("check_show", {}) or {})
-        colours = dict(self.settings.get("check_colors", {}) or {})
         from .print_check import DEFAULT_COLORS
+        colours = DEFAULT_COLORS                     # picked colours last until the program closes
 
         def check_row(kind: str, extra: Optional[QWidget] = None) -> QHBoxLayout:
             row = QHBoxLayout()
@@ -1138,6 +1138,10 @@ class MainWindow(QMainWindow):
             cb.toggled.connect(lambda on, k=kind: self._check_shown(k, on))
             count_lbl = QLabel()
             count_lbl.setObjectName("objectSize")
+            # A fixed width, right-aligned: a count that appears or grows never moves the fields
+            # before it (the nozzle width jumped when "none" appeared).
+            count_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self._count_labels.append(count_lbl)
             row.addWidget(box)
             row.addWidget(cb, 1)
             if extra is not None:
@@ -1438,14 +1442,23 @@ class MainWindow(QMainWindow):
                 ("overhang", tr("Overhangs"), tr("Faces that face down and lean further from vertical than the angle: "
                                                   "they usually need supports. Faces on the plate are not counted.")),
                 ("thin", tr("Thin walls"), tr("Walls and pins thinner than the nozzle: one line of plastic or less.")),
-                ("open", tr("Open edges"), tr("Edges with a face on one side only: holes in the surface.")),
-                ("nonmanifold", tr("Non-manifold edges"), tr("Edges shared by more than two faces.")),
-                ("flipped", tr("Flipped normals"), tr("Faces turned the other way than their neighbours, or a closed "
-                                                     "part that is inside out.")),
-                ("loose", tr("Loose parts"), tr("Pieces not connected to the biggest one."))):
-            cb = self.check_rows[kind][0]
+                ("open", tr("Open edges"), tr("Holes in the surface: edges with a face on one side only. "
+                                               "The model is not closed, so a slicer has to guess what is inside.")),
+                ("nonmanifold", tr("Non-manifold edges"), tr("Edges shared by three or more faces, for example where two "
+                                                              "parts touch along a line. Slicers can read them wrongly.")),
+                ("flipped", tr("Flipped normals"), tr("Faces turned inside out: their front points into the model. "
+                                                     "Slicers may leave them out or fill them wrongly.")),
+                ("loose", tr("Loose parts"), tr("Small pieces not connected to the main body. They print as separate "
+                                                "bits, or not at all."))):
+            cb, count_lbl, _box = self.check_rows[kind]
             cb.setText(text)
             cb.setToolTip(tip)
+            count_lbl.setToolTip(tip)
+        widest = max(self.fontMetrics().horizontalAdvance(t) for t in (
+            tr("none"), tr("{n} faces").format(n=count(999999)), tr("{n} edges").format(n=count(999999)),
+            tr("{n} parts").format(n=count(9999))))
+        for lbl in self._count_labels:
+            lbl.setFixedWidth(widest + 4)
         self._update_check_panel()
         self.act_view.setText(tr("View"))
         self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
@@ -2770,9 +2783,6 @@ class MainWindow(QMainWindow):
         self._set_check_color(kind, DEFAULT_COLORS[kind], button)
 
     def _set_check_color(self, kind: str, color: str, button: "_ColorButton"):
-        colours = dict(self.settings.get("check_colors", {}) or {})
-        colours[kind] = color
-        self.settings.set("check_colors", colours)
         button.set_color(color)
         self.check.set_color(kind, color)
 
@@ -2802,6 +2812,20 @@ class MainWindow(QMainWindow):
         self.view_box.setVisible(show)
         if show:
             self._open_side_panel()
+        if not on:
+            self._view_options_off()             # View off or Close: back to the plain view
+
+    def _view_options_off(self):
+        """Wireframe, X-ray, both cuts and the frozen plane off (the view itself stays)."""
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
+            if a.isChecked():
+                a.setChecked(False)
+        self.view_freeze_cb.setChecked(False)
+
+    def _open_view_section(self):
+        """A view option was turned on (also by its key): its section opens, so Close can end it."""
+        if not self.act_view.isChecked() and self._view_options_apply():
+            self.act_view.setChecked(True)
 
     def set_cut_frozen(self, on: bool):
         """View section: freeze the Clip facing you cut where it is (the other cut never moves)."""
@@ -2834,11 +2858,15 @@ class MainWindow(QMainWindow):
         self._update_clip_label()
 
     def set_wireframe(self, on: bool):
+        if on:
+            self._open_view_section()
         self.scene.set_wireframe(on)
         if self.stack.currentIndex() == 1:
             self.plotter.render()
 
     def set_xray(self, on: bool):
+        if on:
+            self._open_view_section()
         self.scene.set_xray(on)
         if self.stack.currentIndex() == 1:
             self.plotter.render()
@@ -2875,10 +2903,7 @@ class MainWindow(QMainWindow):
         Nothing else changes (the plate, the objects shown, the theme, the measurements)."""
         if not self._view_options_apply():
             return
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
-            if a.isChecked():
-                a.setChecked(False)
-        self.view_freeze_cb.setChecked(False)
+        self._view_options_off()
         self.set_view(None, animate=True)
 
     # ------------------------------------------------------------ measure
@@ -2995,8 +3020,7 @@ class MainWindow(QMainWindow):
         row = self.clip_top_row if cut == "top" else self.clip_face_row
         self._retitle_clip_box()
         if on and self._view_options_apply():
-            if not self.act_view.isChecked():
-                self.act_view.setChecked(True)       # its controls are in the View section
+            self._open_view_section()                # its controls are in the View section
             # A cut that is turned on starts in the middle of its slider.
             slider.blockSignals(True)
             slider.setValue(self.CLIP_STEPS // 2)
@@ -3389,8 +3413,9 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(tr("Saved {path}").format(path=path), 6000)
 
     def open_settings(self, page: str = ""):
-        freecad_before = self.settings.get("freecad_path", "")
+        self._freecad_before = self.settings.get("freecad_path", "")
         dlg = SettingsDialog(self.settings, self, renderer_info(self.plotter), page=page)
+        dlg.applied.connect(self._settings_applied)          # Apply: shown now, the dialog stays
         accepted = dlg.exec()
         self.refresh_update_badge()
         if accepted and dlg.restart_now:
@@ -3398,24 +3423,30 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(0, self.restart)
             return
         if accepted:
-            self._update_slicer_button()
-            # FreeCAD just chosen: show the open FreeCAD file in 3D now.
-            if (self.current_kind in ("freecad", "step") and self.current_path and self.model is not None
-                    and not self.model.parts and self.settings.get("freecad_path", "") != freecad_before):
-                self.load(self.current_path)
-            if (self.scene.plate_mode, self.scene.custom_plate) != (
-                    self.settings.get("plate_mode", "printer"), self._plate_size()):
-                self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
-                self._mark_plate_mode()
-                if self.stack.currentIndex() == 1:
-                    self.plotter.render()
-            show_bed = bool(self.settings.get("show_bed", True))
-            if self.act_bed.isChecked() != show_bed:
-                self.act_bed.setChecked(show_bed)
-            show_cube = bool(self.settings.get("show_view_cube", True))
-            if self.view_cube.visible != show_cube:
-                self.set_view_cube_visible(show_cube)
-            self._apply_grid_label_settings()
+            self._settings_applied()
+
+    def _settings_applied(self):
+        """Settings saved (OK or Apply): show what changed."""
+        self._update_slicer_button()
+        # FreeCAD just chosen: show the open FreeCAD file in 3D now.
+        freecad_before = getattr(self, "_freecad_before", self.settings.get("freecad_path", ""))
+        self._freecad_before = self.settings.get("freecad_path", "")
+        if (self.current_kind in ("freecad", "step") and self.current_path and self.model is not None
+                and not self.model.parts and self.settings.get("freecad_path", "") != freecad_before):
+            self.load(self.current_path)
+        if (self.scene.plate_mode, self.scene.custom_plate) != (
+                self.settings.get("plate_mode", "printer"), self._plate_size()):
+            self.scene.set_plate_mode(self.settings.get("plate_mode", "printer"), self._plate_size())
+            self._mark_plate_mode()
+            if self.stack.currentIndex() == 1:
+                self.plotter.render()
+        show_bed = bool(self.settings.get("show_bed", True))
+        if self.act_bed.isChecked() != show_bed:
+            self.act_bed.setChecked(show_bed)
+        show_cube = bool(self.settings.get("show_view_cube", True))
+        if self.view_cube.visible != show_cube:
+            self.set_view_cube_visible(show_cube)
+        self._apply_grid_label_settings()
 
     def _spacing_mm(self, key: str) -> float:
         """A grid spacing from Settings in mm, for the unit in use (0 = automatic)."""

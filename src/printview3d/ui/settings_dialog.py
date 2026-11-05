@@ -31,10 +31,13 @@ PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "upda
 
 
 class SettingsDialog(QDialog):
+    applied = Signal()                      # Apply: saved; the main window shows the new settings now
+
     def __init__(self, settings, parent=None, gpu_info=None, page: str = ""):
         super().__init__(parent)
         self.settings = settings
         self.restart_now = False            # OK chose "Restart now" (MainWindow.open_settings restarts)
+        self._restart_asked = False         # asked once per dialog, not on every Apply
         self.setWindowTitle(tr("Settings"))
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         outer = QVBoxLayout(self)
@@ -399,6 +402,14 @@ class SettingsDialog(QDialog):
         # View -> Clip: how strongly the cut-away part (ghost and outline) and the cutting plane
         # are drawn, each with its own slider (#66). They change the 3D view while you drag;
         # Cancel puts them back. Same columns as Build plate and Plate size.
+        # Measure: how thick its lines are (1 .. 10 pixels); also tried live, Cancel puts it back.
+        try:
+            self._line_at_open = min(10, max(1, int(round(float(settings.get("measure_line_width", 4))))))
+        except (TypeError, ValueError):
+            self._line_at_open = 4
+        self.line_slider = self._strength_row(
+            plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
+            tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
         from .scene import Scene
         self._ghost_at_open = Scene._strength(settings.get("ghost_strength"))
         self._plane_at_open = Scene._strength(settings.get("plane_strength"))
@@ -408,14 +419,6 @@ class SettingsDialog(QDialog):
         self.plane_slider = self._strength_row(
             plate_form, tr("Cutting plane"), self._plane_at_open, self._preview_plane_strength,
             tr("How strongly the cutting plane is drawn when you use Clip in the View menu."))
-        # Measure: how thick its lines are (1 .. 10 pixels); also tried live, Cancel puts it back.
-        try:
-            self._line_at_open = min(10, max(1, int(round(float(settings.get("measure_line_width", 4))))))
-        except (TypeError, ValueError):
-            self._line_at_open = 4
-        self.line_slider = self._strength_row(
-            plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
-            tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
         # Both cuts on (View section): normally each cutting plane stops where the other cut is, so
         # the two meet in a clean corner. This keeps both planes whole instead.
         self.cut_planes_cb = QCheckBox(tr("Don't let the two cutting planes cut each other"))
@@ -458,8 +461,11 @@ class SettingsDialog(QDialog):
         self._add_page("about", tr("About"), [self._build_about(gpu_info), self._build_shortcuts()],
                        keep_titles=True)
 
-        bb = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        # Apply saves and shows the settings without closing; OK does the same and closes.
+        bb = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Apply | QDialogButtonBox.Cancel)
         bb.button(QDialogButtonBox.Ok).setObjectName("primary")     # in the theme's primary colour
+        self.apply_btn = bb.button(QDialogButtonBox.Apply)
+        self.apply_btn.clicked.connect(lambda: self._save(close=False))
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
         outer.addWidget(bb)
@@ -950,7 +956,9 @@ class SettingsDialog(QDialog):
         self._update_assoc_status()
 
     # ------------------------------------------------------------------ save
-    def _save(self):
+    def _save(self, close: bool = True):
+        """OK (close=True) or Apply (close=False): store everything. After Apply, Cancel keeps
+        what was applied: it only takes back changes made since."""
         self._store_slicer_fields()
         sid = self._current_id
         if sid == sl.CUSTOM and not os.path.isfile(self._custom.get("path", "")):
@@ -1002,9 +1010,18 @@ class SettingsDialog(QDialog):
         choice = self._theme_choice
         if choice != self.settings.get("theme", "auto"):
             self.settings.set("theme", choice)      # already shown live (see _preview_theme)
-        if restart_for:
+        if restart_for and not self._restart_asked:
+            self._restart_asked = not close
             self.restart_now = self._ask_restart(restart_for)
-        self.accept()
+        if close or self.restart_now:
+            self.accept()
+            return
+        # Apply: what is applied now is what Cancel goes back to.
+        self._theme_at_open = self._theme_choice
+        self._ghost_at_open = self.ghost_slider.value()
+        self._plane_at_open = self.plane_slider.value()
+        self._line_at_open = self.line_slider.value()
+        self.applied.emit()
 
     def _ask_restart(self, what: list[str]) -> bool:
         """Restart now / Later. True for Restart now."""

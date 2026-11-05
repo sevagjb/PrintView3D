@@ -41,7 +41,6 @@ DEFAULTS = {
     "check_angle": 45,          # Check: overhangs lean further than this from vertical (degrees)
     "check_nozzle": 0.4,        # Check: thin walls are thinner than this (mm)
     "check_show": {},           # Check: which highlights are on (kind -> bool; missing: the default)
-    "check_colors": {},         # Check: their colours (kind -> "#rrggbb"; missing: the default)
     "units": "mm",              # Settings -> Language and units: "mm" or "in" (inches)
     "grid_labels_step": 0,      # Settings -> Viewer: spacing of those numbers in mm (0 = automatic)
     "grid_labels_step_in": 0,   # ... the same in inches, while inches are in use

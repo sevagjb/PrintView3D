@@ -640,8 +640,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges with a face on one side only: holes in the surface.</source>
-        <translation type="unfinished">Randen met maar aan één kant een vlak: gaten in het oppervlak.</translation>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">Gaten in het oppervlak: randen met maar aan één kant een vlak. Het model is niet gesloten, dus de slicer moet raden wat er binnen is.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -650,8 +650,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges shared by more than two faces.</source>
-        <translation type="unfinished">Randen die door meer dan twee vlakken gedeeld worden.</translation>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">Randen die door drie of meer vlakken gedeeld worden, bijvoorbeeld waar twee delen elkaar langs een lijn raken. Slicers kunnen ze verkeerd lezen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -660,8 +660,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
-        <translation type="unfinished">Vlakken die andersom liggen dan hun buren, of een gesloten onderdeel dat binnenstebuiten is.</translation>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">Vlakken die binnenstebuiten liggen: hun voorkant wijst het model in. Slicers laten ze misschien weg of vullen ze verkeerd.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -670,8 +670,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Pieces not connected to the biggest one.</source>
-        <translation type="unfinished">Stukken die niet aan het grootste vastzitten.</translation>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="unfinished">Kleine stukken die niet aan het hoofddeel vastzitten. Ze worden als losse stukjes geprint, of helemaal niet.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">geen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1281,12 +1287,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{n} parts</source>
         <translation type="unfinished">{n} delen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">geen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1963,6 +1963,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation>Meetlijnen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation>Hoe dik de lijnen van Meten zijn.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation>Dunner</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation>Dikker</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cut-away part</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
         <translation>Weggesneden deel</translation>
@@ -1982,26 +2002,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
         <translation>Hoe sterk het snijvlak getekend wordt als je Afsnijden in het menu Weergave gebruikt.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation>Meetlijnen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation>Hoe dik de lijnen van Meten zijn.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation>Dunner</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation>Dikker</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2624,6 +2624,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">Randen met maar aan één kant een vlak: gaten in het oppervlak.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">Randen die door meer dan twee vlakken gedeeld worden.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">Vlakken die andersom liggen dan hun buren, of een gesloten onderdeel dat binnenstebuiten is.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">Stukken die niet aan het grootste vastzitten.</translation>
     </message>
     <message>
         <source>{n} mm</source>

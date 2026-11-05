@@ -193,7 +193,7 @@ def test_colours_are_not_saved_and_do_not_survive_another_file(window, monkeypat
     _pick(monkeypatch, "#00ff00")
     _boxes(w)[0].click()
     stored = [k for k in w.settings.data if ("color" in k or "colour" in k) and k != "check_colors"]
-    assert not stored and w.settings.get("check_colors") == {}        # the objects' colours: not stored
+    assert not stored                                                 # no colours are stored
     w.load_sync(CUBE)                                                  # the same file again: file colours
     assert w.scene.part_color_override(0) is None and _color(w.scene.model_actors[0]) != (0, 255, 0)
 

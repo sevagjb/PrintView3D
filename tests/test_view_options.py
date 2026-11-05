@@ -475,3 +475,41 @@ def test_view_buttons_are_as_tall_as_the_other_toolbar_buttons(window, app):
             heights[b.objectName() + ":" + (getattr(b, "text", lambda: "")() or "?")] = b.sizeHint().height()
     assert len(set(heights.values())) == 1, heights
 
+
+# ---------------------------------------------------------------- closing the View section ends it all
+def test_close_ends_every_view_option(window):
+    w = window
+    w.load_sync(INSIDE)
+    for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face):
+        a.trigger()
+    w.view_freeze_cb.setChecked(True)
+    assert w.act_view.isChecked()
+    w.view_close_btn.click()
+    assert not any(a.isChecked() for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face))
+    assert not w.view_freeze_cb.isChecked() and w.scene.clip_z is None and w.scene.clip_face is None
+    assert all(p.GetRepresentation() == 2 and p.GetOpacity() == 1.0 for p in _props(w))
+
+
+def test_the_view_button_off_ends_every_view_option_too(window, monkeypatch):
+    w = window
+    w.load_sync(INSIDE)
+    fitted = []
+    monkeypatch.setattr(w, "set_view", lambda view, animate=False: fitted.append(view))
+    w.act_view.trigger()
+    w.act_wireframe.trigger()
+    w.act_clip.trigger()
+    w.act_view.trigger()                                  # the toolbar button off
+    assert not w.act_wireframe.isChecked() and not w.act_clip.isChecked() and fitted == []   # no fit
+    w.act_view.trigger()
+    w.act_xray.trigger()
+    w.reset_view()                                        # Reset view: the same, and a fit
+    assert not w.act_xray.isChecked() and fitted == [None] and w.view_box.isVisible()
+
+
+def test_a_view_key_opens_the_view_section(window):
+    w = window
+    w.load_sync(INSIDE)
+    assert not w.act_view.isChecked()
+    w.act_wireframe.trigger()                             # W
+    assert w.act_view.isChecked() and w.view_box.isVisible()
+

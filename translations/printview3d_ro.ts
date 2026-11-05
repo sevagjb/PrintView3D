@@ -640,8 +640,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges with a face on one side only: holes in the surface.</source>
-        <translation type="unfinished">Muchii cu o față doar pe o parte: găuri în suprafață.</translation>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">Găuri în suprafață: muchii cu o față doar pe o parte. Modelul nu este închis, așa că slicerul trebuie să ghicească ce este înăuntru.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -650,8 +650,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges shared by more than two faces.</source>
-        <translation type="unfinished">Muchii comune pentru mai mult de două fețe.</translation>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">Muchii comune pentru trei sau mai multe fețe, de exemplu unde două piese se ating de-a lungul unei linii. Slicerele le pot citi greșit.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -660,8 +660,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
-        <translation type="unfinished">Fețe întoarse invers față de vecinele lor, sau o piesă închisă întoarsă pe dos.</translation>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">Fețe întoarse pe dos: partea din față arată spre interiorul modelului. Slicerele le pot omite sau umple greșit.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -670,8 +670,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Pieces not connected to the biggest one.</source>
-        <translation type="unfinished">Bucăți care nu sunt legate de cea mai mare.</translation>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="unfinished">Bucăți mici care nu sunt legate de corpul principal. Se tipăresc ca bucăți separate sau deloc.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">niciuna</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1281,12 +1287,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{n} parts</source>
         <translation type="unfinished">{n} părți</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">niciuna</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1963,6 +1963,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation type="unfinished">Linii de măsurare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation type="unfinished">Cât de groase sunt liniile de la Măsoară.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation type="unfinished">Mai subțiri</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation type="unfinished">Mai groase</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cut-away part</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
         <translation>Partea tăiată</translation>
@@ -1982,26 +2002,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
         <translation>Cât de vizibil este planul de tăiere când folosești o tăiere din meniul Vizualizare.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation type="unfinished">Linii de măsurare</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation type="unfinished">Cât de groase sunt liniile de la Măsoară.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation type="unfinished">Mai subțiri</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation type="unfinished">Mai groase</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2624,6 +2624,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">Muchii cu o față doar pe o parte: găuri în suprafață.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">Muchii comune pentru mai mult de două fețe.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">Fețe întoarse invers față de vecinele lor, sau o piesă închisă întoarsă pe dos.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">Bucăți care nu sunt legate de cea mai mare.</translation>
     </message>
     <message>
         <source>{n} mm</source>

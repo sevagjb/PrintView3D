@@ -640,8 +640,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges with a face on one side only: holes in the surface.</source>
-        <translation type="unfinished">Arêtes avec une face d&apos;un seul côté : des trous dans la surface.</translation>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">Trous dans la surface : arêtes avec une face d&apos;un seul côté. Le modèle n&apos;est pas fermé, le trancheur doit donc deviner ce qui est à l&apos;intérieur.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -650,8 +650,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges shared by more than two faces.</source>
-        <translation type="unfinished">Arêtes partagées par plus de deux faces.</translation>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">Arêtes partagées par trois faces ou plus, par exemple là où deux pièces se touchent le long d&apos;une ligne. Les trancheurs peuvent mal les lire.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -660,8 +660,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
-        <translation type="unfinished">Faces tournées dans l&apos;autre sens que leurs voisines, ou une pièce fermée retournée.</translation>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">Faces retournées : leur avant pointe vers l&apos;intérieur du modèle. Les trancheurs peuvent les ignorer ou mal les remplir.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -670,8 +670,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Pieces not connected to the biggest one.</source>
-        <translation type="unfinished">Morceaux non reliés au plus grand.</translation>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="unfinished">Petits morceaux non reliés au corps principal. Ils s&apos;impriment séparément, ou pas du tout.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">aucun</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1281,12 +1287,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{n} parts</source>
         <translation type="unfinished">{n} pièces</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">aucun</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1963,6 +1963,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation type="unfinished">Lignes de mesure</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation type="unfinished">Épaisseur des lignes de Mesurer.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation type="unfinished">Plus fines</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation type="unfinished">Plus épaisses</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cut-away part</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
         <translation type="unfinished">Partie coupée</translation>
@@ -1982,26 +2002,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
         <translation type="unfinished">Intensité du dessin du plan de coupe quand vous utilisez une coupe du menu Affichage.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation type="unfinished">Lignes de mesure</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation type="unfinished">Épaisseur des lignes de Mesurer.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation type="unfinished">Plus fines</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation type="unfinished">Plus épaisses</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2624,6 +2624,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">Arêtes avec une face d&apos;un seul côté : des trous dans la surface.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">Arêtes partagées par plus de deux faces.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">Faces tournées dans l&apos;autre sens que leurs voisines, ou une pièce fermée retournée.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">Morceaux non reliés au plus grand.</translation>
     </message>
     <message>
         <source>{n} mm</source>

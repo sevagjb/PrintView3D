@@ -244,15 +244,50 @@ def test_thin_walls_on_demand(window):
     assert w.settings.get("check_nozzle") == pytest.approx(0.6) and w.check.thin is None
 
 
-def test_check_colours_are_remembered(window, monkeypatch):
+def test_check_colours_last_until_the_program_closes(app, tmp_path, monkeypatch):
     from PySide6.QtGui import QColor
     from PySide6.QtWidgets import QColorDialog
+    from printview3d.ui.print_check import DEFAULT_COLORS
+    w = _make(app, tmp_path)
+    try:
+        w.load_sync(CUBE)
+        w.act_check.trigger()
+        monkeypatch.setattr(QColorDialog, "getColor", staticmethod(lambda *a, **k: QColor("#123456")))
+        w.check_rows["overhang"][2].click()
+        assert w.check.colors["overhang"] == "#123456" and w.check_rows["overhang"][2].color == "#123456"
+        assert "check_colors" not in w.settings.data                       # not saved
+    finally:
+        w.close()
+    w2 = _make(app, tmp_path)                                              # the next start: the defaults
+    try:
+        assert w2.check.colors["overhang"] == DEFAULT_COLORS["overhang"]
+        assert w2.check_rows["overhang"][2].color == DEFAULT_COLORS["overhang"]
+    finally:
+        w2.close()
+
+
+def test_mesh_rows_explain_themselves_on_hover(window):
     w = window
-    w.load_sync(CUBE)
+    for kind in ("open", "nonmanifold", "flipped", "loose"):
+        cb, count_lbl, _box = w.check_rows[kind]
+        assert len(cb.toolTip()) > 30 and count_lbl.toolTip() == cb.toolTip()
+
+
+def test_the_nozzle_field_stays_put_when_counts_change(window, app):
+    w = window
+    w.load_sync(TWO_PARTS)
     w.act_check.trigger()
-    monkeypatch.setattr(QColorDialog, "getColor", staticmethod(lambda *a, **k: QColor("#123456")))
-    w.check_rows["overhang"][2].click()
-    assert w.settings.get("check_colors")["overhang"] == "#123456" and w.check.colors["overhang"] == "#123456"
+    for _ in range(4):
+        app.processEvents()
+    x = lambda: w.check_nozzle.mapTo(w.check_box, w.check_nozzle.rect().topLeft()).x()
+    before = x()
+    w.check_nozzle.set_mm(0.45)
+    w._check_nozzle_changed()
+    w.check_rows["thin"][0].setChecked(True)
+    w.check.wait_for_thin()                                                # "none" appears beside it
+    for _ in range(4):
+        app.processEvents()
+    assert w.check_rows["thin"][1].text() == "none" and x() == before
 
 
 def test_check_is_off_for_gcode(window):
@@ -295,3 +330,53 @@ def test_an_empty_folder_says_so(window, tmp_path, monkeypatch):
     monkeypatch.setattr(QMessageBox, "information", staticmethod(lambda *a, **k: said.append(a)))
     window.open_folder(str(tmp_path))
     assert said and window.folder is None
+
+
+# ------------------------------------------------------------ the line where the two whole planes meet
+def test_a_faint_line_where_the_two_whole_planes_meet(window):
+    w = window
+    w.load_sync(INSIDE)
+    w.act_clip.trigger()
+    w.act_clip_face.trigger()
+    assert w.scene._cut_line is None or not w.scene._cut_line[1].GetVisibility()     # cut each other: no line
+    w.settings.set("cut_planes_whole", True)
+    w._apply_grid_label_settings()
+    line, actor = w.scene._cut_line
+    assert actor.GetVisibility() and actor.GetProperty().GetOpacity() < 0.8
+    pts = np.asarray(line.points)
+    assert np.allclose(pts[:, 2], w.scene.clip_z)                                    # in the height cut ...
+    n = np.array(w.scene._face_plane.GetNormal())
+    o = np.array(w.scene._face_plane.GetOrigin())
+    assert np.allclose((pts - o) @ n, 0, atol=1e-6)                                 # ... and in the upright one
+    w.act_clip.trigger()                                                             # one cut: no line
+    assert not actor.GetVisibility()
+
+
+# ------------------------------------------------------------ Settings: Apply
+def test_apply_shows_the_settings_and_keeps_the_dialog_open(window):
+    from printview3d.ui.settings_dialog import SettingsDialog
+    w = window
+    w.load_sync(CUBE)
+    seen = []
+    dlg = SettingsDialog(w.settings, w, {}, page="viewer")
+    dlg.applied.connect(w._settings_applied)
+    dlg.applied.connect(lambda: seen.append(1))
+    dlg.show()
+    dlg.grid_labels_cb.setChecked(True)
+    dlg.apply_btn.click()
+    assert seen == [1] and dlg.isVisible() and w.grid_labels.enabled                # shown, still open
+    dlg.line_slider.setValue(9)
+    dlg.apply_btn.click()
+    dlg.reject()                                                                     # Cancel after Apply
+    assert w.settings.get("measure_line_width") == 9 and w.measure.line_width == 9   # keeps what was applied
+
+
+def test_measurement_lines_slider_comes_before_the_cut_sliders(window):
+    from printview3d.ui.settings_dialog import SettingsDialog
+    dlg = SettingsDialog(window.settings, window, {}, page="viewer")
+    dlg.resize(900, 800)
+    dlg.show()
+    y = lambda sl: sl.mapTo(dlg, sl.rect().topLeft()).y()
+    assert y(dlg.line_slider) < y(dlg.ghost_slider) < y(dlg.plane_slider)
+    dlg.close()
+

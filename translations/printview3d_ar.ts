@@ -640,8 +640,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges with a face on one side only: holes in the surface.</source>
-        <translation type="unfinished">حواف لها وجه من جهة واحدة فقط: ثقوب في السطح.</translation>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">ثقوب في السطح: حواف لها وجه من جهة واحدة فقط. النموذج غير مغلق، لذا على برنامج التقطيع أن يخمّن ما بداخله.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -650,8 +650,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Edges shared by more than two faces.</source>
-        <translation type="unfinished">حواف يشترك فيها أكثر من وجهين.</translation>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">حواف يشترك فيها ثلاثة أوجه أو أكثر، مثلاً حيث يلتقي جزآن على طول خط. قد تقرأها برامج التقطيع خطأً.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -660,8 +660,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
-        <translation type="unfinished">أوجه مقلوبة عكس جيرانها، أو جزء مغلق مقلوب من الداخل إلى الخارج.</translation>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">أوجه مقلوبة: واجهتها تشير إلى داخل النموذج. قد تتجاهلها برامج التقطيع أو تملؤها خطأً.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -670,8 +670,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Pieces not connected to the biggest one.</source>
-        <translation type="unfinished">قطع غير متصلة بأكبر قطعة.</translation>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي. تُطبع كقطع منفصلة أو لا تُطبع أبداً.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">لا شيء</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1281,12 +1287,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{n} parts</source>
         <translation type="unfinished">{n} أجزاء</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">لا شيء</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1963,6 +1963,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation>خطوط القياس</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation>مدى سماكة خطوط القياس.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation>أرفع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation>أسمك</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Cut-away part</source>
         <extracomment>Settings -&gt; Viewer, label of a slider: how strongly the see-through &apos;ghost&apos; of what a cut hides (and the cutting plane) is drawn.</extracomment>
         <translation>الجزء المقطوع</translation>
@@ -1982,26 +2002,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How strongly the cutting plane is drawn when you use Clip in the View menu.</source>
         <translation>مدى وضوح مستوى القطع عند استخدام القطع من قائمة العرض.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation>خطوط القياس</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation>مدى سماكة خطوط القياس.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation>أرفع</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation>أسمك</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2624,6 +2624,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">حواف لها وجه من جهة واحدة فقط: ثقوب في السطح.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">حواف يشترك فيها أكثر من وجهين.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">أوجه مقلوبة عكس جيرانها، أو جزء مغلق مقلوب من الداخل إلى الخارج.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">قطع غير متصلة بأكبر قطعة.</translation>
     </message>
     <message>
         <source>{n} mm</source>
