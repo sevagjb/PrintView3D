@@ -23,7 +23,8 @@ from typing import Callable, Optional
 
 import numpy as np
 
-from ..i18n import num, tr
+from .. import units
+from ..i18n import tr
 from .overlay_text import Sprites, device_scale, label_picture, make_overlay, _rgb
 
 MAX_LABELS = 8                # along one edge (automatic spacing)
@@ -33,11 +34,24 @@ MULTIPLES = (1, 2, 5, 10, 20, 50, 100)
 OFFSET_PX = 13                # how far outside the edge the text sits
 
 
-def major_step(width: float, depth: float) -> float:
-    """The spacing of the plate's major grid lines (Scene draws a minor line every `step`, a
-    major one every 5th)."""
+def major_step(width: float, depth: float, scene=None) -> float:
+    """The spacing of the plate's major grid lines in mm (as the scene draws them; without a
+    scene: the automatic millimetre grid, a major line every 5th minor one)."""
+    if scene is not None:
+        return scene.grid_spacing(max(width, depth))[1]
     from .scene import Scene
     return Scene._grid_step(max(width, depth)) * 5
+
+
+def _whole(step_mm: float) -> bool:
+    """Is this a spacing worth writing: a whole number, or at most 3 decimals in inches?"""
+    v = units.to_display(step_mm) * 1000
+    return abs(v - round(v)) < 1e-6 and (units.imperial() or float(step_mm).is_integer())
+
+
+def text_for(mm: float) -> str:
+    """'50 mm', '2 in', '0.5 in'."""
+    return tr("{d} {unit}").format(d=units.short(units.to_display(mm)), unit=units.name())
 
 
 def _multiples(lo: float, hi: float, step: float) -> list:
@@ -62,9 +76,9 @@ def label_values(lo: float, hi: float, major: float, max_labels: int = MAX_LABEL
             break
     if len(vals) >= 2 or k != MULTIPLES[0]:
         return vals
-    for div in (2, 5, 10):
+    for div in (2, 4, 5, 10):
         step = major / div
-        if step != int(step):
+        if not _whole(step):
             continue
         finer = _multiples(lo, hi, step)
         if 2 <= len(finer) <= max_labels:
@@ -134,15 +148,15 @@ class GridLabels:
         cam = self.p.renderer.GetActiveCamera().GetPosition()
         if cam[2] < z - 1e-3:                         # under the plate: the text would be back to front
             return []
-        major = major_step(xmax - xmin, ymax - ymin)
+        major = major_step(xmax - xmin, ymax - ymin, self.scene)
         y_edge = ymin if cam[1] <= (ymin + ymax) / 2 else ymax       # the edges nearest the camera
         x_edge = xmin if cam[0] <= (xmin + xmax) / 2 else xmax
         cy, cx = (ymin + ymax) / 2, (xmin + xmax) / 2
         out = []
         for x in label_values(xmin, xmax, major, step=self.step):
-            out.append((tr("{n} mm").format(n=num(x, 0)), (x, y_edge, z), (x, cy, z)))
+            out.append((text_for(x), (x, y_edge, z), (x, cy, z)))
         for y in label_values(ymin, ymax, major, step=self.step):
-            out.append((tr("{n} mm").format(n=num(y, 0)), (x_edge, y, z), (cx, y, z)))
+            out.append((text_for(y), (x_edge, y, z), (cx, y, z)))
         return out
 
     def _layout(self, *_):

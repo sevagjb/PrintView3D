@@ -52,8 +52,9 @@ Under the sliders, **Show the cut-away part** and **Show the cutting plane** tur
 <kbd>C</kbd> and <kbd>V</kbd> each turn their own cut on and off, so both can be on together: the
 model then keeps only what both cuts keep, a corner cut away. The side panel has a slider for each,
 **Height** and **Depth**. What the cuts hide still shows as one even, see-through ghost, and each
-cutting plane stops where the other cut is. **Reset view** ends both cuts; the same key (or button)
-again ends just that one. *New in PrintView3D 0.27.*
+cutting plane stops where the other cut is (**Settings → Viewer → Don't let the two cutting planes
+cut each other** draws both whole). The cut buttons in the View section, or the keys, end each cut.
+*New in PrintView3D 0.27.*
 
 ## X-ray
 
@@ -108,19 +109,46 @@ The **Objects** list comes first in the side panel and the **Details** last; cli
 them away (the choice is remembered). At the top you see the file type and size. Click the colour
 box of an object to pick another colour for that object alone; right-click it to go back to the
 colour from the file. Colours you pick are not saved: they are back to normal after you restart.
-*New in PrintView3D 0.28.*
+Next to the file type and size, *Preview picture* folds the picture the slicer saved away or opens it. *New in PrintView3D 0.28.*
 
 ![The housing and the impeller in colours of your own choice, seen with X-ray](assets/inside/colors.png)
 
-## Distances on the grid
+## Check before printing
 
-**Settings → Viewer → Show distances (mm) along the grid** (off by default) writes small numbers in
-millimetres along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
+The **Check** button (between Plate and View) opens the Check section and colours what may cause
+trouble when printing:
+
+- **Overhangs**: faces that face down and lean further from vertical than an angle (45° by default)
+  usually need supports. Faces resting on the plate don't count.
+- **Thin walls**: walls and pins thinner than the nozzle (0.4 mm by default). This looks at every
+  face and runs in the background, so it is off until you tick it.
+- **Mesh**: open edges (holes), non-manifold edges, flipped normals (faces turned the wrong way, or a
+  part that is inside out) and loose parts (pieces not connected to the rest).
+
+Each has a colour box (click to change it) and a count. The highlights follow the cuts and the
+objects you hide. Your choices are remembered.
+
+## Open a folder
+
+**Menu → Open folder…** lists the 3D files of a folder in the side panel and opens the first one.
+<kbd>↑</kbd> / <kbd>↓</kbd> step through them, as in a ZIP, or click a name.
+
+## Millimetres or inches
+
+**Settings → Language and units → Lengths in** shows every length in millimetres or in inches: sizes,
+measurements, the cuts, the grid and its numbers, and the plate size. Files are not changed; 3D
+files are always in millimetres.
+
+## Scale numbers on the grid
+
+**Settings → Viewer → Show scale numbers on the grid** (off by default) writes small numbers (in the
+unit you chose) along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
 to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
 you look from under the plate. With the endless grid they follow the area around the model.
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
-of the automatic one. *New in PrintView3D 0.28.*
+of the automatic one. **Grid lines every** and **Main grid lines every** set the spacing of the grid
+itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *New in PrintView3D 0.28.*
 
 ![Distances in millimetres along the edges of the build plate](assets/inside/grid-numbers.png)
 

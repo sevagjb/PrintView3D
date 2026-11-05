@@ -176,7 +176,7 @@ def test_the_spacing_setting_changes_the_numbers(window, app):
     assert dlg.grid_step_combo.currentData() == 0 and dlg.grid_step_combo.itemData(0) == 0
     assert [dlg.grid_step_combo.itemData(i) for i in range(dlg.grid_step_combo.count())] == [0, 5, 10, 20, 25, 50, 100]
     dlg.grid_labels_cb.setChecked(True)
-    dlg.grid_step_combo.setCurrentIndex(dlg.grid_step_combo.findData(5))
+    dlg.grid_step_combo.setCurrentIndex(dlg.grid_step_combo.findData(5.0))
     dlg._save()
     w._apply_grid_label_settings()                          # what open_settings does after OK
     assert w.settings.get("grid_labels_step") == 5 and g.step == 5

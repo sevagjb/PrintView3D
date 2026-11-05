@@ -60,7 +60,7 @@ def test_objects_come_first_and_details_last(window):
         assert order.index(first) < order.index(then)
     assert order[-1] is w.details_box
     boxes = [b for b in order if b.__class__.__name__ == "QGroupBox"]
-    assert boxes[0] is w.zip_box or boxes[0] is w.objects_box          # nothing above the objects
+    assert boxes[0] in (w.folder_box, w.zip_box, w.objects_box)       # only the file lists above the objects
     assert order.index(w.objects_box) < order.index(w.embedded_box)
 
 
@@ -192,7 +192,8 @@ def test_colours_are_not_saved_and_do_not_survive_another_file(window, monkeypat
     w.load_sync(CUBE)
     _pick(monkeypatch, "#00ff00")
     _boxes(w)[0].click()
-    assert not any("color" in k or "colour" in k for k in w.settings.data)   # nothing stored
+    stored = [k for k in w.settings.data if ("color" in k or "colour" in k) and k != "check_colors"]
+    assert not stored and w.settings.get("check_colors") == {}        # the objects' colours: not stored
     w.load_sync(CUBE)                                                  # the same file again: file colours
     assert w.scene.part_color_override(0) is None and _color(w.scene.model_actors[0]) != (0, 255, 0)
 

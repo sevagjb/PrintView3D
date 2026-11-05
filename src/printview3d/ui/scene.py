@@ -11,6 +11,7 @@ import pyvista as pv
 from vtkmodules.vtkCommonDataModel import vtkPlane
 from vtkmodules.vtkRenderingCore import vtkProperty
 
+from .. import units
 from ..loaders import FEATURES, GcodeData, ModelData
 from ..loaders.gcode import TRAVEL
 from . import theme
@@ -107,6 +108,10 @@ class Scene:
         self._file_bed: Optional[tuple] = None      # the printer's plate saved in the file
         self._plate_for: Optional[tuple] = None     # (bounds, z) of what is shown
         self._infinite = False
+        # Settings -> Viewer: spacing of the grid lines in mm; 0 = automatic (see grid_spacing).
+        self.grid_minor = 0.0
+        self.grid_major = 0.0
+        self.planes_cut_each_other = True
         # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
         self.wireframe = False
         self.xray = False
@@ -287,6 +292,19 @@ class Scene:
         self.bed_bounds = None
         self._infinite = False
 
+    def grid_spacing(self, size: float) -> tuple:
+        """(minor, major) spacing of the grid lines in mm for a plate `size` mm across: what
+        Settings -> Viewer chose, or automatic. Automatic in millimetres: a line every 10 mm and a
+        major one every 50 mm (5 and 25 on a tiny plate, 50 and 250 on a huge one). In inches: a
+        line every 1/4 in and a major one every inch (0.1 and 0.5 in, 1 and 5 in)."""
+        if units.imperial():
+            inch = units.MM_PER_IN
+            auto = (0.1 * inch, 0.5 * inch) if size < 60 else (inch, 5 * inch) if size > 600 else (0.25 * inch, inch)
+        else:
+            step = self._grid_step(size)
+            auto = (step, step * 5)
+        return (self.grid_minor or auto[0], self.grid_major or auto[1])
+
     @staticmethod
     def _grid_step(size: float) -> float:
         if size > 600:
@@ -303,8 +321,7 @@ class Scene:
         size = max(b[1] - b[0], b[3] - b[2], 10.0)
         half = max(INFINITE_MIN, INFINITE_FACTOR * size) / 2
         auto = self._auto_bed(b)
-        step = self._grid_step(max(auto[1] - auto[0], auto[3] - auto[2]))
-        major = step * 5
+        step, major = self.grid_spacing(max(auto[1] - auto[0], auto[3] - auto[2]))
         # Centred under the model, on the grid of world coordinates (lines at multiples of the
         # step, like the normal plate).
         cx = round((b[0] + b[1]) / 2 / major) * major
@@ -366,20 +383,26 @@ class Scene:
         self.p.add_mesh(plate, color=self.c["plate"], name="bed_plate", lighting=False,
                         pickable=False, reset_camera=False)
 
-        step = self._grid_step(max(w, h))
-        major_every = 5
+        step, major = self.grid_spacing(max(w, h))
         # Grid sits just under z so it never flickers against the model's bottom face.
         gz = z - 0.02
         minor_a, minor_b, major_a, major_b = [], [], [], []
 
-        def add_line(ax, bx, major):
-            (major_a if major else minor_a).append(ax)
-            (major_b if major else minor_b).append(bx)
+        def positions(lo: float, hi: float, spacing: float) -> np.ndarray:
+            return np.arange(math.ceil(lo / spacing - 1e-9), math.floor(hi / spacing + 1e-9) + 1) * spacing
 
-        for x in np.arange(math.ceil(xmin / step) * step, xmax + 1e-6, step):
-            add_line((x, ymin, gz), (x, ymax, gz), int(round(x / step)) % major_every == 0)
-        for y in np.arange(math.ceil(ymin / step) * step, ymax + 1e-6, step):
-            add_line((xmin, y, gz), (xmax, y, gz), int(round(y / step)) % major_every == 0)
+        def on_major(v: float) -> bool:
+            return abs(round(v / major) * major - v) < 1e-6
+
+        for lo, hi, along in ((xmin, xmax, "x"), (ymin, ymax, "y")):
+            majors = positions(lo, hi, major)
+            minors = positions(lo, hi, step)
+            if len(minors) > 3000:                   # a 1 mm grid on a huge plate: no fine lines
+                minors = minors[:0]
+            for v, is_major in [(m, True) for m in majors] + [(m, False) for m in minors if not on_major(m)]:
+                a, b = (((v, ymin, gz), (v, ymax, gz)) if along == "x" else ((xmin, v, gz), (xmax, v, gz)))
+                (major_a if is_major else minor_a).append(a)
+                (major_b if is_major else minor_b).append(b)
 
         if minor_a:
             self.p.add_mesh(_lines_polydata(np.array(minor_a), np.array(minor_b)), color=self.c["grid_minor"],
@@ -706,10 +729,20 @@ class Scene:
             return [self._ghost_top_plane]
         return [self._ghost_face_plane] + ([self._top_plane] if self.clip_z is not None else [])
 
+    def set_planes_cut_each_other(self, on: bool):
+        """Settings -> Viewer: with both cuts on, does each cutting plane stop where the other cut
+        is (the default), or are both drawn whole?"""
+        self.planes_cut_each_other = bool(on)
+        if self.model_actors:
+            self.apply_view_options()
+
     def _sheet_planes(self, cut: str) -> list:
         """Each cutting plane stops where the other cut is: the flat sheet keeps to the part
         behind the upright cut, the upright sheet to the part below the height cut. Together
-        they meet in a clean corner instead of reaching into what is cut away."""
+        they meet in a clean corner instead of reaching into what is cut away. With
+        planes_cut_each_other off (Settings) both are drawn whole."""
+        if not self.planes_cut_each_other:
+            return []
         if cut == "top":
             return [self._face_plane] if self.clip_face is not None else []
         return [self._top_plane] if self.clip_z is not None else []

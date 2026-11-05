@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .. import APP_NAME, __version__, file_assoc, gpu, i18n
+from .. import APP_NAME, __version__, file_assoc, gpu, i18n, units
 from .. import updates as up
 from .. import freecad as fc
 from .. import slicer as sl
@@ -74,7 +74,22 @@ class SettingsDialog(QDialog):
         help_lbl.setWordWrap(True)
         help_lbl.setOpenExternalLinks(True)
         l0.addRow(help_lbl)
-        self._add_page("language", tr("Language"), [g0])
+        # Millimetres or inches: for everything that shows a length (units.py).
+        gu = QGroupBox(tr("Units"))
+        lu = QFormLayout(gu)
+        self.units_combo = QComboBox()
+        for u in units.UNITS:
+            self.units_combo.addItem(tr(units.UNIT_NAMES[u]), u)
+        self.units_combo.setCurrentIndex(max(0, self.units_combo.findData(settings.get("units", "mm"))))
+        ku = QLabel(tr("Lengths in"))
+        ku.setObjectName("formKey")
+        lu.addRow(ku, self.units_combo)
+        units_hint = QLabel(tr("Used for sizes, measurements, the grid and the plate size. Files are not "
+                               "changed: 3D files are always in millimetres."))
+        units_hint.setObjectName("muted")
+        units_hint.setWordWrap(True)
+        lu.addRow(units_hint)
+        self._add_page("language", tr("Language and units"), [g0, gu])
 
         # ---------------- Appearance ----------------
         # A mode (Light / Dark / System) and four style cards, each a small picture of PrintView3D
@@ -305,7 +320,7 @@ class SettingsDialog(QDialog):
         l3.addWidget(self.travel_cb)
         l3.addWidget(self.bed_cb)
         # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
-        self.grid_labels_cb = QCheckBox(tr("Show distances (mm) along the grid"))
+        self.grid_labels_cb = QCheckBox(tr("Show scale numbers on the grid"))
         self.grid_labels_cb.setChecked(bool(settings.get("show_grid_labels", False)))
         self.grid_labels_cb.setToolTip(tr("Small numbers along the edges of the build plate, on its major "
                                           "grid lines. Hidden while you look from under the plate."))
@@ -320,19 +335,35 @@ class SettingsDialog(QDialog):
         self.grid_step_label = QLabel(tr("Spacing of the numbers"))
         self.grid_step_label.setObjectName("formKey")
         self.grid_step_combo = QComboBox()
-        self.grid_step_combo.addItem(tr("Automatic"), 0)
-        for mm in (5, 10, 20, 25, 50, 100):
-            self.grid_step_combo.addItem(tr("{n} mm").format(n=mm), mm)
-        at = self.grid_step_combo.findData(int(settings.get("grid_labels_step", 0) or 0))
-        self.grid_step_combo.setCurrentIndex(max(0, at))
         self.grid_step_combo.setToolTip(tr("Automatic: on the grid's major lines (every 50 mm on a normal plate), "
                                            "fewer on a big plate. Or choose a spacing of your own."))
+        # The three spacings (numbers, fine lines, main lines) are kept per unit: in millimetres
+        # and in inches the sensible values differ. Switching the unit above shows the other set.
+        self._spacing_choice = {u: {key: float(settings.get(key + ("_in" if u == "in" else ""), 0) or 0)
+                                    for key in ("grid_labels_step", "grid_minor", "grid_major")}
+                                for u in units.UNITS}
+        self._spacing_unit = settings.get("units", "mm") if settings.get("units", "mm") in units.UNITS else "mm"
         step_layout.addWidget(self.grid_step_combo)
         step_layout.addStretch(1)
         plate_form.addRow(self.grid_step_label, self.grid_step_row)
         for wdg in (self.grid_step_label, self.grid_step_row):
             wdg.setEnabled(self.grid_labels_cb.isChecked())
             self.grid_labels_cb.toggled.connect(wdg.setEnabled)
+        # Grid lines: a fine line every ..., a main line every ... (automatic: as before).
+        self.grid_minor_combo = QComboBox()
+        self.grid_major_combo = QComboBox()
+        kmin = QLabel(tr("Grid lines every"))
+        kmin.setObjectName("formKey")
+        kmaj = QLabel(tr("Main grid lines every"))
+        kmaj.setObjectName("formKey")
+        plate_form.addRow(kmin, self.grid_minor_combo)
+        plate_form.addRow(kmaj, self.grid_major_combo)
+        self._spacing_combos = {"grid_labels_step": self.grid_step_combo, "grid_minor": self.grid_minor_combo,
+                                "grid_major": self.grid_major_combo}
+        self._fill_spacing_combos()
+        for key, combo in self._spacing_combos.items():
+            combo.currentIndexChanged.connect(lambda _=0, k=key: self._remember_spacing(k))
+        self.units_combo.currentIndexChanged.connect(lambda _=0: self._units_changed())
         # Which plate (also in the Plate button's menu), issue #61.
         from .scene import PLATE_MODES
         self.plate_combo = QComboBox()
@@ -346,15 +377,14 @@ class SettingsDialog(QDialog):
         self.plate_size_row = QWidget()
         size_layout = QHBoxLayout(self.plate_size_row)
         size_layout.setContentsMargins(0, 0, 0, 0)
-        self.plate_w_spin, self.plate_d_spin = QSpinBox(), QSpinBox()
+        from .length_spin import LengthSpin
+        self.plate_w_spin = LengthSpin(10, 5000, unit=self._spacing_unit)
+        self.plate_d_spin = LengthSpin(10, 5000, unit=self._spacing_unit)
         for spin, value in ((self.plate_w_spin, size[0]), (self.plate_d_spin, size[1])):
-            spin.setRange(10, 5000)
-            spin.setSingleStep(10)
-            spin.setSuffix(" mm")
             try:
-                spin.setValue(int(round(float(value))))
+                spin.set_mm(float(value))
             except (TypeError, ValueError):
-                spin.setValue(300)
+                spin.set_mm(300)
         size_layout.addWidget(self.plate_w_spin)
         size_layout.addWidget(QLabel("×"))
         size_layout.addWidget(self.plate_d_spin)
@@ -386,6 +416,13 @@ class SettingsDialog(QDialog):
         self.line_slider = self._strength_row(
             plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
             tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
+        # Both cuts on (View section): normally each cutting plane stops where the other cut is, so
+        # the two meet in a clean corner. This keeps both planes whole instead.
+        self.cut_planes_cb = QCheckBox(tr("Don't let the two cutting planes cut each other"))
+        self.cut_planes_cb.setChecked(bool(settings.get("cut_planes_whole", False)))
+        self.cut_planes_cb.setToolTip(tr("With both cuts on, each cutting plane is drawn whole instead of "
+                                         "stopping where the other cut is."))
+        l3.addWidget(self.cut_planes_cb)
         l3.addWidget(self.cube_cb)
 
         # ---------------- Graphics ----------------
@@ -587,6 +624,38 @@ class SettingsDialog(QDialog):
         for selector in (self.mode_selector, getattr(self, "backdrop_selector", None)):
             if selector is not None:
                 selector.refresh_icons()                    # their symbols use the text colour
+
+    # ---------------------------------------------------------------- units and grid spacing
+    SPACINGS = {
+        "mm": {"grid_labels_step": (5, 10, 20, 25, 50, 100), "grid_minor": (1, 2, 5, 10, 20, 50),
+               "grid_major": (10, 20, 25, 50, 100, 200, 250)},
+        "in": {"grid_labels_step": (0.25, 0.5, 1, 2, 5), "grid_minor": (0.1, 0.125, 0.25, 0.5, 1),
+               "grid_major": (0.5, 1, 2, 5, 10)},
+    }
+
+    def _fill_spacing_combos(self):
+        """The choices of the three spacing dropdowns, in the unit chosen above."""
+        u = self._spacing_unit
+        name = tr("in") if u == "in" else tr("mm")
+        for key, combo in self._spacing_combos.items():
+            combo.blockSignals(True)
+            combo.clear()
+            combo.addItem(tr("Automatic"), 0.0)
+            for v in self.SPACINGS[u][key]:
+                combo.addItem(tr("{d} {unit}").format(d=units.short(v), unit=name), float(v))
+            at = combo.findData(float(self._spacing_choice[u][key]))
+            combo.setCurrentIndex(max(0, at))
+            combo.blockSignals(False)
+
+    def _remember_spacing(self, key: str):
+        self._spacing_choice[self._spacing_unit][key] = float(self._spacing_combos[key].currentData() or 0)
+
+    def _units_changed(self):
+        """Another unit chosen: the plate size and the spacings show in it at once."""
+        self._spacing_unit = self.units_combo.currentData()
+        for spin in (self.plate_w_spin, self.plate_d_spin):
+            spin.set_unit(self._spacing_unit)
+        self._fill_spacing_combos()
 
     def theme_choice(self) -> str:
         """The theme chosen on the Appearance page."""
@@ -894,9 +963,13 @@ class SettingsDialog(QDialog):
         self.settings.set("show_travel", self.travel_cb.isChecked())
         self.settings.set("show_bed", self.bed_cb.isChecked())
         self.settings.set("show_grid_labels", self.grid_labels_cb.isChecked())
-        self.settings.set("grid_labels_step", self.grid_step_combo.currentData() or 0)
+        for u, choice in self._spacing_choice.items():
+            for key, value in choice.items():
+                self.settings.set(key + ("_in" if u == "in" else ""), value)
+        self.settings.set("units", self.units_combo.currentData())
+        self.settings.set("cut_planes_whole", self.cut_planes_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())
-        self.settings.set("plate_size", [self.plate_w_spin.value(), self.plate_d_spin.value()])
+        self.settings.set("plate_size", [round(self.plate_w_spin.mm(), 3), round(self.plate_d_spin.mm(), 3)])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
         self.settings.set("ghost_strength", self.ghost_slider.value())
         self.settings.set("plane_strength", self.plane_slider.value())

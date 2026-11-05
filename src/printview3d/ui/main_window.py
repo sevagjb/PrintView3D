@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from .. import APP_NAME, __version__
+from .. import units
 from .. import archive as za
 from .. import freecad as fc
 from .. import slicer as sl
@@ -121,13 +122,17 @@ def _size_text(size: int) -> str:
 
 
 def _short_mm(v: float) -> str:
-    """A length for the Objects list: whole millimetres without decimals, otherwise one."""
+    """A length (mm) for the Objects list: whole millimetres without decimals, otherwise one; in
+    inches two decimals."""
+    if units.imperial():
+        return units.number(v, 0)
     return num(v, 0 if abs(v - round(v)) < 0.05 else 1)
 
 
 def _size_mm(size: tuple) -> str:
     """'20 × 12.5 × 3 mm': an object's size in the Objects list (issue #59)."""
-    return tr("{x} × {y} × {z} mm").format(x=_short_mm(size[0]), y=_short_mm(size[1]), z=_short_mm(size[2]))
+    return tr("{x} × {y} × {z} {unit}").format(x=_short_mm(size[0]), y=_short_mm(size[1]), z=_short_mm(size[2]),
+                                               unit=units.name())
 
 
 def _plate_name(member: str) -> str:
@@ -425,13 +430,11 @@ class PlateSizeDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(tr("Plate size"))
         form = QFormLayout(self)
-        self.width_spin = QSpinBox()
-        self.depth_spin = QSpinBox()
+        from .length_spin import LengthSpin
+        self.width_spin = LengthSpin(self.MIN, self.MAX)
+        self.depth_spin = LengthSpin(self.MIN, self.MAX)
         for spin, value in ((self.width_spin, size[0]), (self.depth_spin, size[1])):
-            spin.setRange(self.MIN, self.MAX)
-            spin.setSingleStep(10)
-            spin.setSuffix(" mm")
-            spin.setValue(int(round(float(value))))
+            spin.set_mm(value)
         form.addRow(tr("Width (X)"), self.width_spin)
         form.addRow(tr("Depth (Y)"), self.depth_spin)
         note = QLabel(tr("The plate starts at the printer's origin (0, 0) when the file has one, "
@@ -445,7 +448,7 @@ class PlateSizeDialog(QDialog):
         form.addRow(buttons)
 
     def plate_size(self) -> tuple:
-        return (self.width_spin.value(), self.depth_spin.value())
+        return (self.width_spin.mm(), self.depth_spin.mm())
 
 
 def _return_free_memory() -> None:
@@ -465,6 +468,9 @@ class MainWindow(QMainWindow):
     def __init__(self, settings: Optional[Settings] = None):
         super().__init__()
         self.settings = settings or Settings()
+        self.folder: Optional[dict] = None          # Open folder: {"path", "files"}
+        self._folder_index = 0
+        units.set_unit(self.settings.get("units", "mm"))       # before any length is shown
         self.current_path: Optional[str] = None
         self.current_kind = ""
         self.model: Optional[ModelData] = None
@@ -654,6 +660,9 @@ class MainWindow(QMainWindow):
         self.main_menu = QMenu(self)
         self.main_menu.addAction(self.act_home)
         self.main_menu.addAction(self.act_open)
+        # Open folder: its 3D files in a list, stepped through with the arrow keys like a ZIP.
+        self.act_open_folder = QAction(self, triggered=self.open_folder_dialog)
+        self.main_menu.addAction(self.act_open_folder)
         self.main_menu.addMenu(self.recent_menu)
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.act_screenshot)
@@ -764,6 +773,14 @@ class MainWindow(QMainWindow):
             self.addAction(a)                   # the shortcuts work wherever the focus is
         # The View and Measure buttons are switches: each opens its own section in the side panel
         # (View: how the model is drawn and cut; Measure: distances, angles and circles).
+        # Check (between Plate and View): overhangs, thin walls and mesh problems, in its section.
+        self.act_check = QAction(self, checkable=True)
+        self.act_check.toggled.connect(self.set_check_section)
+        self.check_btn = QToolButton()
+        self.check_btn.setObjectName("viewButton")
+        self.check_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.check_btn.setDefaultAction(self.act_check)
+        tb.addWidget(self.check_btn)
         self.act_view = QAction(self, checkable=True)
         self.act_view.toggled.connect(self.set_view_section)
         self.view_btn = QToolButton()
@@ -789,7 +806,7 @@ class MainWindow(QMainWindow):
         tb.addAction(self.act_fit)
         tb.widgetForAction(self.act_fit).setObjectName("viewButton")
         # The view buttons with an icon: styled to be as tall as the others (theme: hasIcon).
-        for b in (self.plate_btn, self.view_btn, self.measure_btn, tb.widgetForAction(self.act_fit)):
+        for b in (self.plate_btn, self.check_btn, self.view_btn, self.measure_btn, tb.widgetForAction(self.act_fit)):
             b.setProperty("hasIcon", True)
             b.setIconSize(TEXT_ICON)
 
@@ -847,6 +864,7 @@ class MainWindow(QMainWindow):
         filled = theme.filled_view_buttons()
         self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled, gap=True))
         self.act_view.setIcon(theme.tool_icon("view", on_accent=filled, gap=True))
+        self.act_check.setIcon(theme.tool_icon("check", on_accent=filled, gap=True))
         self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled, gap=True))
         self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled, gap=True))
         for kind, a in self.measure_actions.items():
@@ -983,6 +1001,13 @@ class MainWindow(QMainWindow):
         self.measure.set_colors(theme.colors())
         self.measure.set_mode(self._measure_mode_setting())
         self.controls.measure = self.measure
+        # Check: the analyses and their highlights (print_check.py).
+        from .print_check import PrintCheck
+        self.check = PrintCheck(self.plotter, self.scene, self._update_check_panel, self.controls.request_render)
+        self.check.angle = float(self.settings.get("check_angle", 45) or 45)
+        self.check.nozzle = float(self.settings.get("check_nozzle", 0.4) or 0.4)
+        self.check.show.update({k: bool(v) for k, v in (self.settings.get("check_show", {}) or {}).items()})
+        self.check.colors.update(self.settings.get("check_colors", {}) or {})
         # Instructions at the bottom of the 3D view, and the millimetre numbers on the plate's grid.
         from .grid_labels import GridLabels
         from .overlay_text import HintOverlay
@@ -990,7 +1015,7 @@ class MainWindow(QMainWindow):
         self.hints.set_colors(theme.colors())
         self.grid_labels = GridLabels(self.plotter, self.scene, self.controls.request_render)
         self.grid_labels.set_colors(theme.colors())
-        self.grid_labels.set_step(self.settings.get("grid_labels_step", 0))
+        self._apply_grid_settings(render=False)
         self.grid_labels.set_enabled(bool(self.settings.get("show_grid_labels", False)))
         self.view_cube.set_tooltips(self._cube_tooltips())
         self._update_view_buttons()
@@ -1038,18 +1063,18 @@ class MainWindow(QMainWindow):
         # What the file is. Its name is in the window title already.
         self.kind_label = QLabel()
         self.kind_label.setObjectName("kindLabel")
-        self.kind_label.setWordWrap(True)
-        L.addWidget(self.kind_label)
 
         # The picture the slicer saved in the file. Next to the 3D view it mostly shows the same
         # thing, so a click on the link above it folds it away (remembered); it still helps while
         # a big file loads or when the 3D view can't show the file (issue #62).
         self.thumb_toggle = QLabel()
         self.thumb_toggle.setObjectName("moreLink")
-        self.thumb_toggle.setWordWrap(True)      # "▾ Imagine de previzualizare" at a big font
         self.thumb_toggle.setTextInteractionFlags(Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
         self.thumb_toggle.linkActivated.connect(lambda _=None: self.set_thumbnail_open(not self._thumbnail_open()))
-        L.addWidget(self.thumb_toggle)
+        # The link sits on the line of the file type and size, to their right; the picture stays
+        # below. In a narrow panel (a long translation) the link goes under them instead.
+        self.kind_row = _FitRow([self.kind_label, self.thumb_toggle], spacing=14)
+        L.addWidget(self.kind_row)
         self.thumb_label = QLabel()
         self.thumb_label.setAlignment(Qt.AlignCenter)
         self.thumb_label.setObjectName("thumbnail")
@@ -1057,6 +1082,12 @@ class MainWindow(QMainWindow):
         self._has_thumbnail = False
 
         # ZIP files: the 3D files inside, to pick one or show them all.
+        # Open folder: the 3D files of the folder (see open_folder).
+        self.folder_box = QGroupBox()
+        self.folder_layout = QVBoxLayout(self.folder_box)
+        L.addWidget(self.folder_box)
+        self.folder_box.hide()
+
         self.zip_box = QGroupBox()
         self.zip_layout = QVBoxLayout(self.zip_box)
         L.addWidget(self.zip_box)
@@ -1086,6 +1117,79 @@ class MainWindow(QMainWindow):
         self.embedded_box = QGroupBox()
         self.embedded_layout = QVBoxLayout(self.embedded_box)
         L.addWidget(self.embedded_box)
+
+        # The Check button's section: what to look for and in which colour; the counts beside them.
+        self.check_box = QGroupBox()
+        ckl = QVBoxLayout(self.check_box)
+        self.check_rows: dict = {}
+        shown = dict(self.settings.get("check_show", {}) or {})
+        colours = dict(self.settings.get("check_colors", {}) or {})
+        from .print_check import DEFAULT_COLORS
+
+        def check_row(kind: str, extra: Optional[QWidget] = None) -> QHBoxLayout:
+            row = QHBoxLayout()
+            row.setSpacing(8)
+            box = _ColorButton(colours.get(kind, DEFAULT_COLORS[kind]))
+            box.setToolTip(tr("Click to pick another colour (right-click: the original colour)"))
+            box.clicked.connect(lambda _=False, k=kind, b=box: self._pick_check_color(k, b))
+            box.customContextMenuRequested.connect(lambda _pos, k=kind, b=box: self._reset_check_color(k, b))
+            cb = QCheckBox()
+            cb.setChecked(bool(shown.get(kind, kind != "thin")))
+            cb.toggled.connect(lambda on, k=kind: self._check_shown(k, on))
+            count_lbl = QLabel()
+            count_lbl.setObjectName("objectSize")
+            row.addWidget(box)
+            row.addWidget(cb, 1)
+            if extra is not None:
+                row.addWidget(extra)
+            row.addWidget(count_lbl)
+            self.check_rows[kind] = (cb, count_lbl, box)
+            return row
+
+        # Overhangs, with their angle
+        angle_w = QWidget()
+        al = QHBoxLayout(angle_w)
+        al.setContentsMargins(0, 0, 0, 0)
+        self.check_angle = QSpinBox()
+        self.check_angle.setRange(1, 89)
+        self.check_angle.setSuffix("°")
+        self.check_angle.setValue(int(self.settings.get("check_angle", 45) or 45))
+        self.check_angle.valueChanged.connect(self._check_angle_changed)
+        self.check_angle_label = QLabel()
+        self.check_angle_label.setObjectName("muted")
+        al.addWidget(self.check_angle)
+        al.addWidget(self.check_angle_label)
+        ckl.addLayout(check_row("overhang", angle_w))
+        # Thin walls, with the nozzle width (in the unit in use)
+        from .length_spin import LengthSpin
+        nozzle_w = QWidget()
+        nl = QHBoxLayout(nozzle_w)
+        nl.setContentsMargins(0, 0, 0, 0)
+        self.check_nozzle_label = QLabel()
+        self.check_nozzle_label.setObjectName("muted")
+        self.check_nozzle = LengthSpin(0.1, 2.0, 0.05, mm_decimals=2, in_step=0.002, in_decimals=3)
+        self.check_nozzle.set_mm(float(self.settings.get("check_nozzle", 0.4) or 0.4))
+        self.check_nozzle.editingFinished.connect(self._check_nozzle_changed)
+        nl.addWidget(self.check_nozzle_label)
+        nl.addWidget(self.check_nozzle)
+        ckl.addLayout(check_row("thin", nozzle_w))
+        self.check_thin_status = QLabel()            # "Checking ... 40 %"
+        self.check_thin_status.setObjectName("muted")
+        ckl.addWidget(self.check_thin_status)
+        # The mesh check
+        self.check_mesh_title = QLabel()
+        self.check_mesh_title.setObjectName("formKey")
+        ckl.addWidget(self.check_mesh_title)
+        for kind in ("open", "nonmanifold", "flipped", "loose"):
+            ckl.addLayout(check_row(kind))
+        crow = QHBoxLayout()
+        self.check_close_btn = QPushButton()
+        self.check_close_btn.clicked.connect(lambda: self.act_check.setChecked(False))
+        crow.addStretch(1)
+        crow.addWidget(self.check_close_btn)
+        ckl.addLayout(crow)
+        self.check_box.hide()
+        L.addWidget(self.check_box)
 
         # The View button's section: how the model is drawn and cut, all as buttons. The controls of
         # a cut (its slider, the ghost and the plane) appear in it while that cut is on.
@@ -1295,6 +1399,8 @@ class MainWindow(QMainWindow):
     def retranslate_ui(self):
         """(Re)set every fixed text. Called at start and when the language changes."""
         self.act_open.setText(tr("Open…"))
+        self.act_open_folder.setText(tr("Open folder…"))
+        self.act_open_folder.setIcon(theme.tool_icon("open"))
         # The shortcut as the system writes it (Ctrl+O, or ⌘O on a Mac).
         self.act_open.setToolTip(tr("Open…") + " (" + QKeySequence(QKeySequence.Open).toString(
             QKeySequence.NativeText) + ")")
@@ -1321,6 +1427,26 @@ class MainWindow(QMainWindow):
         self.act_export_setting.setText(tr("Change what a click does…"))
         self.act_bed.setText(tr("Plate"))
         self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
+        self.act_check.setText(tr("Check"))
+        self.act_check.setToolTip(tr("Check the model before printing: overhangs, thin walls and problems in the mesh"))
+        self.check_box.setTitle(tr("Check"))
+        self.check_angle_label.setText(tr("from vertical"))
+        self.check_nozzle_label.setText(tr("nozzle"))
+        self.check_mesh_title.setText(tr("Mesh"))
+        self.check_close_btn.setText(tr("Close"))
+        for kind, text, tip in (
+                ("overhang", tr("Overhangs"), tr("Faces that face down and lean further from vertical than the angle: "
+                                                  "they usually need supports. Faces on the plate are not counted.")),
+                ("thin", tr("Thin walls"), tr("Walls and pins thinner than the nozzle: one line of plastic or less.")),
+                ("open", tr("Open edges"), tr("Edges with a face on one side only: holes in the surface.")),
+                ("nonmanifold", tr("Non-manifold edges"), tr("Edges shared by more than two faces.")),
+                ("flipped", tr("Flipped normals"), tr("Faces turned the other way than their neighbours, or a closed "
+                                                     "part that is inside out.")),
+                ("loose", tr("Loose parts"), tr("Pieces not connected to the biggest one."))):
+            cb = self.check_rows[kind][0]
+            cb.setText(text)
+            cb.setToolTip(tip)
+        self._update_check_panel()
         self.act_view.setText(tr("View"))
         self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
         self.view_box.setTitle(tr("View"))
@@ -1456,6 +1582,7 @@ class MainWindow(QMainWindow):
             if self.view_stack.currentIndex() == 1:
                 self._show_freecad_preview(self.model)
         self._fill_zip_box()
+        self._fill_folder_box()
 
     def _details_open(self) -> bool:
         return bool(self.settings.get("details_open", True))
@@ -1663,14 +1790,117 @@ class MainWindow(QMainWindow):
             self.zip_show_all()
 
     def _arrow_key(self, delta: int):
-        """Up/Down: the previous/next file of a ZIP while a model is shown; otherwise layers."""
+        """Up/Down: the previous/next file of a ZIP while a model is shown, else of the open
+        folder; with G-code the layers."""
         c = self.zip
         if c and len(c.entries) > 1 and self._zip_index >= 0 and self.gcode is None:
             i = self._zip_wanted - delta                # Up = the file above in the list
             if 0 <= i < len(c.entries):
                 self._open_zip_entry(i)
             return
+        if self.folder and len(self.folder["files"]) > 1 and self.gcode is None:
+            i = self._folder_index - delta
+            if 0 <= i < len(self.folder["files"]):
+                self._open_folder_entry(i)
+            return
         self.step_layer(delta)
+
+    # ------------------------------------------------------------ folder
+    def open_folder_dialog(self):
+        start = self._user_folder() if self.current_path else os.path.expanduser("~")
+        path = QFileDialog.getExistingDirectory(self, tr("Open folder"), start)
+        if path:
+            self.open_folder(path)
+
+    @staticmethod
+    def folder_files(path: str) -> list:
+        """The files PrintView3D can open in a folder (not its subfolders), by name."""
+        try:
+            names = os.listdir(path)
+        except OSError:
+            return []
+        ok = SUPPORTED_EXTENSIONS + za.ARCHIVE_EXTENSIONS
+        files = [os.path.join(path, n) for n in names
+                 if n.lower().endswith(ok) and os.path.isfile(os.path.join(path, n))]
+        return sorted(files, key=lambda f: os.path.basename(f).lower())
+
+    def open_folder(self, path: str, sync: bool = False):
+        """Menu -> Open folder: list the folder's 3D files in the side panel and open the first.
+        Up / Down (or a click in the list) open the others."""
+        files = self.folder_files(path)
+        if not files:
+            QMessageBox.information(self, tr("No 3D files in this folder"),
+                                    tr("This folder contains no files PrintView3D can open."))
+            return
+        self.folder = {"path": os.path.abspath(path), "files": files}
+        self._open_folder_entry(0, sync)
+
+    def _open_folder_entry(self, i: int, sync: bool = False):
+        if not self.folder or not 0 <= i < len(self.folder["files"]):
+            return
+        self._folder_index = i
+        self._folder_loading = True
+        try:
+            (self.load_sync if sync else self.load)(self.folder["files"][i])
+        finally:
+            self._folder_loading = False
+
+    def _folder_of(self, path: str) -> bool:
+        """Is `path` one of the open folder's files? (Then the folder stays; otherwise it goes.)"""
+        if not self.folder:
+            return False
+        norm = os.path.normcase(os.path.abspath(path))
+        for i, f in enumerate(self.folder["files"]):
+            if os.path.normcase(f) == norm:
+                self._folder_index = i
+                return True
+        return False
+
+    def _fill_folder_box(self):
+        self._clear_layout(self.folder_layout)
+        f = self.folder
+        if not f:
+            self.folder_box.hide()
+            return
+        self.folder_box.setTitle(tr("In this folder ({n})").format(n=len(f["files"])))
+        lst = _RowList()
+        lst.setObjectName("zipList")
+        lst.setSelectionMode(QAbstractItemView.SingleSelection)
+        lst.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        lst.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        row_h = self.fontMetrics().height() + 16
+        for path in f["files"]:
+            w = QWidget()
+            h = QHBoxLayout(w)
+            h.setContentsMargins(6, 0, 8, 0)
+            h.setSpacing(8)
+            kind = "zip" if za.is_archive(path) else (file_kind(path) or "")
+            h.addWidget(self._type_tag(kind))
+            name = _ElidedLabel(os.path.basename(path))
+            name.setToolTip(path)
+            h.addWidget(name, 1)
+            try:
+                size = QLabel(_size_text(os.path.getsize(path)))
+            except OSError:
+                size = QLabel("")
+            size.setObjectName("muted")
+            size.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+            h.addWidget(size)
+            item = QListWidgetItem()
+            item.setSizeHint(QSize(0, row_h))
+            lst.addItem(item)
+            lst.setItemWidget(item, w)
+        lst.setCurrentRow(self._folder_index)
+        lst.setFixedHeight(row_h * min(len(f["files"]), 8) + 2 * lst.frameWidth() + 2)
+        lst.itemClicked.connect(lambda item, l=lst: self._open_folder_entry(l.row(item))
+                                if l.row(item) != self._folder_index else None)
+        self.folder_layout.addWidget(lst)
+        note = QLabel(tr("Tip: ↑ / ↓ keys move through the list"))
+        note.setObjectName("muted")
+        note.setStyleSheet("font-size: 11px;")
+        self.folder_layout.addWidget(note)
+        self.folder_list = lst
+        self.folder_box.show()
 
     def _show_all_entries(self) -> list[int]:
         """Show all: the ZIP entries of the ticked models (all of them when none is ticked)."""
@@ -1851,6 +2081,7 @@ class MainWindow(QMainWindow):
 
     def load(self, path: str, _zip: Optional[za.ZipContents] = None, _zip_index: int = 0):
         path = os.path.abspath(path)
+        self._keep_folder(path, _zip)
         if not os.path.isfile(path):
             QMessageBox.warning(self, tr("File not found"),
                                 tr("The file no longer exists:") + f"\n{path}")
@@ -1882,9 +2113,18 @@ class MainWindow(QMainWindow):
 
         threading.Thread(target=work, daemon=True).start()
 
+    def _keep_folder(self, path: str, _zip):
+        """A file of the open folder (or of a ZIP in it) keeps the folder list; another file
+        closes it."""
+        if _zip is not None or getattr(self, "_folder_loading", False):
+            return
+        if not self._folder_of(path):
+            self.folder = None
+
     def load_sync(self, path: str, _zip: Optional[za.ZipContents] = None, _zip_index: int = 0):
         """Load without a worker thread (used for --screenshot)."""
         path = os.path.abspath(path)
+        self._keep_folder(path, _zip)
         if za.is_archive(path):
             self._load_token += 1
             self._on_archive_ready(za.open_archive(path), sync=True)
@@ -1973,6 +2213,7 @@ class MainWindow(QMainWindow):
                                        if kind == "3mf" else
                                        tr("Save the objects of this CAD file as STL files (Ctrl+E)"))
         self._fill_zip_box()
+        self._fill_folder_box()
         msg = tr("Opened {path}").format(path=self.zip.path if self.zip else path)
         if kind in ("freecad", "step") and not getattr(data, "parts", None):
             msg = self._freecad_status_text(data)
@@ -1997,6 +2238,8 @@ class MainWindow(QMainWindow):
         self.model = None
         self.gcode = None
         self.zip = None
+        self.folder = None
+        self.folder_box.hide()
         self._zip_index = self._zip_last_single = self._zip_wanted = 0
         self._zip_owner = []
         self._pending_zip = (None, 0)
@@ -2020,6 +2263,7 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------- model
     def _show_model(self, m: ModelData):
         self._model_actors = self.scene.show_model(m)
+        self.check.set_model(m.parts)
         if m.freecad is not None and not m.parts:   # FreeCAD file without FreeCAD
             self._show_freecad_preview(m)
         self._fill_model_panel(m)
@@ -2034,8 +2278,9 @@ class MainWindow(QMainWindow):
         actors = getattr(self, "_model_actors", [])
         b = m.bounds()
         if b:
-            self._add_detail(tr("Size (X×Y×Z)"), ltr(tr("{x} × {y} × {z} mm").format(
-                x=num(b[1] - b[0]), y=num(b[3] - b[2]), z=num(b[5] - b[4]))))
+            self._add_detail(tr("Size (X×Y×Z)"), ltr(tr("{x} × {y} × {z} {unit}").format(
+                x=units.number(b[1] - b[0]), y=units.number(b[3] - b[2]), z=units.number(b[5] - b[4]),
+                unit=units.name())))
         if b and max(b[1] - b[0], b[3] - b[2], b[5] - b[4]) < 1.0:
             self._add_detail(tr("Note"), tr("Very small: the file may use metres instead of millimetres. "
                                             "Your slicer can scale it."))
@@ -2044,7 +2289,7 @@ class MainWindow(QMainWindow):
         if len(m.parts) == 1:
             vol = self._mesh_volume(m.parts[0])
             if vol:
-                self._add_detail(tr("Volume"), tr("{v} cm³").format(v=num(vol / 1000)))
+                self._add_detail(tr("Volume"), units.volume(vol))
         for k, v in m.meta.items():
             self._add_detail(meta_label(k), meta_value(v))
 
@@ -2267,6 +2512,7 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------- gcode
     def _show_gcode(self, g: GcodeData):
         self.gcode = g
+        self.check.set_model([])
         self.scene.show_gcode(g)
         self._fill_gcode_panel(g)
         if g.n_layers == 0:
@@ -2292,8 +2538,9 @@ class MainWindow(QMainWindow):
 
         b = g.extrusion_bounds
         if b:
-            self._add_detail(tr("Print size"), ltr(tr("{x} × {y} × {z} mm").format(
-                x=num(b[1] - b[0], 1), y=num(b[3] - b[2], 1), z=num(b[5]))))
+            self._add_detail(tr("Print size"), ltr(tr("{x} × {y} × {z} {unit}").format(
+                x=units.number(b[1] - b[0], 1), y=units.number(b[3] - b[2], 1), z=units.number(b[5]),
+                unit=units.name())))
         self._add_detail(tr("Layers"), count(g.n_layers))
         for key in GCODE_META_ORDER:
             if key in g.meta:
@@ -2367,8 +2614,8 @@ class MainWindow(QMainWindow):
             self.layer_info.setText("")
             return
         i = self.layer_slider.value()
-        self.layer_info.setText(tr("<b>Layer {n}</b> of {total}  ·  Z = {z} mm").format(
-            n=count(i + 1), total=count(g.n_layers), z=num(g.layer_z[i])))
+        self.layer_info.setText(tr("<b>Layer {n}</b> of {total}  ·  Z = {z} {unit}").format(
+            n=count(i + 1), total=count(g.n_layers), z=units.number(g.layer_z[i]), unit=units.name()))
 
     def _schedule_gcode(self, *_):
         self._gcode_timer.start()
@@ -2485,6 +2732,69 @@ class MainWindow(QMainWindow):
         sizes[1 - i] = max(0, total - self._side_width)
         self.splitter.setSizes(sizes)
 
+    # ------------------------------------------------------------ check
+    def set_check_section(self, on: bool):
+        """The Check button: shows or hides the Check section and the highlights it controls."""
+        show = bool(on) and self._view_options_apply()
+        self.check_box.setVisible(show)
+        if show:
+            self._open_side_panel()
+        if hasattr(self, "check") and self.check.active != show:
+            self.check.set_active(show)
+        self._update_check_panel()
+
+    def _check_shown(self, kind: str, on: bool):
+        shown = dict(self.settings.get("check_show", {}) or {})
+        shown[kind] = bool(on)
+        self.settings.set("check_show", shown)
+        self.check.set_shown(kind, on)
+
+    def _check_angle_changed(self, value: int):
+        self.settings.set("check_angle", int(value))
+        self.check.set_angle(value)
+
+    def _check_nozzle_changed(self):
+        mm = round(self.check_nozzle.mm(), 4)
+        if abs(mm - self.check.nozzle) < 1e-6:
+            return
+        self.settings.set("check_nozzle", mm)
+        self.check.set_nozzle(mm)
+
+    def _pick_check_color(self, kind: str, button: "_ColorButton"):
+        c = QColorDialog.getColor(QColor(self.check.colors[kind]), self, tr("Colour"))
+        if c.isValid():
+            self._set_check_color(kind, c.name(), button)
+
+    def _reset_check_color(self, kind: str, button: "_ColorButton"):
+        from .print_check import DEFAULT_COLORS
+        self._set_check_color(kind, DEFAULT_COLORS[kind], button)
+
+    def _set_check_color(self, kind: str, color: str, button: "_ColorButton"):
+        colours = dict(self.settings.get("check_colors", {}) or {})
+        colours[kind] = color
+        self.settings.set("check_colors", colours)
+        button.set_color(color)
+        self.check.set_color(kind, color)
+
+    def _update_check_panel(self):
+        """The counts beside each check, and how far the thin-wall check is."""
+        if not hasattr(self, "check") or not hasattr(self, "check_rows"):
+            return
+        counts = self.check.counts() if self.check.active else {}
+        units_text = {"overhang": tr("{n} faces"), "thin": tr("{n} faces"), "open": tr("{n} edges"),
+                      "nonmanifold": tr("{n} edges"), "flipped": tr("{n} faces"), "loose": tr("{n} parts")}
+        for kind, (cb, lbl, _box) in self.check_rows.items():
+            n = counts.get(kind)
+            lbl.setText("" if n is None else (tr("none") if n == 0 else units_text[kind].format(n=count(n))))
+        status = ""
+        if self.check.active and self.check.mesh_busy:
+            status = tr("Checking the mesh…")
+        if self.check.active and self.check.show.get("thin"):
+            if self.check.thin_progress is not None:
+                status = tr("Checking thin walls… {p} %").format(p=int(self.check.thin_progress * 100))
+        self.check_thin_status.setText(status)
+        self.check_thin_status.setVisible(bool(status))
+
     def set_view_section(self, on: bool):
         """The View button: shows or hides the View section of the side panel (and opens the side
         panel if it was dragged shut)."""
@@ -2502,11 +2812,13 @@ class MainWindow(QMainWindow):
     def _update_view_menu(self):
         """After a file opens or closes: the View options on or off for it, the sections with it."""
         ok = self._view_options_apply()
-        for a in (self.act_view, self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face,
+        for a in (self.act_view, self.act_check, self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face,
                   self.act_reset_view, self.act_measure, *self.measure_actions.values()):
             a.setEnabled(ok)
         self.view_btn.setEnabled(ok)
         self.view_box.setVisible(ok and self.act_view.isChecked())
+        if hasattr(self, "check"):
+            self.set_check_section(self.act_check.isChecked())
         self._update_hints()
         if not hasattr(self, "measure"):
             pass                                         # still being built
@@ -2764,9 +3076,11 @@ class MainWindow(QMainWindow):
         if depth is None:
             self.face_info.setText("")
         else:
-            self.face_info.setText(ltr(tr("Depth {d} of {total} mm").format(d=num(depth[0], 1), total=num(depth[1], 1))))
+            self.face_info.setText(ltr(tr("Depth {d} of {total} {unit}").format(
+                d=units.number(depth[0], 1), total=units.number(depth[1], 1), unit=units.name())))
         z = self._clip_height(self.clip_slider.value())
-        self.clip_info.setText(ltr(tr("Height {z} of {top} mm").format(z=num(z - r[0], 1), top=num(r[1] - r[0], 1))))
+        self.clip_info.setText(ltr(tr("Height {z} of {top} {unit}").format(
+            z=units.number(z - r[0], 1), top=units.number(r[1] - r[0], 1), unit=units.name())))
 
     def _plate_size(self) -> tuple:
         size = self.settings.get("plate_size", [300, 300])
@@ -2783,7 +3097,8 @@ class MainWindow(QMainWindow):
             text = plate_mode_label(key)
             if key == "custom":
                 w, d = self._plate_size()
-                text += "  ({w} × {d} mm)".format(w=num(w, 0), d=num(d, 0))
+                text += "  ({w} × {d} {unit})".format(w=units.number(w, 0), d=units.number(d, 0),
+                                                       unit=units.name())
             a.setText(text)
             a.setChecked(key == mode)
 
@@ -3102,14 +3417,47 @@ class MainWindow(QMainWindow):
                 self.set_view_cube_visible(show_cube)
             self._apply_grid_label_settings()
 
+    def _spacing_mm(self, key: str) -> float:
+        """A grid spacing from Settings in mm, for the unit in use (0 = automatic)."""
+        try:
+            if units.imperial():
+                return float(self.settings.get(key + "_in", 0) or 0) * units.MM_PER_IN
+            return float(self.settings.get(key, 0) or 0)
+        except (TypeError, ValueError):
+            return 0.0
+
+    def _apply_grid_settings(self, render: bool = True):
+        """Settings -> Viewer: grid line spacing, the scale numbers' spacing, and whether the two
+        cutting planes cut each other."""
+        self.scene.grid_minor = self._spacing_mm("grid_minor")
+        self.scene.grid_major = self._spacing_mm("grid_major")
+        self.scene.set_planes_cut_each_other(not bool(self.settings.get("cut_planes_whole", False)))
+        self.grid_labels.set_step(self._spacing_mm("grid_labels_step"))
+        if render:
+            self.scene.apply_plate()
+
     def _apply_grid_label_settings(self):
-        """Settings -> Viewer: the millimetre numbers on the grid, on or off and their spacing."""
-        self.grid_labels.set_step(self.settings.get("grid_labels_step", 0))
+        """Settings -> Viewer: the numbers on the grid, on or off; the grid's spacings; the unit."""
+        unit_changed = units.current() != self.settings.get("units", "mm")
+        units.set_unit(self.settings.get("units", "mm"))
+        self._apply_grid_settings()
         show_numbers = bool(self.settings.get("show_grid_labels", False))
         if self.grid_labels.enabled != show_numbers:
             self.grid_labels.set_enabled(show_numbers)
+        if unit_changed:
+            self._apply_units()
         if self.stack.currentIndex() == 1:
             self.plotter.render()
+
+    def _apply_units(self):
+        """Another unit: every text with a length is written again."""
+        self.retranslate_ui()
+        self._refresh_panel()
+        self._update_clip_label()
+        self._mark_plate_mode()
+        if self.measure.active:
+            self.measure._update()
+        self.check_nozzle.set_unit(units.current())
 
     # ------------------------------------------------------------ updates
     def start_update_checks(self):

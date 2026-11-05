@@ -1000,6 +1000,14 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
         p.setBrush(fg)
         p.drawEllipse(QPointF(32, 32), 7, 7)
         p.restore()
+    elif kind == "check":                        # a magnifier with a tick in it
+        p.drawEllipse(QPointF(27, 27), 18, 18)
+        p.drawLine(QPointF(40, 40), QPointF(55, 55))
+        tick = QPainterPath()
+        tick.moveTo(18, 27)
+        tick.lineTo(25, 34)
+        tick.lineTo(36, 21)
+        p.drawPath(tick)
     elif kind == "fit":                          # four corners around a small cube: fit to the view
         for cx, cy, dx, dy in ((8, 8, 1, 1), (56, 8, -1, 1), (8, 56, 1, -1), (56, 56, -1, -1)):
             corner = QPainterPath()
@@ -1100,7 +1108,7 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
 
 TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
               "settings", "updates", "about", "whats_new",
-              "view", "plate", "measure", "fit", "distance", "angle", "circle",
+              "view", "plate", "measure", "fit", "check", "distance", "angle", "circle",
               "wireframe", "xray", "clip_top", "clip_face", "reset")
 
 

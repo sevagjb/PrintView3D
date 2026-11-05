@@ -42,10 +42,10 @@ from vtkmodules.vtkRenderingCore import (
     vtkActor, vtkCellPicker, vtkPolyDataMapper, vtkPolyDataMapper2D, vtkRenderer, vtkTexturedActor2D,
 )
 
+from .. import units
 from ..i18n import num, tr
 from .overlay_text import label_picture
 
-UNIT = "mm"                   # the one place that knows the unit (a global unit setting comes later)
 KINDS = ("distance", "angle", "circle")
 NEED = {"distance": 2, "angle": 3, "circle": 3}      # points a measurement needs
 
@@ -156,15 +156,23 @@ EMPTY = Shape([], [], None, None)
 
 
 def half_text(diameter: float) -> str:
-    """The radius belonging to a diameter that is shown rounded to 0.01: exactly half of what is
-    written (three decimals when half of it needs them: 19.99 -> 9.995), so R is never a
-    rounded-up R."""
-    d = round(float(diameter), 2)
-    return num(d / 2, 2 if round(d * 100) % 2 == 0 else 3)
+    """The radius belonging to a diameter (mm) as it is shown, rounded to its last decimal (0.01 mm
+    or 0.001 in): exactly half of what is written, with one decimal more when half of it needs it
+    (19.99 -> 9.995), so R is never a rounded-up R. In the unit in use."""
+    dec = units.decimals(2)
+    d = round(units.to_display(float(diameter)), dec)
+    whole = round(d * 10 ** dec)
+    return num(d / 2, dec if whole % 2 == 0 else dec + 1)
 
 
-def _signed(v: float) -> str:
-    return ("+" if v > 0.005 else ("−" if v < -0.005 else "")) + num(abs(v), 2)
+def diameter_text(diameter: float) -> str:
+    return units.number(diameter, 2)
+
+
+def _signed(mm: float) -> str:
+    v = units.to_display(mm)
+    tiny = 0.5 * 10 ** -units.decimals(2)
+    return ("+" if v > tiny else ("−" if v < -tiny else "")) + units.number(abs(mm), 2)
 
 
 def shape_of(kind: str, pts: list, deltas: bool = False) -> Shape:
@@ -175,7 +183,7 @@ def shape_of(kind: str, pts: list, deltas: bool = False) -> Shape:
         if len(pts) < 2:
             return EMPTY
         d, dx, dy, dz = distances(pts[0], pts[1])
-        text = tr("{d} {unit}").format(d=num(d, 2), unit=UNIT)
+        text = tr("{d} {unit}").format(d=units.number(d, 2), unit=units.name())
         if deltas:
             text += "\n" + tr("ΔX {x}   ΔY {y}   ΔZ {z}").format(x=_signed(dx), y=_signed(dy), z=_signed(dz))
         return Shape([(pts[0], pts[1])], [], ((pts[0] + pts[1]) / 2, text),
@@ -205,7 +213,8 @@ def shape_of(kind: str, pts: list, deltas: bool = False) -> Shape:
     centre, r, normal = res
     across = np.array([a, 2 * centre - a])           # a diameter, from the first point
     return Shape([], [circle_points(centre, r, normal), across],
-                 (centre, tr("Ø {d} {unit}  ·  R {r} {unit}").format(d=num(2 * r, 2), r=half_text(2 * r), unit=UNIT)),
+                 (centre, tr("Ø {d} {unit}  ·  R {r} {unit}").format(d=diameter_text(2 * r), r=half_text(2 * r),
+                                                           unit=units.name())),
                  {"kind": "circle", "diameter": 2 * r, "radius": r})
 
 
