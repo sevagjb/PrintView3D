@@ -11,7 +11,8 @@ How it works
   (Qt's standard format, editable with Qt Linguist or any text editor) and compiles
   them to resources/translations/*.qm, which the app loads at runtime.
 * Qt's own texts (OK / Cancel buttons, file dialogs) come from the
-  qtbase_<lang>.qm files that ship with Qt.
+  qtbase_<lang>.qm files that ship with Qt. Qt has no such file for some languages;
+  QT_BUTTONS gives those their standard buttons.
 * Arabic switches the whole layout to right-to-left automatically.
 
 Changing the language takes effect immediately: Qt sends a LanguageChange
@@ -42,9 +43,28 @@ RIGHT_TO_LEFT = {"ar", "he", "fa", "ur"}
 # Measurements are shown with Western digits in these languages (as slicers do).
 WESTERN_DIGITS = {"ar", "fa", "ur"}
 
+# Standard buttons for languages Qt ships no qtbase_<code>.qm for. The keys are Qt's own texts
+# (context QPlatformTheme). They stay out of the .ts files because every other language gets
+# these words from Qt and would only collect unfinished texts it never uses.
+QT_BUTTONS: dict[str, dict[str, str]] = {
+    "ro": {"Cancel": "Anulează", "Close": "Închide", "&Yes": "&Da", "&No": "&Nu"},
+}
+
 _TRANSLATIONS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "translations")
 _installed: list[QTranslator] = []
 _current = "en"
+
+
+class _QtButtons(QTranslator):
+    """Qt's standard buttons, for a language without a qtbase_<code>.qm."""
+
+    def __init__(self, parent, texts: dict[str, str]):
+        super().__init__(parent)
+        self._texts = texts
+
+    def translate(self, context, source, disambiguation=None, n=-1):
+        # None, not "": an empty text counts as an answer and Qt would not ask the next translator.
+        return self._texts.get(source) if context == "QPlatformTheme" else None
 
 
 def tr(text: str) -> str:
@@ -113,6 +133,10 @@ def apply_language(app, setting: str = "auto") -> str:
         if qt_tr.load(f"qtbase_{code}", qt_dir):
             app.installTranslator(qt_tr)
             _installed.append(qt_tr)
+        elif code in QT_BUTTONS:
+            buttons = _QtButtons(app, QT_BUTTONS[code])
+            app.installTranslator(buttons)
+            _installed.append(buttons)
 
     # Number format for all widgets (spin boxes too). Arabic keeps Western digits.
     if code in WESTERN_DIGITS:

@@ -60,3 +60,18 @@ def test_unknown_language_falls_back_to_english(app):
     from printview3d import i18n
     assert i18n.resolve("xx") == "en"
     assert i18n.resolve("auto") in i18n.LANGUAGES
+
+
+@pytest.mark.parametrize("code,cancel,close,yes,no", [
+    ("ro", "Anulează", "Închide", "&Da", "&Nu"),         # Qt has no qtbase_ro.qm: our fallback
+    ("de", "Abbrechen", "Schließen", "&Ja", "&Nein"),    # Qt's own translation still wins
+    ("en", "Cancel", "Close", "&Yes", "&No"),
+])
+def test_standard_buttons_follow_the_language(app, code, cancel, close, yes, no):
+    from PySide6.QtWidgets import QDialogButtonBox as Box
+    from printview3d import i18n
+    i18n.apply_language(app, code)
+    box = Box(Box.Cancel | Box.Close | Box.Yes | Box.No)
+    texts = [box.button(b).text() for b in (Box.Cancel, Box.Close, Box.Yes, Box.No)]
+    i18n.apply_language(app, "en")
+    assert texts == [cancel, close, yes, no]
