@@ -14,7 +14,7 @@ release. No other website or account is needed, only a free GitHub account.
 | العربية Arabic | [`printview3d_ar.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_ar.ts) | [`CHANGELOG.ar.md`](https://github.com/sevagjb/PrintView3D/blob/main/CHANGELOG.ar.md) |
 | Deutsch | [`printview3d_de.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_de.ts) | not yet: shown in English |
 | Español | [`printview3d_es.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_es.ts) | not yet: shown in English |
-| Română | [`printview3d_ro.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_ro.ts) | not yet: shown in English |
+| Română | [`printview3d_ro.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_ro.ts) | [`CHANGELOG.ro.md`](https://github.com/sevagjb/PrintView3D/blob/main/CHANGELOG.ro.md) |
 | Français | [`printview3d_fr.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_fr.ts) | not yet: shown in English |
 | Nederlands | [`printview3d_nl.ts`](https://github.com/sevagjb/PrintView3D/blob/main/translations/printview3d_nl.ts) | [`CHANGELOG.nl.md`](https://github.com/sevagjb/PrintView3D/blob/main/CHANGELOG.nl.md) |
 
