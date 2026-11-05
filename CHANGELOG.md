@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.28.0
+- **Measure** ([#59](https://github.com/sevagjb/PrintView3D/issues/59), `M`, the new button next to **View**): **Distance** (with
+  **Show ΔX ΔY ΔZ** for the distance along each axis), **Angle** and **Circle** (diameter and
+  radius). A click places a point, a drag still turns the view, and a placed point can be dragged to
+  move it. Points snap to corners, the middle of an edge and edges. Every value is written next to
+  its measurement, several can stay on screen, and **Clear** removes them. Optional dotted lines, and
+  a **Measurement lines** thickness slider in **Settings → Viewer**.
+- **The View section**: the **View** button opens a section in the side panel with every option as a
+  button, and a button that is on is drawn darker. The clip sliders and checkboxes are part of it,
+  with **Reset view** and **Close** at the end. New: **Freeze the cutting plane** keeps the Clip
+  facing you cut where it is while you turn and move the model, and **Depth** now reads how far the
+  cut is into the model, for example *Depth 22.0 of 44.0 mm*.
+- **Object colours**: click an object's colour box in the **Objects** list to give it another colour;
+  right-click goes back to the file's colour. Not saved.
+- **A tidier side panel**: **Objects** first, **Details** last and foldable, and the file type and
+  size at the top.
+- **Distances on the grid** ([#69](https://github.com/sevagjb/PrintView3D/issues/69)): **Settings → Viewer → Show distances (mm) along the
+  grid** (off by default) writes millimetres along the build plate, with an automatic or a chosen
+  spacing.
+- **Hints in the 3D view**: how to use the chosen measuring tool, and how to pass the model through a
+  cut, are now written at the bottom of the 3D view.
+- **New icons** for Plate, View, Measure and Fit; Fit now sits right after Measure.
+- **Thanks to [@covrig](https://github.com/covrig)**, who built all of this in [#77](https://github.com/sevagjb/PrintView3D/pull/77): his first pull request
+  to PrintView3D.
+
 ## 0.27.0
 - **Both cuts at once** ([#70](https://github.com/sevagjb/PrintView3D/issues/70)): **Clip from the top** (`C`) and **Clip facing you** (`V`)
   can now be on together, for a corner cut away. Each key turns its own cut on and off, and the side

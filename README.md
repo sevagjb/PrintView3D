@@ -55,7 +55,7 @@ without exporting an STL first.
 | **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). On macOS (beta), Finder shows thumbnails of 3MF, STL, G-code, FreeCAD, OBJ and PLY files, and **Quick Look** (space bar) shows STL, 3MF, OBJ and PLY models in 3D. [Details](#quick-look-finder-previews). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
-| **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, on their own or both at once, with the cut-away part as a see-through ghost, to check meshes, hidden parts and hollow walls. [Details](#view-wireframe-x-ray-and-clip). |
+| **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, on their own or both at once, with the cut-away part as a see-through ghost, to check meshes, hidden parts and hollow walls. **Measure** distances, angles and circles. [Details](#view-wireframe-x-ray-and-clip). |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, screenshots. |
 
 <table>
@@ -278,37 +278,55 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
 | `W` · `X` · `C` · `V` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
 | `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (models) |
+| `M` | Measure on / off (models) |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
 
 ### View: wireframe, X-ray and clip
 
-The **View** button in the toolbar changes how a model is drawn (STL, 3MF, OBJ and the other
-model formats; G-code has its layer slider instead):
+The **View** button in the toolbar opens the **View** section in the side panel, with every option
+as a button (a button that is on is drawn darker). It changes how a model is drawn (STL, 3MF, OBJ
+and the other model formats; G-code has its layer slider instead):
 
 - **Wireframe** (`W`): the triangles of the mesh, to see how fine it is or spot broken geometry.
 - **X-ray** (`X`): the parts become see-through, so parts inside other parts, cavities and
   hollow walls show.
 - **Clip from the top** (`C`): hides everything above a height. A slider in the side panel moves
-  the cut; the inside of the walls that the cut lays open is drawn in red. **Turn off** or `C`
-  shows the whole model again.
+  the cut; the inside of the walls that the cut lays open is drawn in red. `C` or the button
+  again shows the whole model.
 - **Clip facing you** (`V`): an upright cut that always faces you and hides the part of the model
   in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
-  click that face on the view cube. The slider moves the cut nearer or further.
+  click that face on the view cube. The slider moves the cut nearer or further, and **Depth**
+  shows how far it is into the model. **Freeze the cutting plane** keeps the cut where it is
+  while you turn and move the model.
 - **Both cuts at once**: `C` and `V` each turn their own cut on and off, so both can be on together
   for a corner cut away, with a **Height** and a **Depth** slider in the side panel. What the cuts
-  hide stays one even ghost, and each cutting plane stops where the other cut is. **Turn off** ends
-  both.
+  hide stays one even ghost, and each cutting plane stops where the other cut is. **Reset view**
+  ends both.
 - **Show the cut-away part** and **Show the cutting plane** (under the sliders, both on by
   default): what the cut hides stays as a white, see-through ghost with outlined edges, and the
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
+  Measurements stay.
 
 The options stay on when you open the next model, and work together (X-ray and clip, for example).
+
+### Measure, object colours and grid numbers
+
+- **Measure** (`M`, the button next to **View**): **Distance** (with ΔX ΔY ΔZ if you like),
+  **Angle** and **Circle** (diameter and radius). A click places a point, a drag still turns the
+  view, and a placed point can be dragged. Points snap to corners and edges; the value is written
+  next to every measurement, and **Clear** removes them all.
+- **Object colours**: click the colour box of an object in the **Objects** list to give it another
+  colour; right-click goes back to the file's colour. Not saved.
+- **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres
+  along the build plate.
+
+More, with pictures: [Look inside your models](https://sevagjb.github.io/PrintView3D/inspect.html). Built by [@covrig](https://github.com/covrig).
 
 ### Choosing your slicer
 

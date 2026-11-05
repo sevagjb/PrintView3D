@@ -93,7 +93,7 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>{n} mm</source>
         <extracomment>A length in millimetres written on the build plate&apos;s grid in the 3D view; {n} is the number (for example 50).</extracomment>
-        <translation type="unfinished">{n} mm</translation>
+        <translation>{n} mm</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
@@ -594,7 +594,7 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>X-ray</source>
         <extracomment>View section button: see-through model (short name; its tooltip says &apos;X-ray (see-through)&apos;).</extracomment>
-        <translation type="unfinished">Röntgen</translation>
+        <translation>Röntgen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -616,18 +616,18 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
-        <translation type="unfinished">Sluiten</translation>
+        <translation>Sluiten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Freeze the cutting plane</source>
         <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation type="unfinished">Snijvlak bevriezen</translation>
+        <translation>Snijvlak bevriezen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation type="unfinished">Houdt de snede „Afsnijden vanaf jouw kant” op zijn plaats, zodat je het model kunt draaien en verschuiven zonder dat de snede meedraait.</translation>
+        <translation>Houdt de snede „Afsnijden vanaf jouw kant” op zijn plaats, zodat je het model kunt draaien en verschuiven zonder dat de snede meedraait.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -654,53 +654,53 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
-        <translation type="unfinished">Meten</translation>
+        <translation>Meten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure on the model: distance, angle, circle</source>
-        <translation type="unfinished">Meten op het model: afstand, hoek, cirkel</translation>
+        <translation>Meten op het model: afstand, hoek, cirkel</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Click a colour box to change its colour.</source>
-        <translation type="unfinished">Klik op een kleurvak om de kleur te wijzigen.</translation>
+        <translation>Klik op een kleurvak om de kleur te wijzigen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Snapping</source>
         <extracomment>Measure checkbox: the points jump to the corners and edges of the model when the mouse is close to one.</extracomment>
-        <translation type="unfinished">Vastklikken</translation>
+        <translation>Magnetisch uitlijnen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Jumps to the nearest corner, the middle of an edge or a point on an edge of the model when the mouse is close to one.</source>
-        <translation type="unfinished">Springt naar de dichtstbijzijnde hoek, het midden van een rand of een punt op een rand van het model als de muis er dichtbij is.</translation>
+        <translation>Springt naar de dichtstbijzijnde hoek, het midden van een rand of een punt op een rand van het model als de muis er dichtbij is.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Dotted line</source>
-        <translation type="unfinished">Stippellijn</translation>
+        <translation>Stippellijn</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Draws the measuring lines dotted.</source>
-        <translation type="unfinished">Tekent de meetlijnen als stippellijn.</translation>
+        <translation>Tekent de meetlijnen als stippellijn.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show ΔX ΔY ΔZ</source>
-        <translation type="unfinished">ΔX ΔY ΔZ tonen</translation>
+        <translation>ΔX ΔY ΔZ tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Writes the distance along X, Y and Z under the value of every distance.</source>
-        <translation type="unfinished">Schrijft de afstand langs X, Y en Z onder de waarde van elke afstand.</translation>
+        <translation>Schrijft de afstand langs X, Y en Z onder de waarde van elke afstand.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clear</source>
-        <translation type="unfinished">Wissen</translation>
+        <translation>Wissen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -815,7 +815,7 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Filetype: {kind}  ·  Size: {size}</source>
         <extracomment>Side panel: the type of the open file ({kind}, for example STL) and its size ({size}, for example 12.4 KB).</extracomment>
-        <translation type="unfinished">Bestandstype: {kind}  ·  Grootte: {size}</translation>
+        <translation>Bestandstype: {kind}  ·  Grootte: {size}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -950,7 +950,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Click to pick another colour (right-click: the original colour)</source>
-        <translation type="unfinished">Klik om een andere kleur te kiezen (rechtsklik: de oorspronkelijke kleur)</translation>
+        <translation>Klik om een andere kleur te kiezen (rechtsklik: de oorspronkelijke kleur)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -975,12 +975,12 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Colour of the object</source>
-        <translation type="unfinished">Kleur van het object</translation>
+        <translation>Kleur van het object</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Original colour</source>
-        <translation type="unfinished">Oorspronkelijke kleur</translation>
+        <translation>Oorspronkelijke kleur</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1156,44 +1156,44 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Distance</source>
-        <translation type="unfinished">Afstand</translation>
+        <translation>Afstand</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Angle</source>
-        <translation type="unfinished">Hoek</translation>
+        <translation>Hoek</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Circle</source>
         <extracomment>Measure button: measure a circle or hole (its diameter and radius).</extracomment>
-        <translation type="unfinished">Cirkel</translation>
+        <translation>Cirkel</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
-        <translation type="unfinished">Cirkel (diameter, straal)</translation>
+        <translation>Cirkel (diameter, straal)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Click two points on the model.</source>
-        <translation type="unfinished">Klik op twee punten op het model.</translation>
+        <translation>Klik op twee punten op het model.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Click three points: one side, the corner, the other side.</source>
-        <translation type="unfinished">Klik op drie punten: de ene zijde, de hoek, de andere zijde.</translation>
+        <translation>Klik op drie punten: de ene zijde, de hoek, de andere zijde.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Click three points on the edge of a circle or hole.</source>
-        <translation type="unfinished">Klik op drie punten op de rand van een cirkel of gat.</translation>
+        <translation>Klik op drie punten op de rand van een cirkel of gat.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drag a point to move it, drag elsewhere to turn the view.</source>
-        <translation type="unfinished">Sleep een punt om het te verplaatsen, sleep elders om de weergave te draaien.</translation>
+        <translation>Sleep een punt om het te verplaatsen, sleep elders om de weergave te draaien.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1204,7 +1204,7 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} mm</source>
         <extracomment>Clip facing you: how far the cut is into the model ({d}), out of the depth of the model in that direction ({total}).</extracomment>
-        <translation type="unfinished">Diepte {d} van {total} mm</translation>
+        <translation>Diepte {d} van {total} mm</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1461,25 +1461,25 @@
         <location filename="../src/printview3d/ui/measure.py"></location>
         <source>{d} {unit}</source>
         <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
-        <translation type="unfinished">{d} {unit}</translation>
+        <translation>{d} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/measure.py"></location>
         <source>ΔX {x}   ΔY {y}   ΔZ {z}</source>
         <extracomment>Measure: the distance along each axis, written under the value of a distance. Δ is the difference.</extracomment>
-        <translation type="unfinished">ΔX {x}   ΔY {y}   ΔZ {z}</translation>
+        <translation>ΔX {x}   ΔY {y}   ΔZ {z}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/measure.py"></location>
         <source>{a}°</source>
         <extracomment>Measure: the angle written next to a measured angle in the 3D view; {a} is the number of degrees.</extracomment>
-        <translation type="unfinished">{a}°</translation>
+        <translation>{a}°</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/measure.py"></location>
         <source>Ø {d} {unit}  ·  R {r} {unit}</source>
         <extracomment>Measure: written in the 3D view next to a measured circle; Ø is the diameter {d} and R the radius {r}, {unit} the unit (mm).</extracomment>
-        <translation type="unfinished">Ø {d} {unit}  ·  R {r} {unit}</translation>
+        <translation>Ø {d} {unit}  ·  R {r} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/send_dialog.py"></location>
@@ -1770,27 +1770,27 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show distances (mm) along the grid</source>
-        <translation type="unfinished">Afstanden (mm) langs het raster tonen</translation>
+        <translation>Afstanden (mm) langs het raster tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Small numbers along the edges of the build plate, on its major grid lines. Hidden while you look from under the plate.</source>
-        <translation type="unfinished">Kleine getallen langs de randen van het printbed, op de hoofdlijnen van het raster. Verborgen als je van onder het bed kijkt.</translation>
+        <translation>Kleine getallen langs de randen van de printplaat, op de hoofdlijnen van het raster. Verborgen als je van onder de plaat kijkt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Spacing of the numbers</source>
-        <translation type="unfinished">Afstand tussen de getallen</translation>
+        <translation>Afstand tussen de getallen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisch</translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automatisch: op de hoofdlijnen van het raster (elke 50 mm bij een gewoon bed), minder bij een groot bed. Of kies een eigen afstand.</translation>
+        <translation>Automatisch: op de hoofdlijnen van het raster (elke 50 mm bij een gewone plaat), minder bij een grote plaat. Of kies een eigen afstand.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1822,22 +1822,22 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Measurement lines</source>
-        <translation type="unfinished">Meetlijnen</translation>
+        <translation>Meetlijnen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>How thick the lines of Measure are.</source>
-        <translation type="unfinished">Hoe dik de lijnen van Meten zijn.</translation>
+        <translation>Hoe dik de lijnen van Meten zijn.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Thinner</source>
-        <translation type="unfinished">Dunner</translation>
+        <translation>Dunner</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Thicker</source>
-        <translation type="unfinished">Dikker</translation>
+        <translation>Dikker</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2224,7 +2224,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Measure on / off (models)</source>
-        <translation type="unfinished">Meten aan / uit (modellen)</translation>
+        <translation>Meten aan / uit (modellen)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

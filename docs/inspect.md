@@ -5,9 +5,10 @@ inside a model before you print it. It works for STL, 3MF, OBJ and the other mod
 (G-code has its layer slider for this). The button opens a **View** section in the side panel with
 every option as a button: Wireframe, X-ray, Clip from the top and Clip facing you. The controls of a
 cut (its slider, the cut-away part, the cutting plane and Freeze) appear in the same section while
-the cut is on, and the section ends with **Reset view** and **Close**. In a narrow side panel the
-buttons get a smaller font; the panel never gets so narrow that an icon or a letter has to go.
-*New in PrintView3D 0.25.*
+the cut is on, and the section ends with **Reset view** and **Close**. A button that is on is drawn
+darker, so you see at a glance what is active. In a narrow side panel the buttons get a smaller
+font; the panel never gets so narrow that an icon or a letter has to go.
+*New in PrintView3D 0.25; the View section is new in 0.28.*
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"
        autoplay loop muted playsinline preload="metadata"
@@ -51,8 +52,8 @@ Under the sliders, **Show the cut-away part** and **Show the cutting plane** tur
 <kbd>C</kbd> and <kbd>V</kbd> each turn their own cut on and off, so both can be on together: the
 model then keeps only what both cuts keep, a corner cut away. The side panel has a slider for each,
 **Height** and **Depth**. What the cuts hide still shows as one even, see-through ghost, and each
-cutting plane stops where the other cut is. **Turn off** in the side panel ends both cuts; the same
-key again ends just that one. *New in PrintView3D 0.27.*
+cutting plane stops where the other cut is. **Reset view** ends both cuts; the same key (or button)
+again ends just that one. *New in PrintView3D 0.27.*
 
 ## X-ray
 
@@ -95,8 +96,9 @@ How to use the chosen tool is written at the bottom of the 3D view while Measure
 Finished measurements stay on screen with their value written next to them, and the next click
 starts another; **Clear** removes them all. Drag a placed point to move it. **Snapping** (on at
 every start) jumps to the nearest corner, the middle of an edge or a point on an edge. **Dotted line**
-draws the lines as dots. How thick the lines are is a slider in Settings (Viewer). Values that would overlap, such as concentric circles, are stacked above each
-other.
+draws the lines as dots. How thick the lines are is a slider in **Settings → Viewer**
+(**Measurement lines**). Values that would overlap, such as concentric circles, are stacked above
+each other. **Reset view** leaves your measurements in place. *New in PrintView3D 0.28.*
 
 ## Colours and the side panel
 
@@ -104,6 +106,7 @@ The **Objects** list comes first in the side panel and the **Details** last; cli
 them away (the choice is remembered). At the top you see the file type and size. Click the colour
 box of an object to pick another colour for that object alone; right-click it to go back to the
 colour from the file. Colours you pick are not saved: they are back to normal after you restart.
+*New in PrintView3D 0.28.*
 
 ## Distances on the grid
 
@@ -113,7 +116,7 @@ to every 100 or 250 mm on a big one so a few readable numbers remain. They sit j
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
 you look from under the plate. With the endless grid they follow the area around the model.
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
-of the automatic one.
+of the automatic one. *New in PrintView3D 0.28.*
 
 ## Keys
 
@@ -123,11 +126,8 @@ of the automatic one.
 | <kbd>X</kbd> | X-ray on / off |
 | <kbd>C</kbd> | Clip from the top on / off |
 | <kbd>V</kbd> | Clip facing you on / off |
-<<<<<<< HEAD
 | <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay) |
-=======
 | <kbd>M</kbd> | Measure on / off |
->>>>>>> 4add7bf (Add Measure tool: distance, angle and circle, snapping, dotted lines, translations)
 
 The options stay on when you open the next model.
 
@@ -137,7 +137,8 @@ The pump housing on this page is
 [`examples/demo_housing.3mf`](https://github.com/sevagjb/PrintView3D/raw/main/examples/demo_housing.3mf)
 in the source code: download it and open it in PrintView3D.
 
-These features were suggested by [@covrig](https://github.com/covrig)
+These features were suggested, and Measure, the View section, the object colours and the grid
+numbers built, by [@covrig](https://github.com/covrig)
 ([#59](https://github.com/sevagjb/PrintView3D/issues/59),
 [#60](https://github.com/sevagjb/PrintView3D/issues/60)). Have an idea too?
 [Open an issue](https://github.com/sevagjb/PrintView3D/issues/new/choose).

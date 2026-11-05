@@ -36,38 +36,54 @@ Dezelfde lijst staat in het programma onder **Instellingen → Over → Toetsenb
 | `F` · `1` · `2` · `3` · `4` | Passend · Iso · Boven · Voor · Rechts |
 | `W` · `X` · `C` · `V` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
 | `R` | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend (modellen) |
+| `M` | Meten aan / uit (modellen) |
 | `↑` / `↓` | Volgende / vorige laag (G-code), of het vorige / volgende bestand in een ZIP |
 | `Page Up` / `Page Down` | 10 lagen omhoog / omlaag |
 | `Home` / `End` | Eerste / laatste laag |
 
 ## Weergave: draadmodel, röntgen en afsnijden {#view-wireframe-x-ray-and-clip}
 
-De knop **Weergave** in de werkbalk verandert hoe een model getekend wordt (STL, 3MF, OBJ en de
-andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
+De knop **Weergave** in de werkbalk opent het onderdeel **Weergave** in het zijpaneel, met elke optie
+als knop (een knop die aan staat is donkerder). Het verandert hoe een model getekend wordt (STL, 3MF,
+OBJ en de andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
 
 - **Draadmodel** (`W`): de driehoeken van het mesh, om te zien hoe fijn het is of kapotte geometrie te vinden.
 - **Röntgen** (`X`): de onderdelen worden doorzichtig, zodat onderdelen in andere onderdelen,
   holtes en holle wanden zichtbaar worden.
 - **Van boven afsnijden** (`C`): verbergt alles boven een hoogte. Een schuifregelaar in het
   zijpaneel verschuift de snede; de binnenkant van de wanden die de snede openlegt is rood.
-  **Uitzetten** of `C` toont het hele model weer.
+  `C` of de knop nog eens toont het hele model weer.
 - **Afsnijden vanaf jouw kant** (`V`): een rechtopstaande snede die altijd naar je toe gericht is en
   het deel van het model ervoor verbergt. Draai de weergave en het model draait door de snede;
   verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
   Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
-  zet de snede dichterbij of verder weg.
+  zet de snede dichterbij of verder weg, en **Diepte** toont hoe ver ze in het model zit.
+  **Snijvlak bevriezen** houdt de snede op haar plaats terwijl je het model draait en verschuift.
 - **Beide sneden tegelijk**: `C` en `V` zetten elk hun eigen snede aan en uit, dus beide kunnen
   samen aan voor een hoek eruit gesneden, met een schuif **Hoogte** en **Diepte** in het zijpaneel.
-  **Uitzetten** zet beide uit.
+  **Weergave herstellen** zet beide uit.
 - **Weggesneden deel tonen** en **Snijvlak tonen** (onder de schuiven, standaard allebei aan): wat
   de snede verbergt blijft zichtbaar als een witte, doorzichtige schim met omlijnde randen, en het
   snijvlak verschijnt als een vaag vlak zo groot als het model. Je keuze wordt onthouden. In
   **Instellingen → Weergave** hebben **Weggesneden deel** en **Snijvlak** elk een schuif
   Vager … Sterker; de 3D-weergave verandert terwijl je sleept.
 - **Weergave herstellen** (`R`): zet alles hierboven uit en past het model in beeld, zoals **Passend**,
-  in één keer.
+  in één keer. Metingen blijven staan.
 
 De opties blijven aan als je het volgende model opent, en werken samen (bijvoorbeeld röntgen en afsnijden).
+
+## Meten, objectkleuren en getallen op het raster {#measure-object-colours-and-grid-numbers}
+
+- **Meten** (`M`, de knop naast **Weergave**): **Afstand** (desgewenst met ΔX ΔY ΔZ), **Hoek** en
+  **Cirkel** (diameter en straal). Een klik zet een punt, slepen draait nog steeds de weergave, en een
+  geplaatst punt kun je verslepen. Punten springen naar hoeken en randen; bij elke meting staat de
+  waarde, en **Wissen** haalt ze allemaal weg.
+- **Objectkleuren**: klik op het kleurvak van een object in de lijst **Objecten** om het een andere
+  kleur te geven; rechtsklik zet de kleur uit het bestand terug. Niet opgeslagen.
+- **Getallen op het raster**: **Instellingen → Weergave → Afstanden (mm) langs het raster tonen**
+  schrijft millimeters langs de printplaat.
+
+Meer, met afbeeldingen: [In je modellen kijken](inspect.md). Gemaakt door [@covrig](https://github.com/covrig).
 
 ## Je slicer kiezen {#choosing-your-slicer}
 
