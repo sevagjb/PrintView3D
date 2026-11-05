@@ -304,9 +304,37 @@ class SettingsDialog(QDialog):
         self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
         l3.addWidget(self.travel_cb)
         l3.addWidget(self.bed_cb)
+        # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
+        self.grid_labels_cb = QCheckBox(tr("Show distances (mm) along the grid"))
+        self.grid_labels_cb.setChecked(bool(settings.get("show_grid_labels", False)))
+        self.grid_labels_cb.setToolTip(tr("Small numbers along the edges of the build plate, on its major "
+                                          "grid lines. Hidden while you look from under the plate."))
+        l3.addWidget(self.grid_labels_cb)
+        # How far apart the numbers are: automatic (the grid's major lines, 50 mm on a normal plate)
+        # or a spacing of your own, for example 10 mm.
+        # In the same form as Build plate below it, so the two dropdowns line up.
+        plate_form = QFormLayout()
+        self.grid_step_row = QWidget()
+        step_layout = QHBoxLayout(self.grid_step_row)
+        step_layout.setContentsMargins(0, 0, 0, 0)
+        self.grid_step_label = QLabel(tr("Spacing of the numbers"))
+        self.grid_step_label.setObjectName("formKey")
+        self.grid_step_combo = QComboBox()
+        self.grid_step_combo.addItem(tr("Automatic"), 0)
+        for mm in (5, 10, 20, 25, 50, 100):
+            self.grid_step_combo.addItem(tr("{n} mm").format(n=mm), mm)
+        at = self.grid_step_combo.findData(int(settings.get("grid_labels_step", 0) or 0))
+        self.grid_step_combo.setCurrentIndex(max(0, at))
+        self.grid_step_combo.setToolTip(tr("Automatic: on the grid's major lines (every 50 mm on a normal plate), "
+                                           "fewer on a big plate. Or choose a spacing of your own."))
+        step_layout.addWidget(self.grid_step_combo)
+        step_layout.addStretch(1)
+        plate_form.addRow(self.grid_step_label, self.grid_step_row)
+        for wdg in (self.grid_step_label, self.grid_step_row):
+            wdg.setEnabled(self.grid_labels_cb.isChecked())
+            self.grid_labels_cb.toggled.connect(wdg.setEnabled)
         # Which plate (also in the Plate button's menu), issue #61.
         from .scene import PLATE_MODES
-        plate_form = QFormLayout()
         self.plate_combo = QComboBox()
         for mode in PLATE_MODES:
             self.plate_combo.addItem(plate_mode_label(mode).rstrip("…"), mode)
@@ -350,6 +378,14 @@ class SettingsDialog(QDialog):
         self.plane_slider = self._strength_row(
             plate_form, tr("Cutting plane"), self._plane_at_open, self._preview_plane_strength,
             tr("How strongly the cutting plane is drawn when you use Clip in the View menu."))
+        # Measure: how thick its lines are (1 .. 10 pixels); also tried live, Cancel puts it back.
+        try:
+            self._line_at_open = min(10, max(1, int(round(float(settings.get("measure_line_width", 4))))))
+        except (TypeError, ValueError):
+            self._line_at_open = 4
+        self.line_slider = self._strength_row(
+            plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
+            tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
         l3.addWidget(self.cube_cb)
 
         # ---------------- Graphics ----------------
@@ -556,23 +592,31 @@ class SettingsDialog(QDialog):
         """The theme chosen on the Appearance page."""
         return self._theme_choice
 
-    def _strength_row(self, form, label: str, value: int, on_change, tooltip: str) -> QSlider:
-        """A "label  Fainter ━━●━━ Stronger" row; returns its slider."""
+    def _strength_row(self, form, label: str, value: int, on_change, tooltip: str,
+                      lo: int = 0, hi: int = 100, left: str = "", right: str = "") -> QSlider:
+        """A "label  Fainter ━━●━━ Stronger" row (or other end names); returns its slider."""
         row = QWidget()
         rl = QHBoxLayout(row)
         rl.setContentsMargins(0, 0, 0, 0)
-        faint, strong = QLabel(tr("Fainter")), QLabel(tr("Stronger"))
+        faint, strong = QLabel(left or tr("Fainter")), QLabel(right or tr("Stronger"))
         for lab in (faint, strong):
             lab.setObjectName("muted")
         slider = QSlider(Qt.Horizontal)
         slider.setLayoutDirection(Qt.LeftToRight)       # fainter on the left, also in Arabic
-        slider.setRange(0, 100)
+        slider.setRange(lo, hi)
         slider.setValue(value)
         slider.setToolTip(tooltip)
         slider.valueChanged.connect(on_change)
         rl.addWidget(faint)
         rl.addWidget(slider, 1)
         rl.addWidget(strong)
+        # The end names of all these rows get the same width, so the sliders line up.
+        ends = self.__dict__.setdefault("_slider_ends", [])
+        ends.append((faint, strong))
+        for i in (0, 1):
+            width = max(pair[i].sizeHint().width() for pair in ends)
+            for pair in ends:
+                pair[i].setMinimumWidth(width)
         key = QLabel(label)
         key.setObjectName("formKey")
         form.addRow(key, row)
@@ -582,6 +626,11 @@ class SettingsDialog(QDialog):
         parent = self.parent()
         if hasattr(parent, "set_ghost_strength"):
             parent.set_ghost_strength(value)
+
+    def _preview_line_width(self, value: int):
+        parent = self.parent()
+        if hasattr(parent, "set_measure_line_width"):
+            parent.set_measure_line_width(value)
 
     def _preview_plane_strength(self, value: int):
         parent = self.parent()
@@ -597,6 +646,8 @@ class SettingsDialog(QDialog):
             self._preview_ghost_strength(self._ghost_at_open)
         if self.plane_slider.value() != self._plane_at_open:
             self._preview_plane_strength(self._plane_at_open)
+        if self.line_slider.value() != self._line_at_open:
+            self._preview_line_width(self._line_at_open)
         super().reject()
 
     @staticmethod
@@ -842,11 +893,14 @@ class SettingsDialog(QDialog):
         self.settings.set("freecad_path", self.freecad_edit.text().strip())
         self.settings.set("show_travel", self.travel_cb.isChecked())
         self.settings.set("show_bed", self.bed_cb.isChecked())
+        self.settings.set("show_grid_labels", self.grid_labels_cb.isChecked())
+        self.settings.set("grid_labels_step", self.grid_step_combo.currentData() or 0)
         self.settings.set("plate_mode", self.plate_combo.currentData())
         self.settings.set("plate_size", [self.plate_w_spin.value(), self.plate_d_spin.value()])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
         self.settings.set("ghost_strength", self.ghost_slider.value())
         self.settings.set("plane_strength", self.plane_slider.value())
+        self.settings.set("measure_line_width", self.line_slider.value())
         if sys.platform != "darwin":        # not on the Mac's Files page (its box is never shown)
             self.settings.set("new_window", self.new_window_cb.isChecked())
         self.settings.set("export_mode", self.export_combo.currentData())
@@ -927,6 +981,7 @@ def shortcut_rows() -> list[tuple[list[str], str]]:
         (["C"], tr("Clip from the top on / off (models)")),
         (["V"], tr("Clip facing you on / off (models)")),
         (["R"], tr("Reset view: all of the above off, model fitted (models)")),
+        (["M"], tr("Measure on / off (models)")),
         (["↑", "↓"], tr("Next / previous layer (G-code), or file (ZIP)")),
         ([_key("PgUp"), _key("PgDown")], tr("10 layers up / down")),
         ([_key("Home"), _key("End")], tr("First / last layer")),

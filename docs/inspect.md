@@ -2,7 +2,12 @@
 
 Hollow walls, hidden parts, channels, screw holes: the **View** button in the toolbar lets you look
 inside a model before you print it. It works for STL, 3MF, OBJ and the other model formats
-(G-code has its layer slider for this). *New in PrintView3D 0.25.*
+(G-code has its layer slider for this). The button opens a **View** section in the side panel with
+every option as a button: Wireframe, X-ray, Clip from the top and Clip facing you. The controls of a
+cut (its slider, the cut-away part, the cutting plane and Freeze) appear in the same section while
+the cut is on, and the section ends with **Reset view** and **Close**. In a narrow side panel the
+buttons get a smaller font; the panel never gets so narrow that an icon or a letter has to go.
+*New in PrintView3D 0.25.*
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"
        autoplay loop muted playsinline preload="metadata"
@@ -15,8 +20,11 @@ An upright cut that always faces you and hides the part of the model in front of
 as if you held the model up to a scanner. For a cut straight from the front or the side, click
 that face on the view cube.
 
-The slider in the side panel moves the cut nearer or further. The inside of the walls the cut
-lays open is drawn in red, so on a solid part you see the cut face.
+The slider in the side panel moves the cut nearer or further; **Depth** shows how far the cut is
+into the model, out of the model's depth in that direction. **Freeze the cutting plane** (in the
+View section) keeps the cut where it is, so you can turn and move the model without the cut turning
+along. The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
+face.
 
 ![The cut and its slider in the side panel](assets/inside/clip-facing.png)
 
@@ -72,6 +80,41 @@ whole model is in **Details**. Untick an object to hide it.
 
 ![The Objects list with each object's size](assets/inside/objects.png)
 
+## Measure
+
+The **Measure** button next to **View** (or <kbd>M</kbd>) opens the Measure section. Choose what to
+measure with the buttons in it:
+
+- **Distance**: click two points. The line follows the mouse and the distance is written next to
+  it. Tick **Show ΔX ΔY ΔZ** to write the distance along each axis under every distance, handy for
+  "how tall from here to there".
+- **Angle**: click a point on one side, the corner, then a point on the other side.
+- **Circle**: click three points on the edge of a circle or hole to read its diameter and radius.
+
+How to use the chosen tool is written at the bottom of the 3D view while Measure is on. A click places a point, a drag still turns the view, so you can turn the model between points.
+Finished measurements stay on screen with their value written next to them, and the next click
+starts another; **Clear** removes them all. Drag a placed point to move it. **Snapping** (on at
+every start) jumps to the nearest corner, the middle of an edge or a point on an edge. **Dotted line**
+draws the lines as dots. How thick the lines are is a slider in Settings (Viewer). Values that would overlap, such as concentric circles, are stacked above each
+other.
+
+## Colours and the side panel
+
+The **Objects** list comes first in the side panel and the **Details** last; click *Details* to fold
+them away (the choice is remembered). At the top you see the file type and size. Click the colour
+box of an object to pick another colour for that object alone; right-click it to go back to the
+colour from the file. Colours you pick are not saved: they are back to normal after you restart.
+
+## Distances on the grid
+
+**Settings → Viewer → Show distances (mm) along the grid** (off by default) writes small numbers in
+millimetres along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
+to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
+edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
+you look from under the plate. With the endless grid they follow the area around the model.
+**Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
+of the automatic one.
+
 ## Keys
 
 | Key | |
@@ -80,7 +123,11 @@ whole model is in **Details**. Untick an object to hide it.
 | <kbd>X</kbd> | X-ray on / off |
 | <kbd>C</kbd> | Clip from the top on / off |
 | <kbd>V</kbd> | Clip facing you on / off |
-| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted |
+<<<<<<< HEAD
+| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay) |
+=======
+| <kbd>M</kbd> | Measure on / off |
+>>>>>>> 4add7bf (Add Measure tool: distance, angle and circle, snapping, dotted lines, translations)
 
 The options stay on when you open the next model.
 

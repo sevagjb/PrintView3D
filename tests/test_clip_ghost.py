@@ -137,7 +137,8 @@ def test_turning_the_cut_off_hides_the_ghost(window):
     w.clip_slider.setValue(w.CLIP_STEPS)                                # all the way up: no cut
     assert _ghosts_visible(w) == [False, False, False]
     w.clip_slider.setValue(500)
-    w.clip_off_btn.click()
+    w.act_clip.setChecked(False)
+    w.act_clip_face.setChecked(False)
     assert _ghosts_visible(w) == [False, False, False]
     assert _plane_visible(w) == [False, False]
 
