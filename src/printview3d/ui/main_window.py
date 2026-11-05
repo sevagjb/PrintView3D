@@ -148,6 +148,10 @@ class _ExportSignals(QObject):
     failed = Signal(str, str)       # path, error
 
 
+# Icons with text beside them: 22 px, plus the empty gap on their right (theme.tool_icon(gap=True)).
+TEXT_ICON = QSize(22 + theme.ICON_GAP, 22)
+
+
 class _FitButton(QToolButton):
     """A button of the View or Measure section whose icon and name always show in full. When the
     panel is narrow its font gets a little smaller; the side panel is never narrower than the
@@ -157,7 +161,7 @@ class _FitButton(QToolButton):
 
     SCALES = (1.0, 0.92, 0.84)                       # font sizes it tries, of the normal size
     PAD = 20                                         # the button's padding and border, both sides
-    ICON = 22 + 6                                    # the icon and the space after it
+    ICON = 22 + theme.ICON_GAP + 2                   # the icon, its gap and Qt's own 2 px before the text
 
     def __init__(self, group: list, parent=None):
         super().__init__(parent)
@@ -612,7 +616,7 @@ class MainWindow(QMainWindow):
         tb = QToolBar()
         tb.setObjectName("mainToolbar")          # the Mica style rules name it (theme.MICA_CSS)
         tb.setMovable(False)
-        tb.setIconSize(QSize(22, 22))
+        tb.setIconSize(TEXT_ICON)                # square icons stay 22 x 22; icons with text get their gap
         # Buttons with an icon show it beside their text; the view buttons have no icon (text only).
         tb.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.addToolBar(tb)
@@ -671,7 +675,7 @@ class MainWindow(QMainWindow):
         tb.addSeparator()
         self.slicer_btn = QToolButton()
         self.slicer_btn.setObjectName("slicerButton")
-        self.slicer_btn.setIconSize(QSize(22, 22))
+        self.slicer_btn.setIconSize(TEXT_ICON)
         self.slicer_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.slicer_btn.clicked.connect(lambda: self.open_in_slicer())
         # The small arrow: send the file to another slicer just once.
@@ -698,7 +702,7 @@ class MainWindow(QMainWindow):
         self.export_menu.aboutToShow.connect(self._mark_export_default)
         self.export_btn = QToolButton()
         self.export_btn.setObjectName("exportButton")
-        self.export_btn.setIconSize(QSize(22, 22))
+        self.export_btn.setIconSize(TEXT_ICON)
         self.export_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.export_btn.setDefaultAction(self.act_export_stl)
         self.export_btn.setMenu(self.export_menu)
@@ -787,7 +791,7 @@ class MainWindow(QMainWindow):
         # The view buttons with an icon: styled to be as tall as the others (theme: hasIcon).
         for b in (self.plate_btn, self.view_btn, self.measure_btn, tb.widgetForAction(self.act_fit)):
             b.setProperty("hasIcon", True)
-            b.setIconSize(QSize(22, 22))
+            b.setIconSize(TEXT_ICON)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -832,7 +836,7 @@ class MainWindow(QMainWindow):
         self.act_open.setIcon(theme.tool_icon("open"))
         # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
         self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
-        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons()))
+        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons(), gap=True))
         self.theme_btn.setIcon(theme.tool_icon("theme", warm=True))
         self.recent_menu.setIcon(theme.tool_icon("recent"))
         self.act_settings.setIcon(theme.tool_icon("settings"))
@@ -841,15 +845,15 @@ class MainWindow(QMainWindow):
         self.act_whats_new.setIcon(theme.tool_icon("whats_new"))
         # Plate, View and Measure; the buttons of the View and Measure sections.
         filled = theme.filled_view_buttons()
-        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled))
-        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled))
-        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled))
-        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled))
+        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled, gap=True))
+        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled, gap=True))
+        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled, gap=True))
+        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled, gap=True))
         for kind, a in self.measure_actions.items():
-            a.setIcon(theme.tool_icon(kind))
+            a.setIcon(theme.tool_icon(kind, gap=True))
         for a, kind in ((self.act_wireframe, "wireframe"), (self.act_xray, "xray"), (self.act_clip, "clip_top"),
                         (self.act_clip_face, "clip_face"), (self.act_reset_view, "reset")):
-            a.setIcon(theme.tool_icon(kind))
+            a.setIcon(theme.tool_icon(kind, gap=True))
 
     def _build_preview_page(self) -> QWidget:
         page = QWidget()
@@ -1023,7 +1027,7 @@ class MainWindow(QMainWindow):
         In a narrow panel the name gets a smaller font (see _FitButton)."""
         b = _FitButton(group)
         b.setObjectName("sectionButton")
-        b.setIconSize(QSize(22, 22))
+        b.setIconSize(TEXT_ICON)
         b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         b.setDefaultAction(action)
         return b
@@ -2809,7 +2813,7 @@ class MainWindow(QMainWindow):
     def _update_slicer_button(self):
         freecad = self.current_kind == "freecad" and not self.showing_embedded
         # A 3D printer for slicers; the FreeCAD cube when the button opens FreeCAD.
-        self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True))
+        self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True))
         if freecad:
             self.slicer_btn.setText(tr("Open in FreeCAD"))
             self.slicer_btn.setToolTip(tr("Open this file in FreeCAD (Ctrl+P). "

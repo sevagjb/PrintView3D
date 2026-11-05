@@ -425,7 +425,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
             padding: 4px 10px; margin: 1px 2px; font-weight: 600; }}
         QToolBar QToolButton:hover {{ background: {t['button_hover']}; border-color: {t['muted']}; }}
         QToolBar QToolButton:checked {{ background: {t['tool_checked']}; border-color: {accent}; }}
-        QToolBar QToolButton#iconButton {{ padding: 2px 3px; }}
+        QToolBar QToolButton#iconButton {{ padding: 2px 0px; }}    /* the icon box is 28 wide (theme.ICON_GAP) */
         QToolBar QToolButton#iconButton::menu-indicator {{ image: none; width: 0; }}
         QToolBar QToolButton#exportButton {{ padding: 2px 10px 2px 3px; }}
         QToolBar QToolButton#exportButton[popupMode="1"] {{ padding-right: 26px; }}
@@ -439,7 +439,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         /* All view buttons as tall as the other toolbar buttons; the ones with an icon (Plate, View,
            Measure, Fit) sit closer around it, like Export STL. */
         QToolBar QToolButton#viewButton {{ padding: 2px 10px; min-height: 22px; }}
-        QToolBar QToolButton#viewButton[hasIcon="true"] {{ padding: 2px 10px 2px 3px; }}
+        QToolBar QToolButton#viewButton[hasIcon="true"] {{ padding: 2px 0px 2px 3px; }}
         QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
         QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
             border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
@@ -1104,13 +1104,19 @@ TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer",
               "wireframe", "xray", "clip_top", "clip_face", "reset")
 
 
-def tool_icon(kind: str, on_accent: bool = False, warm: bool = False) -> QIcon:
+ICON_GAP = 6                  # px between an icon and the text beside it (at 22 px icons)
+
+
+def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False) -> QIcon:
     """Toolbar icon: the symbol in the accent colour on a soft accent-tinted tile.
     on_accent=True is for the slicer button: a white symbol on a soft white tile.
     warm=True uses the theme's primary colour instead (the orange tiles of the Ember themes; the
-    classic themes have the same teal for both, so there it looks the same)."""
+    classic themes have the same teal for both, so there it looks the same).
+    gap=True is for buttons with text beside the icon: the picture is wider by ICON_GAP (empty
+    on the right), so the text keeps some room from the icon. Its buttons use an icon size of
+    (22 + ICON_GAP) x 22."""
     size = 64
-    pm = QPixmap(size, size)
+    pm = QPixmap(size + (round(size * ICON_GAP / 22) if gap else 0), size)
     pm.fill(Qt.transparent)
     p = QPainter(pm)
     p.setRenderHint(QPainter.Antialiasing)
