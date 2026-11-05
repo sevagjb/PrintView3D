@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.28.0
+- **Meten** ([#59](https://github.com/sevagjb/PrintView3D/issues/59), `M`, de nieuwe knop naast **Weergave**): **Afstand** (met
+  **ΔX ΔY ΔZ tonen** voor de afstand langs elke as), **Hoek** en **Cirkel** (diameter en straal). Een
+  klik zet een punt, slepen draait nog steeds de weergave, en een geplaatst punt kun je verslepen.
+  Punten springen naar hoeken, het midden van een rand en randen. Bij elke meting staat de waarde,
+  meerdere metingen kunnen blijven staan, en **Wissen** haalt ze weg. Desgewenst stippellijnen, en een
+  schuif voor de dikte van de **Meetlijnen** in **Instellingen → Weergave**.
+- **Het onderdeel Weergave**: de knop **Weergave** opent een onderdeel in het zijpaneel met elke optie
+  als knop, en een knop die aan staat is donkerder. De schuiven en vinkjes van het afsnijden horen erbij,
+  met **Weergave herstellen** en **Sluiten** onderaan. Nieuw: **Snijvlak bevriezen** houdt de snede
+  van Afsnijden vanaf jouw kant op haar plaats terwijl je het model draait en verschuift, en **Diepte**
+  toont nu hoe ver de snede in het model zit, bijvoorbeeld *Diepte 22,0 van 44,0 mm*.
+- **Objectkleuren**: klik op het kleurvak van een object in de lijst **Objecten** om het een andere
+  kleur te geven; rechtsklik zet de kleur uit het bestand terug. Niet opgeslagen.
+- **Een overzichtelijker zijpaneel**: **Objecten** bovenaan, **Details** onderaan en inklapbaar, en het
+  bestandstype en de grootte bovenaan.
+- **Afstanden op het raster** ([#69](https://github.com/sevagjb/PrintView3D/issues/69)): **Instellingen → Weergave → Afstanden (mm) langs het
+  raster tonen** (standaard uit) schrijft millimeters langs de printplaat, met een automatische of een
+  zelfgekozen afstand.
+- **Hints in de 3D-weergave**: hoe het gekozen meetgereedschap werkt, en hoe je het model door een snede
+  haalt, staat nu onderaan de 3D-weergave.
+- **Nieuwe pictogrammen** voor Plaat, Weergave, Meten en Passend; Passend staat nu direct na Meten.
+- **Met dank aan [@covrig](https://github.com/covrig)**, die dit allemaal heeft gebouwd in [#77](https://github.com/sevagjb/PrintView3D/pull/77): zijn eerste
+  pull request voor PrintView3D.
+
 ## 0.27.0
 - **Beide sneden tegelijk** ([#70](https://github.com/sevagjb/PrintView3D/issues/70)): **Van boven afsnijden** (`C`) en **Afsnijden vanaf jouw kant** (`V`)
   kunnen nu samen aan, voor een hoek eruit gesneden. Elke toets zet zijn eigen snede aan en uit, en het
