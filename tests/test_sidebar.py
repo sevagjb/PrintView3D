@@ -319,10 +319,14 @@ def test_an_open_side_panel_keeps_its_width(window, app):
     app.processEvents()
     i = w.splitter.indexOf(w.side_scroll)
     total = sum(w.splitter.sizes())
-    w.splitter.setSizes([total - 350, 350] if i == 1 else [350, total - 350])
+    # A width the panel can have here: its minimum follows the buttons' text, so it depends on the
+    # system's fonts (312 px on Windows, 357 px on the Linux CI machine).
+    width = min(w.side_scroll.minimumWidth() + 30, w.side_scroll.maximumWidth())
+    w.splitter.setSizes([total - width, width] if i == 1 else [width, total - width])
     w.splitter.splitterMoved.emit(0, 0)
+    assert w.splitter.sizes()[i] == pytest.approx(width, abs=2)
     w.act_view.trigger()
-    assert w.splitter.sizes()[i] == pytest.approx(350, abs=2)                # not reset to the default
+    assert w.splitter.sizes()[i] == pytest.approx(width, abs=2)              # not reset to the default
 
 
 def test_the_colour_hint_stays_on_one_line_even_in_the_narrowest_panel(window, app):
