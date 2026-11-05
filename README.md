@@ -313,7 +313,7 @@ and the other model formats; G-code has its layer slider instead):
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
   Measurements stay.
 
-The options stay on when you open the next model, and work together (X-ray and clip, for example).
+Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed. The options work together (X-ray and clip, for example).
 
 ### Measure, object colours and grid numbers
 

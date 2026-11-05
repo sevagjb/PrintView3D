@@ -378,6 +378,7 @@ class MeasureTool:
         self._reset()
         for a in actors:                             # build now, not on the first mouse move
             self._locator(a)
+        self._update()                               # the old lines and values go from the view too
         return True
 
     # ------------------------------------------------------------ state

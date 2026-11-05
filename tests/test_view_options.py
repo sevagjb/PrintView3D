@@ -181,21 +181,19 @@ def test_clip_turn_off_button_and_shortcut(window):
     assert all(a.GetBackfaceProperty() is None for a in w.scene.model_actors)
 
 
-def test_options_stay_on_for_the_next_model_but_not_for_gcode(window):
+def test_wireframe_and_xray_stay_for_the_next_model_but_the_cuts_go(window):
     w = window
     w.load_sync(INSIDE)
     w.act_xray.trigger()
     w.act_clip.trigger()
     w.clip_slider.setValue(250)
     w.load_sync(GCODE)
-    assert w.clip_box.isHidden()
+    assert w.clip_box.isHidden() and not w.act_clip.isChecked()
     a = w.scene.p.actors.get("gcode")
     assert a is None or a.GetMapper().GetNumberOfClippingPlanes() == 0   # toolpaths untouched
     w.load_sync(CUBE)                                                    # 20 mm cube
-    assert w.clip_box.isVisible()
-    assert all(p.GetOpacity() < 1 for p in _props(w))
-    assert w.scene.clip_z == pytest.approx(5.0)                          # same slider place, its height
-    assert _planes(w) == [1]
+    assert all(p.GetOpacity() < 1 for p in _props(w))                    # X-ray stays
+    assert w.clip_box.isHidden() and w.scene.clip_z is None and _planes(w) == [0]   # the cut is gone
 
 
 def test_options_combine(window):
@@ -340,16 +338,16 @@ def test_turn_off_and_reset_view_end_both_cuts(window):
     assert w.scene.clip_z is None and w.scene.clip_face is None and _planes(w) == [0, 0, 0]
 
 
-def test_both_cuts_stay_on_for_the_next_model(window):
+def test_both_cuts_and_the_freeze_go_when_another_file_opens(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip.trigger()
     w.act_clip_face.trigger()
-    w.load_sync(GCODE)
-    assert w.clip_box.isHidden()
+    w.view_freeze_cb.setChecked(True)
     w.load_sync(CUBE)
-    assert w.clip_box.isVisible()
-    assert w.scene.clip_z is not None and w.scene.clip_face is not None and _planes(w) == [2]
+    assert not w.act_clip.isChecked() and not w.act_clip_face.isChecked() and not w.view_freeze_cb.isChecked()
+    assert w.scene.clip_z is None and w.scene.clip_face is None and _planes(w) == [0]
+    assert w.clip_box.isHidden()
 
 
 def test_clip_facing_you_turn_off(window):
@@ -365,15 +363,12 @@ def test_clip_facing_you_turn_off(window):
     assert w.scene.clip_face is None and _planes(w) == [0, 0, 0]
 
 
-def test_clip_facing_you_stays_on_for_the_next_model(window):
+def test_clip_facing_you_goes_when_another_file_opens(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    w.load_sync(GCODE)
-    assert w.clip_box.isHidden()
-    w.load_sync(CUBE)
-    assert w.clip_box.isVisible()
-    assert w.scene.clip_face is not None and _planes(w) == [1]
+    w.load_sync(INSIDE)                                  # even the same file again
+    assert not w.act_clip_face.isChecked() and w.scene.clip_face is None and _planes(w) == [0, 0, 0]
 
 
 # ---------------------------------------------------------------- Reset view (#66)

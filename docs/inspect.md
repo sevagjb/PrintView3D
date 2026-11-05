@@ -135,7 +135,7 @@ of the automatic one. *New in PrintView3D 0.28.*
 | <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay) |
 | <kbd>M</kbd> | Measure on / off |
 
-The options stay on when you open the next model.
+Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 
 ## Try it yourself
 

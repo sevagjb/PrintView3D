@@ -173,7 +173,9 @@ def test_new_file_replaces_the_ghosts(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip.trigger()
-    w.load_sync(CUBE)                                                   # the cut stays on (#60)
+    w.load_sync(CUBE)                                                   # another file: the cut goes
+    assert not w.act_clip.isChecked() and not any(n.startswith("ghost_") for n in w.scene.p.actors)
+    w.act_clip.trigger()                                                # on again: ghosts of the new model
     assert len(w.scene._ghosts["top"]) == 1
     assert "ghost_top_2" not in w.scene.p.actors
     w.load_sync(GCODE)

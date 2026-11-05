@@ -1942,6 +1942,13 @@ class MainWindow(QMainWindow):
         self.scene.clear()
         self.view_stack.setCurrentIndex(0)
         self._reset_side_panel()
+        # Another file (or Show all): its own start. The cuts and the frozen plane are for the
+        # model they were made on, so they go; the measurements go too (see _update_view_menu).
+        # Wireframe and X-ray stay: they are how you like to look at models.
+        for a in (self.act_clip, self.act_clip_face):
+            if a.isChecked():
+                a.setChecked(False)
+        self.view_freeze_cb.setChecked(False)
 
         if isinstance(data, GcodeData):
             self.model = None
