@@ -312,9 +312,11 @@ class SettingsDialog(QDialog):
         l3.addWidget(self.grid_labels_cb)
         # How far apart the numbers are: automatic (the grid's major lines, 50 mm on a normal plate)
         # or a spacing of your own, for example 10 mm.
+        # In the same form as Build plate below it, so the two dropdowns line up.
+        plate_form = QFormLayout()
         self.grid_step_row = QWidget()
         step_layout = QHBoxLayout(self.grid_step_row)
-        step_layout.setContentsMargins(24, 0, 0, 0)
+        step_layout.setContentsMargins(0, 0, 0, 0)
         self.grid_step_label = QLabel(tr("Spacing of the numbers"))
         self.grid_step_label.setObjectName("formKey")
         self.grid_step_combo = QComboBox()
@@ -325,15 +327,14 @@ class SettingsDialog(QDialog):
         self.grid_step_combo.setCurrentIndex(max(0, at))
         self.grid_step_combo.setToolTip(tr("Automatic: on the grid's major lines (every 50 mm on a normal plate), "
                                            "fewer on a big plate. Or choose a spacing of your own."))
-        step_layout.addWidget(self.grid_step_label)
         step_layout.addWidget(self.grid_step_combo)
         step_layout.addStretch(1)
-        self.grid_step_row.setEnabled(self.grid_labels_cb.isChecked())
-        self.grid_labels_cb.toggled.connect(self.grid_step_row.setEnabled)
-        l3.addWidget(self.grid_step_row)
+        plate_form.addRow(self.grid_step_label, self.grid_step_row)
+        for wdg in (self.grid_step_label, self.grid_step_row):
+            wdg.setEnabled(self.grid_labels_cb.isChecked())
+            self.grid_labels_cb.toggled.connect(wdg.setEnabled)
         # Which plate (also in the Plate button's menu), issue #61.
         from .scene import PLATE_MODES
-        plate_form = QFormLayout()
         self.plate_combo = QComboBox()
         for mode in PLATE_MODES:
             self.plate_combo.addItem(plate_mode_label(mode).rstrip("…"), mode)
@@ -609,6 +610,13 @@ class SettingsDialog(QDialog):
         rl.addWidget(faint)
         rl.addWidget(slider, 1)
         rl.addWidget(strong)
+        # The end names of all these rows get the same width, so the sliders line up.
+        ends = self.__dict__.setdefault("_slider_ends", [])
+        ends.append((faint, strong))
+        for i in (0, 1):
+            width = max(pair[i].sizeHint().width() for pair in ends)
+            for pair in ends:
+                pair[i].setMinimumWidth(width)
         key = QLabel(label)
         key.setObjectName("formKey")
         form.addRow(key, row)

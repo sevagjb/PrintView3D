@@ -6,7 +6,7 @@ inside a model before you print it. It works for STL, 3MF, OBJ and the other mod
 every option as a button: Wireframe, X-ray, Clip from the top and Clip facing you. The controls of a
 cut (its slider, the cut-away part, the cutting plane and Freeze) appear in the same section while
 the cut is on, and the section ends with **Reset view** and **Close**. In a narrow side panel the
-buttons first get a smaller font, then lose their icon, and finally show only the icon.
+buttons get a smaller font; the panel never gets so narrow that an icon or a letter has to go.
 *New in PrintView3D 0.25.*
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"

@@ -190,3 +190,19 @@ def test_the_spacing_choice_is_greyed_out_while_the_numbers_are_off(window):
     assert not dlg.grid_step_row.isEnabled()
     dlg.grid_labels_cb.setChecked(True)
     assert dlg.grid_step_row.isEnabled()
+
+
+def test_viewer_settings_line_up(window, app):
+    from printview3d.ui.settings_dialog import SettingsDialog
+    dlg = SettingsDialog(window.settings, window, {}, page="viewer")
+    dlg.resize(900, 800)
+    dlg.show()
+    for _ in range(4):
+        app.processEvents()
+    x = lambda wd: wd.mapTo(dlg, wd.rect().topLeft()).x()
+    assert x(dlg.grid_step_combo) == x(dlg.plate_combo)                     # the two dropdowns
+    sliders = (dlg.ghost_slider, dlg.plane_slider, dlg.line_slider)
+    assert len({x(sl) for sl in sliders}) == 1                              # the sliders start ...
+    assert len({x(sl) + sl.width() for sl in sliders}) == 1                 # ... and end together
+    dlg.close()
+

@@ -436,6 +436,10 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QToolBar QToolButton#viewButton:hover, QToolBar QToolButton#exportButton:hover {{
             background: {t['view_bg_hover']}; border-color: {t['view_border_hover']}; }}
         QToolBar QToolButton#viewButton:checked {{ background: {t['view_bg_checked']}; border-color: {accent}; }}
+        /* All view buttons as tall as the other toolbar buttons; the ones with an icon (Plate, View,
+           Measure, Fit) sit closer around it, like Export STL. */
+        QToolBar QToolButton#viewButton {{ padding: 2px 10px; min-height: 22px; }}
+        QToolBar QToolButton#viewButton[hasIcon="true"] {{ padding: 2px 10px 2px 3px; }}
         QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
         QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
             border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
@@ -996,6 +1000,14 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
         p.setBrush(fg)
         p.drawEllipse(QPointF(32, 32), 7, 7)
         p.restore()
+    elif kind == "fit":                          # four corners around a small cube: fit to the view
+        for cx, cy, dx, dy in ((8, 8, 1, 1), (56, 8, -1, 1), (8, 56, 1, -1), (56, 56, -1, -1)):
+            corner = QPainterPath()
+            corner.moveTo(cx, cy + 13 * dy)
+            corner.lineTo(cx, cy)
+            corner.lineTo(cx + 13 * dx, cy)
+            p.drawPath(corner)
+        p.drawRect(QRectF(23, 23, 18, 18))
     elif kind == "plate":                        # a build plate with its grid, seen from above and aside
         a, b, c, d = QPointF(6, 47), QPointF(22, 19), QPointF(58, 19), QPointF(42, 47)
         poly = QPainterPath()
@@ -1088,7 +1100,7 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
 
 TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
               "settings", "updates", "about", "whats_new",
-              "view", "plate", "measure", "distance", "angle", "circle",
+              "view", "plate", "measure", "fit", "distance", "angle", "circle",
               "wireframe", "xray", "clip_top", "clip_face", "reset")
 
 

@@ -224,24 +224,22 @@ def _set_widths(w, app, width):
     app.processEvents()
 
 
-def test_buttons_shrink_their_font_then_lose_the_icon_then_the_text_but_never_cut_characters(window, app):
+def test_buttons_shrink_their_font_but_always_keep_icon_and_whole_name(window, app):
+    from PySide6.QtGui import QFontMetrics
     w = window
     w.load_sync(CUBE)
     w.act_view.setChecked(True)
     btn = _fit_buttons(w)[3]                              # "Clip facing you"
-    action = btn.defaultAction()
-    steps = []
-    for width in range(400, 20, -6):
+    sizes = []
+    for width in range(400, 100, -6):                     # also narrower than the panel ever gets
         _set_widths(w, app, width)
-        steps.append((_style(btn), round(btn.font().pointSizeF(), 1)))
-        # whatever shows, no character is cut: the text is the action's full text, or not shown at all
-        assert btn.text() == action.text()
-    styles = [st for st, _ in steps]
-    assert styles[0] == "both" and styles[-1] == "icon"
-    assert styles.index("icon") > styles.index("text") > styles.index("both")        # in that order
-    sizes = [sz for st, sz in steps if st == "both"]
-    assert sizes == sorted(sizes, reverse=True) and sizes[0] > sizes[-1]            # smaller font before the icon goes
-    assert styles == sorted(styles, key=["both", "text", "icon"].index)             # never back and forth
+        assert _style(btn) == "both"                     # the icon never goes
+        assert btn.text() == btn.defaultAction().text()  # nor a character
+        sizes.append(round(btn.font().pointSizeF(), 2))
+    assert sizes == sorted(sizes, reverse=True) and sizes[0] > sizes[-1]   # only the font gets smaller
+    # the button asks for enough room for icon and name in the smallest font
+    need = QFontMetrics(btn._font(btn.SCALES[-1])).horizontalAdvance(btn._text()) + btn.ICON + btn.PAD
+    assert btn.minimumSizeHint().width() >= need
 
 
 def test_the_buttons_of_a_group_shrink_together(window, app):
@@ -249,14 +247,28 @@ def test_the_buttons_of_a_group_shrink_together(window, app):
     w.load_sync(CUBE)
     w.act_view.setChecked(True)
     buttons = _fit_buttons(w)[:4]                         # the four view buttons
-    for width in (400, 170, 140, 110, 28):
+    for width in (400, 170, 150, 130):
         _set_widths(w, app, width)
         assert len({(_style(b), round(b.font().pointSizeF(), 1)) for b in buttons}) == 1   # all alike
-    # one narrow button pulls its group along, but not the other section
-    _set_widths(w, app, 400)
-    buttons[3].setFixedWidth(60)
-    app.processEvents()
-    assert len({_style(b) for b in buttons}) == 1 and _style(buttons[0]) != "both"
+
+
+def test_the_narrowest_panel_still_fits_every_icon_and_name(window, app):
+    from PySide6.QtGui import QFontMetrics
+    w = window
+    w.load_sync(TWO_PARTS)
+    w.act_view.setChecked(True)
+    w.act_measure.setChecked(True)
+    i = w.splitter.indexOf(w.side_scroll)
+    total = sum(w.splitter.sizes())
+    w.splitter.setSizes([total - 10, 10] if i == 1 else [10, total - 10])   # as narrow as it goes
+    for _ in range(6):
+        app.processEvents()
+    assert w.splitter.sizes()[i] >= w.SIDE_MIN_WIDTH
+    assert w.side_scroll.minimumWidth() >= w.SIDE_MIN_WIDTH
+    for b in _fit_buttons(w):
+        assert _style(b) == "both"
+        need = QFontMetrics(b.font()).horizontalAdvance(b._text()) + b.ICON + b.PAD
+        assert need <= b.width() + 1, b._text()
 
 
 def test_a_wide_panel_keeps_icon_and_full_font(window, app):
@@ -265,10 +277,9 @@ def test_a_wide_panel_keeps_icon_and_full_font(window, app):
     w.act_view.setChecked(True)
     _set_widths(w, app, 300)
     for b in _fit_buttons(w):
-        assert _style(b) == "both"
+        assert _style(b) == "both" and b._level == 0
 
 
-# ------------------------------------------------------------ bold file info, reopening the panel
 def test_filetype_and_size_are_bold(window, app):
     from printview3d.ui import theme
     theme.apply_theme(app, "dark")

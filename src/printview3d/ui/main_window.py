@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gc
+import math
 import os
 import sys
 import threading
@@ -148,15 +149,15 @@ class _ExportSignals(QObject):
 
 
 class _FitButton(QToolButton):
-    """A button of the View or Measure section whose name always shows in full. When the panel is
-    too narrow it first gets a smaller font, then loses its icon and, as a last resort, shows only
-    the icon (the tooltip has the name). Characters are never cut off. The buttons of one group
-    (a row or grid) all take the same step, so they keep looking alike."""
+    """A button of the View or Measure section whose icon and name always show in full. When the
+    panel is narrow its font gets a little smaller; the side panel is never narrower than the
+    smallest font needs (MainWindow._update_side_min_width), so the icon never has to go and no
+    character is cut off. The buttons of one group (a row or grid) take the same font, so they
+    keep looking alike."""
 
     SCALES = (1.0, 0.92, 0.84)                       # font sizes it tries, of the normal size
     PAD = 20                                         # the button's padding and border, both sides
     ICON = 22 + 6                                    # the icon and the space after it
-    LEVELS = len(SCALES) + 2                         # 0..2 icon + smaller font, 3 text only, 4 icon only
 
     def __init__(self, group: list, parent=None):
         super().__init__(parent)
@@ -170,8 +171,14 @@ class _FitButton(QToolButton):
         super().setDefaultAction(action)
         action.changed.connect(self.fit)
 
+    def _text(self) -> str:
+        a = self.defaultAction()
+        return a.text().replace("&", "") if a is not None else ""
+
     def minimumSizeHint(self):
-        return QSize(self.PAD + 2, super().sizeHint().height())     # never makes the panel wider
+        """Wide enough for the icon and the name in the smallest font."""
+        need = QFontMetrics(self._font(self.SCALES[-1])).horizontalAdvance(self._text()) + self.ICON + self.PAD
+        return QSize(int(math.ceil(need)) + 1, super().sizeHint().height())
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
@@ -189,32 +196,25 @@ class _FitButton(QToolButton):
         return f
 
     def level_needed(self) -> int:
-        """The first step at which the whole name fits in the button's width."""
-        action = self.defaultAction()
-        if action is None:
-            return 0
-        text = action.text().replace("&", "")
+        """The largest font (0 = normal) at which icon and name fit in the button's width."""
         room = self.width() - self.PAD
         for level, scale in enumerate(self.SCALES):
-            if QFontMetrics(self._font(scale)).horizontalAdvance(text) + self.ICON <= room:
+            if QFontMetrics(self._font(scale)).horizontalAdvance(self._text()) + self.ICON <= room:
                 return level
-        if QFontMetrics(self._font(self.SCALES[-1])).horizontalAdvance(text) <= room:
-            return len(self.SCALES)                  # no icon
-        return len(self.SCALES) + 1                  # only the icon
+        return len(self.SCALES) - 1
 
     def apply_level(self, level: int):
         if level == self._level:
             return
         self._level = level
-        n = len(self.SCALES)
-        self.setFont(self._font(self.SCALES[min(level, n - 1)]) if level < n + 1 else self._font(1.0))
-        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon if level < n else
-                                Qt.ToolButtonTextOnly if level == n else Qt.ToolButtonIconOnly)
+        self.setFont(self._font(self.SCALES[level]))
+        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)        # the icon always stays
 
     def fit(self):
-        """Every button of the group takes the step the narrowest one needs."""
+        """Every button of the group takes the font the narrowest one needs."""
         if self.defaultAction() is None or self.width() <= 1:
             return
+        self.updateGeometry()                        # a new name may need another minimum width
         level = max(b.level_needed() for b in self.group if b.width() > 1 and b.defaultAction() is not None)
         for b in self.group:
             b.apply_level(level)
@@ -711,7 +711,10 @@ class MainWindow(QMainWindow):
         for view, key in ((None, "F"), ("iso", "1"), ("top", "2"), ("front", "3"), ("right", "4")):
             act = QAction(self)
             act.triggered.connect(lambda _=False, v=view: self.set_view(v, animate=True))
-            tb.addAction(act)
+            if view is None:
+                self.act_fit = act                   # Fit goes after Measure (below), with an icon
+            else:
+                tb.addAction(act)
             self.view_actions.append((act, key, view))
 
         self.act_bed = QAction(self, checkable=True)
@@ -719,7 +722,7 @@ class MainWindow(QMainWindow):
         self.act_bed.toggled.connect(self._toggle_bed)
         tb.addAction(self.act_bed)
         # Named, so a theme can style them on their own (Ember Light fills them with teal).
-        for act in [a for a, _, _ in self.view_actions] + [self.act_bed]:
+        for act in [a for a, _, v in self.view_actions if v is not None] + [self.act_bed]:
             tb.widgetForAction(act).setObjectName("viewButton")
         # The Plate button's arrow: which plate to draw (issue #61). A click still shows / hides it.
         self.plate_menu = QMenu(self)
@@ -779,6 +782,12 @@ class MainWindow(QMainWindow):
         self.measure_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.measure_btn.setDefaultAction(self.act_measure)
         tb.addWidget(self.measure_btn)
+        tb.addAction(self.act_fit)
+        tb.widgetForAction(self.act_fit).setObjectName("viewButton")
+        # The view buttons with an icon: styled to be as tall as the others (theme: hasIcon).
+        for b in (self.plate_btn, self.view_btn, self.measure_btn, tb.widgetForAction(self.act_fit)):
+            b.setProperty("hasIcon", True)
+            b.setIconSize(QSize(22, 22))
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -834,6 +843,7 @@ class MainWindow(QMainWindow):
         filled = theme.filled_view_buttons()
         self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled))
         self.act_view.setIcon(theme.tool_icon("view", on_accent=filled))
+        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled))
         self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled))
         for kind, a in self.measure_actions.items():
             a.setIcon(theme.tool_icon(kind))
@@ -1010,7 +1020,7 @@ class MainWindow(QMainWindow):
 
     def _section_button(self, action: QAction, group: list) -> QToolButton:
         """A button of the View or Measure section: the action's icon and name, lit while it is on.
-        In a narrow panel the name gets a smaller font, then the icon goes (see _FitButton)."""
+        In a narrow panel the name gets a smaller font (see _FitButton)."""
         b = _FitButton(group)
         b.setObjectName("sectionButton")
         b.setIconSize(QSize(22, 22))
@@ -1376,6 +1386,7 @@ class MainWindow(QMainWindow):
         self._refresh_recent_menu()
         self._update_slicer_button()
         self._update_layer_label()
+        self._update_side_min_width()
 
     def changeEvent(self, e):
         if e.type() in (QEvent.LanguageChange, QEvent.LayoutDirectionChange):
@@ -2427,6 +2438,24 @@ class MainWindow(QMainWindow):
         """The View menu works on a model shown in 3D (not on G-code or a preview picture)."""
         return (self.stack.currentIndex() == 1 and self.model is not None and self.gcode is None
                 and bool(getattr(self.model, "parts", None)) and self.view_stack.currentIndex() == 0)
+
+    SIDE_MIN_WIDTH = 290                             # the side panel never gets narrower than this ...
+
+    def _update_side_min_width(self):
+        """... nor narrower than the View and Measure sections need for every button's icon and
+        whole name in the smallest font (it depends on the language). Called at start and when
+        the language changes."""
+        if not hasattr(self, "side_scroll"):
+            return
+        m = self.side_layout.contentsMargins()
+        bar = self.side_scroll.style().pixelMetric(self.side_scroll.style().PixelMetric.PM_ScrollBarExtent)
+        need = max(box.minimumSizeHint().width() for box in (self.view_box, self.measure_box))
+        need += m.left() + m.right() + bar + 2 * self.side_scroll.frameWidth() + 2
+        width = max(self.SIDE_MIN_WIDTH, need)
+        self.side_scroll.setMinimumWidth(width)
+        if self.side_scroll.maximumWidth() < width:
+            self.side_scroll.setMaximumWidth(width)
+        self._side_width = max(self._side_width, width)
 
     def _remember_side_width(self, *_):
         """Keep how wide the side panel was, for when it has been dragged shut."""

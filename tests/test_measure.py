@@ -476,6 +476,10 @@ def test_drag_still_turns_the_view_and_places_nothing(window, monkeypatch):
     m = _measuring(w)
     pos = [_screen(w, A)]
     _patch_iren(w, monkeypatch, pos)
+    # The test is about click vs. drag, not about picking the rotation centre: that picker
+    # (vtkPropPicker) renders to pick, which crashes on the offscreen window of the Windows and
+    # macOS CI machines. The real app's drag is not affected.
+    monkeypatch.setattr(w.controls, "_pick_pivot", lambda x, y: np.zeros(3))
     before = np.array(w.plotter.camera.position)
     w.controls._left_down()
     pos[0] = (pos[0][0] + 60, pos[0][1])

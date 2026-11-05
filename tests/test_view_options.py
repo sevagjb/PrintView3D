@@ -451,3 +451,32 @@ def test_freeze_waits_for_the_cut_and_reset_view_clears_it(window):
     assert np.allclose(_face_normal_after(w, "right"), n0)
     w.reset_view()
     assert not w.view_freeze_cb.isChecked() and w.scene.freeze_face is False
+
+
+# ---------------------------------------------------------------- toolbar
+def test_fit_has_an_icon_and_comes_after_measure(window):
+    w = window
+    tb = w.view_btn.parentWidget()
+    fit = tb.widgetForAction(w.act_fit)
+    order = [tb.widgetForAction(a) for a in tb.actions()]
+    order = [o for o in order if o is not None]
+    assert order.index(fit) == order.index(w.measure_btn) + 1
+    assert order.index(w.view_btn) < order.index(w.measure_btn)
+    assert not w.act_fit.icon().isNull() and w.act_fit.shortcut().toString() in ("", "F")
+    assert w.act_fit in [a for a, _, v in w.view_actions if v is None]
+
+
+def test_view_buttons_are_as_tall_as_the_other_toolbar_buttons(window, app):
+    from printview3d.ui import theme
+    theme.apply_theme(app, "dark")
+    w = window
+    w.set_view_cube_visible(False)                        # Iso, Top, Front, Right too
+    app.processEvents()
+    tb = w.view_btn.parentWidget()
+    heights = {}
+    for a in tb.actions():
+        b = tb.widgetForAction(a)
+        if b is not None and b.isVisible() and b.objectName() in ("viewButton", "exportButton", "slicerButton", "iconButton"):
+            heights[b.objectName() + ":" + (getattr(b, "text", lambda: "")() or "?")] = b.sizeHint().height()
+    assert len(set(heights.values())) == 1, heights
+
