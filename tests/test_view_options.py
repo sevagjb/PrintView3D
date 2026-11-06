@@ -458,7 +458,7 @@ def test_fit_has_an_icon_and_comes_after_measure(window):
     order = [o for o in order if o is not None]
     assert order.index(fit) == order.index(w.measure_btn) + 1
     assert order.index(w.view_btn) < order.index(w.measure_btn)
-    assert not w.act_fit.icon().isNull() and w.act_fit.shortcut().toString() in ("", "F")
+    assert not w.act_fit.icon().isNull() and w.act_fit.text().endswith("(F)")
     assert w.act_fit in [a for a, _, v in w.view_actions if v is None]
 
 

@@ -552,6 +552,7 @@ class MainWindow(QMainWindow):
             self.grid_labels.set_colors(theme.colors())
         self._update_theme_button()
         self.refresh_update_badge()
+        self._update_check_panel()                  # the dots' red: brighter on dark, deeper on light
         # The ZIP list's type labels take their text colour from the theme when they are made.
         if self.zip is not None and self.stack.currentIndex() == 1:
             self._fill_zip_box()
@@ -722,8 +723,8 @@ class MainWindow(QMainWindow):
         tb.addSeparator()
 
         self.view_actions = []
-        # Fit has no key of its own: R (Reset view) fits the model too, and on G-code only fits.
-        for view, key in ((None, None), ("iso", "1"), ("top", "2"), ("front", "3"), ("right", "4")):
+        # Fit (F) only fits the camera to the model; R (Reset view) also turns the view options off.
+        for view, key in ((None, "F"), ("iso", "1"), ("top", "2"), ("front", "3"), ("right", "4")):
             act = QAction(self)
             act.triggered.connect(lambda _=False, v=view: self.set_view(v, animate=True))
             if view is None:
@@ -1447,12 +1448,11 @@ class MainWindow(QMainWindow):
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:
-            if key:
-                act.setText(f"{view_names[view]} ({key})")
+            act.setText(f"{view_names[view]} ({key})")
+            if view is None:                         # Fit: the camera only, nothing else changes
+                act.setToolTip(tr("Fit the model in the view") + f" ({key})")
+            else:
                 act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
-            else:                                    # Fit: R, the key of Reset view, fits too
-                act.setText(view_names[view] + " (R)")
-                act.setToolTip(tr("Fit the model in the view") + " (R)")
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
             self.view_cube.set_tooltips(self._cube_tooltips())
@@ -2876,6 +2876,7 @@ class MainWindow(QMainWindow):
     # The checks whose count is a problem to fix (a dot beside it). Overhangs are not: most
     # models have some, and supports handle them.
     PROBLEM_KINDS = ("thin", "open", "nonmanifold", "flipped", "loose")
+    DOT_DARK, DOT_LIGHT = "#ff5c5c", "#e02424"      # the dot's red, bright enough on dark and on light
 
     def _update_check_panel(self):
         """The counts beside each check, and how far the thin-wall check is."""
@@ -2884,8 +2885,8 @@ class MainWindow(QMainWindow):
         counts = self.check.counts() if self.check.active else {}
         units_text = {"overhang": tr("{n} faces"), "thin": tr("{n} faces"), "open": tr("{n} edges"),
                       "nonmanifold": tr("{n} edges"), "flipped": tr("{n} faces"), "loose": tr("{n} parts")}
-        dot = ('<span style="color:%s; font-size:9px;">●</span>&nbsp;'
-               % theme.colors().get("primary", "#ef791b"))
+        dot = ('<span style="color:%s; font-size:13px;">●</span>&nbsp;'
+               % (self.DOT_DARK if theme.is_dark() else self.DOT_LIGHT))
         for kind, (cb, lbl, _box) in self.check_rows.items():
             n = counts.get(kind)
             text = "" if n is None else (tr("none") if n == 0 else units_text[kind].format(n=count(n)))

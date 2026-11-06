@@ -36,8 +36,19 @@ def window(app, tmp_path):
 
 
 # ------------------------------------------------------------ toolbar
-def test_fit_says_its_key(window):
-    assert window.act_fit.text() == "Fit (R)" and window.act_fit.toolTip().endswith("(R)")
+def test_fit_has_its_own_key(window):
+    from PySide6.QtGui import QKeySequence, QShortcut
+    w = window
+    assert w.act_fit.text() == "Fit (F)" and w.act_fit.toolTip().endswith("(F)")
+    w.load_sync(CUBE)
+    w.act_wireframe.setChecked(True)
+    calls = []
+    w.set_view = lambda v, animate=False: calls.append(v)
+    f = [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("F")]
+    assert len(f) == 1
+    f[0].activated.emit()                                # the F key
+    assert calls == [None]                               # fitted (set_view(None): the camera only) ...
+    assert w.act_wireframe.isChecked()                   # ... and nothing else changed (R would turn it off)
 
 
 def test_settings_button_right_of_the_theme_button(window):
@@ -83,7 +94,7 @@ def test_settings_nozzle_box(window):
 def test_dot_beside_problems_only(window):
     from printview3d.loaders.mesh import MeshPart, ModelData
     from printview3d.ui import theme
-    from test_print_check import box
+    from test_print_check import box  # noqa: F811
     w = window
     w.load_sync(CUBE)
     v, f = box()
@@ -92,7 +103,8 @@ def test_dot_beside_problems_only(window):
     w.act_check.trigger()
     texts = {k: r[1].text() for k, r in w.check_rows.items()}
     dot = "●"
-    assert dot in texts["open"] and theme.colors()["primary"] in texts["open"]
+    red = w.DOT_DARK if theme.is_dark() else w.DOT_LIGHT
+    assert dot in texts["open"] and red in texts["open"] and "font-size:13px" in texts["open"]
     assert dot not in texts["flipped"] and texts["flipped"] == "none"
     # overhangs are not a problem as such (most models have them): a count, no dot
     real = w.check.counts
@@ -101,6 +113,10 @@ def test_dot_beside_problems_only(window):
     assert w.check_rows["overhang"][1].text() == "120 faces"
     assert dot in w.check_rows["thin"][1].text()
     assert w.check_mesh_title.text() == "Mesh problems"
+    # another theme: the dot takes that theme's red at once
+    for choice in ("ember_dark", "light"):
+        w.apply_theme(choice)
+        assert (w.DOT_DARK if theme.is_dark() else w.DOT_LIGHT) in w.check_rows["open"][1].text()
 
 
 # ------------------------------------------------------------ tooltips

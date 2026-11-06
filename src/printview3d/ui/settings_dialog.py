@@ -1144,6 +1144,7 @@ def shortcut_rows() -> list[tuple[list[str], str]]:
         ([_key("Ctrl+E")], tr("Export STL (3MF, FreeCAD and STEP)")),
         ([_key("Ctrl+T")], tr("Next theme style")),
         ([_key("Ctrl+Shift+T")], tr("Switch between light and dark")),
+        (["F"], view.format(view=tr("Fit"))),
         (["1"], view.format(view=tr("Iso"))),
         (["2"], view.format(view=tr("Top"))),
         (["3"], view.format(view=tr("Front"))),

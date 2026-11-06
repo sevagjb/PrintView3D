@@ -136,8 +136,8 @@ Measure, and colours what may cause trouble when printing:
   Triangles with no area (three corners on one line, common in exported files) are left out: they
   don't change the shape and slicers ignore them.
 
-Each has a colour box (click to change it) and a count; a small dot in the theme's colour marks
-the counts of problems found (thin walls and the mesh problems; not overhangs, which most models
+Each has a colour box (click to change it) and a count; a red dot marks the counts of problems
+found (thin walls and the mesh problems; not overhangs, which most models
 have). Hover over a name to see what it means and its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
 the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
 defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
@@ -188,6 +188,7 @@ stay there as you turn the view and hide with the plate.
 | <kbd>X</kbd> | X-ray on / off |
 | <kbd>C</kbd> | Clip from the top on / off |
 | <kbd>V</kbd> | Clip facing you on / off |
+| <kbd>F</kbd> | Fit: the whole model in the view (nothing else changes) |
 | <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay); on G-code it fits the view |
 | <kbd>M</kbd> | Measure on / off |
 | <kbd>D</kbd> / <kbd>A</kbd> / <kbd>O</kbd> | Measure a distance, an angle, a circle |
@@ -196,7 +197,7 @@ stay there as you turn the view and hide with the plate.
 | <kbd>P</kbd> | Build plate on / off |
 
 The toolbar buttons and the buttons of the View and Measure sections show their key, for example
-*Measure (M)* and *Wireframe (W)*. **Fit** shows <kbd>R</kbd>: Reset view fits the model too.
+*Measure (M)*, *Fit (F)* and *Wireframe (W)*.
 
 Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 
