@@ -12,7 +12,7 @@
 
 <p align="center">
   📖 <b>Read the guide on the website:</b>
-  <a href="https://sevagjb.github.io/PrintView3D/">English</a> ·
+  <a href="https://sevagjb.github.io/PrintView3D/" target="_blank" rel="noopener noreferrer">English</a> ·
   <a href="https://sevagjb.github.io/PrintView3D/ar/">العربية</a> ·
   <a href="https://sevagjb.github.io/PrintView3D/nl/">Nederlands</a>
 </p>
