@@ -53,6 +53,7 @@ def ghost_factor(strength) -> float:
     except (TypeError, ValueError):
         v = GHOST_STRENGTH_DEFAULT
     return 2.0 ** ((v - GHOST_STRENGTH_DEFAULT) / 25.0)
+BELOW_LIFT = 0.5              # mm: how far the grid lines move up while the camera is under the plate
 INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
 INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
 
@@ -453,6 +454,12 @@ class Scene:
             a = self.p.actors.get(n)
             if a is not None:
                 a.SetVisibility(self.bed_visible and not (below and n in hide_from_below))
+                # The lines lie just under the plate (z - 0.02). From below they would be in front of
+                # the model's bottom and drawn over it: there they move a little above the plate,
+                # behind the model's bottom - far enough (BELOW_LIFT) that depth precision can tell
+                # them apart, otherwise they flicker through it as dotted lines.
+                if n != "bed_plate":
+                    a.SetPosition(0.0, 0.0, BELOW_LIFT if below else 0.0)
 
     def pickable_actors(self) -> list:
         """Actors the mouse can 'grab' to choose the rotation centre."""
@@ -852,7 +859,22 @@ class Scene:
         corners = np.array([(x, y) for x in (b[0], b[1]) for y in (b[2], b[3])])
         along = (corners - o[:2]) @ side[:2]
         base = np.array([o[0], o[1], self.clip_z])
-        pts = np.array([base + side * (along.min() - pad), base + side * (along.max() + pad)], dtype=float)
+        # Only where both planes are: the flat sheet covers the model's box plus pad, the upright
+        # one its width plus pad. Clip the line to the flat sheet's rectangle (Liang-Barsky).
+        t0, t1 = along.min() - pad, along.max() + pad
+        for k, (lo_, hi_) in enumerate(((b[0] - pad, b[1] + pad), (b[2] - pad, b[3] + pad))):
+            d = side[k]
+            if abs(d) < 1e-12:
+                if not lo_ <= base[k] <= hi_:
+                    t0, t1 = 1.0, 0.0            # parallel and outside: no line
+                continue
+            ta, tb = (lo_ - base[k]) / d, (hi_ - base[k]) / d
+            t0, t1 = max(t0, min(ta, tb)), min(t1, max(ta, tb))
+        if t1 <= t0:
+            if self._cut_line is not None:
+                self._cut_line[1].SetVisibility(False)
+            return
+        pts = np.array([base + side * t0, base + side * t1], dtype=float)
         if self._cut_line is None:
             line = pv.PolyData(pts, lines=np.array([2, 0, 1]))
             actor = self.p.add_mesh(line, name="cut_line", line_width=2, lighting=False, pickable=False,

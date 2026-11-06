@@ -29,6 +29,23 @@ from PySide6.QtGui import (QColor, QGuiApplication, QIcon, QLinearGradient, QPai
 
 from ..i18n import tr_noop
 
+
+TOOLTIP_DELAY_MS = 300        # how long the mouse rests before a tooltip shows (Qt's default: 700)
+
+
+def _style():
+    """Fusion, with tooltips that show a little sooner: at Qt's 700 ms the explanations in the
+    side panel felt slow to come."""
+    from PySide6.QtWidgets import QProxyStyle, QStyle
+
+    class _Style(QProxyStyle):
+        def styleHint(self, hint, option=None, widget=None, returnData=None):
+            if hint == QStyle.SH_ToolTip_WakeUpDelay:
+                return TOOLTIP_DELAY_MS
+            return super().styleHint(hint, option, widget, returnData)
+
+    return _Style("Fusion")
+
 # The classic teal. Every theme has its own "accent"/"primary" keys; these stay for older callers.
 ACCENT = "#2fa4a0"
 ACCENT_HOVER = "#38bbb6"
@@ -384,7 +401,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     _current = resolve(_setting)
     _tell_qt_light_or_dark(hints)
     t = THEMES[_current]
-    app.setStyle("Fusion")
+    app.setStyle(_style())
     pal = QPalette()
     c = QColor
     pal.setColor(QPalette.Window, c(t["window"]))

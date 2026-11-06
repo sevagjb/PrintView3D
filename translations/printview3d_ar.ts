@@ -480,6 +480,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive…</source>
+        <translation type="unfinished">فتح أرشيف…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Menu</source>
         <translation>القائمة</translation>
     </message>
@@ -592,6 +597,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">فحص النموذج</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>from vertical</source>
         <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
         <translation type="unfinished">عن العمودي</translation>
@@ -604,6 +614,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">حتى</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Mesh</source>
         <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
         <translation type="unfinished">الشبكة</translation>
@@ -612,6 +627,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation>إغلاق</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Technical term: {term}.</source>
+        <translation type="unfinished">المصطلح التقني: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -635,8 +655,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open edges</source>
-        <translation type="unfinished">حواف مفتوحة</translation>
+        <source>Holes</source>
+        <translation type="unfinished">ثقوب</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -645,8 +665,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Non-manifold edges</source>
-        <translation type="unfinished">حواف غير متشعبة</translation>
+        <source>open edges</source>
+        <translation type="unfinished">حواف مفتوحة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">حواف متشابكة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -655,8 +680,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Flipped normals</source>
-        <translation type="unfinished">متجهات عمودية مقلوبة</translation>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">حواف غير متشعبة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">أوجه مقلوبة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -665,13 +695,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">متجهات عمودية مقلوبة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Loose parts</source>
         <translation type="unfinished">أجزاء منفصلة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
-        <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي. تُطبع كقطع منفصلة أو لا تُطبع أبداً.</translation>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي، حتى الحجم المحدد. تُطبع كقطع منفصلة أو لا تُطبع أبداً. التجاويف داخل الجزء لا تُحسب.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -681,14 +716,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>العرض</translation>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
+        <translation>طريقة رسم النموذج: الإطار السلكي، الأشعة السينية، القطع</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>How the model is drawn: wireframe, X-ray, clip</source>
-        <translation>طريقة رسم النموذج: الإطار السلكي، الأشعة السينية، القطع</translation>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -759,13 +794,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation>قياس</translation>
+        <source>Measure on the model: distance, angle, circle</source>
+        <translation>القياس على النموذج: المسافة، الزاوية، الدائرة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure on the model: distance, angle, circle</source>
-        <translation>القياس على النموذج: المسافة، الزاوية، الدائرة</translation>
+        <source>Measure</source>
+        <translation>قياس</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -947,6 +982,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation>جارٍ وضع {n} نماذج جنبًا إلى جنب…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive</source>
+        <translation type="unfinished">فتح أرشيف</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2015,6 +2055,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">تذكّر ألوان قسم الفحص</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">عند الإيقاف: تبقى ألوان الفحص التي تختارها حتى يُغلق PrintView3D.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>الرسوميات</translation>
     </message>
@@ -2407,6 +2457,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="unfinished">قياس مسافة أو زاوية أو دائرة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">قسم العرض تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">فحص النموذج تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">لوحة الطباعة تشغيل / إيقاف</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next / previous layer (G-code), or file (ZIP)</source>
         <translation>الطبقة التالية / السابقة (G-code)، أو الملف (ZIP)</translation>
     </message>
@@ -2624,6 +2694,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">حواف مفتوحة</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">حواف غير متشعبة</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">متجهات عمودية مقلوبة</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">قطع صغيرة غير متصلة بالجسم الرئيسي. تُطبع كقطع منفصلة أو لا تُطبع أبداً.</translation>
     </message>
     <message>
         <source>Edges with a face on one side only: holes in the surface.</source>

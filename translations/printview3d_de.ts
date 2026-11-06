@@ -480,6 +480,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive…</source>
+        <translation type="unfinished">Archiv öffnen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Menu</source>
         <translation type="unfinished">Menü</translation>
     </message>
@@ -592,6 +597,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">Modell prüfen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>from vertical</source>
         <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
         <translation type="unfinished">von senkrecht</translation>
@@ -604,6 +614,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">bis</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Mesh</source>
         <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
         <translation type="unfinished">Netz</translation>
@@ -612,6 +627,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation type="unfinished">Schließen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Technical term: {term}.</source>
+        <translation type="unfinished">Fachbegriff: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -635,8 +655,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open edges</source>
-        <translation type="unfinished">Offene Kanten</translation>
+        <source>Holes</source>
+        <translation type="unfinished">Löcher</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -645,8 +665,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Non-manifold edges</source>
-        <translation type="unfinished">Nicht-mannigfaltige Kanten</translation>
+        <source>open edges</source>
+        <translation type="unfinished">offene Kanten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">Verworrene Kanten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -655,8 +680,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Flipped normals</source>
-        <translation type="unfinished">Umgedrehte Normalen</translation>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">nicht-mannigfaltige Kanten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">Verkehrte Flächen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -665,13 +695,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">umgedrehte Normalen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Loose parts</source>
         <translation type="unfinished">Lose Teile</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
-        <translation type="unfinished">Kleine Stücke, die nicht mit dem Hauptkörper verbunden sind. Sie werden als einzelne Teile gedruckt oder gar nicht.</translation>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">Kleine Stücke, die nicht mit dem Hauptkörper verbunden sind, bis zur angegebenen Größe. Sie werden als einzelne Teile gedruckt oder gar nicht. Hohlräume in einem Teil zählen nicht.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -681,14 +716,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation type="unfinished">Ansicht</translation>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
+        <translation type="unfinished">Wie das Modell gezeichnet wird: Drahtgitter, Röntgen, Schnitt</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>How the model is drawn: wireframe, X-ray, clip</source>
-        <translation type="unfinished">Wie das Modell gezeichnet wird: Drahtgitter, Röntgen, Schnitt</translation>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation type="unfinished">Ansicht</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -759,13 +794,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation type="unfinished">Messen</translation>
+        <source>Measure on the model: distance, angle, circle</source>
+        <translation type="unfinished">Am Modell messen: Abstand, Winkel, Kreis</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure on the model: distance, angle, circle</source>
-        <translation type="unfinished">Am Modell messen: Abstand, Winkel, Kreis</translation>
+        <source>Measure</source>
+        <translation type="unfinished">Messen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -947,6 +982,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation type="unfinished">{n} Modelle werden nebeneinander platziert…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive</source>
+        <translation type="unfinished">Archiv öffnen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2015,6 +2055,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">Die Farben des Prüfen-Bereichs merken</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">Aus: Die gewählten Prüffarben gelten, bis PrintView3D geschlossen wird.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation type="unfinished">Grafik</translation>
     </message>
@@ -2407,6 +2457,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="unfinished">Einen Abstand, einen Winkel, einen Kreis messen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">Ansicht-Bereich ein / aus (Modelle)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">Modell prüfen ein / aus (Modelle)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">Druckplatte ein / aus</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next / previous layer (G-code), or file (ZIP)</source>
         <translation type="unfinished">Nächste / vorherige Schicht (G-Code) oder Datei (ZIP)</translation>
     </message>
@@ -2624,6 +2694,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">Offene Kanten</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">Nicht-mannigfaltige Kanten</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">Umgedrehte Normalen</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">Kleine Stücke, die nicht mit dem Hauptkörper verbunden sind. Sie werden als einzelne Teile gedruckt oder gar nicht.</translation>
     </message>
     <message>
         <source>Edges with a face on one side only: holes in the surface.</source>

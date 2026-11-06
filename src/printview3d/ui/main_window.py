@@ -663,6 +663,9 @@ class MainWindow(QMainWindow):
         # Open folder: its 3D files in a list, stepped through with the arrow keys like a ZIP.
         self.act_open_folder = QAction(self, triggered=self.open_folder_dialog)
         self.main_menu.addAction(self.act_open_folder)
+        # Open archive: a ZIP with 3D files (also possible with Open..., but not easy to find).
+        self.act_open_archive = QAction(self, triggered=self.open_archive_dialog)
+        self.main_menu.addAction(self.act_open_archive)
         self.main_menu.addMenu(self.recent_menu)
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.act_screenshot)
@@ -730,7 +733,7 @@ class MainWindow(QMainWindow):
                 tb.addAction(act)
             self.view_actions.append((act, key, view))
 
-        self.act_bed = QAction(self, checkable=True)
+        self.act_bed = QAction(self, checkable=True, shortcut=QKeySequence("P"))
         self.act_bed.setChecked(bool(self.settings.get("show_bed", True)))
         self.act_bed.toggled.connect(self._toggle_bed)
         tb.addAction(self.act_bed)
@@ -769,19 +772,19 @@ class MainWindow(QMainWindow):
         self.act_measure = QAction(self, checkable=True, shortcut=QKeySequence("M"))
         self.act_measure.toggled.connect(self.set_measure_on)
         for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view,
-                  self.act_measure):
+                  self.act_measure, self.act_bed):
             self.addAction(a)                   # the shortcuts work wherever the focus is
         # The View and Measure buttons are switches: each opens its own section in the side panel
         # (View: how the model is drawn and cut; Measure: distances, angles and circles).
         # Check (between Plate and View): overhangs, thin walls and mesh problems, in its section.
-        self.act_check = QAction(self, checkable=True)
+        self.act_check = QAction(self, checkable=True, shortcut=QKeySequence("K"))
         self.act_check.toggled.connect(self.set_check_section)
         self.check_btn = QToolButton()
         self.check_btn.setObjectName("viewButton")
         self.check_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.check_btn.setDefaultAction(self.act_check)
         tb.addWidget(self.check_btn)
-        self.act_view = QAction(self, checkable=True)
+        self.act_view = QAction(self, checkable=True, shortcut=QKeySequence("I"))
         self.act_view.toggled.connect(self.set_view_section)
         self.view_btn = QToolButton()
         self.view_btn.setObjectName("viewButton")
@@ -792,11 +795,13 @@ class MainWindow(QMainWindow):
         self.measure_group = QActionGroup(self)
         self.measure_actions = {}
         for kind in ("distance", "angle", "circle"):
-            a = QAction(self, checkable=True)
+            a = QAction(self, checkable=True, shortcut=QKeySequence(self.MEASURE_KEYS[kind]))
             a.triggered.connect(lambda _=False, k=kind: self.choose_measure_mode(k))
             self.measure_group.addAction(a)
             self.measure_actions[kind] = a
         self.measure_actions[self._measure_mode_setting()].setChecked(True)
+        for a in (self.act_check, self.act_view, *self.measure_actions.values()):
+            self.addAction(a)                   # their keys work while their section is closed too
         self.measure_btn = QToolButton()
         self.measure_btn.setObjectName("viewButton")
         self.measure_btn.setIconSize(QSize(22, 22))
@@ -1007,6 +1012,9 @@ class MainWindow(QMainWindow):
         self.check.angle = float(self.settings.get("check_angle", 45) or 45)
         self.check.nozzle = float(self.settings.get("check_nozzle", 0.4) or 0.4)
         self.check.show.update({k: bool(v) for k, v in (self.settings.get("check_show", {}) or {}).items()})
+        self.check.loose_max = float(self.settings.get("check_loose_max", 5.0) or 5.0)
+        if self.settings.get("check_keep_colors", False):
+            self.check.colors.update(self.settings.get("check_colors", {}) or {})
         # Instructions at the bottom of the 3D view, and the millimetre numbers on the plate's grid.
         from .grid_labels import GridLabels
         from .overlay_text import HintOverlay
@@ -1117,84 +1125,6 @@ class MainWindow(QMainWindow):
         self.embedded_layout = QVBoxLayout(self.embedded_box)
         L.addWidget(self.embedded_box)
 
-        # The Check button's section: what to look for and in which colour; the counts beside them.
-        self.check_box = QGroupBox()
-        ckl = QVBoxLayout(self.check_box)
-        self.check_rows: dict = {}
-        self._count_labels: list = []
-        shown = dict(self.settings.get("check_show", {}) or {})
-        from .print_check import DEFAULT_COLORS
-        colours = DEFAULT_COLORS                     # picked colours last until the program closes
-
-        def check_row(kind: str, extra: Optional[QWidget] = None) -> QHBoxLayout:
-            row = QHBoxLayout()
-            row.setSpacing(8)
-            box = _ColorButton(colours.get(kind, DEFAULT_COLORS[kind]))
-            box.setToolTip(tr("Click to pick another colour (right-click: the original colour)"))
-            box.clicked.connect(lambda _=False, k=kind, b=box: self._pick_check_color(k, b))
-            box.customContextMenuRequested.connect(lambda _pos, k=kind, b=box: self._reset_check_color(k, b))
-            cb = QCheckBox()
-            cb.setChecked(bool(shown.get(kind, kind != "thin")))
-            cb.toggled.connect(lambda on, k=kind: self._check_shown(k, on))
-            count_lbl = QLabel()
-            count_lbl.setObjectName("objectSize")
-            # A fixed width, right-aligned: a count that appears or grows never moves the fields
-            # before it (the nozzle width jumped when "none" appeared).
-            count_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            self._count_labels.append(count_lbl)
-            row.addWidget(box)
-            row.addWidget(cb, 1)
-            if extra is not None:
-                row.addWidget(extra)
-            row.addWidget(count_lbl)
-            self.check_rows[kind] = (cb, count_lbl, box)
-            return row
-
-        # Overhangs, with their angle
-        angle_w = QWidget()
-        al = QHBoxLayout(angle_w)
-        al.setContentsMargins(0, 0, 0, 0)
-        self.check_angle = QSpinBox()
-        self.check_angle.setRange(1, 89)
-        self.check_angle.setSuffix("°")
-        self.check_angle.setValue(int(self.settings.get("check_angle", 45) or 45))
-        self.check_angle.valueChanged.connect(self._check_angle_changed)
-        self.check_angle_label = QLabel()
-        self.check_angle_label.setObjectName("muted")
-        al.addWidget(self.check_angle)
-        al.addWidget(self.check_angle_label)
-        ckl.addLayout(check_row("overhang", angle_w))
-        # Thin walls, with the nozzle width (in the unit in use)
-        from .length_spin import LengthSpin
-        nozzle_w = QWidget()
-        nl = QHBoxLayout(nozzle_w)
-        nl.setContentsMargins(0, 0, 0, 0)
-        self.check_nozzle_label = QLabel()
-        self.check_nozzle_label.setObjectName("muted")
-        self.check_nozzle = LengthSpin(0.1, 2.0, 0.05, mm_decimals=2, in_step=0.002, in_decimals=3)
-        self.check_nozzle.set_mm(float(self.settings.get("check_nozzle", 0.4) or 0.4))
-        self.check_nozzle.editingFinished.connect(self._check_nozzle_changed)
-        nl.addWidget(self.check_nozzle_label)
-        nl.addWidget(self.check_nozzle)
-        ckl.addLayout(check_row("thin", nozzle_w))
-        self.check_thin_status = QLabel()            # "Checking ... 40 %"
-        self.check_thin_status.setObjectName("muted")
-        ckl.addWidget(self.check_thin_status)
-        # The mesh check
-        self.check_mesh_title = QLabel()
-        self.check_mesh_title.setObjectName("formKey")
-        ckl.addWidget(self.check_mesh_title)
-        for kind in ("open", "nonmanifold", "flipped", "loose"):
-            ckl.addLayout(check_row(kind))
-        crow = QHBoxLayout()
-        self.check_close_btn = QPushButton()
-        self.check_close_btn.clicked.connect(lambda: self.act_check.setChecked(False))
-        crow.addStretch(1)
-        crow.addWidget(self.check_close_btn)
-        ckl.addLayout(crow)
-        self.check_box.hide()
-        L.addWidget(self.check_box)
-
         # The View button's section: how the model is drawn and cut, all as buttons. The controls of
         # a cut (its slider, the ghost and the plane) appear in it while that cut is on.
         self.view_box = QGroupBox()
@@ -1303,6 +1233,100 @@ class MainWindow(QMainWindow):
         self.measure_box.hide()
         L.addWidget(self.measure_box)
 
+        # The Check button's section: what to look for and in which colour; the counts beside them.
+        self.check_box = QGroupBox()
+        ckl = QVBoxLayout(self.check_box)
+        self.check_rows: dict = {}
+        self._count_labels: list = []
+        shown = dict(self.settings.get("check_show", {}) or {})
+        from .print_check import DEFAULT_COLORS
+        # The colours picked last until the program closes - or longer with Settings -> Viewer ->
+        # Remember the colours of the Check section.
+        colours = dict(DEFAULT_COLORS)
+        if self.settings.get("check_keep_colors", False):
+            colours.update(self.settings.get("check_colors", {}) or {})
+
+        def check_row(kind: str, extra: Optional[QWidget] = None) -> QHBoxLayout:
+            row = QHBoxLayout()
+            row.setSpacing(8)
+            box = _ColorButton(colours.get(kind, DEFAULT_COLORS[kind]))
+            box.setToolTip(tr("Click to pick another colour (right-click: the original colour)"))
+            box.clicked.connect(lambda _=False, k=kind, b=box: self._pick_check_color(k, b))
+            box.customContextMenuRequested.connect(lambda _pos, k=kind, b=box: self._reset_check_color(k, b))
+            cb = QCheckBox()
+            cb.setChecked(bool(shown.get(kind, kind != "thin")))
+            cb.toggled.connect(lambda on, k=kind: self._check_shown(k, on))
+            count_lbl = QLabel()
+            count_lbl.setObjectName("objectSize")
+            # A fixed width, right-aligned: a count that appears or grows never moves the fields
+            # before it (the nozzle width jumped when "none" appeared).
+            count_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self._count_labels.append(count_lbl)
+            row.addWidget(box)
+            row.addWidget(cb, 1)
+            if extra is not None:
+                row.addWidget(extra)
+            row.addWidget(count_lbl)
+            self.check_rows[kind] = (cb, count_lbl, box)
+            return row
+
+        # Overhangs, with their angle
+        angle_w = QWidget()
+        al = QHBoxLayout(angle_w)
+        al.setContentsMargins(0, 0, 0, 0)
+        self.check_angle = QSpinBox()
+        self.check_angle.setRange(1, 89)
+        self.check_angle.setSuffix("°")
+        self.check_angle.setValue(int(self.settings.get("check_angle", 45) or 45))
+        self.check_angle.valueChanged.connect(self._check_angle_changed)
+        self.check_angle_label = QLabel()
+        self.check_angle_label.setObjectName("muted")
+        al.addWidget(self.check_angle)
+        al.addWidget(self.check_angle_label)
+        ckl.addLayout(check_row("overhang", angle_w))
+        # Thin walls, with the nozzle width (in the unit in use)
+        from .length_spin import LengthSpin
+        nozzle_w = QWidget()
+        nl = QHBoxLayout(nozzle_w)
+        nl.setContentsMargins(0, 0, 0, 0)
+        self.check_nozzle_label = QLabel()
+        self.check_nozzle_label.setObjectName("muted")
+        self.check_nozzle = LengthSpin(0.1, 2.0, 0.05, mm_decimals=2, in_step=0.002, in_decimals=3)
+        self.check_nozzle.set_mm(float(self.settings.get("check_nozzle", 0.4) or 0.4))
+        self.check_nozzle.editingFinished.connect(self._check_nozzle_changed)
+        nl.addWidget(self.check_nozzle_label)
+        nl.addWidget(self.check_nozzle)
+        ckl.addLayout(check_row("thin", nozzle_w))
+        self.check_thin_status = QLabel()            # "Checking ... 40 %"
+        self.check_thin_status.setObjectName("muted")
+        ckl.addWidget(self.check_thin_status)
+        # The mesh check
+        self.check_mesh_title = QLabel()
+        self.check_mesh_title.setObjectName("formKey")
+        ckl.addWidget(self.check_mesh_title)
+        for kind in ("open", "nonmanifold", "flipped"):
+            ckl.addLayout(check_row(kind))
+        # Loose parts: up to a size (bigger pieces are objects of their own, not stray bits)
+        loose_w = QWidget()
+        lw = QHBoxLayout(loose_w)
+        lw.setContentsMargins(0, 0, 0, 0)
+        self.check_loose_label = QLabel()
+        self.check_loose_label.setObjectName("muted")
+        self.check_loose = LengthSpin(0.5, 100.0, 0.5, mm_decimals=1, in_step=0.02, in_decimals=2)
+        self.check_loose.set_mm(float(self.settings.get("check_loose_max", 5.0) or 5.0))
+        self.check_loose.editingFinished.connect(self._check_loose_changed)
+        lw.addWidget(self.check_loose_label)
+        lw.addWidget(self.check_loose)
+        ckl.addLayout(check_row("loose", loose_w))
+        crow = QHBoxLayout()
+        self.check_close_btn = QPushButton()
+        self.check_close_btn.clicked.connect(lambda: self.act_check.setChecked(False))
+        crow.addStretch(1)
+        crow.addWidget(self.check_close_btn)
+        ckl.addLayout(crow)
+        self.check_box.hide()
+        L.addWidget(self.check_box)
+
         self.layers_box = QGroupBox()
         ll = QVBoxLayout(self.layers_box)
         self.layer_info = QLabel()
@@ -1404,6 +1428,8 @@ class MainWindow(QMainWindow):
         """(Re)set every fixed text. Called at start and when the language changes."""
         self.act_open.setText(tr("Open…"))
         self.act_open_folder.setText(tr("Open folder…"))
+        self.act_open_archive.setText(tr("Open archive…"))
+        self.act_open_archive.setIcon(theme.tool_icon("open"))
         self.act_open_folder.setIcon(theme.tool_icon("open"))
         # The shortcut as the system writes it (Ctrl+O, or ⌘O on a Mac).
         self.act_open.setToolTip(tr("Open…") + " (" + QKeySequence(QKeySequence.Open).toString(
@@ -1416,7 +1442,7 @@ class MainWindow(QMainWindow):
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:
-            act.setText(view_names[view])
+            act.setText(f"{view_names[view]} ({key})")
             act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
@@ -1429,39 +1455,50 @@ class MainWindow(QMainWindow):
         self.act_export_each.setText(tr("One STL per object"))
         self.act_export_choose.setText(tr("Choose objects…"))
         self.act_export_setting.setText(tr("Change what a click does…"))
-        self.act_bed.setText(tr("Plate"))
-        self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
-        self.act_check.setText(tr("Check"))
-        self.act_check.setToolTip(tr("Check the model before printing: overhangs, thin walls and problems in the mesh"))
-        self.check_box.setTitle(tr("Check"))
+        # The toolbar buttons say their key, as the View section's buttons do in their tooltips.
+        self.act_bed.setText(tr("Plate") + " (P)")
+        self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)") + " (P)")
+        self.act_check.setText(tr("Check") + " (K)")
+        self.act_check.setToolTip(tr("Check the model before printing: overhangs, thin walls and problems in the mesh")
+                                  + " (K)")
+        self.check_box.setTitle(tr("Check model"))
         self.check_angle_label.setText(tr("from vertical"))
         self.check_nozzle_label.setText(tr("nozzle"))
+        self.check_loose_label.setText(tr("up to"))
         self.check_mesh_title.setText(tr("Mesh"))
         self.check_close_btn.setText(tr("Close"))
-        for kind, text, tip in (
+        term = tr("Technical term: {term}.")
+        for kind, text, tip, technical in (
                 ("overhang", tr("Overhangs"), tr("Faces that face down and lean further from vertical than the angle: "
-                                                  "they usually need supports. Faces on the plate are not counted.")),
-                ("thin", tr("Thin walls"), tr("Walls and pins thinner than the nozzle: one line of plastic or less.")),
-                ("open", tr("Open edges"), tr("Holes in the surface: edges with a face on one side only. "
-                                               "The model is not closed, so a slicer has to guess what is inside.")),
-                ("nonmanifold", tr("Non-manifold edges"), tr("Edges shared by three or more faces, for example where two "
-                                                              "parts touch along a line. Slicers can read them wrongly.")),
-                ("flipped", tr("Flipped normals"), tr("Faces turned inside out: their front points into the model. "
-                                                     "Slicers may leave them out or fill them wrongly.")),
-                ("loose", tr("Loose parts"), tr("Small pieces not connected to the main body. They print as separate "
-                                                "bits, or not at all."))):
+                                                  "they usually need supports. Faces on the plate are not counted."), ""),
+                ("thin", tr("Thin walls"), tr("Walls and pins thinner than the nozzle: one line of plastic or less."), ""),
+                ("open", tr("Holes"), tr("Holes in the surface: edges with a face on one side only. "
+                                         "The model is not closed, so a slicer has to guess what is inside."),
+                 tr("open edges")),
+                ("nonmanifold", tr("Tangled edges"), tr("Edges shared by three or more faces, for example where two "
+                                                        "parts touch along a line. Slicers can read them wrongly."),
+                 tr("non-manifold edges")),
+                ("flipped", tr("Inside-out faces"), tr("Faces turned inside out: their front points into the model. "
+                                                       "Slicers may leave them out or fill them wrongly."),
+                 tr("flipped normals")),
+                ("loose", tr("Loose parts"), tr("Small pieces not connected to the main body, up to the size given. "
+                                                "They print as separate bits, or not at all. Hollows inside a part "
+                                                "don't count."), "")):
             cb, count_lbl, _box = self.check_rows[kind]
             cb.setText(text)
-            cb.setToolTip(tip)
-            count_lbl.setToolTip(tip)
+            full = tip + (" " + term.format(term=technical) if technical else "")
+            # Rich text, so Qt wraps a long tooltip instead of running it off the window.
+            rich = "<p>" + full + "</p>"
+            cb.setToolTip(rich)
+            count_lbl.setToolTip(rich)
         widest = max(self.fontMetrics().horizontalAdvance(t) for t in (
             tr("none"), tr("{n} faces").format(n=count(999999)), tr("{n} edges").format(n=count(999999)),
             tr("{n} parts").format(n=count(9999))))
         for lbl in self._count_labels:
             lbl.setFixedWidth(widest + 4)
         self._update_check_panel()
-        self.act_view.setText(tr("View"))
-        self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
+        self.act_view.setText(tr("View") + " (I)")
+        self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip") + " (I)")
         self.view_box.setTitle(tr("View"))
         # The buttons of the View section are short; the tooltip says it in full.
         self.act_reset_view.setText(tr("Reset view"))
@@ -1483,12 +1520,12 @@ class MainWindow(QMainWindow):
         self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost."))
         self.clip_plane_cb.setText(tr("Show the cutting plane"))
         self.clip_plane_cb.setToolTip(tr("Shows where the cut is, as a faint sheet the size of the model."))
-        self.act_measure.setText(tr("Measure"))
+        self.act_measure.setText(tr("Measure") + " (M)")
         self.act_measure.setToolTip(tr("Measure on the model: distance, angle, circle") + " (M)")
         self.measure_box.setTitle(tr("Measure"))
         for kind, a in self.measure_actions.items():
             a.setText(self._measure_mode_label(kind))
-            a.setToolTip(self._measure_mode_tip(kind))
+            a.setToolTip(self._measure_mode_tip(kind) + " (" + self.MEASURE_KEYS[kind] + ")")
         self.objects_hint.setText(tr("Click a colour box to change its colour."))
         self.measure_snap_cb.setText(tr("Snapping"))
         self.measure_snap_cb.setToolTip(tr("Jumps to the nearest corner, the middle of an edge or a point on an "
@@ -1819,6 +1856,15 @@ class MainWindow(QMainWindow):
         self.step_layer(delta)
 
     # ------------------------------------------------------------ folder
+    def open_archive_dialog(self):
+        """Menu -> Open archive: a ZIP; its 3D files are listed in the side panel."""
+        start = self._user_folder() if self.current_path else os.path.expanduser("~")
+        patterns = " ".join("*" + e for e in za.ARCHIVE_EXTENSIONS)
+        path, _ = QFileDialog.getOpenFileName(self, tr("Open archive"), start,
+                                              tr("ZIP files with 3D models") + f" ({patterns})")
+        if path:
+            self.load(path)
+
     def open_folder_dialog(self):
         start = self._user_folder() if self.current_path else os.path.expanduser("~")
         path = QFileDialog.getExistingDirectory(self, tr("Open folder"), start)
@@ -1832,7 +1878,7 @@ class MainWindow(QMainWindow):
             names = os.listdir(path)
         except OSError:
             return []
-        ok = SUPPORTED_EXTENSIONS + za.ARCHIVE_EXTENSIONS
+        ok = SUPPORTED_EXTENSIONS                # archives have Open archive: they are not stepped through
         files = [os.path.join(path, n) for n in names
                  if n.lower().endswith(ok) and os.path.isfile(os.path.join(path, n))]
         return sorted(files, key=lambda f: os.path.basename(f).lower())
@@ -2710,6 +2756,8 @@ class MainWindow(QMainWindow):
         return (self.stack.currentIndex() == 1 and self.model is not None and self.gcode is None
                 and bool(getattr(self.model, "parts", None)) and self.view_stack.currentIndex() == 0)
 
+    MEASURE_KEYS = {"distance": "D", "angle": "A", "circle": "O"}   # the Measure section's keys
+
     SIDE_MIN_WIDTH = 290                             # the side panel never gets narrower than this ...
 
     def _update_side_min_width(self):
@@ -2720,7 +2768,9 @@ class MainWindow(QMainWindow):
             return
         m = self.side_layout.contentsMargins()
         bar = self.side_scroll.style().pixelMetric(self.side_scroll.style().PixelMetric.PM_ScrollBarExtent)
-        need = max(box.minimumSizeHint().width() for box in (self.view_box, self.measure_box))
+        # every box of the side panel, shown now or not (a hidden one may open at any moment)
+        need = max(box.minimumSizeHint().width() for box in self.side.findChildren(QGroupBox)
+                   if box.parent() is self.side)
         need += m.left() + m.right() + bar + 2 * self.side_scroll.frameWidth() + 2
         width = max(self.SIDE_MIN_WIDTH, need)
         self.side_scroll.setMinimumWidth(width)
@@ -2773,6 +2823,13 @@ class MainWindow(QMainWindow):
         self.settings.set("check_nozzle", mm)
         self.check.set_nozzle(mm)
 
+    def _check_loose_changed(self):
+        mm = round(self.check_loose.mm(), 3)
+        if abs(mm - self.check.loose_max) < 1e-6:
+            return
+        self.settings.set("check_loose_max", mm)
+        self.check.set_loose_max(mm)
+
     def _pick_check_color(self, kind: str, button: "_ColorButton"):
         c = QColorDialog.getColor(QColor(self.check.colors[kind]), self, tr("Colour"))
         if c.isValid():
@@ -2784,6 +2841,10 @@ class MainWindow(QMainWindow):
 
     def _set_check_color(self, kind: str, color: str, button: "_ColorButton"):
         button.set_color(color)
+        if self.settings.get("check_keep_colors", False):
+            colours = dict(self.settings.get("check_colors", {}) or {})
+            colours[kind] = color
+            self.settings.set("check_colors", colours)
         self.check.set_color(kind, color)
 
     def _update_check_panel(self):

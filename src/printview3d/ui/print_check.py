@@ -113,19 +113,34 @@ def components(n_vertices: int, faces: np.ndarray) -> np.ndarray:
     return piece.reshape(-1)
 
 
-def mesh_report(vertices, faces) -> dict:
+LOOSE_DEFAULT = 5.0              # mm: a loose piece is at most this big (its longest side)
+ZERO_AREA = 1e-9                 # mm²: a triangle this small is a sliver with no surface
+
+
+def mesh_report(vertices, faces, loose_max: float = LOOSE_DEFAULT) -> dict:
     """What is wrong with a mesh (after merging vertices at the same place):
     open: (k, 2, 3) open edges (edges with one face) as point pairs; nonmanifold: the same for
     edges shared by more than two faces; flipped: bool per face (turned against a neighbour, or
-    part of a closed piece that is inside out); loose: bool per face (in a piece other than the
-    biggest); pieces: the number of pieces; inside_out: closed pieces turned inside out."""
+    part of a closed piece that is inside out); loose: bool per face (in a small piece, at most
+    loose_max mm across, that is not the biggest and not inside another piece); pieces: the
+    number of pieces; inside_out: closed pieces turned inside out; slivers: triangles without
+    area.
+
+    Triangles without area (slivers: three corners on one line, or two in the same place) are
+    common in exported meshes and invisible. They still close the surface, so they count for
+    open edges, but not for the other checks: there they only gave invisible "problems".
+    A closed piece inside another one with its normals pointing inwards is a cavity (the inside
+    of a hollow part), not an inside-out piece, and not a loose one."""
     v, f = merge_vertices(vertices, faces)
     nf = len(f)
     report = {"open": np.zeros((0, 2, 3)), "nonmanifold": np.zeros((0, 2, 3)),
               "flipped": np.zeros(nf, dtype=bool), "loose": np.zeros(nf, dtype=bool),
-              "pieces": 0, "inside_out": 0}
+              "pieces": 0, "inside_out": 0, "slivers": 0}
     if not nf:
         return report
+    _, area = face_normals(v, f)
+    solid = area > ZERO_AREA                          # faces with a surface
+    report["slivers"] = int((~solid).sum())
     directed = _edges(f)
     face_of = np.repeat(np.arange(nf), 3)
     nv = np.int64(len(v))
@@ -135,27 +150,49 @@ def mesh_report(vertices, faces) -> dict:
     inv = inv.reshape(-1)
     pairs = np.column_stack([ukey // nv, ukey % nv])
     report["open"] = v[pairs[cnt == 1]]
-    report["nonmanifold"] = v[pairs[cnt > 2]]
+    # Only faces with a surface count for shared edges and their direction.
+    on_solid = solid[face_of]
+    cnt_solid = np.bincount(inv[on_solid], minlength=len(ukey))
+    report["nonmanifold"] = v[pairs[cnt_solid > 2]]
     # Two faces that run along a shared edge in the same direction face opposite ways.
-    _, dinv, dcnt = np.unique(directed[:, 0] * nv + directed[:, 1], return_inverse=True, return_counts=True)
-    same_way = dcnt[dinv.reshape(-1)] > 1
+    dkey = directed[:, 0] * nv + directed[:, 1]
+    _, dinv, dcnt = np.unique(dkey[on_solid], return_inverse=True, return_counts=True)
+    same_way = np.zeros(len(dkey), dtype=bool)
+    same_way[np.flatnonzero(on_solid)] = dcnt[dinv.reshape(-1)] > 1
     flipped = np.zeros(nf, dtype=bool)
-    flipped[face_of[same_way & (cnt[inv] == 2)]] = True
-    # Pieces: the biggest is the model; the others are loose.
+    flipped[face_of[same_way & (cnt_solid[inv] == 2)]] = True
+    # Pieces, their size, place and volume.
     piece = components(len(v), f)
     n_pieces = int(piece.max()) + 1
     report["pieces"] = n_pieces
-    sizes = np.bincount(piece, minlength=n_pieces)
-    report["loose"] = piece != int(np.argmax(sizes)) if n_pieces > 1 else np.zeros(nf, dtype=bool)
-    # A closed piece (no open edge) with a negative volume is inside out: all its normals point in.
+    fv = v[f]
+    lo = np.full((n_pieces, 3), np.inf)
+    hi = np.full((n_pieces, 3), -np.inf)
+    np.minimum.at(lo, piece, fv.min(axis=1))
+    np.maximum.at(hi, piece, fv.max(axis=1))
+    p0, p1, p2 = fv[:, 0], fv[:, 1], fv[:, 2]
+    vol = np.bincount(piece, weights=np.einsum("ij,ij->i", p0, np.cross(p1, p2)) / 6.0, minlength=n_pieces)
     open_piece = np.zeros(n_pieces, dtype=bool)
     open_piece[np.unique(piece[face_of[cnt[inv] == 1]])] = True
-    p0, p1, p2 = v[f[:, 0]], v[f[:, 1]], v[f[:, 2]]
-    vol = np.bincount(piece, weights=np.einsum("ij,ij->i", p0, np.cross(p1, p2)) / 6.0, minlength=n_pieces)
-    inside_out = (vol < 0) & ~open_piece
+    # inside another piece: its box lies within the box of a piece with more volume
+    inside = np.zeros(n_pieces, dtype=bool)
+    eps = 1e-6
+    for i in range(n_pieces):
+        others = (np.abs(vol) > abs(vol[i])) & (lo <= lo[i] + eps).all(axis=1) & (hi >= hi[i] - eps).all(axis=1)
+        others[i] = False
+        inside[i] = bool(others.any())
+    # A closed piece with a negative volume is inside out - unless it is a cavity in another piece.
+    inside_out = (vol < 0) & ~open_piece & ~inside
     report["inside_out"] = int(inside_out.sum())
     flipped |= inside_out[piece]
-    report["flipped"] = flipped
+    report["flipped"] = flipped & solid
+    # Loose: small pieces on their own, away from the biggest one.
+    if n_pieces > 1:
+        biggest = int(np.argmax(np.bincount(piece, weights=area, minlength=n_pieces)))
+        small = (hi - lo).max(axis=1) <= loose_max
+        loose_piece = small & ~inside
+        loose_piece[biggest] = False
+        report["loose"] = loose_piece[piece]
     return report
 
 
@@ -225,6 +262,7 @@ class PrintCheck:
         self.colors = dict(DEFAULT_COLORS)
         self.angle = OVERHANG_DEFAULT
         self.nozzle = NOZZLE_DEFAULT
+        self.loose_max = LOOSE_DEFAULT
         self.reports: list = []              # mesh_report per part
         self.overhangs: list = []            # mask per part
         self.thin: Optional[list] = None     # mask per part, None while not (yet) known
@@ -267,7 +305,7 @@ class PrintCheck:
         self.overhangs = [overhang_faces(p.vertices, p.faces, self.angle, floor) for p in self.parts]
         if len(self.reports) != len(self.parts) and not self.mesh_busy:
             if sum(len(p.faces) for p in self.parts) <= BACKGROUND_FACES:
-                self.reports = [mesh_report(p.vertices, p.faces) for p in self.parts]
+                self.reports = [mesh_report(p.vertices, p.faces, self.loose_max) for p in self.parts]
             else:
                 self._start_mesh()
         if self.show["thin"] and self.thin is None and self.thin_progress is None:
@@ -285,6 +323,15 @@ class PrintCheck:
         self.thin = None
         self._token += 1
         self.thin_progress = None
+        if self.active:
+            self.analyse()
+
+    def set_loose_max(self, mm: float):
+        """Loose parts are pieces up to this size (mm, their longest side): the mesh check again."""
+        self.loose_max = float(mm)
+        self._mesh_token += 1
+        self.mesh_busy = False
+        self.reports = []
         if self.active:
             self.analyse()
 
@@ -327,9 +374,10 @@ class PrintCheck:
         token = self._mesh_token
         parts = [(p.vertices.copy(), p.faces.copy()) for p in self.parts]
         self.mesh_busy = True
+        loose_max = self.loose_max
 
         def work():
-            self._signals.mesh_done.emit(token, [mesh_report(v, f) for v, f in parts])
+            self._signals.mesh_done.emit(token, [mesh_report(v, f, loose_max) for v, f in parts])
 
         threading.Thread(target=work, daemon=True).start()
 

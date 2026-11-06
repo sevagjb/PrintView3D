@@ -480,6 +480,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive…</source>
+        <translation type="unfinished">Deschide o arhivă…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Menu</source>
         <translation>Meniu</translation>
     </message>
@@ -592,6 +597,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">Verifică modelul</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>from vertical</source>
         <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
         <translation type="unfinished">față de verticală</translation>
@@ -604,6 +614,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">până la</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Mesh</source>
         <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
         <translation type="unfinished">Rețea</translation>
@@ -612,6 +627,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation type="unfinished">Închide</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Technical term: {term}.</source>
+        <translation type="unfinished">Termen tehnic: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -635,8 +655,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open edges</source>
-        <translation type="unfinished">Muchii deschise</translation>
+        <source>Holes</source>
+        <translation type="unfinished">Găuri</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -645,8 +665,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Non-manifold edges</source>
-        <translation type="unfinished">Muchii non-manifold</translation>
+        <source>open edges</source>
+        <translation type="unfinished">muchii deschise</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">Muchii încurcate</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -655,8 +680,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Flipped normals</source>
-        <translation type="unfinished">Normale inversate</translation>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">muchii non-manifold</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">Fețe pe dos</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -665,13 +695,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">normale inversate</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Loose parts</source>
         <translation type="unfinished">Părți desprinse</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
-        <translation type="unfinished">Bucăți mici care nu sunt legate de corpul principal. Se tipăresc ca bucăți separate sau deloc.</translation>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">Bucăți mici care nu sunt legate de corpul principal, până la dimensiunea dată. Se tipăresc ca bucăți separate sau deloc. Golurile din interiorul unei piese nu se numără.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -681,14 +716,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>Vizualizare</translation>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
+        <translation>Cum este desenat modelul: wireframe, raze X, tăiere</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>How the model is drawn: wireframe, X-ray, clip</source>
-        <translation>Cum este desenat modelul: wireframe, raze X, tăiere</translation>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>Vizualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -759,13 +794,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation type="unfinished">Măsoară</translation>
+        <source>Measure on the model: distance, angle, circle</source>
+        <translation type="unfinished">Măsoară pe model: distanță, unghi, cerc</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure on the model: distance, angle, circle</source>
-        <translation type="unfinished">Măsoară pe model: distanță, unghi, cerc</translation>
+        <source>Measure</source>
+        <translation type="unfinished">Măsoară</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -947,6 +982,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation>Se așază {n} modele unul lângă altul…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive</source>
+        <translation type="unfinished">Deschide o arhivă</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2015,6 +2055,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">Ține minte culorile secțiunii Verifică</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">Oprit: culorile alese în Verifică rămân până se închide PrintView3D.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafică</translation>
     </message>
@@ -2407,6 +2457,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="unfinished">Măsoară o distanță, un unghi, un cerc</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">Secțiunea Vizualizare pornită / oprită (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">Verifică modelul pornit / oprit (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">Placa de construcție pornită / oprită</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next / previous layer (G-code), or file (ZIP)</source>
         <translation>Stratul următor / anterior (G-code) sau fișierul (ZIP)</translation>
     </message>
@@ -2624,6 +2694,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">Muchii deschise</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">Muchii non-manifold</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">Normale inversate</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">Bucăți mici care nu sunt legate de corpul principal. Se tipăresc ca bucăți separate sau deloc.</translation>
     </message>
     <message>
         <source>Edges with a face on one side only: holes in the surface.</source>

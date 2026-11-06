@@ -321,6 +321,7 @@ class SettingsDialog(QDialog):
         self.cube_cb = QCheckBox(tr("Show the view cube (top-right corner of the 3D view)"))
         self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
         l3.addWidget(self.travel_cb)
+        l3.addWidget(self.cube_cb)
         l3.addWidget(self.bed_cb)
         # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
         self.grid_labels_cb = QCheckBox(tr("Show scale numbers on the grid"))
@@ -426,7 +427,12 @@ class SettingsDialog(QDialog):
         self.cut_planes_cb.setToolTip(tr("With both cuts on, each cutting plane is drawn whole instead of "
                                          "stopping where the other cut is."))
         l3.addWidget(self.cut_planes_cb)
-        l3.addWidget(self.cube_cb)
+        # Check: keep the colours picked for the highlights (otherwise they are the defaults again
+        # at every start).
+        self.check_colors_cb = QCheckBox(tr("Remember the colours of the Check section"))
+        self.check_colors_cb.setChecked(bool(settings.get("check_keep_colors", False)))
+        self.check_colors_cb.setToolTip(tr("Off: the Check colours you pick last until PrintView3D closes."))
+        l3.addWidget(self.check_colors_cb)
 
         # ---------------- Graphics ----------------
         g4 = QGroupBox(tr("Graphics"))
@@ -503,9 +509,14 @@ class SettingsDialog(QDialog):
         self._page_keys.append(key)
 
     def _initial_size(self):
+        """Wide enough for the pages and tall enough for the longest one, so no page needs a scroll
+        bar - unless the screen is too small for that (then the page scrolls)."""
         screen = (self.parent().screen() if self.parent() is not None else QApplication.primaryScreen())
         avail = screen.availableGeometry() if screen is not None else None
-        w, h = 860, 580
+        tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count()))
+        buttons = self.findChild(QDialogButtonBox).sizeHint().height()
+        m = self.layout().contentsMargins()
+        w, h = 860, max(580, tallest + buttons + m.top() + m.bottom() + 24)
         if avail is not None:
             w, h = min(w, int(avail.width() * 0.9)), min(h, int(avail.height() * 0.9))
         self.resize(w, h)
@@ -976,6 +987,7 @@ class SettingsDialog(QDialog):
                 self.settings.set(key + ("_in" if u == "in" else ""), value)
         self.settings.set("units", self.units_combo.currentData())
         self.settings.set("cut_planes_whole", self.cut_planes_cb.isChecked())
+        self.settings.set("check_keep_colors", self.check_colors_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())
         self.settings.set("plate_size", [round(self.plate_w_spin.mm(), 3), round(self.plate_d_spin.mm(), 3)])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
@@ -1072,6 +1084,10 @@ def shortcut_rows() -> list[tuple[list[str], str]]:
         (["V"], tr("Clip facing you on / off (models)")),
         (["R"], tr("Reset view: all of the above off, model fitted (models)")),
         (["M"], tr("Measure on / off (models)")),
+        (["D", "A", "O"], tr("Measure a distance, an angle, a circle")),
+        (["I"], tr("View section on / off (models)")),
+        (["K"], tr("Check model on / off (models)")),
+        (["P"], tr("Build plate on / off")),
         (["↑", "↓"], tr("Next / previous layer (G-code), or file (ZIP)")),
         ([_key("PgUp"), _key("PgDown")], tr("10 layers up / down")),
         ([_key("Home"), _key("End")], tr("First / last layer")),

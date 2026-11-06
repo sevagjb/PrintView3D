@@ -199,7 +199,7 @@ def test_check_button_sits_between_plate_and_view(window):
     tb = w.view_btn.parentWidget()
     order = [o for o in (tb.widgetForAction(a) for a in tb.actions()) if o is not None]
     assert order.index(w.plate_btn) < order.index(w.check_btn) < order.index(w.view_btn)
-    assert not w.act_check.icon().isNull() and w.act_check.text() == "Check"
+    assert not w.act_check.icon().isNull() and w.act_check.text() == "Check (K)"
 
 
 def test_check_section_counts_and_highlights(window):
@@ -255,7 +255,7 @@ def test_check_colours_last_until_the_program_closes(app, tmp_path, monkeypatch)
         monkeypatch.setattr(QColorDialog, "getColor", staticmethod(lambda *a, **k: QColor("#123456")))
         w.check_rows["overhang"][2].click()
         assert w.check.colors["overhang"] == "#123456" and w.check_rows["overhang"][2].color == "#123456"
-        assert "check_colors" not in w.settings.data                       # not saved
+        assert not w.settings.get("check_colors")                          # not saved (the default)
     finally:
         w.close()
     w2 = _make(app, tmp_path)                                              # the next start: the defaults

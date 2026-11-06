@@ -480,6 +480,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive…</source>
+        <translation type="unfinished">Archief openen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Menu</source>
         <translation>Menu</translation>
     </message>
@@ -592,6 +597,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">Model controleren</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>from vertical</source>
         <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
         <translation type="unfinished">van verticaal</translation>
@@ -604,6 +614,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">tot</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Mesh</source>
         <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
         <translation type="unfinished">Net</translation>
@@ -612,6 +627,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation>Sluiten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Technical term: {term}.</source>
+        <translation type="unfinished">Vakterm: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -635,8 +655,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open edges</source>
-        <translation type="unfinished">Open randen</translation>
+        <source>Holes</source>
+        <translation type="unfinished">Gaten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -645,8 +665,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Non-manifold edges</source>
-        <translation type="unfinished">Niet-manifold randen</translation>
+        <source>open edges</source>
+        <translation type="unfinished">open randen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">Verwarde randen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -655,8 +680,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Flipped normals</source>
-        <translation type="unfinished">Omgedraaide normalen</translation>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">niet-manifold randen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">Binnenstebuiten vlakken</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -665,13 +695,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">omgedraaide normalen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Loose parts</source>
         <translation type="unfinished">Losse delen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
-        <translation type="unfinished">Kleine stukken die niet aan het hoofddeel vastzitten. Ze worden als losse stukjes geprint, of helemaal niet.</translation>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">Kleine stukken die niet aan het hoofddeel vastzitten, tot de opgegeven grootte. Ze worden als losse stukjes geprint, of helemaal niet. Holtes in een onderdeel tellen niet mee.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -681,14 +716,14 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>Weergave</translation>
+        <source>How the model is drawn: wireframe, X-ray, clip</source>
+        <translation>Hoe het model wordt getekend: draadmodel, röntgen, afsnijden</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>How the model is drawn: wireframe, X-ray, clip</source>
-        <translation>Hoe het model wordt getekend: draadmodel, röntgen, afsnijden</translation>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>Weergave</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -759,13 +794,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation>Meten</translation>
+        <source>Measure on the model: distance, angle, circle</source>
+        <translation>Meten op het model: afstand, hoek, cirkel</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure on the model: distance, angle, circle</source>
-        <translation>Meten op het model: afstand, hoek, cirkel</translation>
+        <source>Measure</source>
+        <translation>Meten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -947,6 +982,11 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation>{n} modellen naast elkaar plaatsen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open archive</source>
+        <translation type="unfinished">Archief openen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2015,6 +2055,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">De kleuren van het onderdeel Controleren onthouden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">Uit: de gekozen kleuren van Controleren gelden tot PrintView3D sluit.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Graphics</source>
         <translation>Grafische kaart</translation>
     </message>
@@ -2407,6 +2457,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="unfinished">Een afstand, een hoek, een cirkel meten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">Onderdeel Weergave aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">Model controleren aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">Printbed aan / uit</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Next / previous layer (G-code), or file (ZIP)</source>
         <translation>Volgende / vorige laag (G-code) of bestand (ZIP)</translation>
     </message>
@@ -2624,6 +2694,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">Open randen</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">Niet-manifold randen</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">Omgedraaide normalen</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">Kleine stukken die niet aan het hoofddeel vastzitten. Ze worden als losse stukjes geprint, of helemaal niet.</translation>
     </message>
     <message>
         <source>Edges with a face on one side only: holes in the surface.</source>

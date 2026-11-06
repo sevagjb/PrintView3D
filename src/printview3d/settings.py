@@ -41,6 +41,9 @@ DEFAULTS = {
     "check_angle": 45,          # Check: overhangs lean further than this from vertical (degrees)
     "check_nozzle": 0.4,        # Check: thin walls are thinner than this (mm)
     "check_show": {},           # Check: which highlights are on (kind -> bool; missing: the default)
+    "check_keep_colors": False, # Settings -> Viewer: remember the Check colours (else: defaults at every start)
+    "check_colors": {},         # Check: the colours picked, kept only with check_keep_colors
+    "check_loose_max": 5.0,     # Check: loose parts are at most this big (mm, their longest side)
     "units": "mm",              # Settings -> Language and units: "mm" or "in" (inches)
     "grid_labels_step": 0,      # Settings -> Viewer: spacing of those numbers in mm (0 = automatic)
     "grid_labels_step_in": 0,   # ... the same in inches, while inches are in use

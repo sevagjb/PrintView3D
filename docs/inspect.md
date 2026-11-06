@@ -116,24 +116,35 @@ Next to the file type and size, *Preview picture* folds the picture the slicer s
 
 ## Check before printing
 
-The **Check** button (between Plate and View) opens the Check section and colours what may cause
-trouble when printing:
+The **Check** button (<kbd>K</kbd>, between Plate and View) opens the **Check model** section, below
+Measure, and colours what may cause trouble when printing:
 
 - **Overhangs**: faces that face down and lean further from vertical than an angle (45° by default)
   usually need supports. Faces resting on the plate don't count.
 - **Thin walls**: walls and pins thinner than the nozzle (0.4 mm by default). This looks at every
   face and runs in the background, so it is off until you tick it.
-- **Mesh**: open edges (holes), non-manifold edges, flipped normals (faces turned the wrong way, or a
-  part that is inside out) and loose parts (pieces not connected to the rest).
+- **Mesh**:
+  - **Holes**: edges with a face on one side only (technical term: open edges).
+  - **Tangled edges**: edges shared by three or more faces (non-manifold edges).
+  - **Inside-out faces**: faces whose front points into the model (flipped normals).
+  - **Loose parts**: small pieces not connected to the main body, up to a size you set (5 mm by
+    default, their longest side). Bigger pieces count as objects of their own, and a hollow inside
+    a part is not a loose part.
 
-Each has a colour box (click to change it) and a count; hover over a name to see what it means.
-The highlights follow the cuts and the objects you hide. Which checks are on, the angle and the
-nozzle width are remembered; the colours go back to their defaults when you restart.
+  Triangles with no area (three corners on one line, common in exported files) are left out: they
+  don't change the shape and slicers ignore them.
+
+Each has a colour box (click to change it) and a count; hover over a name to see what it means and
+its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
+the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
+defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
+section**.
 
 ## Open a folder
 
 **Menu → Open folder…** lists the 3D files of a folder in the side panel and opens the first one.
-<kbd>↑</kbd> / <kbd>↓</kbd> step through them, as in a ZIP, or click a name.
+<kbd>↑</kbd> / <kbd>↓</kbd> step through them, as in a ZIP, or click a name. ZIP files in the folder
+are not listed: open them with **Menu → Open archive…**, just below.
 
 ## Millimetres or inches
 
@@ -164,6 +175,12 @@ itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *Ne
 | <kbd>V</kbd> | Clip facing you on / off |
 | <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay) |
 | <kbd>M</kbd> | Measure on / off |
+| <kbd>D</kbd> / <kbd>A</kbd> / <kbd>O</kbd> | Measure a distance, an angle, a circle |
+| <kbd>I</kbd> | View section on / off |
+| <kbd>K</kbd> | Check model on / off |
+| <kbd>P</kbd> | Build plate on / off |
+
+The toolbar buttons show their key, for example *Measure (M)*.
 
 Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 
