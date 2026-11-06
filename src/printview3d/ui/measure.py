@@ -230,6 +230,127 @@ def is_valid(kind: str, pts: list) -> bool:
     return True
 
 
+# ---------------------------------------------------------------- the outline of a cut (View -> Clip)
+SECTION_CORNER_DEG = 30.0     # the outline turns more than this at a point: a corner to snap to
+SECTION_MAX_SEGMENTS = 400_000  # more than this: no middles of edges (the walk would be slow)
+
+
+def section_segments(mesh, origin, normal) -> np.ndarray:
+    """Where the plane through `origin` with `normal` meets the surface of `mesh` (vtkPolyData):
+    short line segments, as an (n, 2, 3) array."""
+    from vtkmodules.vtkCommonDataModel import vtkPlane
+    from vtkmodules.vtkFiltersCore import vtkCutter
+    from vtkmodules.util.numpy_support import vtk_to_numpy
+    plane = vtkPlane()
+    plane.SetOrigin(*(float(v) for v in origin))
+    plane.SetNormal(*(float(v) for v in normal))
+    cut = vtkCutter()
+    cut.SetCutFunction(plane)
+    cut.SetInputData(mesh)
+    cut.Update()
+    out = cut.GetOutput()
+    if out.GetNumberOfPoints() == 0 or out.GetNumberOfLines() == 0:
+        return np.zeros((0, 2, 3))
+    pts = vtk_to_numpy(out.GetPoints().GetData()).astype(float)
+    conn = vtk_to_numpy(out.GetLines().GetConnectivityArray())
+    offs = vtk_to_numpy(out.GetLines().GetOffsetsArray())
+    pairs = [np.column_stack([conn[a:b - 1], conn[a + 1:b]]) for a, b in zip(offs[:-1], offs[1:]) if b - a >= 2]
+    if not pairs:
+        return np.zeros((0, 2, 3))
+    ids = np.concatenate(pairs)
+    return pts[ids]
+
+
+def clip_segments(seg: np.ndarray, origin, normal, tol: float = 1e-9) -> np.ndarray:
+    """The parts of the segments on the side of the plane its normal points to (what a cut keeps)."""
+    if not len(seg):
+        return seg
+    o, n = np.asarray(origin, float), np.asarray(normal, float)
+    da, db = (seg[:, 0] - o) @ n, (seg[:, 1] - o) @ n
+    ka, kb = da >= -tol, db >= -tol
+    out = seg[ka | kb].copy()
+    da, db, ka, kb = da[ka | kb], db[ka | kb], ka[ka | kb], kb[ka | kb]
+    part = ka != kb
+    if part.any():
+        t = (da[part] / (da[part] - db[part]))[:, None]
+        cross = out[part, 0] + t * (out[part, 1] - out[part, 0])
+        a_out = ~ka[part]
+        rows = np.flatnonzero(part)
+        out[rows[a_out], 0] = cross[a_out]
+        out[rows[~a_out], 1] = cross[~a_out]
+    return out
+
+
+def section_targets(seg: np.ndarray, size: float) -> dict:
+    """What Measure snaps to on a cut's outline, like on the model's own edges: its corners (where
+    it turns more than SECTION_CORNER_DEG, and its loose ends), the middle of each run between two
+    corners, and the segments themselves (a point on them). `size`: the model's size, for how close
+    two points must be to count as one."""
+    empty = {"segments": seg, "corners": np.zeros((0, 3)), "mids": np.zeros((0, 3))}
+    if not len(seg):
+        return empty
+    eps = max(size, 1e-6) * 1e-7
+    flat = seg.reshape(-1, 3)
+    _, ids = np.unique(np.round(flat / eps).astype(np.int64), axis=0, return_inverse=True)
+    ids = ids.reshape(-1, 2)
+    keep = ids[:, 0] != ids[:, 1]                        # no segments of length 0
+    seg, ids = seg[keep], ids[keep]
+    if not len(seg):
+        return empty
+    n_nodes = int(ids.max()) + 1
+    node_pt = np.zeros((n_nodes, 3))
+    node_pt[ids.ravel()] = seg.reshape(-1, 3)
+    degree = np.bincount(ids.ravel(), minlength=n_nodes)
+    # The direction away from each node along each of its segments.
+    ends = ids.ravel()
+    away = (seg[:, ::-1] - seg).reshape(-1, 3)
+    order = np.argsort(ends, kind="stable")
+    corner = degree != 2
+    two = np.flatnonzero(degree[ends[order]] == 2)
+    if len(two):
+        o2 = order[two].reshape(-1, 2)                    # the two segment ends at each such node
+        u = away[o2[:, 0]]
+        v = away[o2[:, 1]]
+        cos = np.einsum("ij,ij->i", u, v) / np.maximum(np.linalg.norm(u, axis=1) * np.linalg.norm(v, axis=1), 1e-30)
+        # Straight on: the two directions are opposite (cos -1). Turning by θ: cos = -cos θ.
+        turn = cos > -math.cos(math.radians(SECTION_CORNER_DEG))
+        corner[ends[o2[:, 0]][turn]] = True
+    corners = node_pt[np.flatnonzero(corner & (degree > 0))]
+    mids = []
+    if len(seg) <= SECTION_MAX_SEGMENTS:
+        adj = [[] for _ in range(n_nodes)]
+        for k, (a, b) in enumerate(ids):
+            adj[a].append((b, k))
+            adj[b].append((a, k))
+        used = np.zeros(len(seg), dtype=bool)
+        for c in np.flatnonzero(corner):
+            for nxt, k in adj[c]:
+                if used[k]:
+                    continue
+                path, cur = [node_pt[c]], nxt
+                used[k] = True
+                path.append(node_pt[cur])
+                while not corner[cur]:
+                    step = [(q, kk) for q, kk in adj[cur] if not used[kk]]
+                    if not step:
+                        break
+                    q, kk = step[0]
+                    used[kk] = True
+                    cur = q
+                    path.append(node_pt[cur])
+                pts = np.array(path)
+                lens = np.linalg.norm(np.diff(pts, axis=0), axis=1)
+                half = lens.sum() / 2
+                if half <= 0:
+                    continue
+                i = int(np.searchsorted(np.cumsum(lens), half))
+                i = min(i, len(lens) - 1)
+                before = float(np.cumsum(lens)[i - 1]) if i else 0.0
+                t = (half - before) / lens[i] if lens[i] > 0 else 0.0
+                mids.append(pts[i] + t * (pts[i + 1] - pts[i]))
+    return {"segments": seg, "corners": corners, "mids": np.array(mids) if mids else np.zeros((0, 3))}
+
+
 class Item:
     """One measurement: its kind and the points placed so far."""
     __slots__ = ("kind", "points")
@@ -285,6 +406,8 @@ class MeasureTool:
         self._label_cache: dict = {}              # (text, colours, scale) -> (texture, width, height)
         self._labels: list = []
         self._label_polys: list = []
+        self._section_key = None                  # the cuts and parts the outline below was made for
+        self._section_data: Optional[dict] = None
 
     # ------------------------------------------------------------ on / off
     def start(self):
@@ -523,14 +646,113 @@ class MeasureTool:
         for a in actors:
             pk.AddPickList(a)
             pk.AddLocator(self._locator(a))
-        if not pk.Pick(x, y, 0, self.p.renderer) or pk.GetCellId() < 0 or pk.GetActor() is None:
-            return None
-        pos = np.array(pk.GetPickPosition(), dtype=float)
-        if self.snap:
+        hit = pk.Pick(x, y, 0, self.p.renderer) and pk.GetCellId() >= 0 and pk.GetActor() is not None
+        pos = np.array(pk.GetPickPosition(), dtype=float) if hit else None
+        if not self.snap:
+            return (pos, "free") if hit else None
+        # What to snap to: the model's own corners and edges under the mouse, and - with a cut on -
+        # the outline of the cut, as if it were an edge of the model. The best kind wins (corner,
+        # then middle, then edge); between two of the same kind, the one nearer the mouse.
+        found = []
+        if hit:
             snapped = self._snap(pk.GetActor(), pk.GetCellId(), x, y)
             if snapped is not None:
-                return snapped
-        return pos, "free"
+                found.append(snapped)
+        on_cut = self._snap_section(x, y, pos)
+        if on_cut is not None:
+            found.append(on_cut)
+        if found:
+            m = np.array([x, y], dtype=float)
+            rank = {"corner": 0, "mid": 1, "edge": 2}
+            return min(found, key=lambda f: (rank[f[1]], float(np.linalg.norm(np.array(self._to_screen(f[0])) - m))))
+        return (pos, "free") if hit else None
+
+    # --- the outline of a cut (View -> Clip): snapped to like an edge of the model
+    def _section(self) -> Optional[dict]:
+        """section_targets() of every cut that is on, on the parts shown: where each cutting plane
+        meets the surface, only as far as the other cut keeps it. Made again when a cut moves or
+        turns, or other parts are shown. None without a cut."""
+        planes = self.scene.cut_planes() if hasattr(self.scene, "cut_planes") else []
+        actors = self._actors()
+        if not planes or not actors:
+            return None
+        key = (tuple((tuple(np.round(o, 9)), tuple(np.round(n, 9))) for o, n in planes),
+               tuple((id(a), id(a.GetMapper().GetInput())) for a in actors))
+        if self._section_key == key:
+            return self._section_data
+        parts = []
+        for i, (o, n) in enumerate(planes):
+            for a in actors:
+                s = section_segments(a.GetMapper().GetInput(), o, n)
+                for j, (o2, n2) in enumerate(planes):
+                    if j != i:
+                        s = clip_segments(s, o2, n2)
+                if len(s):
+                    parts.append(s)
+        b = getattr(self.scene, "focus_bounds", None)
+        size = float(max(b[1] - b[0], b[3] - b[2], b[5] - b[4])) if b else 100.0
+        self._section_key = key
+        self._section_data = section_targets(np.concatenate(parts), size) if parts else None
+        return self._section_data
+
+    def _project(self, pts: np.ndarray) -> tuple:
+        """(display x/y, depth along the view) of many world points at once; the same display
+        positions as _to_screen."""
+        ren = self.p.renderer
+        cam = ren.GetActiveCamera()
+        m = cam.GetCompositeProjectionTransformMatrix(ren.GetTiledAspectRatio(), -1.0, 1.0)
+        a = np.array([[m.GetElement(i, j) for j in range(4)] for i in range(4)])
+        h = np.c_[pts, np.ones(len(pts))] @ a.T
+        w = h[:, 3:4]
+        ndc = h[:, :2] / np.where(np.abs(w) < 1e-30, 1e-30, w)
+        sx, sy = ren.GetRenderWindow().GetSize() if ren.GetRenderWindow() is not None else ren.GetSize()
+        vp = ren.GetViewport()
+        x = (ndc[:, 0] + 1.0) * (sx * (vp[2] - vp[0])) / 2.0 + sx * vp[0]
+        y = (ndc[:, 1] + 1.0) * (sy * (vp[3] - vp[1])) / 2.0 + sy * vp[1]
+        pos = np.array(cam.GetPosition(), dtype=float)
+        fwd = np.array(cam.GetDirectionOfProjection(), dtype=float)
+        return np.column_stack([x, y]), (pts - pos) @ fwd
+
+    def _snap_section(self, x: int, y: int, hit_pos) -> Optional[tuple]:
+        """(point, how) on the outline of a cut near the mouse, or None. Only what can be seen:
+        nothing the model under the mouse is in front of."""
+        sec = self._section()
+        if sec is None:
+            return None
+        m = np.array([x, y], dtype=float)
+        limit = None
+        if hit_pos is not None:
+            # The model under the mouse hides what is behind it. A point a few pixels away on the
+            # same (sloping) surface is a little further away too: allow what the snap distance
+            # can add along a wall at up to about 60°.
+            hp = np.asarray(hit_pos, float)
+            limit = float(self._project(hp[None])[1][0]) + 2 * SNAP_PX * self._world_per_px(hp)
+
+        def nearest(points: np.ndarray, px: float):
+            if not len(points):
+                return None
+            scr, depth = self._project(points)
+            d = np.linalg.norm(scr - m, axis=1)
+            ok = d <= px
+            if limit is not None:
+                ok &= depth <= limit
+            if not ok.any():
+                return None
+            i = int(np.flatnonzero(ok)[np.argmin(d[ok])])
+            return points[i]
+
+        for pts, px, how in ((sec["corners"], SNAP_PX, "corner"), (sec["mids"], MID_PX, "mid")):
+            p = nearest(pts, px)
+            if p is not None:
+                return np.array(p, dtype=float), how
+        seg = sec["segments"]
+        flat, _ = self._project(seg.reshape(-1, 3))
+        sa, sb = flat[0::2], flat[1::2]
+        d_ab = sb - sa
+        l2 = np.einsum("ij,ij->i", d_ab, d_ab)
+        t = np.clip(np.einsum("ij,ij->i", m - sa, d_ab) / np.maximum(l2, 1e-9), 0.0, 1.0)
+        on_line = seg[:, 0] + t[:, None] * (seg[:, 1] - seg[:, 0])
+        return (lambda p: None if p is None else (np.array(p, dtype=float), "edge"))(nearest(on_line, EDGE_PX))
 
     @staticmethod
     def _is_edge(mesh, cell_id: int, p1: int, p2: int) -> bool:

@@ -131,6 +131,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Save a screenshot of the 3D view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished"></translation>
@@ -592,6 +597,16 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No preview picture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2203,6 +2218,16 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>With both cuts on, each cutting plane is drawn whole instead of stopping where the other cut is.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

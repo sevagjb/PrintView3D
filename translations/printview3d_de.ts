@@ -131,6 +131,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Save a screenshot of the 3D view</source>
+        <translation type="unfinished">Screenshot der 3D-Ansicht speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Next theme style</source>
         <translation type="unfinished">Nächster Designstil</translation>
@@ -593,6 +598,16 @@
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation type="unfinished">Platte {n}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Folder</source>
+        <translation type="unfinished">Ordner</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No preview picture</source>
+        <translation type="unfinished">Kein Vorschaubild</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2204,6 +2219,16 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>With both cuts on, each cutting plane is drawn whole instead of stopping where the other cut is.</source>
         <translation type="unfinished">Mit beiden Schnitten wird jede Schnittebene ganz gezeichnet, statt dort aufzuhören, wo der andere Schnitt ist.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">Schnitte durch Ziehen in der 3D-Ansicht verschieben</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="unfinished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um den Schnitt zu verschieben, wie mit seinem Schieberegler.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

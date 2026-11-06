@@ -480,6 +480,11 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QPushButton#primary:hover {{ background: {primary_hover}; }}
         QPushButton#link {{ color: {t['link']}; border: none; background: transparent; }}
         QPushButton#link:hover {{ text-decoration: underline; }}
+        /* The preview card of a recent file on the start page. */
+        QFrame#recentPreview {{ background: {t['base']}; border: 1px solid {t['border']}; border-radius: 10px; }}
+        QLabel#recentPreviewPicture {{ background: {t['alt']}; border-radius: 6px; color: {t['muted']}; }}
+        QLabel#recentPreviewName {{ font-weight: 600; font-size: 14px; }}
+        QLabel#recentPreviewFolder {{ color: {t['text']}; }}
         QScrollArea {{ border: none; }}
         QScrollArea#objectsScroll, QScrollArea#objectsScroll > QWidget, QWidget#objectsList {{ background: transparent; }}
         /* The handle (16 x 16 with its border: a round thumb) sticks out 5 px above and below the

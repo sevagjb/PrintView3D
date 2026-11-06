@@ -55,6 +55,7 @@ DEFAULTS = {
     "grid_minor_in": 0,         # ... the same two in inches, while inches are in use
     "grid_major_in": 0,
     "cut_planes_whole": False,  # Settings -> Viewer: with both cuts on, the two cutting planes don't cut each other
+    "clip_handles": False,      # Settings -> Viewer: move the cuts by dragging their knobs in the 3D view
     "show_grid_labels": False,  # Settings -> Viewer: millimetre numbers along the plate's major grid lines
     "clip_ghost": True,         # View -> Clip: show the cut-away part as a see-through ghost (#66)
     "clip_plane": True,         # View -> Clip: show the cutting plane as a faint sheet (#66)

@@ -451,6 +451,13 @@ class SettingsDialog(QDialog):
         self.cut_planes_cb.setToolTip(tr("With both cuts on, each cutting plane is drawn whole instead of "
                                          "stopping where the other cut is."))
         l3.addWidget(self.cut_planes_cb)
+        # View -> Clip: a knob on each cutting plane, to move the cut by dragging it in the 3D view
+        # (the sliders still work as well).
+        self.clip_handles_cb = QCheckBox(tr("Move the cuts by dragging them in the 3D view"))
+        self.clip_handles_cb.setChecked(bool(settings.get("clip_handles", False)))
+        self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the cut, "
+                                           "like its slider does."))
+        l3.addWidget(self.clip_handles_cb)
         # Check: keep the colours picked for the highlights (otherwise they are the defaults again
         # at every start).
         self.check_colors_cb = QCheckBox(tr("Remember the colours of the Check section"))
@@ -1132,6 +1139,7 @@ class SettingsDialog(QDialog):
         self.settings.set("units", self.units_combo.currentData())
         self.settings.set("nozzle_in_inches", self.nozzle_in_cb.isChecked())
         self.settings.set("cut_planes_whole", self.cut_planes_cb.isChecked())
+        self.settings.set("clip_handles", self.clip_handles_cb.isChecked())
         keys.save(self.settings, self._key_values)
         self.settings.set("check_keep_colors", self.check_colors_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())

@@ -131,6 +131,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Save a screenshot of the 3D view</source>
+        <translation type="unfinished">Salvează o captură a vizualizării 3D</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Next theme style</source>
         <translation>Următorul stil de temă</translation>
@@ -593,6 +598,16 @@
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation>Placa {n}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Folder</source>
+        <translation type="unfinished">Dosar</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No preview picture</source>
+        <translation type="unfinished">Nicio imagine de previzualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2204,6 +2219,16 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>With both cuts on, each cutting plane is drawn whole instead of stopping where the other cut is.</source>
         <translation type="unfinished">Cu ambele tăieri pornite, fiecare plan de tăiere este desenat întreg în loc să se oprească unde este cealaltă tăiere.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">Mută tăieturile trăgându-le în vizualizarea 3D</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="unfinished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura, ca glisorul său.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

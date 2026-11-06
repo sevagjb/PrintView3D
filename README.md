@@ -247,8 +247,9 @@ into Applications to replace the old one. Older Macs that can't run macOS 14:
 your recent files. It also gives back the memory the file took, which matters most after a large
 G-code or ZIP.
 
-On the start page, hold the mouse over a recent file to see where it is and, for 3MF projects,
-G-code and FreeCAD files that have one, its preview picture.
+On the start page, hold the mouse over a recent file and a card next to the list shows its preview
+picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
+The card stays in the same place for every file, so you can run down the list and compare.
 
 **One window:** a file you double-click while PrintView3D is already open is shown in that window,
 which comes to the front. To give every file its own window (to compare two models side by side),
@@ -282,6 +283,7 @@ already has. The mouse controls are fixed.
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
 | `S` | Settings |
+| `Ctrl+Shift+S` | Save a screenshot of the 3D view |
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` | Fit the model in the view |
@@ -314,7 +316,7 @@ and the other model formats; G-code has its layer slider instead):
   click that face on the view cube. The slider moves the cut nearer or further, and **Depth**
   shows how far it is into the model. **Freeze the cutting plane** keeps the cut where it is
   while you turn and move the model.
-- **Both cuts at once**: `C` and `V` each turn their own cut on and off, so both can be on together
+- **Both cuts at once**: `T` and `Y` each turn their own cut on and off, so both can be on together
   for a corner cut away, with a **Height** and a **Depth** slider in the side panel. What the cuts
   hide stays one even ghost, and each cutting plane stops where the other cut is. **Reset view**
   ends both.
@@ -323,6 +325,9 @@ and the other model formats; G-code has its layer slider instead):
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
+- **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Move the cuts by
+  dragging them in the 3D view** and each cut gets a round handle on the edge of its cutting plane,
+  with a short line showing which way it moves. Drag it to move the cut; its slider moves along.
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
   Measurements stay.
 
@@ -334,8 +339,9 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
 
 - **Measure** (`M`, the button next to **View**): **Distance** (with ΔX ΔY ΔZ if you like),
   **Angle** and **Circle** (diameter and radius). A click places a point, a drag still turns the
-  view, and a placed point can be dragged. Points snap to corners and edges; the value is written
-  next to every measurement, and **Clear** removes them all.
+  view, and a placed point can be dragged. Points snap to corners and edges, and with a cut on also
+  to the outline of the cut, so you can measure inside the model; the value is written next to
+  every measurement, and **Clear** removes them all.
 - **Object colours**: click the colour box of an object in the **Objects** list to give it another
   colour; right-click goes back to the file's colour. Not saved.
 - **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres

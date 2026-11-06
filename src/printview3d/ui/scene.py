@@ -769,6 +769,17 @@ class Scene:
         """The planes every part is cut by: it keeps only what all of them keep."""
         return [{"top": self._top_plane, "face": self._face_plane}[k] for k in self._cuts()]
 
+    def cut_planes(self) -> list:
+        """(origin, normal) of every cut that is on, as numpy arrays; the normal points to the part
+        that is kept. Measure snaps to where they meet the model."""
+        return [(np.array(p.GetOrigin(), dtype=float), np.array(p.GetNormal(), dtype=float))
+                for p in self._model_planes()]
+
+    def face_plane(self) -> tuple:
+        """(origin, normal) of the Clip facing you cut as it is now drawn (it turns with the view)."""
+        return (np.array(self._face_plane.GetOrigin(), dtype=float),
+                np.array(self._face_plane.GetNormal(), dtype=float))
+
     def apply_view_options(self):
         """Wireframe, X-ray and the cuts on every part of the model (G-code toolpaths keep
         their look: they are lines already, and the layer slider is their cut)."""

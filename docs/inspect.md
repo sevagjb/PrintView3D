@@ -57,6 +57,15 @@ cutting plane stops where the other cut is (**Settings → Viewer → Don't let 
 cut each other** draws both whole, with a faint line where they meet). The cut buttons in the View section, or the keys, end each cut.
 *New in PrintView3D 0.27.*
 
+## Drag the cuts in the 3D view
+
+Rather move a cut where you are looking than on its slider? Tick **Settings → Viewer → Move the
+cuts by dragging them in the 3D view**. Each cut then gets a round handle on the edge of its
+cutting plane, with a short line through it that shows which way the cut moves: Clip from the top's
+on the side of the plane furthest right, Clip facing you's on the top edge of its plane. The handle
+lights up under the mouse; drag it and the cut follows, with its slider. Seen straight from above
+(or the upright cut from eye level), drag up to move the cut up or further away. Off by default.
+
 ## X-ray
 
 The parts become see-through, so parts inside other parts, cavities, channels and screw holes
@@ -97,7 +106,10 @@ measure with the buttons in it:
 How to use the chosen tool is written at the bottom of the 3D view while Measure is on. A click places a point, a drag still turns the view, so you can turn the model between points.
 Finished measurements stay on screen with their value written next to them, and the next click
 starts another; **Clear** removes them all. Drag a placed point to move it. **Snapping** (on at
-every start) jumps to the nearest corner, the middle of an edge or a point on an edge. **Dotted line**
+every start) jumps to the nearest corner, the middle of an edge or a point on an edge. With a cut
+on (View → Clip), the outline of the cut counts as an edge too: its corners, the middles of its
+straight runs and any point on it, so you can measure walls and holes inside the model. Only the
+part you can see is snapped to. **Dotted line**
 draws the lines as dots. How thick the lines are is a slider in **Settings → Viewer**
 (**Measurement lines**). Values that would overlap, such as concentric circles, are stacked above
 each other. **Reset view** leaves your measurements in place. *New in PrintView3D 0.28.*

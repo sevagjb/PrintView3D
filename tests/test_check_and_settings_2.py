@@ -185,7 +185,9 @@ def test_settings_layout(window, app):
         app.processEvents()
     lay = dlg.travel_cb.parentWidget().layout()
     assert lay.indexOf(dlg.cube_cb) == lay.indexOf(dlg.travel_cb) + 1          # right after travel moves
-    assert lay.indexOf(dlg.check_colors_cb) == lay.indexOf(dlg.cut_planes_cb) + 1
+    # Under the planes option: dragging the cuts, then the Check colours.
+    assert lay.indexOf(dlg.clip_handles_cb) == lay.indexOf(dlg.cut_planes_cb) + 1
+    assert lay.indexOf(dlg.check_colors_cb) == lay.indexOf(dlg.clip_handles_cb) + 1
     # The window is as tall as the tallest page of settings needs, up to 90 % of the screen: those
     # pages have no scroll bar. The long list of keys doesn't make it taller: it scrolls.
     limit = int(dlg.screen().availableGeometry().height() * 0.9)

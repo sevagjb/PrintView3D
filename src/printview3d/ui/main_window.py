@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import base64
 import gc
 import html
 import math
@@ -12,11 +11,11 @@ import threading
 from typing import Optional
 
 import numpy as np
-from PySide6.QtCore import QBuffer, QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
+from PySide6.QtCore import QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
 from PySide6.QtGui import (QAction, QActionGroup, QColor, QDesktopServices, QFont, QFontMetrics, QGuiApplication, QIcon,
                            QImage, QKeySequence, QPixmap, QShortcut)
 from PySide6.QtWidgets import (
-    QAbstractItemView, QApplication, QCheckBox, QColorDialog, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QAbstractItemView, QApplication, QCheckBox, QColorDialog, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QScrollArea,
     QSizePolicy, QSlider, QSpinBox, QSplitter, QStackedWidget, QToolBar,
     QToolButton, QVBoxLayout, QWidget,
@@ -145,46 +144,143 @@ def _plate_name(member: str) -> str:
     return tr("Plate {n}").format(n=digits) if digits else stem
 
 
-THUMB_TIP_PX = 200                  # the preview picture in a recent file's tooltip, at most this big
-_recent_tips: dict[tuple[str, float], str] = {}
+PREVIEW_PX = 200                    # the picture of a recent file on the start page: a box this big
+PREVIEW_GAP = 28                    # space between the list of recent files and the preview card
+PREVIEW_NAME_LINES = 2              # the card's file name and folder get this many lines at most,
+PREVIEW_FOLDER_LINES = 4            # so the card is always the same size
+_recent_pics: dict[tuple[str, float], Optional[QImage]] = {}
 
 
-def recent_tooltip(path: str) -> str:
-    """A recent file's tooltip on the start page: its preview picture (3MF, G-code and FreeCAD
-    files can have one) above its full path. Read once per file and change."""
+def recent_picture(path: str) -> Optional[QImage]:
+    """A recent file's preview picture (3MF, G-code and FreeCAD files can have one), or None.
+    Read once per file and change."""
     try:
         stamp = os.path.getmtime(path)
     except OSError:
-        return html.escape(path)
+        return None
     key = (path, stamp)
-    if key not in _recent_tips:
-        picture = ""
+    if key not in _recent_pics:
         data = read_thumbnail(path)
         img = QImage.fromData(data) if data else QImage()
-        if not img.isNull():
-            if max(img.width(), img.height()) > THUMB_TIP_PX:
-                img = img.scaled(THUMB_TIP_PX, THUMB_TIP_PX, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            buf = QBuffer()
-            buf.open(QBuffer.WriteOnly)
-            img.save(buf, "PNG")
-            picture = (f'<img src="data:image/png;base64,{base64.b64encode(bytes(buf.data())).decode()}" '
-                       f'width="{img.width()}" height="{img.height()}"><br>')
-        _recent_tips[key] = f"<p>{picture}{html.escape(path)}</p>"
-    return _recent_tips[key]
+        _recent_pics[key] = None if img.isNull() else img
+    return _recent_pics[key]
+
+
+def breakable_path(text: str) -> str:
+    """A path that a label may wrap after each folder separator (a zero-width space after it)."""
+    return text.replace("\\", "\\\u200b").replace("/", "/\u200b")
+
+
+def fit_lines(text: str, fm: QFontMetrics, width: int, lines: int) -> str:
+    """`text` wrapped to `width`, shortened in the middle (…) until it takes at most `lines` lines."""
+    def height(t: str) -> int:
+        return fm.boundingRect(0, 0, width, 10 ** 6, int(Qt.TextWordWrap | Qt.TextWrapAnywhere), t).height()
+    most = lines * fm.lineSpacing()
+    if height(text) <= most:
+        return text
+    keep = len(text)
+    while keep > 4:
+        keep -= max(1, keep // 20)
+        short = text[:keep // 2] + "…" + text[len(text) - keep // 2:]
+        if height(short) <= most:
+            return short
+    return text[:4] + "…"
 
 
 class _RecentButton(QPushButton):
-    """A recent file on the start page. Its tooltip (picture and path) is made on the first
-    hover, so the start page doesn't open every file when it appears."""
+    """A recent file on the start page. With the mouse over it (or the keyboard focus on it) the
+    start page shows its preview card; the picture is only read then."""
 
-    def __init__(self, path: str, parent=None):
+    def __init__(self, path: str, on_hover=None, parent=None):
         super().__init__(os.path.basename(path), parent)
         self.path = path
+        self.on_hover = on_hover
 
-    def event(self, e):
-        if e.type() == QEvent.ToolTip:
-            self.setToolTip(recent_tooltip(self.path))
-        return super().event(e)
+    def _tell(self, path):
+        if self.on_hover is not None:
+            self.on_hover(path)
+
+    def enterEvent(self, e):
+        self._tell(self.path)
+        super().enterEvent(e)
+
+    def leaveEvent(self, e):
+        self._tell(None)
+        super().leaveEvent(e)
+
+    def focusInEvent(self, e):
+        self._tell(self.path)
+        super().focusInEvent(e)
+
+    def focusOutEvent(self, e):
+        self._tell(None)
+        super().focusOutEvent(e)
+
+
+class _RecentPreview(QFrame):
+    """The card next to the recent files on the start page: the file's picture in a box of fixed
+    size (centred in it), its name and, under a small heading, the folder it is in. The card is
+    always the same size and, for the whole list, in the same place, so nothing jumps from one
+    file to the next."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("recentPreview")
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)       # never takes the mouse from the list
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(12, 12, 12, 12)
+        lay.setSpacing(6)
+        self.picture = QLabel()
+        self.picture.setObjectName("recentPreviewPicture")
+        self.picture.setFixedSize(PREVIEW_PX, PREVIEW_PX)
+        self.picture.setAlignment(Qt.AlignCenter)
+        self.picture.setWordWrap(True)
+        lay.addWidget(self.picture)
+        self.name = QLabel()
+        self.name.setObjectName("recentPreviewName")
+        self.name.setWordWrap(True)
+        self.name.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        lay.addWidget(self.name)
+        self.folder_title = QLabel()
+        self.folder_title.setObjectName("muted")
+        lay.addWidget(self.folder_title)
+        self.folder = QLabel()
+        self.folder.setObjectName("recentPreviewFolder")
+        self.folder.setWordWrap(True)
+        self.folder.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        lay.addWidget(self.folder)
+        self.setFixedWidth(PREVIEW_PX + 24)
+        self.path = None
+        self.hide()
+
+    def _fix_heights(self):
+        """The name and folder rows keep the same height for every file (their fonts may differ:
+        the theme sets them)."""
+        self.name.setFixedHeight(PREVIEW_NAME_LINES * self.name.fontMetrics().lineSpacing())
+        self.folder.setFixedHeight(PREVIEW_FOLDER_LINES * self.folder.fontMetrics().lineSpacing())
+
+    def show_file(self, path: str):
+        self.path = path
+        self.folder_title.setText(tr("Folder"))
+        self._fix_heights()
+        img = recent_picture(path)
+        if img is None:
+            self.picture.setPixmap(QPixmap())
+            self.picture.setText(tr("No preview picture"))
+        else:
+            dpr = self.devicePixelRatioF()
+            side = int(round(PREVIEW_PX * dpr))
+            pm = QPixmap.fromImage(img)
+            if pm.width() > side or pm.height() > side:
+                pm = pm.scaled(side, side, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pm.setDevicePixelRatio(dpr)
+            self.picture.setText("")
+            self.picture.setPixmap(pm)
+        width = PREVIEW_PX
+        self.name.setText(fit_lines(os.path.basename(path), self.name.fontMetrics(), width, PREVIEW_NAME_LINES))
+        self.folder.setText(breakable_path(fit_lines(os.path.dirname(path), self.folder.fontMetrics(), width,
+                                                     PREVIEW_FOLDER_LINES)))
+        self.adjustSize()
 
 
 class _LoadSignals(QObject):
@@ -593,6 +689,7 @@ class MainWindow(QMainWindow):
         self.view_cube.set_colors(theme.colors())
         if hasattr(self, "measure"):
             self.measure.set_colors(theme.colors())
+            self.clip_handles.set_colors(theme.colors())
             self.hints.set_colors(theme.colors())
             self.grid_labels.set_colors(theme.colors())
         self._update_theme_button()
@@ -691,6 +788,7 @@ class MainWindow(QMainWindow):
         self.act_home.setEnabled(False)                 # nothing open yet
         self.addAction(self.act_home)
         self.act_screenshot = QAction(self, triggered=self.save_screenshot)
+        self.addAction(self.act_screenshot)             # its key works wherever the focus is
         self.act_settings = QAction(self, triggered=lambda: self.open_settings())
         self.addAction(self.act_settings)               # its key opens Settings wherever the focus is
         self.act_updates = QAction(self, triggered=lambda: self.open_settings("updates"))
@@ -1012,6 +1110,10 @@ class MainWindow(QMainWindow):
         wl.addLayout(self.welcome_recent)
         wl.addStretch(3)
         self.stack.addWidget(welcome)
+        self.welcome_page = welcome
+        # The preview card of the recent file under the mouse: next to the list, not in a layout,
+        # so the list stays centred and the card stays in one place.
+        self.recent_preview = _RecentPreview(welcome)
 
         # ---- viewer page ----
         splitter = QSplitter(Qt.Horizontal)
@@ -1051,6 +1153,13 @@ class MainWindow(QMainWindow):
         self.measure.set_colors(theme.colors())
         self.measure.set_mode(self._measure_mode_setting())
         self.controls.measure = self.measure
+        # View -> Clip: knobs to drag the cuts in the 3D view (Settings -> Viewer, off by default).
+        from .clip_handles import ClipHandles
+        self.clip_handles = ClipHandles(self.plotter, self.scene, self._clip_handle_cuts, self._clip_dragged,
+                                        self.controls.request_render)
+        self.clip_handles.set_colors(theme.colors())
+        self.clip_handles.set_enabled(bool(self.settings.get("clip_handles", False)))
+        self.controls.clip_handles = self.clip_handles
         # Check: the analyses and their highlights (print_check.py).
         from .print_check import PrintCheck
         self.check = PrintCheck(self.plotter, self.scene, self._update_check_panel, self.controls.request_render)
@@ -1468,7 +1577,7 @@ class MainWindow(QMainWindow):
         view_acts = {view: act for act, _, view in self.view_actions}
         self.key_targets = {
             "open": self.act_open, "home": self.act_home, "export": self.act_export_stl,
-            "settings": self.act_settings,
+            "settings": self.act_settings, "screenshot": self.act_screenshot,
             "slicer": short(self.open_in_slicer),
             "next_theme": short(self.next_theme),
             "light_dark": short(self.toggle_light_dark),
@@ -1638,6 +1747,7 @@ class MainWindow(QMainWindow):
         self._update_clip_label()
         self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
+        self.act_screenshot.setToolTip(self._with_key(tr("Screenshot"), "screenshot"))
         self.act_settings.setText(tr("Settings"))
         self.act_settings.setToolTip(self._with_key(tr("Settings"), "settings"))
         self.act_updates.setText(tr("Updates"))
@@ -3272,6 +3382,40 @@ class MainWindow(QMainWindow):
         if render and self.stack.currentIndex() == 1:
             self.plotter.render()
 
+    def _clip_handle_cuts(self) -> dict:
+        """For the knobs of the cuts: {"top": height in mm, "face": distance from the centre of the
+        view in mm} of the cuts that are on, as their sliders say (also at the very top, where
+        Clip from the top cuts nothing but its knob must stay to drag it down again)."""
+        if not self._view_options_apply():
+            return {}
+        out = {}
+        cuts = self._clip_cuts()
+        if "top" in cuts:
+            z = self._clip_height(self.clip_slider.value())
+            if z is not None:
+                out["top"] = z
+        if "face" in cuts:
+            d = self._clip_offset(self.face_slider.value())
+            if d is not None:
+                out["face"] = d
+        return out
+
+    def _clip_dragged(self, cut: str, value: float):
+        """A cut's knob was dragged to `value` (mm): move its slider there, which moves the cut."""
+        if cut == "top":
+            r = self.scene.model_z_range()
+            if r is None or r[1] <= r[0]:
+                return
+            step = (value - r[0]) / (r[1] - r[0]) * self.CLIP_STEPS
+            slider = self.clip_slider
+        else:
+            reach = self.scene.model_face_reach()
+            if not reach:
+                return
+            step = (value / reach + 1.0) / 2.0 * self.CLIP_STEPS
+            slider = self.face_slider
+        slider.setValue(min(self.CLIP_STEPS, max(0, int(round(step)))))
+
     def _update_clip_label(self):
         r = self.scene.model_z_range() if hasattr(self, "scene") else None
         if r is None:
@@ -3596,10 +3740,12 @@ class MainWindow(QMainWindow):
             # The picture shows the model, not the view cube.
             cube_on = self.view_cube.visible
             self.view_cube.set_visible(False)
+            self.clip_handles.set_visible(False)        # nor the knobs of the cuts
             try:
                 self.plotter.screenshot(path)
             finally:
                 self.view_cube.set_visible(cube_on)
+                self.clip_handles.set_visible(True)
                 self.plotter.render()
             self.statusBar().showMessage(tr("Saved {path}").format(path=path), 6000)
 
@@ -3658,6 +3804,8 @@ class MainWindow(QMainWindow):
         self.scene.grid_minor = self._spacing_mm("grid_minor")
         self.scene.grid_major = self._spacing_mm("grid_major")
         self.scene.set_planes_cut_each_other(not bool(self.settings.get("cut_planes_whole", False)))
+        if hasattr(self, "clip_handles"):
+            self.clip_handles.set_enabled(bool(self.settings.get("clip_handles", False)))
         self.scene.show_plate_axes = bool(self.settings.get("show_plate_axes", False))
         self.grid_labels.set_step(self._spacing_mm("grid_labels_step"))
         if render:
@@ -3785,6 +3933,8 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------- recent
     def _refresh_recent_menu(self):
         self.recent_menu.clear()
+        if hasattr(self, "recent_preview"):
+            self.recent_preview.hide()
         self._clear_layout(self.welcome_recent)
         recent = [p for p in self.settings.get("recent_files", []) if os.path.isfile(p)]
         if not recent:
@@ -3799,7 +3949,7 @@ class MainWindow(QMainWindow):
             self.recent_menu.addAction(f"{os.path.basename(p)}   —   {os.path.dirname(p)}",
                                        lambda path=p: self.load(path))
             if i < 6:
-                b = _RecentButton(p)          # hover: the file's preview picture and its path
+                b = _RecentButton(p, self._recent_hover)     # hover: the preview card
                 b.setFlat(True)
                 b.setObjectName("link")
                 b.clicked.connect(lambda _=False, path=p: self.load(path))
@@ -3807,6 +3957,41 @@ class MainWindow(QMainWindow):
         if recent:
             self.recent_menu.addSeparator()
             self.recent_menu.addAction(tr("Clear list"), self._clear_recent)
+
+    def _recent_hover(self, path: Optional[str]):
+        """The mouse is over a recent file on the start page (None: over none): show its preview
+        card, or hide it."""
+        card = self.recent_preview
+        if not path:
+            card.hide()
+            return
+        card.show_file(path)
+        self._place_recent_preview()
+        card.show()
+        card.raise_()
+
+    def _place_recent_preview(self):
+        """The card goes to the right of the list of recent files, its top level with the list's
+        heading: the same place for every file of the list. Without room on the right it goes
+        to the left, and with room on neither side to the right edge of the page."""
+        card, page = self.recent_preview, self.welcome_page
+        page.layout().activate()                     # the list just made: its places are known
+        items = [self.welcome_recent.itemAt(i).widget() for i in range(self.welcome_recent.count())]
+        items = [w for w in items if w is not None]
+        buttons = [w for w in items if isinstance(w, _RecentButton)]
+        if not buttons:
+            return
+        left = min(b.mapTo(page, b.rect().topLeft()).x() for b in buttons)
+        right = max(b.mapTo(page, b.rect().topRight()).x() for b in buttons)
+        top = items[0].mapTo(page, items[0].rect().topLeft()).y()
+        margin = 12
+        x = right + PREVIEW_GAP
+        if x + card.width() > page.width() - margin:
+            x = left - PREVIEW_GAP - card.width()
+            if x < margin:
+                x = page.width() - margin - card.width()
+        y = max(margin, min(top, page.height() - margin - card.height()))
+        card.move(x, y)
 
     def _clear_recent(self):
         self.settings.clear_recent()
