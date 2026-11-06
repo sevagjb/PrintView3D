@@ -1957,13 +1957,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show the X, Y and Z axes on the build plate</source>
-        <translation type="unfinished">De X-, Y- en Z-as op het printbed tonen</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Ook de X-, Y- en Z-as op het printbed tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
-        <translation type="unfinished">Drie pijlen langs X, Y en Z, vlak naast het model bij de hoek die het dichtst bij je is.</translation>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">Kleine pijlen langs X, Y en Z naast de achterste rechterhoek van het model, naast de markering in de hoek van de weergave.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2689,6 +2689,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">De X-, Y- en Z-as op het printbed tonen</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">Drie pijlen langs X, Y en Z, vlak naast het model bij de hoek die het dichtst bij je is.</translation>
     </message>
     <message>
         <source>Open…</source>

@@ -1957,13 +1957,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show the X, Y and Z axes on the build plate</source>
-        <translation type="unfinished">إظهار المحاور X وY وZ على لوحة الطباعة</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">إظهار المحاور X وY وZ على لوحة الطباعة أيضاً</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
-        <translation type="unfinished">ثلاثة أسهم على امتداد X وY وZ، بجانب النموذج مباشرة عند الزاوية الأقرب إليك.</translation>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">أسهم صغيرة على امتداد X وY وZ بجانب الزاوية الخلفية اليمنى للنموذج، إضافةً إلى المؤشر في زاوية العرض.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2689,6 +2689,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">إظهار المحاور X وY وZ على لوحة الطباعة</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">ثلاثة أسهم على امتداد X وY وZ، بجانب النموذج مباشرة عند الزاوية الأقرب إليك.</translation>
     </message>
     <message>
         <source>Open…</source>

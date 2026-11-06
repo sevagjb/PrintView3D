@@ -118,9 +118,11 @@ class Scene:
         self.grid_major = 0.0
         self.planes_cut_each_other = True
         self.show_plate_axes = False                 # Settings -> Viewer: X/Y/Z arrows on the plate
+        # Where the grid starts (its lines and the scale numbers count from here): the plate's
+        # front-left corner, or with the infinite grid the model's front-left corner.
+        self.grid_origin = (0.0, 0.0)
         self._axes_names: list[str] = []
         self._axes_parts: list = []                  # (arrow, letter, letter offset) per axis
-        self._axes_at = None                         # the corner they are at now
         # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
         self.wireframe = False
         self.xray = False
@@ -168,8 +170,6 @@ class Scene:
         self.p.renderer.AddObserver("StartEvent", self._update_face_plane)
         # ... and let the ghosts follow their parts (hidden in the Objects list: no ghost).
         self.p.renderer.AddObserver("StartEvent", self._sync_ghosts)
-        # ... and put the X/Y/Z arrows (Settings) at the model's corner nearest the camera.
-        self.p.renderer.AddObserver("StartEvent", self._place_plate_axes)
         self._color_axes()
 
     # ------------------------------------------------------------------ theme
@@ -308,19 +308,18 @@ class Scene:
         self._draw_plate_axes()
 
     def plate_axes_frame(self) -> Optional[tuple]:
-        """(origin, length) of the arrows: at the corner of the model nearest the camera, a small
-        gap outside its footprint so they never touch or hide behind it, and about a third of its
-        size long (15 .. 60 mm). The corner changes as the view turns, as the grid numbers do."""
+        """(origin, length) of the arrows: at the model's back-right corner, a small gap outside
+        its footprint so they never touch it, pointing away from it. The usual view looks from the
+        front-right: the back-left corner, farthest away, is hidden behind the model there, so the
+        arrows take the farther of the two corners you see. They stay there whichever way the
+        view turns. Small: a tenth of the model's size (5 .. 20 mm), so they never outgrow it."""
         if self._plate_for is None or not self._plate_for[0]:
             return None
         b, z = self._plate_for
         size = max(b[1] - b[0], b[3] - b[2])
-        length = min(60.0, max(15.0, 0.3 * size))
-        gap = max(3.0, 0.04 * size)
-        cam = self.p.renderer.GetActiveCamera().GetPosition()
-        x = b[1] + gap if cam[0] > (b[0] + b[1]) / 2 else b[0] - gap
-        y = b[3] + gap if cam[1] > (b[2] + b[3]) / 2 else b[2] - gap
-        return (x, y, z), length
+        length = min(20.0, max(5.0, 0.1 * size))
+        gap = max(2.0, 0.03 * size)
+        return (b[1] + gap, b[3] + gap, z), length
 
     def _draw_plate_axes(self):
         for n in self._axes_names:
@@ -332,8 +331,6 @@ class Scene:
             return
         from vtkmodules.vtkRenderingCore import vtkBillboardTextActor3D
         _o, length = frame
-        # Drawn at the origin and moved to their corner (_place_plate_axes), so turning the view
-        # only moves them.
         for label, d, color in PLATE_AXES:
             arrow = pv.Arrow(start=(0, 0, 0), direction=d, scale=length, tip_length=0.22, tip_radius=0.07,
                              shaft_radius=0.025)
@@ -344,7 +341,7 @@ class Scene:
             text = vtkBillboardTextActor3D()         # upright letter, hidden behind the model like the arrow
             text.SetInput(label)
             prop = text.GetTextProperty()
-            prop.SetFontSize(15)
+            prop.SetFontSize(12)
             prop.SetBold(True)
             prop.SetColor(*(v / 255 for v in _hex_to_rgb(self.c["axes_label"])))
             prop.SetJustificationToCentered()
@@ -354,21 +351,11 @@ class Scene:
             self.p.add_actor(text, name=name + "_label", reset_camera=False, render=False, pickable=False)
             self._axes_names += [name, name + "_label"]
             self._axes_parts.append((a, text, [v * length * 1.18 for v in d]))
-        self._axes_at = None
-        self._place_plate_axes()
-        self._show_plate_axes()
-
-    def _place_plate_axes(self, *_):
-        """Before every frame: the arrows at the model's corner nearest the camera."""
-        if not getattr(self, "_axes_parts", None):
-            return
-        frame = self.plate_axes_frame()
-        if frame is None or frame[0] == self._axes_at:
-            return
-        self._axes_at = o = frame[0]
+        o = frame[0]
         for arrow, text, tip in self._axes_parts:
             arrow.SetPosition(*o)
             text.SetPosition(o[0] + tip[0], o[1] + tip[1], o[2] + tip[2])
+        self._show_plate_axes()
 
     def _show_plate_axes(self):
         for n in self._axes_names:
@@ -414,11 +401,11 @@ class Scene:
         half = max(INFINITE_MIN, INFINITE_FACTOR * size) / 2
         auto = self._auto_bed(b)
         step, major = self.grid_spacing(max(auto[1] - auto[0], auto[3] - auto[2]))
-        # Centred under the model, on the grid of world coordinates (lines at multiples of the
-        # step, like the normal plate).
-        cx = round((b[0] + b[1]) / 2 / major) * major
-        cy = round((b[2] + b[3]) / 2 / major) * major
-        # Grid lines on the same world positions as the normal plate (multiples of the step).
+        # The grid starts at the model's front-left corner (its 0 for the scale numbers), and is
+        # centred under the model on that grid.
+        ox, oy = self.grid_origin = (float(b[0]), float(b[2]))
+        cx = ox + round(((b[0] + b[1]) / 2 - ox) / major) * major
+        cy = oy + round(((b[2] + b[3]) / 2 - oy) / major) * major
         gz = z - 0.02
         def lines(spacing: float, reach: float, color: str, skip_major: bool):
             vals = np.arange(math.ceil((-reach) / spacing), math.floor(reach / spacing) + 1) * spacing
@@ -479,19 +466,21 @@ class Scene:
         # Grid sits just under z so it never flickers against the model's bottom face.
         gz = z - 0.02
         minor_a, minor_b, major_a, major_b = [], [], [], []
+        # The lines start at the plate's front-left corner (the scale numbers count from there).
+        self.grid_origin = (float(xmin), float(ymin))
 
         def positions(lo: float, hi: float, spacing: float) -> np.ndarray:
-            return np.arange(math.ceil(lo / spacing - 1e-9), math.floor(hi / spacing + 1e-9) + 1) * spacing
+            return lo + np.arange(0, math.floor((hi - lo) / spacing + 1e-9) + 1) * spacing
 
-        def on_major(v: float) -> bool:
-            return abs(round(v / major) * major - v) < 1e-6
+        def on_major(v: float, lo: float) -> bool:
+            return abs(round((v - lo) / major) * major - (v - lo)) < 1e-6
 
         for lo, hi, along in ((xmin, xmax, "x"), (ymin, ymax, "y")):
             majors = positions(lo, hi, major)
             minors = positions(lo, hi, step)
             if len(minors) > 3000:                   # a 1 mm grid on a huge plate: no fine lines
                 minors = minors[:0]
-            for v, is_major in [(m, True) for m in majors] + [(m, False) for m in minors if not on_major(m)]:
+            for v, is_major in [(m, True) for m in majors] + [(m, False) for m in minors if not on_major(m, lo)]:
                 a, b = (((v, ymin, gz), (v, ymax, gz)) if along == "x" else ((xmin, v, gz), (xmax, v, gz)))
                 (major_a if is_major else minor_a).append(a)
                 (major_b if is_major else minor_b).append(b)

@@ -1957,12 +1957,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show the X, Y and Z axes on the build plate</source>
+        <source>Also show the X, Y and Z axes on the build plate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

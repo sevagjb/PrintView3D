@@ -324,10 +324,10 @@ class SettingsDialog(QDialog):
         l3.addWidget(self.cube_cb)
         l3.addWidget(self.bed_cb)
         # X/Y/Z arrows on the plate, beside the model (off by default).
-        self.plate_axes_cb = QCheckBox(tr("Show the X, Y and Z axes on the build plate"))
+        self.plate_axes_cb = QCheckBox(tr("Also show the X, Y and Z axes on the build plate"))
         self.plate_axes_cb.setChecked(bool(settings.get("show_plate_axes", False)))
-        self.plate_axes_cb.setToolTip(tr("Three arrows pointing along X, Y and Z, just beside the model at "
-                                         "its corner nearest to you."))
+        self.plate_axes_cb.setToolTip(tr("Small arrows pointing along X, Y and Z, beside the back-right corner of the "
+                                         "model, in addition to the marker in the corner of the view."))
         l3.addWidget(self.plate_axes_cb)
         # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
         self.grid_labels_cb = QCheckBox(tr("Show scale numbers on the grid"))

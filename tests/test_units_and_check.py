@@ -137,10 +137,10 @@ def _lines(w, name):
 
 
 def _expected(lo, hi, minor, major):
-    """(minor, major) line counts along one axis, as the grid draws them."""
+    """(minor, major) line counts along one axis, as the grid draws them (from the plate's corner)."""
     import math
     def pos(step):
-        return [i * step for i in range(math.ceil(lo / step - 1e-9), math.floor(hi / step + 1e-9) + 1)]
+        return [lo + i * step for i in range(0, math.floor((hi - lo) / step + 1e-9) + 1)]
     majors = pos(major)
     minors = [m for m in pos(minor) if all(abs(m - M) > 1e-6 for M in majors)]
     return len(minors), len(majors)

@@ -14,8 +14,10 @@ Decisions
     quiet. They are hidden while the camera is under the plate.
   * The endless grid has no edge: its numbers follow the area around the model (the rectangle
     the grid is drawn for), so they stay near the model.
-  * Only positive numbers are written: a plate around the origin, or the area left of / in front
-    of it, shows no "-20 mm" (a distance on the plate reads as a size, not a coordinate).
+  * The numbers count from the plate's front-left corner (0 there), whatever coordinates the
+    printer uses, so none is negative. With the infinite grid they count from the model's
+    front-left corner: the grid's lines start there too (Scene.grid_origin), and the area
+    left of / in front of the model has no numbers.
 """
 
 from __future__ import annotations
@@ -155,12 +157,13 @@ class GridLabels:
         x_edge = xmin if cam[0] <= (xmin + xmax) / 2 else xmax
         cy, cx = (ymin + ymax) / 2, (xmin + xmax) / 2
         out = []
-        for x in label_values(xmin, xmax, major, step=self.step):
-            if x > 0:
-                out.append((text_for(x), (x, y_edge, z), (x, cy, z)))
-        for y in label_values(ymin, ymax, major, step=self.step):
-            if y > 0:
-                out.append((text_for(y), (x_edge, y, z), (cx, y, z)))
+        ox, oy = getattr(self.scene, "grid_origin", (0.0, 0.0))
+        for d in label_values(xmin - ox, xmax - ox, major, step=self.step):
+            if d > 0:
+                out.append((text_for(d), (ox + d, y_edge, z), (ox + d, cy, z)))
+        for d in label_values(ymin - oy, ymax - oy, major, step=self.step):
+            if d > 0:
+                out.append((text_for(d), (x_edge, oy + d, z), (cx, oy + d, z)))
         return out
 
     def _layout(self, *_):

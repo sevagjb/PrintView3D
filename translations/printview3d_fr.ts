@@ -1957,13 +1957,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show the X, Y and Z axes on the build plate</source>
-        <translation type="unfinished">Afficher les axes X, Y et Z sur le plateau</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Afficher aussi les axes X, Y et Z sur le plateau</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
-        <translation type="unfinished">Trois flèches selon X, Y et Z, juste à côté du modèle, à son coin le plus proche de vous.</translation>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">Petites flèches selon X, Y et Z, à côté du coin arrière droit du modèle, en plus du repère dans le coin de la vue.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2689,6 +2689,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">Afficher les axes X, Y et Z sur le plateau</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">Trois flèches selon X, Y et Z, juste à côté du modèle, à son coin le plus proche de vous.</translation>
     </message>
     <message>
         <source>Open…</source>

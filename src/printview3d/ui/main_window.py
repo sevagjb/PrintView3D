@@ -1467,6 +1467,7 @@ class MainWindow(QMainWindow):
         self.check_angle_label.setText(tr("from vertical"))
         self.check_nozzle_label.setText(tr("nozzle"))
         self.check_loose_label.setText(tr("up to"))
+        self._align_check_inputs()
         self.check_mesh_title.setText(tr("Mesh"))
         self.check_close_btn.setText(tr("Close"))
         for kind, text, tip, technical in (
@@ -2816,6 +2817,21 @@ class MainWindow(QMainWindow):
         self.settings.set("check_nozzle", mm)
         self.check.set_nozzle(mm)
 
+    def _align_check_inputs(self):
+        """The angle and the nozzle width one above the other: both fields as wide as the wider
+        needs, and both words after them ("from vertical", "nozzle") as wide as the longer."""
+        spins = (self.check_angle, self.check_nozzle)
+        labels = (self.check_angle_label, self.check_nozzle_label)
+        for wdg in spins + labels:
+            wdg.setMinimumWidth(0)
+            wdg.setMaximumWidth(16777215)
+        width = max(w.sizeHint().width() for w in spins)
+        for w in spins:
+            w.setFixedWidth(width)
+        width = max(w.sizeHint().width() for w in labels)
+        for w in labels:
+            w.setFixedWidth(width)
+
     def _check_loose_changed(self):
         mm = round(self.check_loose.mm(), 3)
         if abs(mm - self.check.loose_max) < 1e-6:
@@ -3548,6 +3564,7 @@ class MainWindow(QMainWindow):
         if self.measure.active:
             self.measure._update()
         self.check_nozzle.set_unit(units.current())
+        self._align_check_inputs()
 
     # ------------------------------------------------------------ updates
     def start_update_checks(self):

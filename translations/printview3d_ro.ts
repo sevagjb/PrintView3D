@@ -1957,13 +1957,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show the X, Y and Z axes on the build plate</source>
-        <translation type="unfinished">Arată axele X, Y și Z pe placa de construcție</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Arată și axele X, Y și Z pe placa de construcție</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
-        <translation type="unfinished">Trei săgeți de-a lungul axelor X, Y și Z, chiar lângă model, la colțul cel mai apropiat de tine.</translation>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">Săgeți mici de-a lungul axelor X, Y și Z, lângă colțul din spate-dreapta al modelului, pe lângă marcajul din colțul vizualizării.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2689,6 +2689,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">Arată axele X, Y și Z pe placa de construcție</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">Trei săgeți de-a lungul axelor X, Y și Z, chiar lângă model, la colțul cel mai apropiat de tine.</translation>
     </message>
     <message>
         <source>Open…</source>

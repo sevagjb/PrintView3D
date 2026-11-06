@@ -158,8 +158,9 @@ files are always in millimetres.
 unit you chose) along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
 to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
-you look from under the plate. With the endless grid they follow the area around the model. Only
-positive numbers are written: a plate around the origin shows no "-20 mm".
+you look from under the plate. They count from the plate's front-left corner (0 there), whatever
+coordinates the printer uses, so there are no negative numbers. With the endless grid they follow the
+area around the model and count from the model's front-left corner, where the grid's lines start too.
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
 of the automatic one. **Grid lines every** and **Main grid lines every** set the spacing of the grid
 itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *New in PrintView3D 0.28.*
@@ -168,10 +169,10 @@ itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *Ne
 
 ## X, Y and Z on the plate
 
-**Settings → Viewer → Show the X, Y and Z axes on the build plate** (off by default, just under
-*Show build plate grid*) draws three arrows (X red, Y green, Z blue, as in the small marker in the
-corner of the view) just beside the model, at its corner nearest to you. They move to another corner
-as you turn the view, so they never stand in front of the model, and hide with the plate.
+**Settings → Viewer → Also show the X, Y and Z axes on the build plate** (off by default, just under
+*Show build plate grid*) draws three small arrows (X red, Y green, Z blue, as in the marker in the
+corner of the view) just beside the back-right corner of the model, about a tenth of its size. They
+stay there as you turn the view and hide with the plate.
 
 ## Keys
 

@@ -203,6 +203,7 @@ def test_settings_layout(window, app):
     widths = {c.width() for c in (dlg.grid_step_combo, dlg.grid_minor_combo, dlg.grid_major_combo, dlg.plate_combo)}
     assert len(widths) == 1
     assert lay.indexOf(dlg.plate_axes_cb) == lay.indexOf(dlg.bed_cb) + 1
+    assert dlg.plate_axes_cb.text().startswith("Also show")    # in addition to the corner marker
     dlg.close()
 
 
@@ -310,15 +311,45 @@ def test_highlights_leave_the_grid_where_it_is(window):
     assert (float(f), float(u)) == (0.0, 0.0)
 
 
-def test_grid_numbers_are_positive(window):
+def test_grid_numbers_count_from_the_plate_corner(window):
     w = window
     w.load_sync(CUBE)
     w.plotter.ren_win.SetSize(800, 600)
     g = w.grid_labels
     g.set_enabled(True)
-    w.scene.bed_bounds = (-100, 100, -100, 100, 0, 0)     # a plate around the origin
-    vals = [t for t, _a, _c in g.wanted()]
-    assert vals and all(not t.startswith("-") for t in vals)
+    w.scene.draw_bed((-100.0, 100.0, -80.0, 120.0), 0.0)     # a plate around the origin
+    assert w.scene.grid_origin == (-100.0, -80.0)            # 0 is its front-left corner
+    items = g.wanted()
+    assert items and all(not t.startswith("-") for t, _a, _c in items)
+    xs = {round(a[0], 6): t for t, a, _c in items if a[1] in (-80.0, 120.0)}
+    assert xs[-50.0] == "50 mm" and xs[0.0] == "100 mm"       # counted from the corner
+    # the grid lines start at the corner too: the numbers sit on major lines
+    from vtkmodules.util.numpy_support import vtk_to_numpy
+    pts = vtk_to_numpy(w.scene.p.actors["bed_major"].GetMapper().GetInput().GetPoints().GetData())
+    assert -50.0 in set(np.round(pts[:, 0], 6))
+
+
+def test_infinite_grid_counts_from_the_model(window):
+    w = window
+    w.load_sync(CUBE)
+    w.choose_plate_mode("infinite")
+    b = w.scene.focus_bounds
+    assert w.scene.grid_origin == pytest.approx((b[0], b[2]))
+    g = w.grid_labels
+    g.set_enabled(True)
+    w.plotter.ren_win.SetSize(800, 600)
+    items = g.wanted()
+    assert items and all(not t.startswith("-") for t, _a, _c in items)
+
+
+def test_angle_and_nozzle_fields_line_up(window):
+    w = window
+    w.load_sync(CUBE)
+    w.act_check.trigger()
+    w.side.adjustSize()
+    a = w.check_angle.mapTo(w.side, w.check_angle.rect().topLeft()).x()
+    n = w.check_nozzle.mapTo(w.side, w.check_nozzle.rect().topLeft()).x()
+    assert a == n and w.check_angle.width() == w.check_nozzle.width()
 
 
 def test_xyz_arrows_on_the_plate(window):
@@ -329,15 +360,16 @@ def test_xyz_arrows_on_the_plate(window):
     w._settings_applied()
     names = [n for n in w.scene.p.actors if n.startswith("plate_axis")]
     assert len(names) == 6                            # three arrows, three letters
-    cam = w.plotter.renderer.GetActiveCamera()
     b = w.scene.focus_bounds
-    for pos, near_x, near_y in (((-100, -100, 80), b[0], b[2]), ((200, 200, 80), b[1], b[3])):
+    (ox, oy, _z), length = w.scene.plate_axes_frame()
+    assert length <= 0.5 * (b[1] - b[0])              # small: well under the model's size
+    # beside the back-right corner, just outside the model; it stays there as the view turns
+    assert b[1] < ox < b[1] + 5 and b[3] < oy < b[3] + 5
+    cam = w.plotter.renderer.GetActiveCamera()
+    for pos in ((-100, -100, 80), (200, 200, 80), (-100, 200, 80)):
         cam.SetPosition(*pos)
-        w.scene._place_plate_axes()
-        o = w.scene.p.actors["plate_axis_X"].GetPosition()
-        # at the corner nearest the camera, just outside the model
-        assert abs(o[0] - near_x) < 10 and abs(o[1] - near_y) < 10
-        assert not (b[0] <= o[0] <= b[1]) and not (b[2] <= o[1] <= b[3])
+        w.plotter.render()
+        assert w.scene.p.actors["plate_axis_X"].GetPosition() == pytest.approx((ox, oy, _z))
     w.act_bed.setChecked(False)                       # on the plate: hidden with it
     assert not w.scene.p.actors["plate_axis_X"].GetVisibility()
     w.act_bed.setChecked(True)

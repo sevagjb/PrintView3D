@@ -1957,13 +1957,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show the X, Y and Z axes on the build plate</source>
-        <translation type="unfinished">X-, Y- und Z-Achse auf der Druckplatte zeigen</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Auch die X-, Y- und Z-Achse auf der Druckplatte zeigen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
-        <translation type="unfinished">Drei Pfeile entlang X, Y und Z, direkt neben dem Modell an seiner Ecke, die Ihnen am nächsten ist.</translation>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">Kleine Pfeile entlang X, Y und Z neben der hinteren rechten Ecke des Modells, zusätzlich zur Markierung in der Ecke der Ansicht.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2689,6 +2689,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">X-, Y- und Z-Achse auf der Druckplatte zeigen</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">Drei Pfeile entlang X, Y und Z, direkt neben dem Modell an seiner Ecke, die Ihnen am nächsten ist.</translation>
     </message>
     <message>
         <source>Open…</source>
