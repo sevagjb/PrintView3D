@@ -11,7 +11,6 @@
 </p>
 
 <p align="center">
-
   📖 <b>Read the guide on the website:</b>
   <a href="https://sevagjb.github.io/PrintView3D/">English</a> ·
   <a href="https://sevagjb.github.io/PrintView3D/ar/">العربية</a> ·
