@@ -102,6 +102,8 @@ punt op een rand. **Stippellijn** tekent de lijnen gestippeld. Hoe dik de lijnen
 concentrische cirkels, komen boven elkaar te staan. **Weergave herstellen** laat je metingen staan.
 *Nieuw in PrintView3D 0.28.*
 
+![Een afstand met ΔX ΔY ΔZ, een rechte hoek en de diameter van de inlaat, gemeten op het pomphuis](assets/inside/measure.nl.png)
+
 ## Kleuren en het zijpaneel
 
 De lijst **Objecten** staat bovenaan in het zijpaneel en **Details** onderaan; klik op *Details* om ze
@@ -109,6 +111,8 @@ in te klappen (de keuze wordt onthouden). Bovenaan zie je het bestandstype en de
 kleurvak van een object om alleen dat object een andere kleur te geven; rechtsklik zet de kleur uit het
 bestand terug. Gekozen kleuren worden niet opgeslagen: na een herstart is alles weer zoals het was.
 *Nieuw in PrintView3D 0.28.*
+
+![Het huis en de waaier in zelfgekozen kleuren, met röntgen](assets/inside/colors.nl.png)
 
 ## Afstanden op het raster
 
@@ -119,6 +123,8 @@ buiten de twee randen die het dichtst bij je zijn, in de kleur van het raster, b
 ook kijkt, en verdwijnen als je van onder de plaat kijkt. Bij het oneindige raster volgen ze het gebied
 rond het model. **Afstand tussen de getallen** kiest een andere afstand, van 5 tot 100 mm, in plaats
 van de automatische. *Nieuw in PrintView3D 0.28.*
+
+![Afstanden in millimeters langs de randen van de printplaat](assets/inside/grid-numbers.png)
 
 ## Toetsen
 

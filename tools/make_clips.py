@@ -125,9 +125,50 @@ class Capture:
 
     def off(self):
         w = self.w
-        for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face):
+        for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face, w.act_measure):
             if a.isChecked():
                 a.setChecked(False)
+        for i in range(len(w.scene.model_actors)):           # the file's own colours again
+            w.scene.set_part_color(i, None)
+        self.show_colors()
+        w.grid_labels.set_enabled(False)
+        w.act_view.setChecked(False)                      # the View section closed
+        self.settle()
+
+    def show_colors(self):
+        """The colour boxes in the Objects list follow the colours the parts are drawn in."""
+        from printview3d.ui.main_window import _ColorButton
+        w = self.w
+        n = len(w.model.parts)
+        for i, box in enumerate(w.findChildren(_ColorButton)):
+            if i < n:
+                box.set_color(w._object_color(i, w.model.parts[i], n))
+
+    def measurements(self):
+        """Measure on, with one of each kind on the housing (world coordinates, mm): the height
+        of the front wall with its ΔX ΔY ΔZ, the right angle of the top front edge, and the
+        14 mm inlet on top (Ø 14, R 7)."""
+        import math
+        import numpy as np
+        from printview3d.ui.measure import Item
+        w = self.w
+        w.measure_deltas_cb.setChecked(True)
+        w.choose_measure_mode("distance")           # turns Measure on, the section opens
+        self.settle()
+        m = w.measure
+        cx, cy, top = 175.0, 175.0, 46.0           # see tools/make_inside_demo.py
+        front = cy - 32.0
+        dist = Item("distance")
+        dist.points = [np.array(p) for p in ((205.0, front, top), (205.0, front, 0.0))]
+        ang = Item("angle")
+        ang.points = [np.array(p) for p in ((150.0, front + 16.0, top), (150.0, front, top), (150.0, front, top - 20.0))]
+        circ = Item("circle")
+        circ.points = [np.array((cx - 14.0 + 7.0 * math.cos(t), cy + 7.0 * math.sin(t), top))
+                       for t in (math.radians(200), math.radians(300), math.radians(60))]
+        m.items = [dist, ang, circ]
+        m.current = dist
+        m.hover_point = None
+        m._update()
         self.settle()
 
 
@@ -187,6 +228,36 @@ def make_stills(c: Capture, lang: str):
     w.act_xray.setChecked(True)
     c.still(f"xray-clip{sfx}.png")                  # options work together
     c.off()
+    # 0.28: Measure, the object colours.
+    c.iso()
+    c.measurements()
+    c.still(f"measure{sfx}.png")                    # distance with ΔX ΔY ΔZ, angle, circle
+    c.off()
+    c.iso()
+    w.act_xray.setChecked(True)                     # see-through, so the impeller shows too
+    w.act_view.setChecked(False)
+    w.scene.set_part_color(0, "#ef791b")            # Ember orange and teal
+    w.scene.set_part_color(1, "#2cc1b2")
+    c.show_colors()
+    c.still(f"colors{sfx}.png")
+    c.off()
+
+
+def make_grid(c: Capture):
+    """The numbers along the plate (3D view only, the same in every language)."""
+    w = c.w
+    c.off()
+    w.grid_labels.set_step(0)
+    w.grid_labels.set_enabled(True)
+    w.scene.set_view("iso", render=False)
+    cam = w.plotter.camera
+    cam.Azimuth(-20)
+    cam.Elevation(14)
+    cam.Zoom(0.36)
+    c.render()
+    c.frame().save(os.path.join(c.out, "grid-numbers.png"), optimize=True)
+    print("   grid-numbers.png")
+    c.off()
 
 
 def main():
@@ -208,6 +279,8 @@ def main():
         c.open(lang)
         if i == 0 and not a.no_videos:
             make_videos(c)
+        if i == 0:
+            make_grid(c)
         make_stills(c, lang)
     c.w.close()
 

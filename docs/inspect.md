@@ -100,6 +100,8 @@ draws the lines as dots. How thick the lines are is a slider in **Settings → V
 (**Measurement lines**). Values that would overlap, such as concentric circles, are stacked above
 each other. **Reset view** leaves your measurements in place. *New in PrintView3D 0.28.*
 
+![A distance with its ΔX ΔY ΔZ, a right angle and the diameter of the inlet, measured on the pump housing](assets/inside/measure.png)
+
 ## Colours and the side panel
 
 The **Objects** list comes first in the side panel and the **Details** last; click *Details* to fold
@@ -107,6 +109,8 @@ them away (the choice is remembered). At the top you see the file type and size.
 box of an object to pick another colour for that object alone; right-click it to go back to the
 colour from the file. Colours you pick are not saved: they are back to normal after you restart.
 *New in PrintView3D 0.28.*
+
+![The housing and the impeller in colours of your own choice, seen with X-ray](assets/inside/colors.png)
 
 ## Distances on the grid
 
@@ -117,6 +121,8 @@ edges nearest to you, in the grid's own colour, stay upright whichever way you l
 you look from under the plate. With the endless grid they follow the area around the model.
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
 of the automatic one. *New in PrintView3D 0.28.*
+
+![Distances in millimetres along the edges of the build plate](assets/inside/grid-numbers.png)
 
 ## Keys
 

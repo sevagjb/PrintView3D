@@ -21,11 +21,17 @@ file to Creality Print, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura and others w
 Designing in FreeCAD? Open the `.FCStd` file and send it to your slicer as a model directly,
 without exporting an STL first.
 
-## New: look inside your models
+## New: measure and look inside your models
+
+**New in 0.28: Measure.** Click two points for a distance (with ΔX ΔY ΔZ), three for an angle or for
+the diameter of a hole. Points snap to corners and edges, and every value is written right next to
+its measurement.
+
+![Measuring a distance, an angle and a hole on a pump housing](assets/inside/measure.png)
 
 Turn a model through a cut that always faces you, slice it from the top, or use both cuts at once to
-cut a corner away. What the cut takes away stays as a see-through ghost. Make it see-through, and see
-the size of every object.
+cut a corner away. What the cut takes away stays as a see-through ghost. Make it see-through, give
+each object a colour of your own, and see the size of every object.
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"
        autoplay loop muted playsinline preload="metadata" aria-label="A pump housing turning through an upright cut, showing its insides"></video>
