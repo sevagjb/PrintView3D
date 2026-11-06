@@ -91,8 +91,11 @@ def test_own_key_is_saved_and_shown_everywhere(window):
     assert w.settings.get("shortcuts") == {"measure": "Shift+M", "fit": "Ctrl+Shift+F"}   # only the changes
     w._settings_applied()
     assert w.act_measure.shortcut().toString() == "Shift+M"
-    assert w.act_measure.text() == "Measure (Shift+M)" and w.act_measure.toolTip().endswith("(Shift+M)")
-    assert w.act_fit.text() == "Fit (Ctrl+Shift+F)"
+    # as the system writes it: "Shift+M" on Windows and Linux, "⇧M" on a Mac
+    shift_m, ctrl_shift_f = QKeySequence("Shift+M").toString(QKeySequence.NativeText), \
+        QKeySequence("Ctrl+Shift+F").toString(QKeySequence.NativeText)
+    assert w.act_measure.text() == f"Measure ({shift_m})" and w.act_measure.toolTip().endswith(f"({shift_m})")
+    assert w.act_fit.text() == f"Fit ({ctrl_shift_f})"
     fit = [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("Ctrl+Shift+F")]
     assert len(fit) == 1 and not [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("F")]
     # kept for the next start
