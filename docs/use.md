@@ -34,9 +34,9 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
-| `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
+| `1` · `2` · `3` · `4` | Iso · Top · Front · Right view |
 | `W` · `X` · `C` · `V` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
-| `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (models) |
+| `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (on G-code: fit) |
 | `M` | Measure on / off (models) |
 | `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
 | `Page Up` / `Page Down` | 10 layers up / down |
@@ -119,7 +119,7 @@ files, for example to share a model or open it in a program that does not read 3
 
 ## ZIP files
 
-Model downloads often come as a ZIP. Open it like any other file (**Open…** or drag it onto the
+Model downloads often come as a ZIP. Open it like any other file (**Open file or ZIP…** or drag it onto the
 window); there is no need to unpack it first.
 
 <table>

@@ -14,6 +14,8 @@ Decisions
     quiet. They are hidden while the camera is under the plate.
   * The endless grid has no edge: its numbers follow the area around the model (the rectangle
     the grid is drawn for), so they stay near the model.
+  * Only positive numbers are written: a plate around the origin, or the area left of / in front
+    of it, shows no "-20 mm" (a distance on the plate reads as a size, not a coordinate).
 """
 
 from __future__ import annotations
@@ -154,9 +156,11 @@ class GridLabels:
         cy, cx = (ymin + ymax) / 2, (xmin + xmax) / 2
         out = []
         for x in label_values(xmin, xmax, major, step=self.step):
-            out.append((text_for(x), (x, y_edge, z), (x, cy, z)))
+            if x > 0:
+                out.append((text_for(x), (x, y_edge, z), (x, cy, z)))
         for y in label_values(ymin, ymax, major, step=self.step):
-            out.append((text_for(y), (x_edge, y, z), (cx, y, z)))
+            if y > 0:
+                out.append((text_for(y), (x_edge, y, z), (cx, y, z)))
         return out
 
     def _layout(self, *_):

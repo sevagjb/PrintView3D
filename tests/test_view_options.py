@@ -403,11 +403,12 @@ def test_reset_view_key_and_shortcut_list(window, app):
     assert "R" in [k for row, _ in shortcut_rows() for k in row]
 
 
-def test_reset_view_off_for_gcode(window):
+def test_reset_view_on_gcode_only_fits(window):
     w = window
     w.load_sync(GCODE)
-    assert not w.act_reset_view.isEnabled()
-    w.reset_view()                                                      # harmless anyway
+    assert w.act_reset_view.isEnabled()                                 # R is also Fit's key
+    assert not w.act_wireframe.isEnabled()                              # ... the view options are off
+    w.reset_view()
 
 
 # ---------------------------------------------------------------- freeze the cutting plane

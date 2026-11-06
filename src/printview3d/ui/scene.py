@@ -56,6 +56,9 @@ def ghost_factor(strength) -> float:
 BELOW_LIFT = 0.5              # mm: how far the grid lines move up while the camera is under the plate
 INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
 INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
+# The X/Y/Z arrows on the plate (Settings -> Viewer, off by default): the colours of the corner marker.
+PLATE_AXES = (("X", (1.0, 0.0, 0.0), "tomato"), ("Y", (0.0, 1.0, 0.0), "seagreen"),
+              ("Z", (0.0, 0.0, 1.0), "#4a6cf7"))
 
 MODEL_COLORS = ["#4aa3df", "#f59f4c", "#69c66b", "#b98cff", "#ff6b6b", "#ffd166", "#3cc8c8", "#e88fc7"]
 
@@ -114,6 +117,10 @@ class Scene:
         self.grid_minor = 0.0
         self.grid_major = 0.0
         self.planes_cut_each_other = True
+        self.show_plate_axes = False                 # Settings -> Viewer: X/Y/Z arrows on the plate
+        self._axes_names: list[str] = []
+        self._axes_parts: list = []                  # (arrow, letter, letter offset) per axis
+        self._axes_at = None                         # the corner they are at now
         # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
         self.wireframe = False
         self.xray = False
@@ -161,6 +168,8 @@ class Scene:
         self.p.renderer.AddObserver("StartEvent", self._update_face_plane)
         # ... and let the ghosts follow their parts (hidden in the Objects list: no ghost).
         self.p.renderer.AddObserver("StartEvent", self._sync_ghosts)
+        # ... and put the X/Y/Z arrows (Settings) at the model's corner nearest the camera.
+        self.p.renderer.AddObserver("StartEvent", self._place_plate_axes)
         self._color_axes()
 
     # ------------------------------------------------------------------ theme
@@ -185,6 +194,7 @@ class Scene:
             key = "plate_edge" if self._real_bed else "grid_major"
             a.GetProperty().SetColor(*(v / 255 for v in _hex_to_rgb(c[key])))
         self._color_axes()
+        self._draw_plate_axes()              # their letters in the new theme's colour
 
     def _color_axes(self):
         """The small X/Y/Z marker in the corner: labels readable on any background."""
@@ -222,6 +232,8 @@ class Scene:
         self._cut_line = None
         self.gcode = None
         self._bed_actor_names = []
+        self._axes_names = []
+        self._axes_parts = []
         self.focus_bounds = None
         self.bed_bounds = None
         self._file_bed = None
@@ -284,9 +296,85 @@ class Scene:
         b, z = self._plate_for
         if self.plate_mode == "infinite" and b:
             self.draw_infinite_grid(b, z)
+        else:
+            r = self.plate_rect()
+            self.draw_bed(r[0] if r else None, r[1] if r else 0.0, r[2] if r else True)
+        self._draw_plate_axes()
+
+    # --------------------------------------------------------------- X/Y/Z on the plate
+    def set_plate_axes(self, on: bool):
+        """Settings -> Viewer: arrows for X, Y and Z on the plate, next to the model."""
+        self.show_plate_axes = bool(on)
+        self._draw_plate_axes()
+
+    def plate_axes_frame(self) -> Optional[tuple]:
+        """(origin, length) of the arrows: at the corner of the model nearest the camera, a small
+        gap outside its footprint so they never touch or hide behind it, and about a third of its
+        size long (15 .. 60 mm). The corner changes as the view turns, as the grid numbers do."""
+        if self._plate_for is None or not self._plate_for[0]:
+            return None
+        b, z = self._plate_for
+        size = max(b[1] - b[0], b[3] - b[2])
+        length = min(60.0, max(15.0, 0.3 * size))
+        gap = max(3.0, 0.04 * size)
+        cam = self.p.renderer.GetActiveCamera().GetPosition()
+        x = b[1] + gap if cam[0] > (b[0] + b[1]) / 2 else b[0] - gap
+        y = b[3] + gap if cam[1] > (b[2] + b[3]) / 2 else b[2] - gap
+        return (x, y, z), length
+
+    def _draw_plate_axes(self):
+        for n in self._axes_names:
+            self.p.remove_actor(n, render=False)
+        self._axes_names = []
+        self._axes_parts = []
+        frame = self.plate_axes_frame() if self.show_plate_axes else None
+        if frame is None:
             return
-        r = self.plate_rect()
-        self.draw_bed(r[0] if r else None, r[1] if r else 0.0, r[2] if r else True)
+        from vtkmodules.vtkRenderingCore import vtkBillboardTextActor3D
+        _o, length = frame
+        # Drawn at the origin and moved to their corner (_place_plate_axes), so turning the view
+        # only moves them.
+        for label, d, color in PLATE_AXES:
+            arrow = pv.Arrow(start=(0, 0, 0), direction=d, scale=length, tip_length=0.22, tip_radius=0.07,
+                             shaft_radius=0.025)
+            name = f"plate_axis_{label}"
+            a = self.p.add_mesh(arrow, color=color, name=name, pickable=False, reset_camera=False,
+                                show_scalar_bar=False)
+            a.SetUseBounds(False)                    # Fit and Reset view see the model only
+            text = vtkBillboardTextActor3D()         # upright letter, hidden behind the model like the arrow
+            text.SetInput(label)
+            prop = text.GetTextProperty()
+            prop.SetFontSize(15)
+            prop.SetBold(True)
+            prop.SetColor(*(v / 255 for v in _hex_to_rgb(self.c["axes_label"])))
+            prop.SetJustificationToCentered()
+            prop.SetVerticalJustificationToCentered()
+            text.SetUseBounds(False)
+            text.SetPickable(False)
+            self.p.add_actor(text, name=name + "_label", reset_camera=False, render=False, pickable=False)
+            self._axes_names += [name, name + "_label"]
+            self._axes_parts.append((a, text, [v * length * 1.18 for v in d]))
+        self._axes_at = None
+        self._place_plate_axes()
+        self._show_plate_axes()
+
+    def _place_plate_axes(self, *_):
+        """Before every frame: the arrows at the model's corner nearest the camera."""
+        if not getattr(self, "_axes_parts", None):
+            return
+        frame = self.plate_axes_frame()
+        if frame is None or frame[0] == self._axes_at:
+            return
+        self._axes_at = o = frame[0]
+        for arrow, text, tip in self._axes_parts:
+            arrow.SetPosition(*o)
+            text.SetPosition(o[0] + tip[0], o[1] + tip[1], o[2] + tip[2])
+
+    def _show_plate_axes(self):
+        for n in self._axes_names:
+            a = self.p.actors.get(n)
+            if a is not None:
+                a.SetVisibility(self.bed_visible)
 
     # --------------------------------------------------------------- bed/grid
     def _remove_bed(self):
@@ -431,6 +519,7 @@ class Scene:
             a = self.p.actors.get(n)
             if a is not None:
                 a.SetVisibility(visible)
+        self._show_plate_axes()              # the arrows are on the plate: shown with it
         self._update_plate_side()
 
     def _update_plate_side(self, *_):

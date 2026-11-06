@@ -470,18 +470,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation>Deschide…</translation>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">Deschide un fișier sau un ZIP…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Open folder…</source>
         <translation type="unfinished">Deschide un dosar…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive…</source>
-        <translation type="unfinished">Deschide o arhivă…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -508,7 +503,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation>Încadrează</translation>
@@ -546,6 +540,12 @@
         <source>{view} view ({key})</source>
         <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
         <translation>Vedere {view} ({key})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation>Vedere {view}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -627,11 +627,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation type="unfinished">Închide</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Technical term: {term}.</source>
-        <translation type="unfinished">Termen tehnic: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -982,11 +977,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation>Se așază {n} modele unul lângă altul…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive</source>
-        <translation type="unfinished">Deschide o arhivă</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1967,6 +1957,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Arată axele X, Y și Z pe placa de construcție</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="unfinished">Trei săgeți de-a lungul axelor X, Y și Z, chiar lângă model, la colțul cel mai apropiat de tine.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show scale numbers on the grid</source>
         <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
         <translation type="unfinished">Arată numerele de scară pe grilă</translation>
@@ -2402,11 +2402,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>Vedere {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation>Deschide un fișier</translation>
     </message>
@@ -2694,6 +2689,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">Deschide…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">Deschide o arhivă…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">Termen tehnic: {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">Deschide o arhivă</translation>
     </message>
     <message>
         <source>Open edges</source>

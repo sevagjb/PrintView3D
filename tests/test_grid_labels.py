@@ -68,9 +68,9 @@ def test_off_by_default_and_in_the_viewer_settings(window):
     assert DEFAULTS["show_grid_labels"] is False and not w.grid_labels.enabled
     dlg = SettingsDialog(w.settings, w, {}, page="viewer")
     assert not dlg.grid_labels_cb.isChecked()
-    # next to the "Show build plate grid" checkbox
+    # under the "Show build plate grid" checkbox, after the X/Y/Z arrows on the plate
     layout = dlg.bed_cb.parentWidget().layout()
-    assert layout.indexOf(dlg.grid_labels_cb) == layout.indexOf(dlg.bed_cb) + 1
+    assert layout.indexOf(dlg.grid_labels_cb) == layout.indexOf(dlg.plate_axes_cb) + 1 == layout.indexOf(dlg.bed_cb) + 2
     dlg.grid_labels_cb.setChecked(True)
     dlg._save()
     assert w.settings.get("show_grid_labels") is True
@@ -110,7 +110,8 @@ def test_numbers_sit_on_the_edges_nearest_the_camera(window):
     g = w.grid_labels
     g.set_enabled(True)
     b = w.scene.bed_bounds
-    n_x = len(gl.label_values(b[0], b[1], gl.major_step(b[1] - b[0], b[3] - b[2])))   # X numbers come first
+    n_x = len([v for v in gl.label_values(b[0], b[1], gl.major_step(b[1] - b[0], b[3] - b[2]))
+               if v > 0])                                   # X numbers come first (positive only)
     cx, cy = (b[0] + b[1]) / 2, (b[2] + b[3]) / 2
     cam = w.plotter.renderer.GetActiveCamera()
     cam.SetPosition(cx + 80, cy - 200, b[4] + 150)          # in front, to the right

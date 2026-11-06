@@ -470,18 +470,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation type="unfinished">Abrir…</translation>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">Abrir archivo o ZIP…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Open folder…</source>
         <translation type="unfinished">Abrir carpeta…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive…</source>
-        <translation type="unfinished">Abrir archivo comprimido…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -508,7 +503,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation type="unfinished">Ajustar</translation>
@@ -546,6 +540,12 @@
         <source>{view} view ({key})</source>
         <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
         <translation type="unfinished">Vista {view} ({key})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation type="unfinished">Vista {view}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -627,11 +627,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation type="unfinished">Cerrar</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Technical term: {term}.</source>
-        <translation type="unfinished">Término técnico: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -982,11 +977,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation type="unfinished">Colocando {n} modelos uno al lado del otro…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive</source>
-        <translation type="unfinished">Abrir archivo comprimido</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1967,6 +1957,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Mostrar los ejes X, Y y Z en la placa de impresión</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="unfinished">Tres flechas en las direcciones X, Y y Z, justo al lado del modelo, en su esquina más cercana a ti.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show scale numbers on the grid</source>
         <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
         <translation type="unfinished">Mostrar números de escala en la cuadrícula</translation>
@@ -2402,11 +2402,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation type="unfinished">Vista {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation type="unfinished">Abrir un archivo</translation>
     </message>
@@ -2694,6 +2689,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">Abrir…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">Abrir archivo comprimido…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">Término técnico: {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">Abrir archivo comprimido</translation>
     </message>
     <message>
         <source>Open edges</source>

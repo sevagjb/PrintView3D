@@ -323,6 +323,12 @@ class SettingsDialog(QDialog):
         l3.addWidget(self.travel_cb)
         l3.addWidget(self.cube_cb)
         l3.addWidget(self.bed_cb)
+        # X/Y/Z arrows on the plate, beside the model (off by default).
+        self.plate_axes_cb = QCheckBox(tr("Show the X, Y and Z axes on the build plate"))
+        self.plate_axes_cb.setChecked(bool(settings.get("show_plate_axes", False)))
+        self.plate_axes_cb.setToolTip(tr("Three arrows pointing along X, Y and Z, just beside the model at "
+                                         "its corner nearest to you."))
+        l3.addWidget(self.plate_axes_cb)
         # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
         self.grid_labels_cb = QCheckBox(tr("Show scale numbers on the grid"))
         self.grid_labels_cb.setChecked(bool(settings.get("show_grid_labels", False)))
@@ -478,8 +484,32 @@ class SettingsDialog(QDialog):
 
         self._update_assoc_status()
         self._refresh_updates()
+        self._even_combo_widths()
+        # The page asked for, or the one open when Settings was last closed.
+        if page not in self._page_keys:
+            page = settings.get("settings_page", "")
         self.nav.setCurrentRow(self._page_keys.index(page) if page in self._page_keys else 0)
+        self.nav.currentRowChanged.connect(self._remember_page)
         self._initial_size()
+
+    def _remember_page(self, row: int):
+        if 0 <= row < len(self._page_keys):
+            self.settings.set("settings_page", self._page_keys[row])
+
+    def _even_combo_widths(self):
+        """The dropdowns of the Viewer page are all as wide as the widest needs to be, so they line
+        up (in every language and unit)."""
+        combos = [c for c in (getattr(self, "grid_step_combo", None), getattr(self, "grid_minor_combo", None),
+                              getattr(self, "grid_major_combo", None), getattr(self, "plate_combo", None))
+                  if c is not None]
+        if not combos:
+            return
+        for c in combos:
+            c.setMinimumWidth(0)
+            c.setMaximumWidth(16777215)
+        width = max(c.sizeHint().width() for c in combos)
+        for c in combos:
+            c.setFixedWidth(width)
 
     # ---------------------------------------------------------------- pages
     def _add_page(self, key: str, title: str, widgets: list, keep_titles: bool = False):
@@ -509,11 +539,13 @@ class SettingsDialog(QDialog):
         self._page_keys.append(key)
 
     def _initial_size(self):
-        """Wide enough for the pages and tall enough for the longest one, so no page needs a scroll
-        bar - unless the screen is too small for that (then the page scrolls)."""
+        """Wide enough for the pages and tall enough for the longest page of settings, so none of
+        them needs a scroll bar - unless the screen is too small for that (then the page scrolls).
+        About (the long list of keys and mouse buttons) doesn't count: it scrolls instead."""
         screen = (self.parent().screen() if self.parent() is not None else QApplication.primaryScreen())
         avail = screen.availableGeometry() if screen is not None else None
-        tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count()))
+        tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count())
+                      if self._page_keys[i] != "about")
         buttons = self.findChild(QDialogButtonBox).sizeHint().height()
         m = self.layout().contentsMargins()
         w, h = 860, max(580, tallest + buttons + m.top() + m.bottom() + 24)
@@ -673,6 +705,7 @@ class SettingsDialog(QDialog):
         for spin in (self.plate_w_spin, self.plate_d_spin):
             spin.set_unit(self._spacing_unit)
         self._fill_spacing_combos()
+        self._even_combo_widths()
 
     def theme_choice(self) -> str:
         """The theme chosen on the Appearance page."""
@@ -981,6 +1014,7 @@ class SettingsDialog(QDialog):
         self.settings.set("freecad_path", self.freecad_edit.text().strip())
         self.settings.set("show_travel", self.travel_cb.isChecked())
         self.settings.set("show_bed", self.bed_cb.isChecked())
+        self.settings.set("show_plate_axes", self.plate_axes_cb.isChecked())
         self.settings.set("show_grid_labels", self.grid_labels_cb.isChecked())
         for u, choice in self._spacing_choice.items():
             for key, value in choice.items():
@@ -1073,7 +1107,6 @@ def shortcut_rows() -> list[tuple[list[str], str]]:
         ([_key("Ctrl+E")], tr("Export STL (3MF, FreeCAD and STEP)")),
         ([_key("Ctrl+T")], tr("Next theme style")),
         ([_key("Ctrl+Shift+T")], tr("Switch between light and dark")),
-        (["F"], view.format(view=tr("Fit"))),
         (["1"], view.format(view=tr("Iso"))),
         (["2"], view.format(view=tr("Top"))),
         (["3"], view.format(view=tr("Front"))),

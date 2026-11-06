@@ -243,7 +243,7 @@ def test_about_page_lists_the_shortcuts(app, tmp_path):
     d = SettingsDialog(Settings(str(tmp_path / "settings.json")), page="about")
     keys = {k for row_keys, _ in shortcut_rows() for k in row_keys}
     # Keys are shown as the system writes them: Ctrl+O on Windows and Linux, ⌘O on a Mac.
-    for k in ("Ctrl+O", "Ctrl+P", "Ctrl+E", "Ctrl+T", "Ctrl+Shift+T", "F", "1", "2", "3", "4"):
+    for k in ("Ctrl+O", "Ctrl+P", "Ctrl+E", "Ctrl+T", "Ctrl+Shift+T", "1", "2", "3", "4"):
         assert _key(k) in keys, k
     assert len(mouse_rows()) >= 3
     d.deleteLater()

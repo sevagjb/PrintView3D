@@ -144,7 +144,7 @@ section**.
 
 **Menu → Open folder…** lists the 3D files of a folder in the side panel and opens the first one.
 <kbd>↑</kbd> / <kbd>↓</kbd> step through them, as in a ZIP, or click a name. ZIP files in the folder
-are not listed: open them with **Menu → Open archive…**, just below.
+are not listed: open them with **Open file or ZIP…** (<kbd>Ctrl</kbd>+<kbd>O</kbd>).
 
 ## Millimetres or inches
 
@@ -158,12 +158,20 @@ files are always in millimetres.
 unit you chose) along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
 to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
-you look from under the plate. With the endless grid they follow the area around the model.
+you look from under the plate. With the endless grid they follow the area around the model. Only
+positive numbers are written: a plate around the origin shows no "-20 mm".
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
 of the automatic one. **Grid lines every** and **Main grid lines every** set the spacing of the grid
 itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *New in PrintView3D 0.28.*
 
 ![Distances in millimetres along the edges of the build plate](assets/inside/grid-numbers.png)
+
+## X, Y and Z on the plate
+
+**Settings → Viewer → Show the X, Y and Z axes on the build plate** (off by default, just under
+*Show build plate grid*) draws three arrows (X red, Y green, Z blue, as in the small marker in the
+corner of the view) just beside the model, at its corner nearest to you. They move to another corner
+as you turn the view, so they never stand in front of the model, and hide with the plate.
 
 ## Keys
 
@@ -173,14 +181,15 @@ itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *Ne
 | <kbd>X</kbd> | X-ray on / off |
 | <kbd>C</kbd> | Clip from the top on / off |
 | <kbd>V</kbd> | Clip facing you on / off |
-| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay) |
+| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay); on G-code it fits the view |
 | <kbd>M</kbd> | Measure on / off |
 | <kbd>D</kbd> / <kbd>A</kbd> / <kbd>O</kbd> | Measure a distance, an angle, a circle |
 | <kbd>I</kbd> | View section on / off |
 | <kbd>K</kbd> | Check model on / off |
 | <kbd>P</kbd> | Build plate on / off |
 
-The toolbar buttons show their key, for example *Measure (M)*.
+The toolbar buttons and the buttons of the View and Measure sections show their key, for example
+*Measure (M)* and *Wireframe (W)*. **Fit** has no key of its own: <kbd>R</kbd> fits the model too.
 
 Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 

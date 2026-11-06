@@ -470,17 +470,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
+        <source>Open file or ZIP…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Open folder…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -508,7 +503,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation type="unfinished"></translation>
@@ -545,6 +539,12 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{view} view ({key})</source>
         <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -626,11 +626,6 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Technical term: {term}.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -981,11 +976,6 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1967,6 +1957,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show scale numbers on the grid</source>
         <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
         <translation type="unfinished"></translation>
@@ -2398,11 +2398,6 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Later</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

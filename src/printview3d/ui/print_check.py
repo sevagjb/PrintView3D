@@ -247,6 +247,21 @@ def _hex_rgb(h: str) -> tuple:
     return tuple(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
 
 
+def _polygon_offset_only_where_asked():
+    """Lets a highlight be drawn just in front of the faces it lies on (a per-actor offset).
+
+    VTK's offset mode is one setting for every mapper, and it comes with default offsets for all
+    of them: lines (the plate grid) are pulled 4 depth units towards the camera. Zoomed out, with
+    the far-reaching grid, that is many millimetres and the grid showed through the model - even
+    after the Check section was closed. So the shared offsets are zero: only an actor that asks for
+    one (the highlights) moves."""
+    from vtkmodules.vtkRenderingCore import vtkMapper
+    vtkMapper.SetResolveCoincidentTopologyToPolygonOffset()
+    vtkMapper.SetResolveCoincidentTopologyPolygonOffsetParameters(0.0, 0.0)
+    vtkMapper.SetResolveCoincidentTopologyLineOffsetParameters(0.0, 0.0)
+    vtkMapper.SetResolveCoincidentTopologyPointOffsetParameter(0.0)
+
+
 class PrintCheck:
     """Keeps the analyses of the model on screen and the actors that show them."""
 
@@ -436,9 +451,8 @@ class PrintCheck:
                            faces=np.hstack([np.full((len(f), 1), 3), f]).ravel())
         a = self.p.add_mesh(mesh, color=color, name=name, reset_camera=False, pickable=False,
                             lighting=True, show_scalar_bar=False)
-        m = a.GetMapper()
-        m.SetResolveCoincidentTopologyToPolygonOffset()
-        m.SetRelativeCoincidentTopologyPolygonOffsetParameters(-1.5, -4.0)
+        _polygon_offset_only_where_asked()
+        a.GetMapper().SetRelativeCoincidentTopologyPolygonOffsetParameters(-1.5, -4.0)
         a.SetUseBounds(False)
         self._actors[name] = a
 

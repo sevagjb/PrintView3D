@@ -470,18 +470,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation>Openen…</translation>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">Bestand of ZIP openen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Open folder…</source>
         <translation type="unfinished">Map openen…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive…</source>
-        <translation type="unfinished">Archief openen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -508,7 +503,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation>Passend</translation>
@@ -546,6 +540,12 @@
         <source>{view} view ({key})</source>
         <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
         <translation>Weergave {view} ({key})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation>Weergave {view}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -627,11 +627,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation>Sluiten</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Technical term: {term}.</source>
-        <translation type="unfinished">Vakterm: {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -982,11 +977,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation>{n} modellen naast elkaar plaatsen…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive</source>
-        <translation type="unfinished">Archief openen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1967,6 +1957,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">De X-, Y- en Z-as op het printbed tonen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="unfinished">Drie pijlen langs X, Y en Z, vlak naast het model bij de hoek die het dichtst bij je is.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show scale numbers on the grid</source>
         <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
         <translation type="unfinished">Schaalgetallen op het raster tonen</translation>
@@ -2402,11 +2402,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>Weergave {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation>Een bestand openen</translation>
     </message>
@@ -2694,6 +2689,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">Openen…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">Archief openen…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">Vakterm: {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">Archief openen</translation>
     </message>
     <message>
         <source>Open edges</source>

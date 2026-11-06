@@ -663,9 +663,6 @@ class MainWindow(QMainWindow):
         # Open folder: its 3D files in a list, stepped through with the arrow keys like a ZIP.
         self.act_open_folder = QAction(self, triggered=self.open_folder_dialog)
         self.main_menu.addAction(self.act_open_folder)
-        # Open archive: a ZIP with 3D files (also possible with Open..., but not easy to find).
-        self.act_open_archive = QAction(self, triggered=self.open_archive_dialog)
-        self.main_menu.addAction(self.act_open_archive)
         self.main_menu.addMenu(self.recent_menu)
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.act_screenshot)
@@ -724,7 +721,8 @@ class MainWindow(QMainWindow):
         tb.addSeparator()
 
         self.view_actions = []
-        for view, key in ((None, "F"), ("iso", "1"), ("top", "2"), ("front", "3"), ("right", "4")):
+        # Fit has no key of its own: R (Reset view) fits the model too, and on G-code only fits.
+        for view, key in ((None, None), ("iso", "1"), ("top", "2"), ("front", "3"), ("right", "4")):
             act = QAction(self)
             act.triggered.connect(lambda _=False, v=view: self.set_view(v, animate=True))
             if view is None:
@@ -1294,8 +1292,8 @@ class MainWindow(QMainWindow):
         self.check_nozzle = LengthSpin(0.1, 2.0, 0.05, mm_decimals=2, in_step=0.002, in_decimals=3)
         self.check_nozzle.set_mm(float(self.settings.get("check_nozzle", 0.4) or 0.4))
         self.check_nozzle.editingFinished.connect(self._check_nozzle_changed)
+        nl.addWidget(self.check_nozzle)                # "0.40 mm nozzle", like "45° from vertical"
         nl.addWidget(self.check_nozzle_label)
-        nl.addWidget(self.check_nozzle)
         ckl.addLayout(check_row("thin", nozzle_w))
         self.check_thin_status = QLabel()            # "Checking ... 40 %"
         self.check_thin_status.setObjectName("muted")
@@ -1414,7 +1412,8 @@ class MainWindow(QMainWindow):
         QShortcut(QKeySequence("Ctrl+T"), self, activated=self.next_theme)
         QShortcut(QKeySequence("Ctrl+Shift+T"), self, activated=self.toggle_light_dark)
         for act, key, _ in self.view_actions:
-            QShortcut(QKeySequence(key), self, activated=act.trigger)
+            if key:
+                QShortcut(QKeySequence(key), self, activated=act.trigger)
         # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.
         QShortcut(QKeySequence(Qt.Key_Up), self, activated=lambda: self._arrow_key(1))
         QShortcut(QKeySequence(Qt.Key_Down), self, activated=lambda: self._arrow_key(-1))
@@ -1426,13 +1425,12 @@ class MainWindow(QMainWindow):
     # ========================================================= language
     def retranslate_ui(self):
         """(Re)set every fixed text. Called at start and when the language changes."""
-        self.act_open.setText(tr("Open…"))
+        # Open takes a 3D file or a ZIP with 3D files in it; it says so (Open folder is the other way in).
+        self.act_open.setText(tr("Open file or ZIP…"))
         self.act_open_folder.setText(tr("Open folder…"))
-        self.act_open_archive.setText(tr("Open archive…"))
-        self.act_open_archive.setIcon(theme.tool_icon("open"))
         self.act_open_folder.setIcon(theme.tool_icon("open"))
         # The shortcut as the system writes it (Ctrl+O, or ⌘O on a Mac).
-        self.act_open.setToolTip(tr("Open…") + " (" + QKeySequence(QKeySequence.Open).toString(
+        self.act_open.setToolTip(tr("Open file or ZIP…") + " (" + QKeySequence(QKeySequence.Open).toString(
             QKeySequence.NativeText) + ")")
         self.menu_btn.setToolTip(tr("Menu"))
         self.act_home.setText(tr("Home"))
@@ -1442,8 +1440,12 @@ class MainWindow(QMainWindow):
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:
-            act.setText(f"{view_names[view]} ({key})")
-            act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
+            if key:
+                act.setText(f"{view_names[view]} ({key})")
+                act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
+            else:                                    # Fit: R (Reset view) also fits
+                act.setText(view_names[view])
+                act.setToolTip(tr("{view} view").format(view=view_names[view]))
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
             self.view_cube.set_tooltips(self._cube_tooltips())
@@ -1467,7 +1469,6 @@ class MainWindow(QMainWindow):
         self.check_loose_label.setText(tr("up to"))
         self.check_mesh_title.setText(tr("Mesh"))
         self.check_close_btn.setText(tr("Close"))
-        term = tr("Technical term: {term}.")
         for kind, text, tip, technical in (
                 ("overhang", tr("Overhangs"), tr("Faces that face down and lean further from vertical than the angle: "
                                                   "they usually need supports. Faces on the plate are not counted."), ""),
@@ -1486,9 +1487,10 @@ class MainWindow(QMainWindow):
                                                 "don't count."), "")):
             cb, count_lbl, _box = self.check_rows[kind]
             cb.setText(text)
-            full = tip + (" " + term.format(term=technical) if technical else "")
-            # Rich text, so Qt wraps a long tooltip instead of running it off the window.
-            rich = "<p>" + full + "</p>"
+            # The technical term first, in bold (what a slicer or a forum calls it), then what it
+            # means. Rich text, so Qt wraps a long tooltip instead of running it off the window.
+            head = "<b>" + technical[:1].upper() + technical[1:] + "</b><br>" if technical else ""
+            rich = "<p>" + head + tip + "</p>"
             cb.setToolTip(rich)
             count_lbl.setToolTip(rich)
         widest = max(self.fontMetrics().horizontalAdvance(t) for t in (
@@ -1507,9 +1509,9 @@ class MainWindow(QMainWindow):
                                     (self.act_clip, tr("Clip from the top"), tr("Clip from the top"), "C"),
                                     (self.act_clip_face, tr("Clip facing you"), tr("Clip facing you"), "V"),
                                     (self.act_reset_view, tr("Reset view"), tr("Reset view"), "R")):
-            act.setText(text)
+            act.setText(text + " (" + key + ")")         # the key on the button, as on the toolbar
             act.setToolTip(tip + " (" + key + ")")
-        self.view_reset_btn.setText(tr("Reset view"))
+        self.view_reset_btn.setText(tr("Reset view") + " (R)")
         self.view_reset_btn.setToolTip(tr("Reset view") + " (R)")
         self.view_close_btn.setText(tr("Close"))
         self.view_freeze_cb.setText(tr("Freeze the cutting plane"))
@@ -1524,7 +1526,7 @@ class MainWindow(QMainWindow):
         self.act_measure.setToolTip(tr("Measure on the model: distance, angle, circle") + " (M)")
         self.measure_box.setTitle(tr("Measure"))
         for kind, a in self.measure_actions.items():
-            a.setText(self._measure_mode_label(kind))
+            a.setText(self._measure_mode_label(kind) + " (" + self.MEASURE_KEYS[kind] + ")")
             a.setToolTip(self._measure_mode_tip(kind) + " (" + self.MEASURE_KEYS[kind] + ")")
         self.objects_hint.setText(tr("Click a colour box to change its colour."))
         self.measure_snap_cb.setText(tr("Snapping"))
@@ -1856,15 +1858,6 @@ class MainWindow(QMainWindow):
         self.step_layer(delta)
 
     # ------------------------------------------------------------ folder
-    def open_archive_dialog(self):
-        """Menu -> Open archive: a ZIP; its 3D files are listed in the side panel."""
-        start = self._user_folder() if self.current_path else os.path.expanduser("~")
-        patterns = " ".join("*" + e for e in za.ARCHIVE_EXTENSIONS)
-        path, _ = QFileDialog.getOpenFileName(self, tr("Open archive"), start,
-                                              tr("ZIP files with 3D models") + f" ({patterns})")
-        if path:
-            self.load(path)
-
     def open_folder_dialog(self):
         start = self._user_folder() if self.current_path else os.path.expanduser("~")
         path = QFileDialog.getExistingDirectory(self, tr("Open folder"), start)
@@ -2898,8 +2891,9 @@ class MainWindow(QMainWindow):
         """After a file opens or closes: the View options on or off for it, the sections with it."""
         ok = self._view_options_apply()
         for a in (self.act_view, self.act_check, self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face,
-                  self.act_reset_view, self.act_measure, *self.measure_actions.values()):
+                  self.act_measure, *self.measure_actions.values()):
             a.setEnabled(ok)
+        self.act_reset_view.setEnabled(self.stack.currentIndex() == 1)     # R fits G-code too
         self.view_btn.setEnabled(ok)
         self.view_box.setVisible(ok and self.act_view.isChecked())
         if hasattr(self, "check"):
@@ -2961,8 +2955,11 @@ class MainWindow(QMainWindow):
 
     def reset_view(self):
         """View -> Reset view (R, #66): wireframe, X-ray and both cuts off, and the model fitted, like Fit.
-        Nothing else changes (the plate, the objects shown, the theme, the measurements)."""
+        Nothing else changes (the plate, the objects shown, the theme, the measurements). On G-code
+        (no view options) R just fits, so it is the one key for both."""
         if not self._view_options_apply():
+            if self.stack.currentIndex() == 1:
+                self.set_view(None, animate=True)
             return
         self._view_options_off()
         self.set_view(None, animate=True)
@@ -3524,6 +3521,7 @@ class MainWindow(QMainWindow):
         self.scene.grid_minor = self._spacing_mm("grid_minor")
         self.scene.grid_major = self._spacing_mm("grid_major")
         self.scene.set_planes_cut_each_other(not bool(self.settings.get("cut_planes_whole", False)))
+        self.scene.show_plate_axes = bool(self.settings.get("show_plate_axes", False))
         self.grid_labels.set_step(self._spacing_mm("grid_labels_step"))
         if render:
             self.scene.apply_plate()

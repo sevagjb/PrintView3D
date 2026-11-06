@@ -470,18 +470,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation type="unfinished">Ouvrir…</translation>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">Ouvrir un fichier ou un ZIP…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Open folder…</source>
         <translation type="unfinished">Ouvrir un dossier…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive…</source>
-        <translation type="unfinished">Ouvrir une archive…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -508,7 +503,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation type="unfinished">Ajuster</translation>
@@ -546,6 +540,12 @@
         <source>{view} view ({key})</source>
         <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
         <translation type="unfinished">Vue {view} ({key})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation type="unfinished">Vue {view}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -615,7 +615,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>up to</source>
-        <translation type="unfinished">jusqu'à</translation>
+        <translation type="unfinished">jusqu&apos;à</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -627,11 +627,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Close</source>
         <translation type="unfinished">Fermer</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Technical term: {term}.</source>
-        <translation type="unfinished">Terme technique : {term}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -706,7 +701,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
-        <translation type="unfinished">Petits morceaux non reliés au corps principal, jusqu'à la taille indiquée. Ils s'impriment séparément, ou pas du tout. Les creux à l'intérieur d'une pièce ne comptent pas.</translation>
+        <translation type="unfinished">Petits morceaux non reliés au corps principal, jusqu&apos;à la taille indiquée. Ils s&apos;impriment séparément, ou pas du tout. Les creux à l&apos;intérieur d&apos;une pièce ne comptent pas.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -982,11 +977,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Placing {n} models side by side…</source>
         <translation type="unfinished">Placement de {n} modèles côte à côte…</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open archive</source>
-        <translation type="unfinished">Ouvrir une archive</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1967,6 +1957,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Afficher les axes X, Y et Z sur le plateau</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="unfinished">Trois flèches selon X, Y et Z, juste à côté du modèle, à son coin le plus proche de vous.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show scale numbers on the grid</source>
         <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
         <translation type="unfinished">Afficher les graduations sur la grille</translation>
@@ -2061,7 +2061,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
-        <translation type="unfinished">Désactivé : les couleurs de Vérifier que vous choisissez durent jusqu'à la fermeture de PrintView3D.</translation>
+        <translation type="unfinished">Désactivé : les couleurs de Vérifier que vous choisissez durent jusqu&apos;à la fermeture de PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2402,11 +2402,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation type="unfinished">Vue {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation type="unfinished">Ouvrir un fichier</translation>
     </message>
@@ -2694,6 +2689,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">Ouvrir…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">Ouvrir une archive…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">Terme technique : {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">Ouvrir une archive</translation>
     </message>
     <message>
         <source>Open edges</source>
