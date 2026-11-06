@@ -373,6 +373,7 @@ class SettingsDialog(QDialog):
         self._fill_spacing_combos()
         for key, combo in self._spacing_combos.items():
             combo.currentIndexChanged.connect(lambda _=0, k=key: self._remember_spacing(k))
+        self.grid_minor_combo.currentIndexChanged.connect(lambda _=0: self._match_major_spacing())
         self.units_combo.currentIndexChanged.connect(lambda _=0: self._units_changed())
         # Which plate (also in the Plate button's menu), issue #61.
         from .scene import PLATE_MODES
@@ -695,6 +696,21 @@ class SettingsDialog(QDialog):
             at = combo.findData(float(self._spacing_choice[u][key]))
             combo.setCurrentIndex(max(0, at))
             combo.blockSignals(False)
+        self._match_major_spacing()
+
+    def _match_major_spacing(self):
+        """Main grid lines fall on fine lines: only multiples of the fine spacing can be chosen
+        (20 mm fine lines: 20, 100, 200 mm main lines, not 25 or 50). A main spacing that no
+        longer fits goes back to Automatic."""
+        from .scene import is_multiple
+        minor = float(self.grid_minor_combo.currentData() or 0)
+        combo = self.grid_major_combo
+        model = combo.model()
+        for i in range(1, combo.count()):
+            ok = not minor or is_multiple(float(combo.itemData(i)), minor)
+            model.item(i).setEnabled(ok)
+        if not model.item(combo.currentIndex()).isEnabled():
+            combo.setCurrentIndex(0)
 
     def _remember_spacing(self, key: str):
         self._spacing_choice[self._spacing_unit][key] = float(self._spacing_combos[key].currentData() or 0)

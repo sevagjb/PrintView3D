@@ -14,8 +14,9 @@ Decisions
     quiet. They are hidden while the camera is under the plate.
   * The endless grid has no edge: its numbers follow the area around the model (the rectangle
     the grid is drawn for), so they stay near the model.
-  * The numbers count from the plate's front-left corner (0 there), whatever coordinates the
-    printer uses, so none is negative. With the infinite grid they count from the model's
+  * The numbers count from the plate's front-left corner (0 there, written once outside the
+    corner when both rows of numbers meet there), whatever coordinates the printer uses, so
+    none is negative. With the infinite grid they count from the model's
     front-left corner: the grid's lines start there too (Scene.grid_origin), and the area
     left of / in front of the model has no numbers.
 """
@@ -158,9 +159,17 @@ class GridLabels:
         cy, cx = (ymin + ymax) / 2, (xmin + xmax) / 2
         out = []
         ox, oy = getattr(self.scene, "grid_origin", (0.0, 0.0))
+        eps = 1e-6
+        # 0 where the counting starts. When both edges' zeros are the same corner, it is written
+        # once, outside that corner (pushed away from the plate's centre).
+        corner = abs(y_edge - oy) < eps and abs(x_edge - ox) < eps
+        if xmin - eps <= ox <= xmax + eps:
+            out.append((text_for(0), (ox, y_edge, z), (cx, cy, z) if corner else (ox, cy, z)))
         for d in label_values(xmin - ox, xmax - ox, major, step=self.step):
             if d > 0:
                 out.append((text_for(d), (ox + d, y_edge, z), (ox + d, cy, z)))
+        if ymin - eps <= oy <= ymax + eps and not corner:
+            out.append((text_for(0), (x_edge, oy, z), (cx, oy, z)))
         for d in label_values(ymin - oy, ymax - oy, major, step=self.step):
             if d > 0:
                 out.append((text_for(d), (x_edge, oy + d, z), (cx, oy + d, z)))

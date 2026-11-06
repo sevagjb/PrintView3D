@@ -151,7 +151,7 @@ def test_grid_spacing_from_settings(app, tmp_path):
     try:
         w.load_sync(CUBE)
         b = w.scene.bed_bounds
-        for minor, major in ((10, 50), (5, 20), (2, 25)):
+        for minor, major in ((10, 50), (5, 20), (2, 20)):
             if (minor, major) != (10, 50):
                 w.settings.set("grid_minor", minor)
                 w.settings.set("grid_major", major)

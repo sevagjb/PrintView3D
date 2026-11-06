@@ -114,6 +114,60 @@ def components(n_vertices: int, faces: np.ndarray) -> np.ndarray:
 
 
 LOOSE_DEFAULT = 5.0              # mm: a loose piece is at most this big (its longest side)
+
+
+def _crossings(points: np.ndarray, tris: np.ndarray, t_lo: np.ndarray, t_hi: np.ndarray,
+               axis: int) -> np.ndarray:
+    """How many triangles a ray from each point along +axis passes through (k points, (m, 3, 3)
+    triangles with their boxes t_lo / t_hi). Hits exactly on an edge are not counted."""
+    u, w = [a for a in range(3) if a != axis]
+    out = np.zeros(len(points), dtype=np.int64)
+    # Rays from round places (the centre of a box) run exactly along the edges between the
+    # triangles of a face, and would miss both. A tiny, odd sideways shift avoids that.
+    span = float((t_hi.max(axis=0) - t_lo.min(axis=0)).max()) or 1.0
+    shift = np.zeros(3)
+    shift[u], shift[w] = 0.618034e-6 * span, 0.414214e-6 * span
+    points = points + shift
+    # Triangles sorted by where their shadow starts on u: each point only looks at those that
+    # start before it (a binary search), then at the few that also cover it.
+    order = np.argsort(t_lo[:, u], kind="stable")
+    starts = t_lo[order, u]
+    for k, pt in enumerate(points):
+        cand = order[:np.searchsorted(starts, pt[u], side="right")]
+        cand = cand[(t_hi[cand, u] >= pt[u]) & (t_lo[cand, w] <= pt[w]) & (t_hi[cand, w] >= pt[w])
+                    & (t_hi[cand, axis] > pt[axis])]
+        if not len(cand):
+            continue
+        t = tris[cand]
+        a, b, c = t[:, 0], t[:, 1], t[:, 2]
+
+        def side(p, q):                    # which side of the edge p -> q the point is, seen along axis
+            return (q[:, u] - p[:, u]) * (pt[w] - p[:, w]) - (q[:, w] - p[:, w]) * (pt[u] - p[:, u])
+
+        e0, e1, e2 = side(a, b), side(b, c), side(c, a)
+        hit = ((e0 > 0) & (e1 > 0) & (e2 > 0)) | ((e0 < 0) & (e1 < 0) & (e2 < 0))
+        if not hit.any():
+            continue
+        # where the ray meets the triangle's plane: it must be ahead of the point
+        n = np.cross(b[hit] - a[hit], c[hit] - a[hit])
+        ok = np.abs(n[:, axis]) > 1e-12
+        d = np.einsum("ij,ij->i", n, a[hit] - pt)
+        out[k] = int(((d[ok] / n[ok, axis]) > 0).sum())
+    return out
+
+
+def inside(points: np.ndarray, tris: np.ndarray) -> np.ndarray:
+    """Which points lie inside the closed surface made of these triangles: rays along X, Y and Z
+    each cross it an odd number of times from inside; the majority of the three decides."""
+    points = np.asarray(points, dtype=float).reshape(-1, 3)
+    tris = np.asarray(tris, dtype=float)
+    if not len(tris) or not len(points):
+        return np.zeros(len(points), dtype=bool)
+    t_lo, t_hi = tris.min(axis=1), tris.max(axis=1)
+    votes = sum((_crossings(points, tris, t_lo, t_hi, axis) % 2 == 1).astype(int) for axis in range(3))
+    return votes >= 2
+
+
 ZERO_AREA = 1e-9                 # mm²: a triangle this small is a sliver with no surface
 
 
@@ -123,7 +177,7 @@ def mesh_report(vertices, faces, loose_max: float = LOOSE_DEFAULT) -> dict:
     edges shared by more than two faces; flipped: bool per face (turned against a neighbour, or
     part of a closed piece that is inside out); loose: bool per face (in a small piece, at most
     loose_max mm across, that is not the biggest and not inside another piece); pieces: the
-    number of pieces; inside_out: closed pieces turned inside out; slivers: triangles without
+    number of pieces; loose_pieces: how many of them are loose; inside_out: closed pieces turned inside out; slivers: triangles without
     area.
 
     Triangles without area (slivers: three corners on one line, or two in the same place) are
@@ -135,7 +189,7 @@ def mesh_report(vertices, faces, loose_max: float = LOOSE_DEFAULT) -> dict:
     nf = len(f)
     report = {"open": np.zeros((0, 2, 3)), "nonmanifold": np.zeros((0, 2, 3)),
               "flipped": np.zeros(nf, dtype=bool), "loose": np.zeros(nf, dtype=bool),
-              "pieces": 0, "inside_out": 0, "slivers": 0}
+              "pieces": 0, "loose_pieces": 0, "inside_out": 0, "slivers": 0}
     if not nf:
         return report
     _, area = face_normals(v, f)
@@ -174,25 +228,45 @@ def mesh_report(vertices, faces, loose_max: float = LOOSE_DEFAULT) -> dict:
     vol = np.bincount(piece, weights=np.einsum("ij,ij->i", p0, np.cross(p1, p2)) / 6.0, minlength=n_pieces)
     open_piece = np.zeros(n_pieces, dtype=bool)
     open_piece[np.unique(piece[face_of[cnt[inv] == 1]])] = True
-    # inside another piece: its box lies within the box of a piece with more volume
-    inside = np.zeros(n_pieces, dtype=bool)
+    # Inside another piece: within the box of a piece with more volume, and really inside that
+    # piece (a point of it - the centre of its biggest face - is inside its surface). The box alone
+    # is not enough: a stray bit in the empty corner of an L-shaped part lies in its box too.
+    # Only pieces whose answer matters are tested: closed inside-out ones (a cavity or not) and
+    # small ones (loose or not), each against the pieces whose box holds it - all its candidates
+    # against one piece at once.
+    small = (hi - lo).max(axis=1) <= loose_max
+    asks = ((vol < 0) & ~open_piece) | small
+    inside_piece = np.zeros(n_pieces, dtype=bool)
     eps = 1e-6
-    for i in range(n_pieces):
+    holders = {}                                      # piece j -> the pieces that may be inside it
+    for i in (np.flatnonzero(asks) if n_pieces > 1 else ()):
         others = (np.abs(vol) > abs(vol[i])) & (lo <= lo[i] + eps).all(axis=1) & (hi >= hi[i] - eps).all(axis=1)
         others[i] = False
-        inside[i] = bool(others.any())
+        for j in np.flatnonzero(others):
+            holders.setdefault(int(j), []).append(int(i))
+    if holders:
+        best_face = np.zeros(n_pieces, dtype=np.int64)
+        order = np.lexsort((area, piece))             # by piece, and in each its biggest face last
+        by_piece = piece[order]
+        last = np.r_[by_piece[1:] != by_piece[:-1], True]
+        best_face[by_piece[last]] = order[last]
+        centre = fv[best_face].mean(axis=1)           # a point of the piece: its biggest face's centre
+        for j, members in holders.items():
+            todo = [i for i in members if not inside_piece[i]]
+            if todo:
+                inside_piece[todo] = inside(centre[todo], fv[piece == j])
     # A closed piece with a negative volume is inside out - unless it is a cavity in another piece.
-    inside_out = (vol < 0) & ~open_piece & ~inside
+    inside_out = (vol < 0) & ~open_piece & ~inside_piece
     report["inside_out"] = int(inside_out.sum())
     flipped |= inside_out[piece]
     report["flipped"] = flipped & solid
     # Loose: small pieces on their own, away from the biggest one.
     if n_pieces > 1:
         biggest = int(np.argmax(np.bincount(piece, weights=area, minlength=n_pieces)))
-        small = (hi - lo).max(axis=1) <= loose_max
-        loose_piece = small & ~inside
+        loose_piece = small & ~inside_piece
         loose_piece[biggest] = False
         report["loose"] = loose_piece[piece]
+        report["loose_pieces"] = int(loose_piece.sum())
     return report
 
 
@@ -430,7 +504,7 @@ class PrintCheck:
              "open": sum(len(r["open"]) for r in self.reports),
              "nonmanifold": sum(len(r["nonmanifold"]) for r in self.reports),
              "flipped": int(sum(int(r["flipped"].sum()) for r in self.reports)),
-             "loose": sum(max(0, r["pieces"] - 1) for r in self.reports)}
+             "loose": sum(r["loose_pieces"] for r in self.reports)}
         if self.mesh_busy:                   # not known yet
             for k in MESH_KINDS:
                 c[k] = None

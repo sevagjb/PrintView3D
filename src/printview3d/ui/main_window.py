@@ -1291,7 +1291,8 @@ class MainWindow(QMainWindow):
         self.check_nozzle_label.setObjectName("muted")
         self.check_nozzle = LengthSpin(0.1, 2.0, 0.05, mm_decimals=2, in_step=0.002, in_decimals=3)
         self.check_nozzle.set_mm(float(self.settings.get("check_nozzle", 0.4) or 0.4))
-        self.check_nozzle.editingFinished.connect(self._check_nozzle_changed)
+        self.check_nozzle.setKeyboardTracking(False)   # a typed number counts on Enter, the arrows at once
+        self.check_nozzle.valueChanged.connect(self._check_nozzle_changed)
         nl.addWidget(self.check_nozzle)                # "0.40 mm nozzle", like "45° from vertical"
         nl.addWidget(self.check_nozzle_label)
         ckl.addLayout(check_row("thin", nozzle_w))
@@ -1312,7 +1313,8 @@ class MainWindow(QMainWindow):
         self.check_loose_label.setObjectName("muted")
         self.check_loose = LengthSpin(0.5, 100.0, 0.5, mm_decimals=1, in_step=0.02, in_decimals=2)
         self.check_loose.set_mm(float(self.settings.get("check_loose_max", 5.0) or 5.0))
-        self.check_loose.editingFinished.connect(self._check_loose_changed)
+        self.check_loose.setKeyboardTracking(False)
+        self.check_loose.valueChanged.connect(self._check_loose_changed)
         lw.addWidget(self.check_loose_label)
         lw.addWidget(self.check_loose)
         ckl.addLayout(check_row("loose", loose_w))
@@ -1467,6 +1469,8 @@ class MainWindow(QMainWindow):
         self.check_angle_label.setText(tr("from vertical"))
         self.check_nozzle_label.setText(tr("nozzle"))
         self.check_loose_label.setText(tr("up to"))
+        for spin in (self.check_nozzle, self.check_loose):
+            spin.set_unit(units.current())             # "mm" / "in" in this language and unit
         self._align_check_inputs()
         self.check_mesh_title.setText(tr("Mesh"))
         self.check_close_btn.setText(tr("Close"))
@@ -1872,7 +1876,7 @@ class MainWindow(QMainWindow):
             names = os.listdir(path)
         except OSError:
             return []
-        ok = SUPPORTED_EXTENSIONS                # archives have Open archive: they are not stepped through
+        ok = SUPPORTED_EXTENSIONS                # 3D files only: a ZIP is opened with Open file or ZIP
         files = [os.path.join(path, n) for n in names
                  if n.lower().endswith(ok) and os.path.isfile(os.path.join(path, n))]
         return sorted(files, key=lambda f: os.path.basename(f).lower())
@@ -1927,8 +1931,7 @@ class MainWindow(QMainWindow):
             h = QHBoxLayout(w)
             h.setContentsMargins(6, 0, 8, 0)
             h.setSpacing(8)
-            kind = "zip" if za.is_archive(path) else (file_kind(path) or "")
-            h.addWidget(self._type_tag(kind))
+            h.addWidget(self._type_tag(file_kind(path) or ""))
             name = _ElidedLabel(os.path.basename(path))
             name.setToolTip(path)
             h.addWidget(name, 1)
@@ -2810,10 +2813,10 @@ class MainWindow(QMainWindow):
         self.settings.set("check_angle", int(value))
         self.check.set_angle(value)
 
-    def _check_nozzle_changed(self):
-        mm = round(self.check_nozzle.mm(), 4)
-        if abs(mm - self.check.nozzle) < 1e-6:
+    def _check_nozzle_changed(self, *_):
+        if self.check_nozzle.shows(self.check.nozzle):     # the same width (e.g. other units)
             return
+        mm = round(self.check_nozzle.mm(), 4)
         self.settings.set("check_nozzle", mm)
         self.check.set_nozzle(mm)
 
@@ -2832,10 +2835,10 @@ class MainWindow(QMainWindow):
         for w in labels:
             w.setFixedWidth(width)
 
-    def _check_loose_changed(self):
-        mm = round(self.check_loose.mm(), 3)
-        if abs(mm - self.check.loose_max) < 1e-6:
+    def _check_loose_changed(self, *_):
+        if self.check_loose.shows(self.check.loose_max):
             return
+        mm = round(self.check_loose.mm(), 3)
         self.settings.set("check_loose_max", mm)
         self.check.set_loose_max(mm)
 
@@ -3563,8 +3566,6 @@ class MainWindow(QMainWindow):
         self._mark_plate_mode()
         if self.measure.active:
             self.measure._update()
-        self.check_nozzle.set_unit(units.current())
-        self._align_check_inputs()
 
     # ------------------------------------------------------------ updates
     def start_update_checks(self):

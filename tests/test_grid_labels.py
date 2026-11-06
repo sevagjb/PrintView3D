@@ -111,8 +111,8 @@ def test_numbers_sit_on_the_edges_nearest_the_camera(window):
     g.set_enabled(True)
     b = w.scene.bed_bounds
     ox = w.scene.grid_origin[0]                             # counted from the plate's corner
-    n_x = len([v for v in gl.label_values(b[0] - ox, b[1] - ox, gl.major_step(b[1] - b[0], b[3] - b[2]))
-               if v > 0])                                   # X numbers come first
+    n_x = 1 + len([v for v in gl.label_values(b[0] - ox, b[1] - ox, gl.major_step(b[1] - b[0], b[3] - b[2]))
+               if v > 0])                                   # 0 and the X numbers come first
     cx, cy = (b[0] + b[1]) / 2, (b[2] + b[3]) / 2
     cam = w.plotter.renderer.GetActiveCamera()
     cam.SetPosition(cx + 80, cy - 200, b[4] + 150)          # in front, to the right

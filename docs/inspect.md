@@ -129,7 +129,7 @@ Measure, and colours what may cause trouble when printing:
   - **Inside-out faces**: faces whose front points into the model (flipped normals).
   - **Loose parts**: small pieces not connected to the main body, up to a size you set (5 mm by
     default, their longest side). Bigger pieces count as objects of their own, and a hollow inside
-    a part is not a loose part.
+    a part is not a loose part. The count is the number of loose parts, the ones coloured.
 
   Triangles with no area (three corners on one line, common in exported files) are left out: they
   don't change the shape and slicers ignore them.
@@ -158,12 +158,14 @@ files are always in millimetres.
 unit you chose) along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
 to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
-you look from under the plate. They count from the plate's front-left corner (0 there), whatever
-coordinates the printer uses, so there are no negative numbers. With the endless grid they follow the
+you look from under the plate. They count from the plate's front-left corner (0 there, written once
+beside the corner), whatever coordinates the printer uses, so there are no negative numbers. With the endless grid they follow the
 area around the model and count from the model's front-left corner, where the grid's lines start too.
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
 of the automatic one. **Grid lines every** and **Main grid lines every** set the spacing of the grid
-itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). *New in PrintView3D 0.28.*
+itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). Main lines always fall
+on fine lines, so the grid stays even: with fine lines every 20 mm you can pick main lines every 20,
+100 or 200 mm, and *Automatic* then means every 100 mm. *New in PrintView3D 0.28.*
 
 ![Distances in millimetres along the edges of the build plate](assets/inside/grid-numbers.png)
 

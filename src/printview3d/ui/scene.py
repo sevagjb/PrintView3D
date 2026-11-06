@@ -84,6 +84,14 @@ def _lines_polydata(a: np.ndarray, b: np.ndarray) -> pv.PolyData:
     return pv.PolyData(pts, lines=cells.ravel())
 
 
+def is_multiple(major: float, minor: float) -> bool:
+    """Is `major` a whole multiple (1x, 2x, ...) of `minor`?"""
+    if minor <= 0 or major <= 0:
+        return False
+    k = major / minor
+    return round(k) >= 1 and abs(k - round(k)) < 1e-6
+
+
 class Scene:
     def __init__(self, plotter):
         self.p = plotter
@@ -382,7 +390,22 @@ class Scene:
         else:
             step = self._grid_step(size)
             auto = (step, step * 5)
-        return (self.grid_minor or auto[0], self.grid_major or auto[1])
+        return self.even_spacing(self.grid_minor or auto[0], self.grid_major or auto[1],
+                                 bool(self.grid_minor), bool(self.grid_major))
+
+    @staticmethod
+    def even_spacing(minor: float, major: float, minor_chosen: bool = True, major_chosen: bool = True) -> tuple:
+        """(minor, major) with the main lines on fine lines: major a whole multiple of minor, so
+        the grid stays even (fine lines every 20 mm and main ones every 50 mm would give lines at
+        0, 20, 40, 50, 60 ...). A chosen main spacing with automatic fine lines keeps the main
+        one and takes the widest even part of it up to the automatic fine one; otherwise the
+        fine lines stay and the main ones are every 5th."""
+        if is_multiple(major, minor):
+            return minor, major
+        if major_chosen and not minor_chosen:
+            parts = [major / k for k in (1, 2, 5, 10, 4) if major / k <= minor + 1e-9]
+            return (parts[0] if parts else major / 10), major
+        return minor, minor * 5
 
     @staticmethod
     def _grid_step(size: float) -> float:
