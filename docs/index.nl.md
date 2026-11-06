@@ -21,11 +21,17 @@ printtijd en het filamentverbruik, en stuurt het bestand met één klik naar Cre
 Bambu Studio, PrusaSlicer, Cura en andere. Ontwerp je in FreeCAD? Open het `.FCStd`-bestand en stuur het
 direct als model naar je slicer, zonder eerst een STL te exporteren.
 
-## Nieuw: in je modellen kijken
+## Nieuw: meten en in je modellen kijken
+
+**Nieuw in 0.28: Meten.** Klik op twee punten voor een afstand (met ΔX ΔY ΔZ), op drie voor een hoek of
+voor de diameter van een gat. Punten springen naar hoeken en randen, en bij elke meting staat de waarde
+er direct naast.
+
+![Een afstand, een hoek en een gat meten op een pomphuis](assets/inside/measure.nl.png)
 
 Draai een model door een snede die altijd naar je toe gericht is, snijd het van boven af, of gebruik
 beide sneden tegelijk om er een hoek uit te snijden. Wat de snede wegneemt blijft zichtbaar als een
-doorzichtige schim. Maak het doorzichtig en zie de maat van elk object.
+doorzichtige schim. Maak het doorzichtig, geef elk object een eigen kleur en zie de maat van elk object.
 
 <video class="pv-video" src="../assets/inside/clip-facing.mp4" poster="../assets/inside/clip-facing.jpg"
        autoplay loop muted playsinline preload="metadata" aria-label="Een pomphuis draait door een rechtopstaande snede en laat zijn binnenkant zien"></video>

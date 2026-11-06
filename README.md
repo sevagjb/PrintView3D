@@ -317,6 +317,8 @@ The options stay on when you open the next model, and work together (X-ray and c
 
 ### Measure, object colours and grid numbers
 
+![Measuring a distance, an angle and a hole](docs/assets/inside/measure.png)
+
 - **Measure** (`M`, the button next to **View**): **Distance** (with ΔX ΔY ΔZ if you like),
   **Angle** and **Circle** (diameter and radius). A click places a point, a drag still turns the
   view, and a placed point can be dragged. Points snap to corners and edges; the value is written
