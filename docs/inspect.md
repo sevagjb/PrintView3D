@@ -50,7 +50,7 @@ Under the sliders, **Show the cut-away part** and **Show the cutting plane** tur
 
 ## Both cuts at once
 
-<kbd>C</kbd> and <kbd>V</kbd> each turn their own cut on and off, so both can be on together: the
+<kbd>T</kbd> and <kbd>Y</kbd> each turn their own cut on and off, so both can be on together: the
 model then keeps only what both cuts keep, a corner cut away. The side panel has a slider for each,
 **Height** and **Depth**. What the cuts hide still shows as one even, see-through ghost, and each
 cutting plane stops where the other cut is (**Settings → Viewer → Don't let the two cutting planes
@@ -116,7 +116,7 @@ Next to the file type and size, *Preview picture* folds the picture the slicer s
 
 ## Check before printing
 
-The **Check** button (<kbd>K</kbd>, between Plate and View) opens the **Check model** section, below
+The **Check** button (<kbd>C</kbd>, between Plate and View) opens the **Check model** section, below
 Measure, and colours what may cause trouble when printing:
 
 - **Overhangs**: faces that face down and lean further from vertical than an angle (45° by default)
@@ -186,18 +186,22 @@ stay there as you turn the view and hide with the plate.
 |---|---|
 | <kbd>W</kbd> | Wireframe on / off |
 | <kbd>X</kbd> | X-ray on / off |
-| <kbd>C</kbd> | Clip from the top on / off |
-| <kbd>V</kbd> | Clip facing you on / off |
+| <kbd>T</kbd> | Clip from the top on / off |
+| <kbd>Y</kbd> | Clip facing you on / off |
 | <kbd>F</kbd> | Fit: the whole model in the view (nothing else changes) |
 | <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay); on G-code it fits the view |
 | <kbd>M</kbd> | Measure on / off |
 | <kbd>D</kbd> / <kbd>A</kbd> / <kbd>O</kbd> | Measure a distance, an angle, a circle |
-| <kbd>I</kbd> | View section on / off |
-| <kbd>K</kbd> | Check model on / off |
+| <kbd>V</kbd> | View section on / off |
+| <kbd>C</kbd> | Check model on / off |
 | <kbd>P</kbd> | Build plate on / off |
+| <kbd>S</kbd> | Settings |
+
+These are the keys PrintView3D comes with; **Settings → Keyboard and mouse** gives any of them a key
+of your own (and **Reset to defaults** puts them back).
 
 The toolbar buttons and the buttons of the View and Measure sections show their key, for example
-*Measure (M)*, *Fit (F)* and *Wireframe (W)*.
+*Measure (M)*, *Fit (F)* and *Wireframe (W)*, and they follow when you change a key.
 
 Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 

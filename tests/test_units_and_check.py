@@ -199,7 +199,7 @@ def test_check_button_sits_between_plate_and_view(window):
     tb = w.view_btn.parentWidget()
     order = [o for o in (tb.widgetForAction(a) for a in tb.actions()) if o is not None]
     assert order.index(w.plate_btn) < order.index(w.check_btn) < order.index(w.view_btn)
-    assert not w.act_check.icon().isNull() and w.act_check.text() == "Check (K)"
+    assert not w.act_check.icon().isNull() and w.act_check.text() == "Check (C)"
 
 
 def test_check_section_counts_and_highlights(window):

@@ -1,7 +1,7 @@
 """Settings dialog: a sidebar with one page per topic.
 
 Language · Appearance · Slicer · FreeCAD · Files (default program) · Viewer (and graphics) ·
-Updates · About. MainWindow.open_settings(page="updates") opens a given page.
+Keyboard and mouse · Updates · About. MainWindow.open_settings(page="updates") opens a given page.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
     QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMessageBox,
-    QPushButton, QScrollArea, QSizePolicy, QSlider, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout,
+    QKeySequenceEdit, QPushButton, QScrollArea, QSizePolicy, QSlider, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout,
     QWidget,
 )
 
@@ -23,11 +23,11 @@ from .. import updates as up
 from .. import freecad as fc
 from .. import slicer as sl
 from ..i18n import tr
-from . import theme
+from . import keys, theme
 from . import update_ui
 from .labels import assoc_status, plate_mode_label
 
-PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "updates", "about"]
+PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "keys", "updates", "about"]
 
 
 class SettingsDialog(QDialog):
@@ -276,9 +276,10 @@ class SettingsDialog(QDialog):
         ke = QLabel(tr("When I click Export STL"))
         ke.setObjectName("formKey")
         le.addRow(ke, self.export_combo)
-        ex_note = QLabel(tr("{key} does the same. The arrow next to the button always offers all three "
-                            "ways. A file with only one object is always saved straight away.").format(
-                                key=_key("Ctrl+E")))
+        export_key = keys.native(keys.current(settings)["export"])
+        ex_note = QLabel(((tr("{key} does the same.").format(key=export_key) + " ") if export_key else "")
+                         + tr("The arrow next to the button always offers all three ways. A file with only "
+                              "one object is always saved straight away."))
         ex_note.setObjectName("muted")
         ex_note.setWordWrap(True)
         le.addRow(ex_note)
@@ -486,9 +487,10 @@ class SettingsDialog(QDialog):
         l4.addWidget(self.gpu_hint)
         self._add_page("viewer", tr("Viewer"), [g3, g4], keep_titles=True)
 
-        self._add_page("updates", tr("Updates"), [self._build_updates()])
-        self._add_page("about", tr("About"), [self._build_about(gpu_info), self._build_shortcuts()],
+        self._add_page("keys", tr("Keyboard and mouse"), [self._build_keys(), self._build_mouse()],
                        keep_titles=True)
+        self._add_page("updates", tr("Updates"), [self._build_updates()])
+        self._add_page("about", tr("About"), [self._build_about(gpu_info)])
 
         # Apply saves and shows the settings without closing; OK does the same and closes.
         bb = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Apply | QDialogButtonBox.Cancel)
@@ -558,11 +560,11 @@ class SettingsDialog(QDialog):
     def _initial_size(self):
         """Wide enough for the pages and tall enough for the longest page of settings, so none of
         them needs a scroll bar - unless the screen is too small for that (then the page scrolls).
-        About (the long list of keys and mouse buttons) doesn't count: it scrolls instead."""
+        The long list of keys doesn't count: it scrolls instead."""
         screen = (self.parent().screen() if self.parent() is not None else QApplication.primaryScreen())
         avail = screen.availableGeometry() if screen is not None else None
         tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count())
-                      if self._page_keys[i] != "about")
+                      if self._page_keys[i] not in ("about", "keys"))
         buttons = self.findChild(QDialogButtonBox).sizeHint().height()
         m = self.layout().contentsMargins()
         w, h = 860, max(580, tallest + buttons + m.top() + m.bottom() + 24)
@@ -865,41 +867,113 @@ class SettingsDialog(QDialog):
         v.addWidget(built)
         return g
 
-    def _build_shortcuts(self) -> QGroupBox:
-        """Keyboard shortcuts and mouse controls of the main window (keep in step with
-        MainWindow._build_shortcuts and the README)."""
-        g = QGroupBox(tr("Keyboard and mouse"))
+    # ---------------------------------------------------- keyboard and mouse
+    def _build_keys(self) -> QGroupBox:
+        """Every key of the main window, each in a field that records a new one. A key the
+        system uses (Windows, macOS, Linux) or that another row already has is not taken; the
+        row says why. Saved with OK / Apply (keys.save); Reset to defaults puts all back."""
+        g = QGroupBox(tr("Keyboard"))
+        grid = QGridLayout(g)
+        grid.setHorizontalSpacing(14)
+        grid.setVerticalSpacing(4)
+        grid.setColumnStretch(0, 1)
+        hint = QLabel(tr("Click a field and press the new key. The clear button removes the key."))
+        hint.setObjectName("muted")
+        hint.setWordWrap(True)
+        grid.addWidget(hint, 0, 0, 1, 2)
+        names = keys.descriptions()
+        self._key_values = keys.current(self.settings)
+        self.key_edits: dict[str, QKeySequenceEdit] = {}
+        self.key_notes: dict[str, QLabel] = {}
+        row = 1
+        for kid in keys.IDS:
+            text = QLabel(names[kid])
+            text.setWordWrap(True)
+            text.setStyleSheet("font-weight: 400;")     # not the box title's bold
+            grid.addWidget(text, row, 0)
+            edit = QKeySequenceEdit(QKeySequence(self._key_values[kid]))
+            edit.setMaximumSequenceLength(1)            # one key (with Ctrl, Shift, Alt), no sequences
+            edit.setClearButtonEnabled(True)
+            edit.setFixedWidth(150)
+            edit.setToolTip(tr("Default: {key}").format(key=keys.native(keys.DEFAULT[kid])))
+            edit.keySequenceChanged.connect(lambda _seq, k=kid: self._key_edited(k))
+            grid.addWidget(edit, row, 1)
+            note = QLabel()
+            note.setObjectName("keyProblem")
+            note.setWordWrap(True)
+            note.hide()
+            grid.addWidget(note, row + 1, 0, 1, 2)
+            self.key_edits[kid] = edit
+            self.key_notes[kid] = note
+            row += 2
+        self.keys_reset_btn = QPushButton(tr("Reset to defaults"))
+        self.keys_reset_btn.setToolTip(tr("Puts every key back to the one PrintView3D comes with."))
+        self.keys_reset_btn.clicked.connect(self._reset_keys)
+        bottom = QHBoxLayout()
+        bottom.addStretch(1)
+        bottom.addWidget(self.keys_reset_btn)
+        grid.addLayout(bottom, row, 0, 1, 2)
+        return g
+
+    def _key_edited(self, kid: str):
+        """A key was recorded: take it, or say why not and keep the one before."""
+        edit = self.key_edits[kid]
+        seq = keys.normalize(edit.keySequence().toString(QKeySequence.PortableText))
+        why = keys.problem(seq)
+        if not why and seq:
+            other = next((k for k, v in self._key_values.items() if k != kid and v == seq), None)
+            if other:
+                why = tr("{key} is already used for: {what}").format(
+                    key=keys.native(seq), what=keys.descriptions()[other])
+        note = self.key_notes[kid]
+        if why:
+            note.setText(why)
+            note.setStyleSheet("color: %s;" % ("#ff5c5c" if theme.is_dark() else "#e02424"))
+            note.show()
+            edit.blockSignals(True)
+            edit.setKeySequence(QKeySequence(self._key_values[kid]))
+            edit.blockSignals(False)
+            return
+        note.hide()
+        self._key_values[kid] = seq
+
+    def _reset_keys(self):
+        self._key_values = dict(keys.DEFAULT)
+        for kid, edit in self.key_edits.items():
+            edit.blockSignals(True)
+            edit.setKeySequence(QKeySequence(keys.DEFAULT[kid]))
+            edit.blockSignals(False)
+            self.key_notes[kid].hide()
+
+    def _build_mouse(self) -> QGroupBox:
+        """The mouse controls of the 3D view. They are fixed: the list only shows them."""
+        g = QGroupBox(tr("Mouse"))
         grid = QGridLayout(g)
         grid.setHorizontalSpacing(14)
         grid.setVerticalSpacing(6)
         grid.setColumnStretch(1, 1)
-        row = 0
-        for heading, items in ((tr("Keyboard"), shortcut_rows()), (tr("Mouse"), mouse_rows())):
-            head = QLabel(heading)
-            head.setObjectName("formKey")
-            head.setStyleSheet("font-weight: 600;" + (" margin-top: 8px;" if row else ""))
-            grid.addWidget(head, row, 0, 1, 2)
-            row += 1
-            for keys, action in items:
-                caps = QWidget()
-                h = QHBoxLayout(caps)
-                h.setContentsMargins(0, 0, 0, 0)
-                h.setSpacing(4)
-                for i, k in enumerate(keys):
-                    if i:
-                        sep = QLabel("/")
-                        sep.setObjectName("muted")
-                        h.addWidget(sep)
-                    cap = QLabel(i18n.ltr(k))
-                    cap.setObjectName("keyCap")
-                    h.addWidget(cap)
-                h.addStretch(1)
-                grid.addWidget(caps, row, 0)
-                text = QLabel(action)
-                text.setWordWrap(True)
-                text.setStyleSheet("font-weight: 400;")     # not the box title's bold
-                grid.addWidget(text, row, 1)
-                row += 1
+        note = QLabel(tr("The mouse controls are fixed."))
+        note.setObjectName("muted")
+        grid.addWidget(note, 0, 0, 1, 2)
+        for row, (buttons, action) in enumerate(mouse_rows(), start=1):
+            caps = QWidget()
+            h = QHBoxLayout(caps)
+            h.setContentsMargins(0, 0, 0, 0)
+            h.setSpacing(4)
+            for i, k in enumerate(buttons):
+                if i:
+                    sep = QLabel("/")
+                    sep.setObjectName("muted")
+                    h.addWidget(sep)
+                cap = QLabel(i18n.ltr(k))
+                cap.setObjectName("keyCap")
+                h.addWidget(cap)
+            h.addStretch(1)
+            grid.addWidget(caps, row, 0)
+            text = QLabel(action)
+            text.setWordWrap(True)
+            text.setStyleSheet("font-weight: 400;")
+            grid.addWidget(text, row, 1)
         return g
 
     # ---------------------------------------------------------------- slicer
@@ -1058,6 +1132,7 @@ class SettingsDialog(QDialog):
         self.settings.set("units", self.units_combo.currentData())
         self.settings.set("nozzle_in_inches", self.nozzle_in_cb.isChecked())
         self.settings.set("cut_planes_whole", self.cut_planes_cb.isChecked())
+        keys.save(self.settings, self._key_values)
         self.settings.set("check_keep_colors", self.check_colors_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())
         self.settings.set("plate_size", [round(self.plate_w_spin.mm(), 3), round(self.plate_d_spin.mm(), 3)])
@@ -1127,42 +1202,6 @@ class SettingsDialog(QDialog):
         box.setEscapeButton(later)
         box.exec()
         return box.clickedButton() is now
-
-
-def _key(seq: str) -> str:
-    """A shortcut as the system writes it (Ctrl+O on Windows/Linux, ⌘O on a Mac)."""
-    return QKeySequence(seq).toString(QKeySequence.NativeText)
-
-
-def shortcut_rows() -> list[tuple[list[str], str]]:
-    """(keys, what they do) for the About page, in the order people need them."""
-    view = tr("{view} view")
-    return [
-        ([_key("Ctrl+O")], tr("Open a file")),
-        ([_key("Ctrl+W")], tr("Close the file (back to the start page)")),
-        ([_key("Ctrl+P")], tr("Open the file in your slicer")),
-        ([_key("Ctrl+E")], tr("Export STL (3MF, FreeCAD and STEP)")),
-        ([_key("Ctrl+T")], tr("Next theme style")),
-        ([_key("Ctrl+Shift+T")], tr("Switch between light and dark")),
-        (["F"], view.format(view=tr("Fit"))),
-        (["1"], view.format(view=tr("Iso"))),
-        (["2"], view.format(view=tr("Top"))),
-        (["3"], view.format(view=tr("Front"))),
-        (["4"], view.format(view=tr("Right"))),
-        (["W"], tr("Wireframe on / off (models)")),
-        (["X"], tr("X-ray (see-through) on / off (models)")),
-        (["C"], tr("Clip from the top on / off (models)")),
-        (["V"], tr("Clip facing you on / off (models)")),
-        (["R"], tr("Reset view: all of the above off, model fitted (models)")),
-        (["M"], tr("Measure on / off (models)")),
-        (["D", "A", "O"], tr("Measure a distance, an angle, a circle")),
-        (["I"], tr("View section on / off (models)")),
-        (["K"], tr("Check model on / off (models)")),
-        (["P"], tr("Build plate on / off")),
-        (["↑", "↓"], tr("Next / previous layer (G-code), or file (ZIP)")),
-        ([_key("PgUp"), _key("PgDown")], tr("10 layers up / down")),
-        ([_key("Home"), _key("End")], tr("First / last layer")),
-    ]
 
 
 def mouse_rows() -> list[tuple[list[str], str]]:

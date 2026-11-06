@@ -7,6 +7,9 @@
 your recent files. It also gives back the memory the file took, which matters most after a large
 G-code or ZIP.
 
+On the start page, hold the mouse over a recent file to see where it is and, for 3MF projects,
+G-code and FreeCAD files that have one, its preview picture.
+
 **One window:** a file you double-click while PrintView3D is already open is shown in that window,
 which comes to the front. To give every file its own window (to compare two models side by side),
 tick **Settings → Files → Open each file in a new window**. Starting PrintView3D from the Start
@@ -24,7 +27,12 @@ Looking from underneath? The plate gets out of the way so you can see the bottom
 
 ## Keyboard
 
-The same list is in the program under **Settings → About → Keyboard and mouse**.
+These are the keys PrintView3D comes with. **Settings → Keyboard and mouse** lists them all, and
+you can give any of them a key of your own there: click its field and press the new key (the
+clear button removes it). The buttons and tooltips then show your key. **Reset to defaults** puts
+them all back. Keys the system uses (the Windows or Super key, Alt+F4, Alt+Tab, ⌘Q, Ctrl+Alt+Del
+and the like), Tab, Enter, Esc and Space can't be chosen, and neither can a key another action
+already has. The mouse controls are fixed.
 
 | Key | Action |
 |---|---|
@@ -32,13 +40,18 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+W` | Close the file (back to the start page) |
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
+| `S` | Settings |
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
+| `F` | Fit the model in the view |
 | `1` · `2` · `3` · `4` | Iso · Top · Front · Right view |
-| `W` · `X` · `C` · `V` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
+| `P` | Build plate on / off |
+| `C` · `V` | Check section · View section, on / off (models) |
+| `W` · `X` · `T` · `Y` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
 | `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (on G-code: fit) |
 | `M` | Measure on / off (models) |
-| `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
+| `D` · `A` · `O` | Measure a distance · an angle · a circle |
+| `↑` / `↓` | Next / previous layer (G-code), or the file above / below in a ZIP or folder |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
 
@@ -51,10 +64,10 @@ and the other model formats; G-code has its layer slider instead):
 - **Wireframe** (`W`): the triangles of the mesh, to see how fine it is or spot broken geometry.
 - **X-ray** (`X`): the parts become see-through, so parts inside other parts, cavities and
   hollow walls show.
-- **Clip from the top** (`C`): hides everything above a height. A slider in the side panel moves
-  the cut; the inside of the walls that the cut lays open is drawn in red. `C` or the button
+- **Clip from the top** (`T`): hides everything above a height. A slider in the side panel moves
+  the cut; the inside of the walls that the cut lays open is drawn in red. `T` or the button
   again shows the whole model.
-- **Clip facing you** (`V`): an upright cut that always faces you and hides the part of the model
+- **Clip facing you** (`Y`): an upright cut that always faces you and hides the part of the model
   in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
   click that face on the view cube. The slider moves the cut nearer or further, and **Depth**

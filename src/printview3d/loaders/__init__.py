@@ -44,9 +44,31 @@ def load_file(path: str, progress=None, freecad_path: str = ""):
     raise ValueError(f"Unsupported file type: {os.path.basename(path)}")
 
 
+def read_thumbnail(path: str):
+    """Only the preview picture saved in a file (PNG or JPEG bytes), or None: 3MF projects,
+    G-code and FreeCAD documents can have one. Quick: the model itself is not read."""
+    import zipfile
+    from . import gcode, mesh, zipsafe
+    kind = file_kind(path)
+    try:
+        if kind == "3mf":
+            return mesh.read_3mf_thumbnail(path)
+        if kind == "gcode":
+            return gcode.read_thumbnail(path)
+        if kind == "freecad":
+            with zipfile.ZipFile(path) as z:
+                names = set(z.namelist())
+                for t in ("thumbnails/Thumbnail.png", "Thumbnail.png"):
+                    if t in names:
+                        return zipsafe.read(z, t, zipsafe.MAX_SMALL_BYTES)
+    except (OSError, ValueError, zipfile.BadZipFile):
+        pass
+    return None
+
+
 __all__ = [
     "FEATURES", "FREECAD_EXTENSIONS", "GcodeData", "MeshPart", "ModelData", "SEND_AS_STL",
     "SUPPORTED_EXTENSIONS", "file_kind", "load_file", "load_3mf", "load_gltf", "load_obj", "load_off",
     "load_ply", "load_stl", "parse_gcode_file",
-    "parse_gcode_text", "read_3mf_for_export", "read_embedded_gcode", "stl_file_names", "write_binary_stl",
+    "parse_gcode_text", "read_3mf_for_export", "read_thumbnail", "read_embedded_gcode", "stl_file_names", "write_binary_stl",
 ]

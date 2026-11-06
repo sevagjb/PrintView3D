@@ -110,7 +110,7 @@ def test_the_clip_controls_live_in_the_view_section_and_open_it(window):
 def test_menu_and_shortcuts(window):
     w = window
     actions = [w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face, w.act_reset_view]
-    assert [a.shortcut().toString() for a in actions] == ["W", "X", "C", "V", "R"]
+    assert [a.shortcut().toString() for a in actions] == ["W", "X", "T", "Y", "R"]
     assert w.act_measure in w.actions() and w.act_measure.shortcut().toString() == "M"
     for a in actions:
         assert a in w.actions()                           # work wherever the focus is
@@ -217,11 +217,9 @@ def test_hiding_an_object_keeps_the_view_options(window, app):
     assert _planes(w) == [1, 1, 1]
 
 
-def test_shortcuts_on_the_about_page(app):
-    from printview3d.ui.settings_dialog import shortcut_rows
-    keys = [k for row, _ in shortcut_rows() for k in row]
-    for k in ("W", "X", "C", "V"):
-        assert k in keys
+def test_view_keys_have_defaults(app):
+    from printview3d.ui import keys
+    assert [keys.DEFAULT[i] for i in ("wireframe", "xray", "clip_top", "clip_face")] == ["W", "X", "T", "Y"]
 
 
 def test_arabic_keeps_the_slider_left_to_right(window, app):
@@ -398,9 +396,9 @@ def test_reset_view_also_ends_clip_facing_you(window):
 
 
 def test_reset_view_key_and_shortcut_list(window, app):
-    from printview3d.ui.settings_dialog import shortcut_rows
+    from printview3d.ui import keys
     assert window.act_reset_view.shortcut().toString() == "R"
-    assert "R" in [k for row, _ in shortcut_rows() for k in row]
+    assert keys.DEFAULT["reset_view"] == "R"
 
 
 def test_reset_view_on_gcode_only_fits(window):

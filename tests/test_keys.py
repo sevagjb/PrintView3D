@@ -1,0 +1,220 @@
+"""Own keyboard shortcuts (Settings -> Keyboard and mouse), keys the system keeps, and the
+start page's recent files with their preview picture."""
+
+import base64
+import os
+import zipfile
+
+import pytest
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+from printview3d import units  # noqa: E402
+from printview3d.settings import Settings  # noqa: E402
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+CUBE = os.path.join(HERE, "data", "cube_binary.stl")
+# A 2 x 1 PNG (red, blue).
+PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAB7QOjdAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAD0lE"
+                       "QVQImWP4z8DAwPAfAAcAAf/89wURAAAAAElFTkSuQmCC")
+
+
+@pytest.fixture
+def app():
+    from PySide6.QtWidgets import QApplication
+    return QApplication.instance() or QApplication([])
+
+
+@pytest.fixture
+def window(app, tmp_path):
+    from PySide6.QtCore import QEvent
+    from printview3d.ui import main_window as mw
+    w = mw.MainWindow(Settings(str(tmp_path / "settings.json")))
+    w.resize(1280, 800)
+    w.show()
+    yield w
+    w.close()
+    w.deleteLater()
+    app.sendPostedEvents(None, QEvent.DeferredDelete)
+    app.processEvents()
+    units.set_unit("mm")
+
+
+def _dialog(window):
+    from printview3d.ui.settings_dialog import SettingsDialog
+    return SettingsDialog(window.settings, window, {}, page="keys")
+
+
+def _record(dlg, kid, seq):
+    from PySide6.QtGui import QKeySequence
+    dlg.key_edits[kid].setKeySequence(QKeySequence(seq))      # as if the key was pressed
+
+
+# ------------------------------------------------------------------ defaults
+def test_defaults(app):
+    from printview3d.ui import keys
+    d = keys.DEFAULT
+    assert (d["view"], d["check"], d["clip_top"], d["settings"], d["fit"]) == ("V", "C", "T", "S", "F")
+    assert not keys.conflicts(d)                                 # no key twice
+    assert all(not keys.problem(k) for k in d.values())          # none the system keeps
+    assert set(keys.descriptions()) == set(keys.IDS)
+
+
+def test_window_uses_the_defaults(window):
+    w = window
+    assert w.act_view.text() == "View (V)" and w.act_check.text() == "Check (C)"
+    assert w.act_clip.shortcut().toString() == "T" and w.act_clip.text() == "Clip from the top (T)"
+    assert w.act_settings.shortcut().toString() == "S" and w.act_settings in w.actions()
+    assert w.act_settings.toolTip() == "Settings (S)"
+
+
+# ------------------------------------------------------------------ Settings page
+def test_keys_page_sits_above_updates_and_about_has_no_keys(window):
+    dlg = _dialog(window)
+    pages = dlg._page_keys
+    assert pages.index("keys") == pages.index("updates") - 1
+    assert dlg.nav.item(pages.index("keys")).text() == "Keyboard and mouse"
+    about = dlg.pages.widget(pages.index("about")).widget()
+    from PySide6.QtWidgets import QKeySequenceEdit, QLabel
+    assert not about.findChildren(QKeySequenceEdit)
+    assert not [lb for lb in about.findChildren(QLabel) if lb.objectName() == "keyCap"]
+    dlg.close()
+
+
+def test_own_key_is_saved_and_shown_everywhere(window):
+    from PySide6.QtGui import QKeySequence, QShortcut
+    w = window
+    dlg = _dialog(window)
+    _record(dlg, "measure", "Shift+M")
+    _record(dlg, "fit", "Ctrl+Shift+F")
+    dlg._save(close=True)
+    assert w.settings.get("shortcuts") == {"measure": "Shift+M", "fit": "Ctrl+Shift+F"}   # only the changes
+    w._settings_applied()
+    assert w.act_measure.shortcut().toString() == "Shift+M"
+    assert w.act_measure.text() == "Measure (Shift+M)" and w.act_measure.toolTip().endswith("(Shift+M)")
+    assert w.act_fit.text() == "Fit (Ctrl+Shift+F)"
+    fit = [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("Ctrl+Shift+F")]
+    assert len(fit) == 1 and not [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("F")]
+    # kept for the next start
+    from printview3d.ui import main_window as mw
+    w2 = mw.MainWindow(w.settings)
+    assert w2.act_measure.shortcut().toString() == "Shift+M"
+    w2.close()
+    w2.deleteLater()
+
+
+def test_no_key(window):
+    w = window
+    dlg = _dialog(window)
+    dlg.key_edits["measure"].clear()
+    dlg._save(close=True)
+    w._settings_applied()
+    assert w.act_measure.shortcut().isEmpty() and w.act_measure.text() == "Measure"
+
+
+def test_key_used_twice_is_refused(window):
+    dlg = _dialog(window)
+    _record(dlg, "measure", "W")                                  # W is Wireframe's
+    assert dlg.key_edits["measure"].keySequence().toString() == "M"   # kept the one before
+    assert not dlg.key_notes["measure"].isHidden()
+    assert "Wireframe" in dlg.key_notes["measure"].text()
+    _record(dlg, "measure", "N")                                  # a free one: taken, the note goes
+    assert dlg._key_values["measure"] == "N" and dlg.key_notes["measure"].isHidden()
+    dlg.close()
+
+
+@pytest.mark.parametrize("seq, platform", [
+    ("Meta+E", "win32"),            # the Windows key
+    ("Meta+L", "linux"),            # Super
+    ("Alt+F4", "win32"), ("Alt+Tab", "win32"), ("Ctrl+Alt+Del", "win32"), ("Ctrl+Shift+Esc", "win32"),
+    ("Ctrl+Alt+T", "linux"), ("Ctrl+Alt+F2", "linux"),
+    ("Ctrl+Q", "darwin"), ("Ctrl+H", "darwin"), ("Ctrl+Space", "darwin"), ("Ctrl+Shift+4", "darwin"),
+    ("Tab", "win32"), ("Esc", "linux"), ("Return", "darwin"), ("Space", "win32"), ("Print", "win32"),
+])
+def test_system_keys_are_refused(seq, platform):
+    from printview3d.ui import keys
+    assert keys.problem(seq, platform)
+
+
+@pytest.mark.parametrize("seq, platform", [
+    ("Ctrl+Q", "win32"), ("Ctrl+H", "linux"), ("Shift+M", "darwin"), ("F5", "win32"), ("Alt+M", "win32"),
+    ("Meta+E", "darwin"),           # on a Mac Qt's Meta is the Control key: Control+E is free
+])
+def test_other_keys_are_fine(seq, platform):
+    from printview3d.ui import keys
+    assert keys.problem(seq, platform) == ""
+
+
+def test_system_key_refused_in_settings(window):
+    dlg = _dialog(window)
+    _record(dlg, "measure", "Meta+E" if os.sys.platform != "darwin" else "Ctrl+Q")
+    assert dlg.key_edits["measure"].keySequence().toString() == "M"
+    assert "system" in dlg.key_notes["measure"].text()
+    dlg.close()
+
+
+def test_reset_to_defaults(window):
+    w = window
+    dlg = _dialog(window)
+    _record(dlg, "measure", "Shift+M")
+    dlg._save(close=True)
+    dlg = _dialog(window)
+    assert dlg.key_edits["measure"].keySequence().toString() == "Shift+M"
+    dlg.keys_reset_btn.click()
+    assert dlg.key_edits["measure"].keySequence().toString() == "M"
+    dlg._save(close=True)
+    assert w.settings.get("shortcuts") == {}
+
+
+def test_saved_junk_falls_back(window):
+    from printview3d.ui import keys
+    window.settings.set("shortcuts", {"measure": 5, "fit": "Ctrl+Shift+F"})
+    k = keys.current(window.settings)
+    assert k["measure"] == "M" and k["fit"] == "Ctrl+Shift+F"
+
+
+def test_mouse_rows_are_fixed(window):
+    from PySide6.QtWidgets import QKeySequenceEdit
+    dlg = _dialog(window)
+    assert not dlg._build_mouse().findChildren(QKeySequenceEdit)
+    dlg.close()
+
+
+# ------------------------------------------------------------------ start page
+def test_recent_file_tooltip_shows_picture_and_path(window, tmp_path):
+    from PySide6.QtCore import QEvent, QPoint
+    from PySide6.QtGui import QHelpEvent
+    from printview3d.ui import main_window as mw
+    with_pic = tmp_path / "with_picture.3mf"
+    with zipfile.ZipFile(with_pic, "w") as z:
+        z.writestr("3D/3dmodel.model", "<model/>")
+        z.writestr("Metadata/thumbnail.png", PNG)
+    gcode = tmp_path / "printed.gcode"
+    gcode.write_text("; generated by test\n; thumbnail begin 2x1 100\n; "
+                     + base64.b64encode(PNG).decode() + "\n; thumbnail end\nG1 X1 Y1\n", encoding="utf-8")
+    w = window
+    for p in (str(with_pic), str(gcode), CUBE):
+        w.settings.add_recent(p)
+    w._refresh_recent_menu()
+    buttons = {b.path: b for b in w.findChildren(mw._RecentButton)}
+    for p, has_picture in ((str(with_pic), True), (str(gcode), True), (os.path.abspath(CUBE), False)):
+        b = buttons[os.path.abspath(p)]
+        assert b.toolTip() == ""                                 # nothing read before the hover
+        b.event(QHelpEvent(QEvent.ToolTip, QPoint(2, 2), b.mapToGlobal(QPoint(2, 2))))
+        tip = b.toolTip()
+        assert ("data:image/png;base64," in tip) is has_picture, p
+        assert os.path.abspath(p).replace("&", "&amp;") in tip
+
+
+def test_read_thumbnail(tmp_path):
+    from printview3d.loaders import read_thumbnail
+    gcode = tmp_path / "a.gcode"
+    small, big = PNG, PNG + b"x"                               # any bytes after a PNG's end are ignored
+    gcode.write_text("; thumbnail begin 1x1 10\n; " + base64.b64encode(small).decode()
+                     + "\n; thumbnail end\n; thumbnail begin 4x4 10\n; " + base64.b64encode(big).decode()
+                     + "\n; thumbnail end\nG1 X0\n", encoding="utf-8")
+    assert read_thumbnail(str(gcode)) == big
+    assert read_thumbnail(CUBE) is None
+    bad = tmp_path / "bad.3mf"
+    bad.write_bytes(b"not a zip")
+    assert read_thumbnail(str(bad)) is None

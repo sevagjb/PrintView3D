@@ -103,7 +103,7 @@ def test_check_section_names_size_limit_and_place(window):
     w = window
     w.load_sync(CUBE)
     w.act_check.trigger()
-    assert w.check_box.title() == "Check model" and w.act_check.text() == "Check (K)"
+    assert w.check_box.title() == "Check model" and w.act_check.text() == "Check (C)"
     names = {k: r[0].text() for k, r in w.check_rows.items()}
     assert names["open"] == "Holes" and names["nonmanifold"] == "Tangled edges"
     assert names["flipped"] == "Inside-out faces"
@@ -187,14 +187,16 @@ def test_settings_layout(window, app):
     assert lay.indexOf(dlg.cube_cb) == lay.indexOf(dlg.travel_cb) + 1          # right after travel moves
     assert lay.indexOf(dlg.check_colors_cb) == lay.indexOf(dlg.cut_planes_cb) + 1
     # The window is as tall as the tallest page of settings needs, up to 90 % of the screen: those
-    # pages have no scroll bar. About (the long list of keys) doesn't make it taller: it scrolls.
+    # pages have no scroll bar. The long list of keys doesn't make it taller: it scrolls.
     limit = int(dlg.screen().availableGeometry().height() * 0.9)
     for i in range(dlg.pages.count()):
         dlg.pages.setCurrentIndex(i)
         app.processEvents()
         bar = dlg.pages.widget(i).verticalScrollBar().maximum()
-        if dlg._page_keys[i] == "about":
+        if dlg._page_keys[i] == "keys":
             assert bar > 0                                # longer than the window: it scrolls
+            continue
+        if dlg._page_keys[i] == "about":
             continue
         if dlg.height() < limit - 1:
             assert bar == 0, dlg._page_keys[i]
@@ -224,7 +226,7 @@ def test_settings_opens_on_the_last_page(window, app):
 # ------------------------------------------------------------ shortcuts
 def test_every_section_button_has_a_key(window):
     w = window
-    keys = {w.act_bed: "P", w.act_check: "K", w.act_view: "I", w.act_measure: "M",
+    keys = {w.act_bed: "P", w.act_check: "C", w.act_view: "V", w.act_measure: "M",
             w.measure_actions["distance"]: "D", w.measure_actions["angle"]: "A", w.measure_actions["circle"]: "O"}
     for act, key in keys.items():
         assert act.shortcut().toString() == key and act in w.actions()
@@ -236,9 +238,9 @@ def test_every_section_button_has_a_key(window):
     assert w.view_reset_btn.text().endswith("(R)")
     # Fit has its own key again: F
     assert w.act_fit.text() == "Fit (F)" and w.act_fit.toolTip().endswith("(F)")
-    from printview3d.ui.settings_dialog import shortcut_rows
-    listed = [k for row, _ in shortcut_rows() for k in row]
-    assert all(k in listed for k in ("P", "K", "I", "D", "A", "O", "F"))
+    from printview3d.ui import keys as k
+    listed = set(k.DEFAULT.values())
+    assert all(key in listed for key in ("P", "C", "V", "D", "A", "O", "F", "T", "S"))
 
 
 def test_r_fits_g_code_too(window):

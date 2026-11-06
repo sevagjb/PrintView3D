@@ -57,7 +57,7 @@ def test_settings_button_right_of_the_theme_button(window):
     i = widgets.index(window.theme_btn)
     assert widgets[i + 1] is window.settings_btn
     assert window.settings_btn.defaultAction() is window.act_settings
-    assert window.settings_btn.toolTip() == "Settings" and not window.settings_btn.icon().isNull()
+    assert window.settings_btn.toolTip() == "Settings (S)" and not window.settings_btn.icon().isNull()
 
 
 # ------------------------------------------------------------ nozzle width in mm

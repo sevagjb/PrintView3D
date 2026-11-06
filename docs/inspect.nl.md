@@ -48,7 +48,7 @@ terwijl je sleept. *Nieuw in PrintView3D 0.26.*
 
 ## Beide sneden tegelijk
 
-<kbd>C</kbd> en <kbd>V</kbd> zetten elk hun eigen snede aan en uit, dus beide kunnen tegelijk aan
+<kbd>T</kbd> en <kbd>Y</kbd> zetten elk hun eigen snede aan en uit, dus beide kunnen tegelijk aan
 staan: het model houdt dan alleen over wat beide sneden overlaten, een hoek eruit gesneden. Het
 zijpaneel heeft voor elk een schuif, **Hoogte** en **Diepte**. Wat de sneden verbergen blijft
 zichtbaar als één gelijkmatige, doorzichtige schim, en elk snijvlak stopt waar de andere snede is.
@@ -132,8 +132,8 @@ van de automatische. *Nieuw in PrintView3D 0.28.*
 |---|---|
 | <kbd>W</kbd> | Draadmodel aan / uit |
 | <kbd>X</kbd> | Röntgen aan / uit |
-| <kbd>C</kbd> | Van boven afsnijden aan / uit |
-| <kbd>V</kbd> | Afsnijden vanaf jouw kant aan / uit |
+| <kbd>T</kbd> | Van boven afsnijden aan / uit |
+| <kbd>Y</kbd> | Afsnijden vanaf jouw kant aan / uit |
 | <kbd>R</kbd> | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend (metingen blijven) |
 | <kbd>M</kbd> | Meten aan / uit |
 

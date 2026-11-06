@@ -885,6 +885,15 @@ def _nav_pixmap(kind: str, dot: bool, color: str, ring: str) -> QPixmap:
         head.lineTo(36, 20)
         head.closeSubpath()
         p.fillPath(head, fg)
+    elif kind == "keys":                         # keyboard: frame, two rows of keys, space bar
+        p.drawRoundedRect(QRectF(6, 16, 52, 34), 6, 6)
+        p.setBrush(fg)
+        p.setPen(Qt.NoPen)
+        for y in (25, 33):
+            for x in (15, 23, 31, 39, 47):
+                p.drawEllipse(QPointF(x, y), 2.6, 2.6)
+        p.setPen(pen)
+        p.drawLine(QPointF(22, 42), QPointF(42, 42))
     elif kind == "about":                        # (i)
         p.drawEllipse(c, 24, 24)
         p.drawLine(QPointF(32, 28), QPointF(32, 44))

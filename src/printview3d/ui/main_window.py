@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import gc
 import html
 import math
@@ -11,9 +12,9 @@ import threading
 from typing import Optional
 
 import numpy as np
-from PySide6.QtCore import QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
+from PySide6.QtCore import QBuffer, QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
 from PySide6.QtGui import (QAction, QActionGroup, QColor, QDesktopServices, QFont, QFontMetrics, QGuiApplication, QIcon,
-                           QKeySequence, QPixmap, QShortcut)
+                           QImage, QKeySequence, QPixmap, QShortcut)
 from PySide6.QtWidgets import (
     QAbstractItemView, QApplication, QCheckBox, QColorDialog, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QScrollArea,
@@ -31,12 +32,13 @@ from ..gpu import renderer_info
 from ..i18n import count, ltr, num, tr
 from ..loaders import (
     FEATURES, GcodeData, ModelData, SEND_AS_STL, SUPPORTED_EXTENSIONS, file_kind, load_file,
-    parse_gcode_text, read_3mf_for_export, read_embedded_gcode, stl_file_names, write_binary_stl,
+    parse_gcode_text, read_3mf_for_export, read_embedded_gcode, read_thumbnail, stl_file_names,
+    write_binary_stl,
 )
 from ..loaders.gcode import FEATURE_INDEX
 from ..settings import EXPORT_MODES, Settings
 from .labels import feature_label, meta_label, meta_value, plate_mode_label
-from . import theme, update_ui
+from . import keys, theme, update_ui
 from .. import updates as up
 from .export_stl import ExportStlDialog
 from .scene import PLATE_MODES, Scene
@@ -141,6 +143,48 @@ def _plate_name(member: str) -> str:
     stem = os.path.splitext(os.path.basename(member))[0]
     digits = "".join(ch for ch in stem if ch.isdigit())
     return tr("Plate {n}").format(n=digits) if digits else stem
+
+
+THUMB_TIP_PX = 200                  # the preview picture in a recent file's tooltip, at most this big
+_recent_tips: dict[tuple[str, float], str] = {}
+
+
+def recent_tooltip(path: str) -> str:
+    """A recent file's tooltip on the start page: its preview picture (3MF, G-code and FreeCAD
+    files can have one) above its full path. Read once per file and change."""
+    try:
+        stamp = os.path.getmtime(path)
+    except OSError:
+        return html.escape(path)
+    key = (path, stamp)
+    if key not in _recent_tips:
+        picture = ""
+        data = read_thumbnail(path)
+        img = QImage.fromData(data) if data else QImage()
+        if not img.isNull():
+            if max(img.width(), img.height()) > THUMB_TIP_PX:
+                img = img.scaled(THUMB_TIP_PX, THUMB_TIP_PX, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            buf = QBuffer()
+            buf.open(QBuffer.WriteOnly)
+            img.save(buf, "PNG")
+            picture = (f'<img src="data:image/png;base64,{base64.b64encode(bytes(buf.data())).decode()}" '
+                       f'width="{img.width()}" height="{img.height()}"><br>')
+        _recent_tips[key] = f"<p>{picture}{html.escape(path)}</p>"
+    return _recent_tips[key]
+
+
+class _RecentButton(QPushButton):
+    """A recent file on the start page. Its tooltip (picture and path) is made on the first
+    hover, so the start page doesn't open every file when it appears."""
+
+    def __init__(self, path: str, parent=None):
+        super().__init__(os.path.basename(path), parent)
+        self.path = path
+
+    def event(self, e):
+        if e.type() == QEvent.ToolTip:
+            self.setToolTip(recent_tooltip(self.path))
+        return super().event(e)
 
 
 class _LoadSignals(QObject):
@@ -509,6 +553,7 @@ class MainWindow(QMainWindow):
         self._export_signals.done.connect(self._on_export_read)
         self._export_signals.failed.connect(self._on_export_failed)
 
+        self.keys = keys.current(self.settings)     # {id: key}: Settings -> Keyboard and mouse
         self._build_toolbar()
         self._build_central()
         self._build_statusbar()
@@ -606,14 +651,11 @@ class MainWindow(QMainWindow):
             a.setText(tr(theme.MODE_NAMES[key]))
             a.setIcon(theme.segment_icon(key, menu=True))
             a.setChecked(key == mode)
-        self.act_next_theme.setText(tr("Next theme style") + "\t" + self._native("Ctrl+T"))
-        self.act_toggle_dark.setText(tr("Switch between light and dark") + "\t" + self._native("Ctrl+Shift+T"))
-        self.theme_btn.setToolTip(tr("Theme: {name} (Ctrl+T: next theme)").format(
-            name=theme.display_name(theme.make_choice(style, mode))))
-
-    @staticmethod
-    def _native(seq: str) -> str:
-        return QKeySequence(seq).toString(QKeySequence.NativeText)
+        self.act_next_theme.setText(tr("Next theme style") + "\t" + self._k("next_theme"))
+        self.act_toggle_dark.setText(tr("Switch between light and dark") + "\t" + self._k("light_dark"))
+        name = theme.display_name(theme.make_choice(style, mode))
+        self.theme_btn.setToolTip(tr("Theme: {name} ({key}: next theme)").format(name=name, key=self._k("next_theme"))
+                                  if self._k("next_theme") else tr("Theme: {name}").format(name=name))
 
     def _system_theme_changed(self, *_):
         if theme.follows_system():
@@ -643,13 +685,14 @@ class MainWindow(QMainWindow):
             return b
 
         # Actions live on the window too, so their shortcuts work wherever the button is.
-        self.act_open = QAction(self, shortcut=QKeySequence.Open, triggered=self.open_dialog)
+        self.act_open = QAction(self, triggered=self.open_dialog)
         # Home: close the file and go back to the start page (frees what the file took).
-        self.act_home = QAction(self, shortcut=QKeySequence("Ctrl+W"), triggered=self.go_home)
+        self.act_home = QAction(self, triggered=self.go_home)
         self.act_home.setEnabled(False)                 # nothing open yet
         self.addAction(self.act_home)
         self.act_screenshot = QAction(self, triggered=self.save_screenshot)
-        self.act_settings = QAction(self, triggered=self.open_settings)
+        self.act_settings = QAction(self, triggered=lambda: self.open_settings())
+        self.addAction(self.act_settings)               # its key opens Settings wherever the focus is
         self.act_updates = QAction(self, triggered=lambda: self.open_settings("updates"))
         self.act_about = QAction(self, triggered=lambda: self.open_settings("about"))
         # This version's notes, any time (the same window as once after an update).
@@ -698,7 +741,6 @@ class MainWindow(QMainWindow):
         # 3MF projects, FreeCAD and STEP files: save the objects as plain STL files.
         # A click (or Ctrl+E) does what Settings -> Files says; the arrow offers every way.
         self.act_export_stl = QAction(self, triggered=lambda: self.export_stl())
-        self.act_export_stl.setShortcut(QKeySequence("Ctrl+E"))
         self.addAction(self.act_export_stl)
         self.act_export_one = QAction(self, triggered=lambda: self.export_stl("combined"))
         self.act_export_each = QAction(self, triggered=lambda: self.export_stl("per_object"))
@@ -733,7 +775,7 @@ class MainWindow(QMainWindow):
                 tb.addAction(act)
             self.view_actions.append((act, key, view))
 
-        self.act_bed = QAction(self, checkable=True, shortcut=QKeySequence("P"))
+        self.act_bed = QAction(self, checkable=True)
         self.act_bed.setChecked(bool(self.settings.get("show_bed", True)))
         self.act_bed.toggled.connect(self._toggle_bed)
         tb.addAction(self.act_bed)
@@ -756,20 +798,20 @@ class MainWindow(QMainWindow):
         self.plate_btn.setPopupMode(QToolButton.MenuButtonPopup)
         # View: how the model is drawn (issue #60). Models only; G-code toolpaths are lines
         # already and have the layer slider as their cut.
-        self.act_wireframe = QAction(self, checkable=True, shortcut=QKeySequence("W"))
+        self.act_wireframe = QAction(self, checkable=True)
         self.act_wireframe.toggled.connect(self.set_wireframe)
-        self.act_xray = QAction(self, checkable=True, shortcut=QKeySequence("X"))
+        self.act_xray = QAction(self, checkable=True)
         self.act_xray.toggled.connect(self.set_xray)
-        self.act_clip = QAction(self, checkable=True, shortcut=QKeySequence("C"))
+        self.act_clip = QAction(self, checkable=True)
         self.act_clip.toggled.connect(self.set_clip_on)
         # Clip facing you: an upright cut that turns with the view. Both cuts can be on together
-        # (#70); C and V each turn their own cut on and off.
-        self.act_clip_face = QAction(self, checkable=True, shortcut=QKeySequence("V"))
+        # (#70); each has its own key (T and Y by default).
+        self.act_clip_face = QAction(self, checkable=True)
         self.act_clip_face.toggled.connect(self.set_clip_face_on)
         # Reset view (#66): all of the above off and the model fitted, in one go.
-        self.act_reset_view = QAction(self, shortcut=QKeySequence("R"), triggered=self.reset_view)
+        self.act_reset_view = QAction(self, triggered=self.reset_view)
         # Measure: distances, angles and circles on the model; a click places a point.
-        self.act_measure = QAction(self, checkable=True, shortcut=QKeySequence("M"))
+        self.act_measure = QAction(self, checkable=True)
         self.act_measure.toggled.connect(self.set_measure_on)
         for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view,
                   self.act_measure, self.act_bed):
@@ -777,14 +819,14 @@ class MainWindow(QMainWindow):
         # The View and Measure buttons are switches: each opens its own section in the side panel
         # (View: how the model is drawn and cut; Measure: distances, angles and circles).
         # Check (between Plate and View): overhangs, thin walls and mesh problems, in its section.
-        self.act_check = QAction(self, checkable=True, shortcut=QKeySequence("K"))
+        self.act_check = QAction(self, checkable=True)
         self.act_check.toggled.connect(self.set_check_section)
         self.check_btn = QToolButton()
         self.check_btn.setObjectName("viewButton")
         self.check_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.check_btn.setDefaultAction(self.act_check)
         tb.addWidget(self.check_btn)
-        self.act_view = QAction(self, checkable=True, shortcut=QKeySequence("I"))
+        self.act_view = QAction(self, checkable=True)
         self.act_view.toggled.connect(self.set_view_section)
         self.view_btn = QToolButton()
         self.view_btn.setObjectName("viewButton")
@@ -795,7 +837,7 @@ class MainWindow(QMainWindow):
         self.measure_group = QActionGroup(self)
         self.measure_actions = {}
         for kind in ("distance", "angle", "circle"):
-            a = QAction(self, checkable=True, shortcut=QKeySequence(self.MEASURE_KEYS[kind]))
+            a = QAction(self, checkable=True)
             a.triggered.connect(lambda _=False, k=kind: self.choose_measure_mode(k))
             self.measure_group.addAction(a)
             self.measure_actions[kind] = a
@@ -1416,19 +1458,66 @@ class MainWindow(QMainWindow):
         sb.addPermanentWidget(self.version_badge)
 
     def _build_shortcuts(self):
-        QShortcut(QKeySequence("Ctrl+P"), self, activated=self.open_in_slicer)
-        QShortcut(QKeySequence("Ctrl+T"), self, activated=self.next_theme)
-        QShortcut(QKeySequence("Ctrl+Shift+T"), self, activated=self.toggle_light_dark)
-        for act, key, _ in self.view_actions:
-            if key:
-                QShortcut(QKeySequence(key), self, activated=act.trigger)
-        # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.
-        QShortcut(QKeySequence(Qt.Key_Up), self, activated=lambda: self._arrow_key(1))
-        QShortcut(QKeySequence(Qt.Key_Down), self, activated=lambda: self._arrow_key(-1))
-        QShortcut(QKeySequence(Qt.Key_PageUp), self, activated=lambda: self.step_layer(10))
-        QShortcut(QKeySequence(Qt.Key_PageDown), self, activated=lambda: self.step_layer(-10))
-        QShortcut(QKeySequence(Qt.Key_Home), self, activated=lambda: self.set_layer(0))
-        QShortcut(QKeySequence(Qt.Key_End), self, activated=lambda: self.set_layer(10 ** 9))
+        """Every key of the window, by its id in keys.DEFAULTS: the actions' own shortcuts and,
+        for what has no action of its own, a QShortcut. _apply_shortcuts gives them their keys
+        (the defaults, or the user's from Settings -> Keyboard and mouse)."""
+        def short(slot):
+            sc = QShortcut(self)
+            sc.activated.connect(slot)
+            return sc
+        view_acts = {view: act for act, _, view in self.view_actions}
+        self.key_targets = {
+            "open": self.act_open, "home": self.act_home, "export": self.act_export_stl,
+            "settings": self.act_settings,
+            "slicer": short(self.open_in_slicer),
+            "next_theme": short(self.next_theme),
+            "light_dark": short(self.toggle_light_dark),
+            "fit": short(view_acts[None].trigger),
+            "iso": short(view_acts["iso"].trigger), "top": short(view_acts["top"].trigger),
+            "front": short(view_acts["front"].trigger), "right": short(view_acts["right"].trigger),
+            "plate": self.act_bed, "check": self.act_check, "view": self.act_view,
+            "wireframe": self.act_wireframe, "xray": self.act_xray, "clip_top": self.act_clip,
+            "clip_face": self.act_clip_face, "reset_view": self.act_reset_view,
+            "measure": self.act_measure, "distance": self.measure_actions["distance"],
+            "angle": self.measure_actions["angle"], "circle": self.measure_actions["circle"],
+            # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.
+            "next": short(lambda: self._arrow_key(1)),
+            "previous": short(lambda: self._arrow_key(-1)),
+            "up10": short(lambda: self.step_layer(10)),
+            "down10": short(lambda: self.step_layer(-10)),
+            "first": short(lambda: self.set_layer(0)),
+            "last": short(lambda: self.set_layer(10 ** 9)),
+        }
+        self._apply_shortcuts()
+
+    def _apply_shortcuts(self):
+        """Give every action and shortcut its key. The texts that name the keys follow in
+        retranslate_ui."""
+        self.keys = keys.current(self.settings)
+        for kid, target in self.key_targets.items():
+            seq = QKeySequence(self.keys[kid])
+            if isinstance(target, QShortcut):
+                target.setKey(seq)
+                target.setEnabled(not seq.isEmpty())
+            else:
+                target.setShortcut(seq)
+        self.view_actions = [(act, self.keys["fit" if view is None else view], view)
+                             for act, _, view in self.view_actions]
+
+    def _k(self, kid: str) -> str:
+        """A key as the system writes it, for the texts ("" when it has none)."""
+        return keys.native(self.keys.get(kid, ""))
+
+    def _with_key(self, text: str, kid: str) -> str:
+        """'Measure (M)', or just 'Measure' when it has no key."""
+        return keys.with_key(text, self.keys.get(kid, ""))
+
+    def _list_tip(self) -> str:
+        """The tip under a list of files or layers, naming the two keys that step through it."""
+        up, down = self._k("next"), self._k("previous")
+        if up and down:
+            return tr("Tip: the {up} / {down} keys move through it").format(up=up, down=down)
+        return ""
 
     # ========================================================= language
     def retranslate_ui(self):
@@ -1438,38 +1527,34 @@ class MainWindow(QMainWindow):
         self.act_open_folder.setText(tr("Open folder…"))
         self.act_open_folder.setIcon(theme.tool_icon("open"))
         # The shortcut as the system writes it (Ctrl+O, or ⌘O on a Mac).
-        self.act_open.setToolTip(tr("Open file or ZIP…") + " (" + QKeySequence(QKeySequence.Open).toString(
-            QKeySequence.NativeText) + ")")
+        self.act_open.setToolTip(self._with_key(tr("Open file or ZIP…"), "open"))
         self.menu_btn.setToolTip(tr("Menu"))
         self.act_home.setText(tr("Home"))
-        self.act_home.setToolTip(tr("Close the file and go back to the start page ({key})").format(
-            key=self.act_home.shortcut().toString(QKeySequence.NativeText)))
+        self.act_home.setToolTip(self._with_key(tr("Close the file and go back to the start page"), "home"))
         self.recent_menu.setTitle(tr("Recent"))
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:
-            act.setText(f"{view_names[view]} ({key})")
+            act.setText(keys.with_key(view_names[view], key))
             if view is None:                         # Fit: the camera only, nothing else changes
-                act.setToolTip(tr("Fit the model in the view") + f" ({key})")
+                act.setToolTip(keys.with_key(tr("Fit the model in the view"), key))
             else:
-                act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
+                act.setToolTip(keys.with_key(tr("{view} view").format(view=view_names[view]), key))
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
             self.view_cube.set_tooltips(self._cube_tooltips())
         self.act_export_stl.setText(tr("Export STL"))
-        self.act_export_stl.setToolTip(tr("Save the objects of this CAD file as STL files (Ctrl+E)")
-                                       if getattr(self, "current_kind", "") in ("freecad", "step") else
-                                       tr("Save the objects of this 3MF project as STL files (Ctrl+E)"))
+        self._export_tooltip()
         self.act_export_one.setText(tr("All objects as one STL"))
         self.act_export_each.setText(tr("One STL per object"))
         self.act_export_choose.setText(tr("Choose objects…"))
         self.act_export_setting.setText(tr("Change what a click does…"))
         # The toolbar buttons say their key, as the View section's buttons do in their tooltips.
-        self.act_bed.setText(tr("Plate") + " (P)")
-        self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)") + " (P)")
-        self.act_check.setText(tr("Check") + " (K)")
-        self.act_check.setToolTip(tr("Check the model before printing: overhangs, thin walls and problems in the mesh")
-                                  + " (K)")
+        self.act_bed.setText(self._with_key(tr("Plate"), "plate"))
+        self.act_bed.setToolTip(self._with_key(tr("Show / hide the build plate grid (arrow: plate size)"), "plate"))
+        self.act_check.setText(self._with_key(tr("Check"), "check"))
+        self.act_check.setToolTip(self._with_key(
+            tr("Check the model before printing: overhangs, thin walls and problems in the mesh"), "check"))
         self.check_box.setTitle(tr("Check model"))
         self.check_angle_label.setText(tr("from vertical"))
         self.check_nozzle_label.setText(tr("nozzle"))
@@ -1509,20 +1594,20 @@ class MainWindow(QMainWindow):
         for lbl in self._count_labels:
             lbl.setFixedWidth(widest + 4)
         self._update_check_panel()
-        self.act_view.setText(tr("View") + " (I)")
-        self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip") + " (I)")
+        self.act_view.setText(self._with_key(tr("View"), "view"))
+        self.act_view.setToolTip(self._with_key(tr("How the model is drawn: wireframe, X-ray, clip"), "view"))
         self.view_box.setTitle(tr("View"))
         # The buttons of the View section are short; the tooltip says it in full.
         self.act_reset_view.setText(tr("Reset view"))
-        for act, text, tip, key in ((self.act_wireframe, tr("Wireframe"), tr("Wireframe"), "W"),
-                                    (self.act_xray, tr("X-ray"), tr("X-ray (see-through)"), "X"),
-                                    (self.act_clip, tr("Clip from the top"), tr("Clip from the top"), "C"),
-                                    (self.act_clip_face, tr("Clip facing you"), tr("Clip facing you"), "V"),
-                                    (self.act_reset_view, tr("Reset view"), tr("Reset view"), "R")):
-            act.setText(text + " (" + key + ")")         # the key on the button, as on the toolbar
-            act.setToolTip(tip + " (" + key + ")")
-        self.view_reset_btn.setText(tr("Reset view") + " (R)")
-        self.view_reset_btn.setToolTip(tr("Reset view") + " (R)")
+        for act, text, tip, kid in ((self.act_wireframe, tr("Wireframe"), tr("Wireframe"), "wireframe"),
+                                    (self.act_xray, tr("X-ray"), tr("X-ray (see-through)"), "xray"),
+                                    (self.act_clip, tr("Clip from the top"), tr("Clip from the top"), "clip_top"),
+                                    (self.act_clip_face, tr("Clip facing you"), tr("Clip facing you"), "clip_face"),
+                                    (self.act_reset_view, tr("Reset view"), tr("Reset view"), "reset_view")):
+            act.setText(self._with_key(text, kid))      # the key on the button, as on the toolbar
+            act.setToolTip(self._with_key(tip, kid))
+        self.view_reset_btn.setText(self._with_key(tr("Reset view"), "reset_view"))
+        self.view_reset_btn.setToolTip(self._with_key(tr("Reset view"), "reset_view"))
         self.view_close_btn.setText(tr("Close"))
         self.view_freeze_cb.setText(tr("Freeze the cutting plane"))
         self.view_freeze_cb.setToolTip(tr("Keeps the cut of Clip facing you where it is, so you can turn and "
@@ -1532,12 +1617,12 @@ class MainWindow(QMainWindow):
         self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost."))
         self.clip_plane_cb.setText(tr("Show the cutting plane"))
         self.clip_plane_cb.setToolTip(tr("Shows where the cut is, as a faint sheet the size of the model."))
-        self.act_measure.setText(tr("Measure") + " (M)")
-        self.act_measure.setToolTip(tr("Measure on the model: distance, angle, circle") + " (M)")
+        self.act_measure.setText(self._with_key(tr("Measure"), "measure"))
+        self.act_measure.setToolTip(self._with_key(tr("Measure on the model: distance, angle, circle"), "measure"))
         self.measure_box.setTitle(tr("Measure"))
         for kind, a in self.measure_actions.items():
-            a.setText(self._measure_mode_label(kind) + " (" + self.MEASURE_KEYS[kind] + ")")
-            a.setToolTip(self._measure_mode_tip(kind) + " (" + self.MEASURE_KEYS[kind] + ")")
+            a.setText(self._with_key(self._measure_mode_label(kind), kind))
+            a.setToolTip(self._with_key(self._measure_mode_tip(kind), kind))
         self.objects_hint.setText(tr("Click a colour box to change its colour."))
         self.measure_snap_cb.setText(tr("Snapping"))
         self.measure_snap_cb.setToolTip(tr("Jumps to the nearest corner, the middle of an edge or a point on an "
@@ -1554,7 +1639,7 @@ class MainWindow(QMainWindow):
         self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
         self.act_settings.setText(tr("Settings"))
-        self.act_settings.setToolTip(tr("Settings"))
+        self.act_settings.setToolTip(self._with_key(tr("Settings"), "settings"))
         self.act_updates.setText(tr("Updates"))
         self.act_about.setText(tr("About"))
         self.act_whats_new.setText(tr("What's new"))
@@ -1570,7 +1655,8 @@ class MainWindow(QMainWindow):
         self.features_box.setTitle(tr("Features"))
         self.goto_label.setText(tr("Go to layer"))
         self.only_layer_cb.setText(tr("Show only this layer"))
-        self.layer_hint.setText(tr("Tip: ↑ / ↓ arrow keys move through layers"))
+        self.layer_hint.setText(self._list_tip())
+        self.layer_hint.setVisible(bool(self._list_tip()))
         self.layer_down.setText("◀")
         self.layer_up.setText("▶")
         self.layer_down.setToolTip(tr("Previous layer"))
@@ -1957,7 +2043,7 @@ class MainWindow(QMainWindow):
         lst.itemClicked.connect(lambda item, l=lst: self._open_folder_entry(l.row(item))
                                 if l.row(item) != self._folder_index else None)
         self.folder_layout.addWidget(lst)
-        note = QLabel(tr("Tip: ↑ / ↓ keys move through the list"))
+        note = QLabel(self._list_tip())
         note.setObjectName("muted")
         note.setStyleSheet("font-size: 11px;")
         self.folder_layout.addWidget(note)
@@ -2116,7 +2202,8 @@ class MainWindow(QMainWindow):
         if showing_all:
             notes.append(tr("Untick a model to hide it; click a G-code to open it."))
         else:
-            notes.append(tr("Tip: ↑ / ↓ keys move through the list"))
+            if self._list_tip():
+                notes.append(self._list_tip())
         note = QLabel("<br>".join(notes))
         note.setObjectName("muted")
         note.setWordWrap(True)
@@ -2271,9 +2358,7 @@ class MainWindow(QMainWindow):
         cad_parts = kind in ("freecad", "step") and bool(getattr(data, "parts", None))
         self._set_export_visible(kind == "3mf" or cad_parts)
         self.act_export_stl.setEnabled(True)
-        self.act_export_stl.setToolTip(tr("Save the objects of this 3MF project as STL files (Ctrl+E)")
-                                       if kind == "3mf" else
-                                       tr("Save the objects of this CAD file as STL files (Ctrl+E)"))
+        self._export_tooltip()
         self._fill_zip_box()
         self._fill_folder_box()
         msg = tr("Opened {path}").format(path=self.zip.path if self.zip else path)
@@ -2759,7 +2844,6 @@ class MainWindow(QMainWindow):
         return (self.stack.currentIndex() == 1 and self.model is not None and self.gcode is None
                 and bool(getattr(self.model, "parts", None)) and self.view_stack.currentIndex() == 0)
 
-    MEASURE_KEYS = {"distance": "D", "angle": "A", "circle": "O"}   # the Measure section's keys
 
     SIDE_MIN_WIDTH = 290                             # the side panel never gets narrower than this ...
 
@@ -3107,12 +3191,12 @@ class MainWindow(QMainWindow):
         return [k for k, a in (("top", self.act_clip), ("face", self.act_clip_face)) if a.isChecked()]
 
     def set_clip_face_on(self, on: bool):
-        """View -> Clip facing you (V): on or off, whatever Clip from the top does (#70). It starts
+        """View -> Clip facing you (Y): on or off, whatever Clip from the top does (#70). It starts
         through the centre of the view; its slider moves the cut nearer or further."""
         self._start_clip("face", on)
 
     def set_clip_on(self, on: bool):
-        """View -> Clip from the top (C): on or off, whatever Clip facing you does (#70). It starts
+        """View -> Clip from the top (T): on or off, whatever Clip facing you does (#70). It starts
         halfway up the model; its slider moves the cut."""
         self._start_clip("top", on)
 
@@ -3250,24 +3334,30 @@ class MainWindow(QMainWindow):
     def _slicer_name(self, sid: str, name: str) -> str:
         return tr("custom slicer") if (sid == sl.CUSTOM and name == "custom slicer") else name
 
+    def _export_tooltip(self):
+        cad = getattr(self, "current_kind", "") in ("freecad", "step")
+        self.act_export_stl.setToolTip(self._with_key(
+            tr("Save the objects of this CAD file as STL files") if cad else
+            tr("Save the objects of this 3MF project as STL files"), "export"))
+
     def _update_slicer_button(self):
         freecad = self.current_kind == "freecad" and not self.showing_embedded
         # A 3D printer for slicers; the FreeCAD cube when the button opens FreeCAD.
         self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True))
         if freecad:
             self.slicer_btn.setText(tr("Open in FreeCAD"))
-            self.slicer_btn.setToolTip(tr("Open this file in FreeCAD (Ctrl+P). "
-                                          "Use the arrow to send the model to a slicer as STL."))
+            self.slicer_btn.setToolTip(self._with_key(tr("Open this file in FreeCAD"), "slicer") + ". "
+                                       + tr("Use the arrow to send the model to a slicer as STL."))
             return
         sid, name, _ = sl.resolve(self.settings)
         if sid:
             name = self._slicer_name(sid, name)
             self.slicer_btn.setText(tr("Open in {slicer}").format(slicer=name))
-            self.slicer_btn.setToolTip(tr("Open this file in {slicer} (Ctrl+P). "
-                                          "Use the arrow to pick another slicer.").format(slicer=name))
+            self.slicer_btn.setToolTip(self._with_key(tr("Open this file in {slicer}").format(slicer=name), "slicer")
+                                       + ". " + tr("Use the arrow to pick another slicer."))
         else:
             self.slicer_btn.setText(tr("Open in slicer"))
-            self.slicer_btn.setToolTip(tr("No slicer found yet — choose one in Settings (Ctrl+P)"))
+            self.slicer_btn.setToolTip(self._with_key(tr("No slicer found yet — choose one in Settings"), "slicer"))
 
     def _fill_slicer_menu(self):
         self.slicer_menu.clear()
@@ -3548,6 +3638,10 @@ class MainWindow(QMainWindow):
         if self.view_cube.visible != show_cube:
             self.set_view_cube_visible(show_cube)
         self._apply_grid_label_settings()
+        if keys.current(self.settings) != self.keys:            # Settings -> Keyboard and mouse
+            self._apply_shortcuts()
+            self.retranslate_ui()
+            self._refresh_panel()                               # the tips under the lists
 
     def _spacing_mm(self, key: str) -> float:
         """A grid spacing from Settings in mm, for the unit in use (0 = automatic)."""
@@ -3705,8 +3799,7 @@ class MainWindow(QMainWindow):
             self.recent_menu.addAction(f"{os.path.basename(p)}   —   {os.path.dirname(p)}",
                                        lambda path=p: self.load(path))
             if i < 6:
-                b = QPushButton(os.path.basename(p))
-                b.setToolTip(p)
+                b = _RecentButton(p)          # hover: the file's preview picture and its path
                 b.setFlat(True)
                 b.setObjectName("link")
                 b.clicked.connect(lambda _=False, path=p: self.load(path))

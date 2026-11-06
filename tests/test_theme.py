@@ -237,14 +237,15 @@ def test_toolbar_icons_draw_in_every_theme(app):
     theme.apply_theme(app, "dark")
 
 
-def test_about_page_lists_the_shortcuts(app, tmp_path):
-    """The Settings window builds, and About shows every keyboard shortcut of the main window."""
-    from printview3d.ui.settings_dialog import SettingsDialog, _key, mouse_rows, shortcut_rows
-    d = SettingsDialog(Settings(str(tmp_path / "settings.json")), page="about")
-    keys = {k for row_keys, _ in shortcut_rows() for k in row_keys}
-    # Keys are shown as the system writes them: Ctrl+O on Windows and Linux, ⌘O on a Mac.
-    for k in ("Ctrl+O", "Ctrl+P", "Ctrl+E", "Ctrl+T", "Ctrl+Shift+T", "1", "2", "3", "4"):
-        assert _key(k) in keys, k
+def test_keys_page_lists_the_shortcuts(app, tmp_path):
+    """The Settings window builds, and Keyboard and mouse shows every key of the main window."""
+    from printview3d.ui import keys as k
+    from printview3d.ui.settings_dialog import SettingsDialog, mouse_rows
+    d = SettingsDialog(Settings(str(tmp_path / "settings.json")), page="keys")
+    shown = {e.keySequence().toString() for e in d.key_edits.values()}
+    for key in ("Ctrl+O", "Ctrl+P", "Ctrl+E", "Ctrl+T", "Ctrl+Shift+T", "1", "2", "3", "4"):
+        assert key in shown, key
+    assert set(d.key_edits) == set(k.IDS)
     assert len(mouse_rows()) >= 3
     d.deleteLater()
 

@@ -34,7 +34,7 @@ Dezelfde lijst staat in het programma onder **Instellingen → Over → Toetsenb
 | `Ctrl+E` | STL exporteren (3MF-projecten, FreeCAD- en STEP-bestanden) |
 | `Ctrl+T` | Volgend thema (Donker → Grijs → Grafiet → Licht) |
 | `F` · `1` · `2` · `3` · `4` | Passend · Iso · Boven · Voor · Rechts |
-| `W` · `X` · `C` · `V` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
+| `W` · `X` · `T` · `Y` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
 | `R` | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend (modellen) |
 | `M` | Meten aan / uit (modellen) |
 | `↑` / `↓` | Volgende / vorige laag (G-code), of het vorige / volgende bestand in een ZIP |
@@ -50,16 +50,16 @@ OBJ en de andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
 - **Draadmodel** (`W`): de driehoeken van het mesh, om te zien hoe fijn het is of kapotte geometrie te vinden.
 - **Röntgen** (`X`): de onderdelen worden doorzichtig, zodat onderdelen in andere onderdelen,
   holtes en holle wanden zichtbaar worden.
-- **Van boven afsnijden** (`C`): verbergt alles boven een hoogte. Een schuifregelaar in het
+- **Van boven afsnijden** (`T`): verbergt alles boven een hoogte. Een schuifregelaar in het
   zijpaneel verschuift de snede; de binnenkant van de wanden die de snede openlegt is rood.
-  `C` of de knop nog eens toont het hele model weer.
-- **Afsnijden vanaf jouw kant** (`V`): een rechtopstaande snede die altijd naar je toe gericht is en
+  `T` of de knop nog eens toont het hele model weer.
+- **Afsnijden vanaf jouw kant** (`Y`): een rechtopstaande snede die altijd naar je toe gericht is en
   het deel van het model ervoor verbergt. Draai de weergave en het model draait door de snede;
   verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
   Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
   zet de snede dichterbij of verder weg, en **Diepte** toont hoe ver ze in het model zit.
   **Snijvlak bevriezen** houdt de snede op haar plaats terwijl je het model draait en verschuift.
-- **Beide sneden tegelijk**: `C` en `V` zetten elk hun eigen snede aan en uit, dus beide kunnen
+- **Beide sneden tegelijk**: `T` en `Y` zetten elk hun eigen snede aan en uit, dus beide kunnen
   samen aan voor een hoek eruit gesneden, met een schuif **Hoogte** en **Diepte** in het zijpaneel.
   **Weergave herstellen** zet beide uit.
 - **Weggesneden deel tonen** en **Snijvlak tonen** (onder de schuiven, standaard allebei aan): wat
