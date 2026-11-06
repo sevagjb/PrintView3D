@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gc
+import html
 import math
 import os
 import sys
@@ -846,6 +847,9 @@ class MainWindow(QMainWindow):
         self.theme_menu.addAction(self.act_toggle_dark)
         self.theme_btn = icon_button(menu=self.theme_menu)
         tb.addWidget(self.theme_btn)
+        # Settings, one click away (also in the menu).
+        self.settings_btn = icon_button(action=self.act_settings)
+        tb.addWidget(self.settings_btn)
 
     def _update_toolbar_icons(self):
         """Draw the toolbar icons in the current theme's colours (again after a theme switch)."""
@@ -1259,6 +1263,7 @@ class MainWindow(QMainWindow):
             # A fixed width, right-aligned: a count that appears or grows never moves the fields
             # before it (the nozzle width jumped when "none" appeared).
             count_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            count_lbl.setTextFormat(Qt.RichText)           # the dot before a problem count
             self._count_labels.append(count_lbl)
             row.addWidget(box)
             row.addWidget(cb, 1)
@@ -1445,9 +1450,9 @@ class MainWindow(QMainWindow):
             if key:
                 act.setText(f"{view_names[view]} ({key})")
                 act.setToolTip(tr("{view} view ({key})").format(view=view_names[view], key=key))
-            else:                                    # Fit: R (Reset view) also fits
-                act.setText(view_names[view])
-                act.setToolTip(tr("{view} view").format(view=view_names[view]))
+            else:                                    # Fit: R, the key of Reset view, fits too
+                act.setText(view_names[view] + " (R)")
+                act.setToolTip(tr("Fit the model in the view") + " (R)")
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
             self.view_cube.set_tooltips(self._cube_tooltips())
@@ -1469,10 +1474,10 @@ class MainWindow(QMainWindow):
         self.check_angle_label.setText(tr("from vertical"))
         self.check_nozzle_label.setText(tr("nozzle"))
         self.check_loose_label.setText(tr("up to"))
-        for spin in (self.check_nozzle, self.check_loose):
-            spin.set_unit(units.current())             # "mm" / "in" in this language and unit
+        self.check_loose.set_unit(units.current())     # "mm" / "in" in this language and unit
+        self.check_nozzle.set_unit(self._nozzle_unit())
         self._align_check_inputs()
-        self.check_mesh_title.setText(tr("Mesh"))
+        self.check_mesh_title.setText(tr("Mesh problems"))
         self.check_close_btn.setText(tr("Close"))
         for kind, text, tip, technical in (
                 ("overhang", tr("Overhangs"), tr("Faces that face down and lean further from vertical than the angle: "
@@ -1549,6 +1554,7 @@ class MainWindow(QMainWindow):
         self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
         self.act_settings.setText(tr("Settings"))
+        self.act_settings.setToolTip(tr("Settings"))
         self.act_updates.setText(tr("Updates"))
         self.act_about.setText(tr("About"))
         self.act_whats_new.setText(tr("What's new"))
@@ -2820,6 +2826,14 @@ class MainWindow(QMainWindow):
         self.settings.set("check_nozzle", mm)
         self.check.set_nozzle(mm)
 
+    def _nozzle_unit(self) -> str:
+        """Nozzles are sold by their diameter in millimetres (0.4 mm), also where lengths are in
+        inches: the nozzle width stays in mm unless Settings -> Language and units says inches
+        for it too."""
+        if units.imperial() and self.settings.get("nozzle_in_inches", False):
+            return "in"
+        return "mm"
+
     def _align_check_inputs(self):
         """The angle and the nozzle width one above the other: both fields as wide as the wider
         needs, and both words after them ("from vertical", "nozzle") as wide as the longer."""
@@ -2859,6 +2873,10 @@ class MainWindow(QMainWindow):
             self.settings.set("check_colors", colours)
         self.check.set_color(kind, color)
 
+    # The checks whose count is a problem to fix (a dot beside it). Overhangs are not: most
+    # models have some, and supports handle them.
+    PROBLEM_KINDS = ("thin", "open", "nonmanifold", "flipped", "loose")
+
     def _update_check_panel(self):
         """The counts beside each check, and how far the thin-wall check is."""
         if not hasattr(self, "check") or not hasattr(self, "check_rows"):
@@ -2866,9 +2884,14 @@ class MainWindow(QMainWindow):
         counts = self.check.counts() if self.check.active else {}
         units_text = {"overhang": tr("{n} faces"), "thin": tr("{n} faces"), "open": tr("{n} edges"),
                       "nonmanifold": tr("{n} edges"), "flipped": tr("{n} faces"), "loose": tr("{n} parts")}
+        dot = ('<span style="color:%s; font-size:9px;">●</span>&nbsp;'
+               % theme.colors().get("primary", "#ef791b"))
         for kind, (cb, lbl, _box) in self.check_rows.items():
             n = counts.get(kind)
-            lbl.setText("" if n is None else (tr("none") if n == 0 else units_text[kind].format(n=count(n))))
+            text = "" if n is None else (tr("none") if n == 0 else units_text[kind].format(n=count(n)))
+            if n and kind in self.PROBLEM_KINDS:      # something to fix: a small dot draws the eye
+                text = dot + html.escape(text)
+            lbl.setText(text)
         status = ""
         if self.check.active and self.check.mesh_busy:
             status = tr("Checking the mesh…")
@@ -3549,6 +3572,9 @@ class MainWindow(QMainWindow):
         """Settings -> Viewer: the numbers on the grid, on or off; the grid's spacings; the unit."""
         unit_changed = units.current() != self.settings.get("units", "mm")
         units.set_unit(self.settings.get("units", "mm"))
+        if self.check_nozzle.unit != self._nozzle_unit():
+            self.check_nozzle.set_unit(self._nozzle_unit())
+            self._align_check_inputs()
         self._apply_grid_settings()
         show_numbers = bool(self.settings.get("show_grid_labels", False))
         if self.grid_labels.enabled != show_numbers:

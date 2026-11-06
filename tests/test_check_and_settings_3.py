@@ -123,7 +123,8 @@ def test_both_fields_follow_the_units_without_drifting(window, app):
     w.settings.set("units", "in")
     units.set_unit("in")
     w._apply_units()
-    assert w.check_nozzle.suffix().strip() == "in" and w.check_loose.suffix().strip() == "in"
+    assert w.check_loose.suffix().strip() == "in"
+    assert w.check_nozzle.suffix().strip() == "mm"        # nozzles are sold in mm: stays mm
     assert w.check_loose.value() == pytest.approx(5.0 / 25.4, abs=0.01)
     w.settings.set("units", "mm")
     units.set_unit("mm")

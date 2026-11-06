@@ -543,9 +543,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>Vedere {view}</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">Încadrează modelul în vizualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -619,9 +618,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Mesh</source>
-        <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
-        <translation type="unfinished">Rețea</translation>
+        <source>Mesh problems</source>
+        <translation type="unfinished">Probleme ale rețelei</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -702,12 +700,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
         <translation type="unfinished">Bucăți mici care nu sunt legate de corpul principal, până la dimensiunea dată. Se tipăresc ca bucăți separate sau deloc. Golurile din interiorul unei piese nu se numără.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">niciuna</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1320,6 +1312,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">niciuna</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
         <translation type="unfinished">Se verifică rețeaua…</translation>
     </message>
@@ -1732,6 +1730,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">Lățimea duzei tot în inci</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">Duzele se vând după diametrul în milimetri (0,4 mm), așa că secțiunea Verificare arată lățimea duzei în milimetri, dacă nu bifați aceasta.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
         <translation type="unfinished">Folosit pentru dimensiuni, măsurători, grilă și dimensiunea plăcii. Fișierele nu se schimbă: fișierele 3D sunt mereu în milimetri.</translation>
     </message>
@@ -1983,8 +1991,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automat: pe liniile principale ale grilei (la 50 mm pe o placă obișnuită), mai rar pe o placă mare. Sau alege o distanță proprie.</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">Automat: atâtea numere câte încap la zoomul actual, pe liniile grilei și niciodată mai dese decât liniile fine. Sau alegeți propria distanță.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2402,6 +2410,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation>Vedere {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation>Deschide un fișier</translation>
     </message>
@@ -2689,6 +2702,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">Rețea</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">Automat: pe liniile principale ale grilei (la 50 mm pe o placă obișnuită), mai rar pe o placă mare. Sau alege o distanță proprie.</translation>
     </message>
     <message>
         <source>Show the X, Y and Z axes on the build plate</source>

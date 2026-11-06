@@ -543,9 +543,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation type="unfinished">Vue {view}</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">Ajuster le modèle à la vue</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -619,9 +618,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Mesh</source>
-        <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
-        <translation type="unfinished">Maillage</translation>
+        <source>Mesh problems</source>
+        <translation type="unfinished">Problèmes du maillage</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -702,12 +700,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
         <translation type="unfinished">Petits morceaux non reliés au corps principal, jusqu&apos;à la taille indiquée. Ils s&apos;impriment séparément, ou pas du tout. Les creux à l&apos;intérieur d&apos;une pièce ne comptent pas.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">aucun</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1320,6 +1312,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">aucun</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
         <translation type="unfinished">Vérification du maillage…</translation>
     </message>
@@ -1732,6 +1730,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">Largeur de buse aussi en pouces</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">Les buses sont vendues selon leur diamètre en millimètres (0,4 mm) : la section Vérifier affiche donc la largeur de buse en millimètres, sauf si ceci est coché.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
         <translation type="unfinished">Utilisé pour les tailles, les mesures, la grille et la taille du plateau. Les fichiers ne changent pas : les fichiers 3D sont toujours en millimètres.</translation>
     </message>
@@ -1983,8 +1991,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automatique : sur les lignes principales de la grille (tous les 50 mm sur un plateau normal), moins sur un grand plateau. Ou choisissez votre propre espacement.</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">Automatique : autant de nombres que le zoom actuel le permet, sur les lignes de la grille et jamais plus serrés que les lignes fines. Ou choisissez votre propre espacement.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2402,6 +2410,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation type="unfinished">Vue {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation type="unfinished">Ouvrir un fichier</translation>
     </message>
@@ -2689,6 +2702,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">Maillage</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">Automatique : sur les lignes principales de la grille (tous les 50 mm sur un plateau normal), moins sur un grand plateau. Ou choisissez votre propre espacement.</translation>
     </message>
     <message>
         <source>Show the X, Y and Z axes on the build plate</source>

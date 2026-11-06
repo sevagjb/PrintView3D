@@ -543,8 +543,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
+        <source>Fit the model in the view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -619,8 +618,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Mesh</source>
-        <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
+        <source>Mesh problems</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -701,12 +699,6 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1320,6 +1312,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1732,6 +1730,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1983,7 +1991,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2398,6 +2406,11 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

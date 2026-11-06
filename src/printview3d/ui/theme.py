@@ -402,6 +402,8 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     _tell_qt_light_or_dark(hints)
     t = THEMES[_current]
     app.setStyle(_style())
+    from . import tooltips
+    tooltips.install(app)                   # tooltips wrap and stay inside the window
     pal = QPalette()
     c = QColor
     pal.setColor(QPalette.Window, c(t["window"]))

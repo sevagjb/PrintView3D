@@ -81,8 +81,9 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
   next to every measurement, and **Clear** removes them all.
 - **Object colours**: click the colour box of an object in the **Objects** list to give it another
   colour; right-click goes back to the file's colour. Not saved.
-- **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres
-  along the build plate.
+- **Grid numbers**: **Settings → Viewer → Show scale numbers on the grid** writes millimetres
+  along the build plate, as many as fit at the zoom you look at.
+- **Settings** is also the gear icon at the right end of the toolbar, next to the theme icon.
 
 More, with pictures: [Look inside your models](inspect.md). Built by [@covrig](https://github.com/covrig).
 

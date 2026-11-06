@@ -226,7 +226,7 @@ def test_check_finds_an_open_mesh_and_shows_it(window, tmp_path):
     w.model = ModelData([MeshPart("open", v, f[1:])])
     w.act_check.trigger()
     assert w.check.counts()["open"] == 3
-    assert w.check_rows["open"][1].text() == "3 edges"
+    assert w.check_rows["open"][1].text().endswith("&nbsp;3 edges")      # with the dot before it
     assert "check_open_0" in w.check._actors
     w.check_rows["open"][0].setChecked(False)                        # untick: the highlight goes
     assert "check_open_0" not in w.check._actors and w.settings.get("check_show")["open"] is False

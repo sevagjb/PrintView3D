@@ -234,8 +234,8 @@ def test_every_section_button_has_a_key(window):
     # the side panel's buttons too: "Wireframe (W)", "Distance (D)", "Reset view (R)"
     assert w.act_wireframe.text().endswith("(W)") and w.measure_actions["distance"].text().endswith("(D)")
     assert w.view_reset_btn.text().endswith("(R)")
-    # Fit has no key of its own: R (Reset view) fits too
-    assert w.act_fit.text() == "Fit" and "(F)" not in w.act_fit.toolTip()
+    # Fit says R, the key of Reset view, which fits the model too
+    assert w.act_fit.text() == "Fit (R)" and w.act_fit.toolTip().endswith("(R)")
     from printview3d.ui.settings_dialog import shortcut_rows
     listed = [k for row, _ in shortcut_rows() for k in row]
     assert all(k in listed for k in ("P", "K", "I", "D", "A", "O")) and "F" not in listed

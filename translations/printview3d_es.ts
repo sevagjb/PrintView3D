@@ -543,9 +543,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation type="unfinished">Vista {view}</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">Ajustar el modelo a la vista</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -619,9 +618,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Mesh</source>
-        <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
-        <translation type="unfinished">Malla</translation>
+        <source>Mesh problems</source>
+        <translation type="unfinished">Problemas de la malla</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -702,12 +700,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
         <translation type="unfinished">Trozos pequeños no unidos al cuerpo principal, hasta el tamaño indicado. Se imprimen como piezas sueltas, o no se imprimen. Los huecos dentro de una pieza no cuentan.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">ninguno</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1320,6 +1312,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">ninguno</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
         <translation type="unfinished">Comprobando la malla…</translation>
     </message>
@@ -1732,6 +1730,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">Ancho de boquilla también en pulgadas</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">Las boquillas se venden por su diámetro en milímetros (0,4 mm), así que la sección Comprobar muestra el ancho de boquilla en milímetros, salvo que marques esto.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
         <translation type="unfinished">Se usa para tamaños, medidas, la cuadrícula y el tamaño de la placa. Los archivos no cambian: los archivos 3D están siempre en milímetros.</translation>
     </message>
@@ -1983,8 +1991,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automática: en las líneas principales de la cuadrícula (cada 50 mm en una placa normal), menos en una placa grande. O elige tu propia separación.</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">Automático: tantos números como quepan con el zoom actual, sobre las líneas de la cuadrícula y nunca más juntos que las líneas finas. O elige un espaciado propio.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2402,6 +2410,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation type="unfinished">Vista {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation type="unfinished">Abrir un archivo</translation>
     </message>
@@ -2689,6 +2702,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">Malla</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">Automática: en las líneas principales de la cuadrícula (cada 50 mm en una placa normal), menos en una placa grande. O elige tu propia separación.</translation>
     </message>
     <message>
         <source>Show the X, Y and Z axes on the build plate</source>

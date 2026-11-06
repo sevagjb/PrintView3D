@@ -110,19 +110,21 @@ def test_numbers_sit_on_the_edges_nearest_the_camera(window):
     g = w.grid_labels
     g.set_enabled(True)
     b = w.scene.bed_bounds
-    ox = w.scene.grid_origin[0]                             # counted from the plate's corner
-    n_x = 1 + len([v for v in gl.label_values(b[0] - ox, b[1] - ox, gl.major_step(b[1] - b[0], b[3] - b[2]))
-               if v > 0])                                   # 0 and the X numbers come first
     cx, cy = (b[0] + b[1]) / 2, (b[2] + b[3]) / 2
     cam = w.plotter.renderer.GetActiveCamera()
+
+    def edges():
+        """The X numbers' y and the Y numbers' x (X numbers first, each row from its 0)."""
+        g._layout()
+        zeros = [i for i, (t, _a) in enumerate(g.items) if t == "0 mm"]
+        assert len(zeros) == 2 and zeros[0] == 0              # these corners are not where 0 is
+        xs = [a for t, a in g.items]
+        return {a[1] for a in xs[:zeros[1]]}, {a[0] for a in xs[zeros[1]:]}
+
     cam.SetPosition(cx + 80, cy - 200, b[4] + 150)          # in front, to the right
-    g._layout()
-    assert all(a[1] == b[2] for t, a in g.items[:n_x])      # X numbers along the front edge ...
-    assert all(a[0] == b[1] for t, a in g.items[n_x:])      # ... Y numbers along the right edge
+    assert edges() == ({b[2]}, {b[1]})                      # front edge, right edge
     cam.SetPosition(cx - 80, cy + 300, b[4] + 150)          # from behind, to the left
-    g._layout()
-    assert all(a[1] == b[3] for t, a in g.items[:n_x])      # the other edges now
-    assert all(a[0] == b[0] for t, a in g.items[n_x:])
+    assert edges() == ({b[3]}, {b[0]})                      # the other edges now
 
 
 def test_hidden_from_under_the_plate_and_with_the_plate_hidden(window):

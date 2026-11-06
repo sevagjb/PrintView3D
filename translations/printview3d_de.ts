@@ -543,9 +543,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation type="unfinished">Ansicht {view}</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">Modell in die Ansicht einpassen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -619,9 +618,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Mesh</source>
-        <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
-        <translation type="unfinished">Netz</translation>
+        <source>Mesh problems</source>
+        <translation type="unfinished">Probleme im Netz</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -702,12 +700,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
         <translation type="unfinished">Kleine Stücke, die nicht mit dem Hauptkörper verbunden sind, bis zur angegebenen Größe. Sie werden als einzelne Teile gedruckt oder gar nicht. Hohlräume in einem Teil zählen nicht.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">keine</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1320,6 +1312,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">keine</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
         <translation type="unfinished">Netz wird geprüft…</translation>
     </message>
@@ -1732,6 +1730,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">Düsenbreite auch in Zoll</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">Düsen werden nach ihrem Durchmesser in Millimetern verkauft (0,4 mm), daher zeigt der Prüfbereich die Düsenbreite in Millimetern, außer wenn dies angehakt ist.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
         <translation type="unfinished">Für Größen, Messungen, das Raster und die Plattengröße. Dateien werden nicht geändert: 3D-Dateien sind immer in Millimetern.</translation>
     </message>
@@ -1983,8 +1991,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automatisch: an den Hauptlinien des Rasters (bei einer normalen Platte alle 50 mm), bei großen Platten seltener. Oder wähle einen eigenen Abstand.</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">Automatisch: so viele Zahlen, wie beim aktuellen Zoom passen, auf den Rasterlinien und nie dichter als die feinen Linien. Oder wähle einen eigenen Abstand.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2402,6 +2410,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation type="unfinished">Ansicht {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation type="unfinished">Datei öffnen</translation>
     </message>
@@ -2689,6 +2702,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">Netz</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">Automatisch: an den Hauptlinien des Rasters (bei einer normalen Platte alle 50 mm), bei großen Platten seltener. Oder wähle einen eigenen Abstand.</translation>
     </message>
     <message>
         <source>Show the X, Y and Z axes on the build plate</source>

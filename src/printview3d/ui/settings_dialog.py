@@ -86,7 +86,22 @@ class SettingsDialog(QDialog):
         self.units_combo.setCurrentIndex(max(0, self.units_combo.findData(settings.get("units", "mm"))))
         ku = QLabel(tr("Lengths in"))
         ku.setObjectName("formKey")
-        lu.addRow(ku, self.units_combo)
+        # Nozzles are sold by their diameter in mm, also in inch countries: the nozzle width stays
+        # in mm unless this box (beside the unit, only with inches) says otherwise.
+        units_row = QWidget()
+        ur = QHBoxLayout(units_row)
+        ur.setContentsMargins(0, 0, 0, 0)
+        ur.addWidget(self.units_combo)
+        self.nozzle_in_cb = QCheckBox(tr("Nozzle width in inches too"))
+        self.nozzle_in_cb.setToolTip(tr("Nozzles are sold by their diameter in millimetres (0.4 mm), so the "
+                                        "Check section shows the nozzle width in millimetres unless this is "
+                                        "ticked."))
+        self.nozzle_in_cb.setChecked(bool(settings.get("nozzle_in_inches", False)))
+        ur.addWidget(self.nozzle_in_cb)
+        ur.addStretch(1)
+        self.units_combo.currentIndexChanged.connect(lambda _=0: self._nozzle_box_state())
+        self._nozzle_box_state()
+        lu.addRow(ku, units_row)
         units_hint = QLabel(tr("Used for sizes, measurements, the grid and the plate size. Files are not "
                                "changed: 3D files are always in millimetres."))
         units_hint.setObjectName("muted")
@@ -345,8 +360,9 @@ class SettingsDialog(QDialog):
         self.grid_step_label = QLabel(tr("Spacing of the numbers"))
         self.grid_step_label.setObjectName("formKey")
         self.grid_step_combo = QComboBox()
-        self.grid_step_combo.setToolTip(tr("Automatic: on the grid's major lines (every 50 mm on a normal plate), "
-                                           "fewer on a big plate. Or choose a spacing of your own."))
+        self.grid_step_combo.setToolTip(tr("Automatic: as many numbers as fit at the zoom you look at, on the grid "
+                                           "lines and never closer than the fine lines. Or choose a spacing of "
+                                           "your own."))
         # The three spacings (numbers, fine lines, main lines) are kept per unit: in millimetres
         # and in inches the sensible values differ. Switching the unit above shows the other set.
         self._spacing_choice = {u: {key: float(settings.get(key + ("_in" if u == "in" else ""), 0) or 0)
@@ -715,6 +731,10 @@ class SettingsDialog(QDialog):
     def _remember_spacing(self, key: str):
         self._spacing_choice[self._spacing_unit][key] = float(self._spacing_combos[key].currentData() or 0)
 
+    def _nozzle_box_state(self):
+        """Nozzle width in inches too: only a choice while lengths are in inches."""
+        self.nozzle_in_cb.setEnabled(self.units_combo.currentData() == "in")
+
     def _units_changed(self):
         """Another unit chosen: the plate size and the spacings show in it at once."""
         self._spacing_unit = self.units_combo.currentData()
@@ -1036,6 +1056,7 @@ class SettingsDialog(QDialog):
             for key, value in choice.items():
                 self.settings.set(key + ("_in" if u == "in" else ""), value)
         self.settings.set("units", self.units_combo.currentData())
+        self.settings.set("nozzle_in_inches", self.nozzle_in_cb.isChecked())
         self.settings.set("cut_planes_whole", self.cut_planes_cb.isChecked())
         self.settings.set("check_keep_colors", self.check_colors_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())

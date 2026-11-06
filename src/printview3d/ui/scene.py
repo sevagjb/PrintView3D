@@ -129,6 +129,7 @@ class Scene:
         # Where the grid starts (its lines and the scale numbers count from here): the plate's
         # front-left corner, or with the infinite grid the model's front-left corner.
         self.grid_origin = (0.0, 0.0)
+        self.grid_drawn = (10.0, 50.0)        # (fine, main) spacing of the grid drawn now, in mm
         self._axes_names: list[str] = []
         self._axes_parts: list = []                  # (arrow, letter, letter offset) per axis
         # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
@@ -423,7 +424,7 @@ class Scene:
         size = max(b[1] - b[0], b[3] - b[2], 10.0)
         half = max(INFINITE_MIN, INFINITE_FACTOR * size) / 2
         auto = self._auto_bed(b)
-        step, major = self.grid_spacing(max(auto[1] - auto[0], auto[3] - auto[2]))
+        step, major = self.grid_drawn = self.grid_spacing(max(auto[1] - auto[0], auto[3] - auto[2]))
         # The grid starts at the model's front-left corner (its 0 for the scale numbers), and is
         # centred under the model on that grid.
         ox, oy = self.grid_origin = (float(b[0]), float(b[2]))
@@ -485,7 +486,7 @@ class Scene:
         self.p.add_mesh(plate, color=self.c["plate"], name="bed_plate", lighting=False,
                         pickable=False, reset_camera=False)
 
-        step, major = self.grid_spacing(max(w, h))
+        step, major = self.grid_drawn = self.grid_spacing(max(w, h))
         # Grid sits just under z so it never flickers against the model's bottom face.
         gz = z - 0.02
         minor_a, minor_b, major_a, major_b = [], [], [], []

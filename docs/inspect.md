@@ -122,8 +122,10 @@ Measure, and colours what may cause trouble when printing:
 - **Overhangs**: faces that face down and lean further from vertical than an angle (45° by default)
   usually need supports. Faces resting on the plate don't count.
 - **Thin walls**: walls and pins thinner than the nozzle (0.4 mm by default). This looks at every
-  face and runs in the background, so it is off until you tick it.
-- **Mesh**:
+  face and runs in the background, so it is off until you tick it. The nozzle width stays in
+  millimetres when lengths are in inches (nozzles are sold as 0.4 mm, 0.6 mm ...), unless you tick
+  **Nozzle width in inches too** beside **Settings → Language and units → Lengths in**.
+- **Mesh problems**:
   - **Holes**: edges with a face on one side only (technical term: open edges).
   - **Tangled edges**: edges shared by three or more faces (non-manifold edges).
   - **Inside-out faces**: faces whose front points into the model (flipped normals).
@@ -134,8 +136,9 @@ Measure, and colours what may cause trouble when printing:
   Triangles with no area (three corners on one line, common in exported files) are left out: they
   don't change the shape and slicers ignore them.
 
-Each has a colour box (click to change it) and a count; hover over a name to see what it means and
-its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
+Each has a colour box (click to change it) and a count; a small dot in the theme's colour marks
+the counts of problems found (thin walls and the mesh problems; not overhangs, which most models
+have). Hover over a name to see what it means and its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
 the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
 defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
 section**.
@@ -155,8 +158,9 @@ files are always in millimetres.
 ## Scale numbers on the grid
 
 **Settings → Viewer → Show scale numbers on the grid** (off by default) writes small numbers (in the
-unit you chose) along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
-to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
+unit you chose) along the build plate, as many as fit at the zoom you look at: zoom in on a small
+part and they come every 10 mm, zoom out and every 50, 100 or 250 mm. They are always on grid lines
+and never closer than the fine lines (**Grid lines every**). They sit just outside the two
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
 you look from under the plate. They count from the plate's front-left corner (0 there, written once
 beside the corner), whatever coordinates the printer uses, so there are no negative numbers. With the endless grid they follow the
@@ -192,7 +196,7 @@ stay there as you turn the view and hide with the plate.
 | <kbd>P</kbd> | Build plate on / off |
 
 The toolbar buttons and the buttons of the View and Measure sections show their key, for example
-*Measure (M)* and *Wireframe (W)*. **Fit** has no key of its own: <kbd>R</kbd> fits the model too.
+*Measure (M)* and *Wireframe (W)*. **Fit** shows <kbd>R</kbd>: Reset view fits the model too.
 
 Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 

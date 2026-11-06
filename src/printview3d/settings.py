@@ -47,6 +47,7 @@ DEFAULTS = {
     "check_colors": {},         # Check: the colours picked, kept only with check_keep_colors
     "check_loose_max": 5.0,     # Check: loose parts are at most this big (mm, their longest side)
     "units": "mm",              # Settings -> Language and units: "mm" or "in" (inches)
+    "nozzle_in_inches": False,  # ... the Check nozzle width in inches too (else always mm)
     "grid_labels_step": 0,      # Settings -> Viewer: spacing of those numbers in mm (0 = automatic)
     "grid_labels_step_in": 0,   # ... the same in inches, while inches are in use
     "grid_minor": 0,            # Settings -> Viewer: grid lines every ... mm (0 = automatic)

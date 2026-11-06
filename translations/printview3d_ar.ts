@@ -543,9 +543,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>عرض {view}</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">ملاءمة النموذج مع العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -619,9 +618,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Mesh</source>
-        <extracomment>Heading in the Check section: the triangle surface of the model (its mesh).</extracomment>
-        <translation type="unfinished">الشبكة</translation>
+        <source>Mesh problems</source>
+        <translation type="unfinished">مشكلات الشبكة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -702,12 +700,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
         <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي، حتى الحجم المحدد. تُطبع كقطع منفصلة أو لا تُطبع أبداً. التجاويف داخل الجزء لا تُحسب.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>none</source>
-        <extracomment>Check section: a count of zero problems.</extracomment>
-        <translation type="unfinished">لا شيء</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1320,6 +1312,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">لا شيء</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
         <translation type="unfinished">جارٍ فحص الشبكة…</translation>
     </message>
@@ -1732,6 +1730,16 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">عرض الفوهة بالبوصة أيضاً</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">تُباع الفوهات حسب قطرها بالمليمتر (0.4 مم)، لذلك يعرض قسم الفحص عرض الفوهة بالمليمتر ما لم يتم تحديد هذا الخيار.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
         <translation type="unfinished">تُستخدم للأحجام والقياسات والشبكة وحجم اللوحة. لا تتغير الملفات: الملفات ثلاثية الأبعاد دائماً بالمليمتر.</translation>
     </message>
@@ -1983,8 +1991,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation>تلقائي: عند خطوط الشبكة الرئيسية (كل 50 مم على لوحة عادية)، وبعدد أقل على لوحة كبيرة. أو اختر مسافة خاصة بك.</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">تلقائي: أكبر عدد من الأرقام يتسع عند التكبير الحالي، على خطوط الشبكة ولا تكون أقرب من الخطوط الدقيقة. أو اختر تباعداً خاصاً بك.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2402,6 +2410,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{view} view</source>
+        <translation>عرض {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open a file</source>
         <translation>فتح ملف</translation>
     </message>
@@ -2689,6 +2702,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">الشبكة</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">تلقائي: عند خطوط الشبكة الرئيسية (كل 50 مم على لوحة عادية)، وبعدد أقل على لوحة كبيرة. أو اختر مسافة خاصة بك.</translation>
     </message>
     <message>
         <source>Show the X, Y and Z axes on the build plate</source>
