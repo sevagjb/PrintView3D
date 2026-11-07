@@ -122,5 +122,5 @@ def test_home_after_a_zip(window, tmp_path):
 
 
 def test_shortcut_listed_on_about_page(app):
-    from printview3d.ui.settings_dialog import _key, shortcut_rows
-    assert any(_key("Ctrl+W") in keys for keys, _ in shortcut_rows())
+    from printview3d.ui import keys
+    assert keys.DEFAULT["home"] == "Ctrl+W"

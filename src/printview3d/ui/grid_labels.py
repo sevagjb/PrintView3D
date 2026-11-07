@@ -2,11 +2,10 @@
 default).
 
 Decisions
-  * The numbers are on the plate's major grid lines: every 50 mm on a normal plate (every 25 mm
-    on a tiny one, every 250 mm on a huge one), the same spacing the grid itself uses. Where that
-    would give more than MAX_LABELS numbers along an edge, only every 2nd, 5th, 10th ... is
-    written, so a 120 mm plate and a 500 mm plate both get a few readable numbers.
-    A small plate or area (too few major lines) gets numbers on the lines in between.
+  * Automatic spacing follows the zoom: as many numbers as fit along each edge on screen without
+    crowding (MIN_GAP_PX between them), always on grid lines and never closer than the fine
+    lines (Settings -> Viewer -> Grid lines every). Zoom in on a small part and they come every
+    10 mm, zoom out and every 50, 100, 250 mm ... (the main lines and their multiples).
     Settings can set another spacing (5 .. 100 mm) instead: then it is exactly that.
   * They sit just outside the two edges of the plate nearest to the camera, the X numbers along
     one and the Y numbers along the other, and move to the other edges when the view turns round.
@@ -14,6 +13,11 @@ Decisions
     quiet. They are hidden while the camera is under the plate.
   * The endless grid has no edge: its numbers follow the area around the model (the rectangle
     the grid is drawn for), so they stay near the model.
+  * The numbers count from the plate's front-left corner (0 there, written once outside the
+    corner when both rows of numbers meet there), whatever coordinates the printer uses, so
+    none is negative. With the infinite grid they count from the model's
+    front-left corner: the grid's lines start there too (Scene.grid_origin), and the area
+    left of / in front of the model has no numbers.
 """
 
 from __future__ import annotations
@@ -23,7 +27,8 @@ from typing import Callable, Optional
 
 import numpy as np
 
-from ..i18n import num, tr
+from .. import units
+from ..i18n import tr
 from .overlay_text import Sprites, device_scale, label_picture, make_overlay, _rgb
 
 MAX_LABELS = 8                # along one edge (automatic spacing)
@@ -31,13 +36,50 @@ STEPS = (5, 10, 20, 25, 50, 100)     # the fixed spacings Settings offers, in mm
 MAX_FIXED = 120               # a fixed spacing never writes more than this many numbers along an edge
 MULTIPLES = (1, 2, 5, 10, 20, 50, 100)
 OFFSET_PX = 13                # how far outside the edge the text sits
+MIN_GAP_PX = 16               # automatic spacing: at least this much room between two numbers
 
 
-def major_step(width: float, depth: float) -> float:
-    """The spacing of the plate's major grid lines (Scene draws a minor line every `step`, a
-    major one every 5th)."""
+def auto_candidates(minor: float, major: float) -> list:
+    """The spacings automatic numbers may use, smallest first: the fine lines and 2 or 5 of them
+    (when those fall on fine lines below the main ones), then the main lines and their 2, 5, 10,
+    ... multiples."""
+    from .scene import is_multiple
+    out = {round(major * k, 9) for k in (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000)}
+    for k in (1, 2, 5):
+        c = minor * k
+        if c < major - 1e-9 or is_multiple(c, major):
+            out.add(round(c, 9))
+    return sorted(out)
+
+
+def auto_step(minor: float, major: float, px_per_mm: float, need_px: float, length: float) -> float:
+    """The smallest candidate spacing whose numbers are at least need_px apart on screen (and at
+    most MAX_FIXED along an edge `length` mm long)."""
+    cands = auto_candidates(minor, major)
+    for c in cands:
+        if c * px_per_mm >= need_px and length / c <= MAX_FIXED:
+            return c
+    return cands[-1]
+
+
+def major_step(width: float, depth: float, scene=None) -> float:
+    """The spacing of the plate's major grid lines in mm (as the scene draws them; without a
+    scene: the automatic millimetre grid, a major line every 5th minor one)."""
+    if scene is not None:
+        return scene.grid_spacing(max(width, depth))[1]
     from .scene import Scene
     return Scene._grid_step(max(width, depth)) * 5
+
+
+def _whole(step_mm: float) -> bool:
+    """Is this a spacing worth writing: a whole number, or at most 3 decimals in inches?"""
+    v = units.to_display(step_mm) * 1000
+    return abs(v - round(v)) < 1e-6 and (units.imperial() or float(step_mm).is_integer())
+
+
+def text_for(mm: float) -> str:
+    """'50 mm', '2 in', '0.5 in'."""
+    return tr("{d} {unit}").format(d=units.short(units.to_display(mm)), unit=units.name())
 
 
 def _multiples(lo: float, hi: float, step: float) -> list:
@@ -62,9 +104,9 @@ def label_values(lo: float, hi: float, major: float, max_labels: int = MAX_LABEL
             break
     if len(vals) >= 2 or k != MULTIPLES[0]:
         return vals
-    for div in (2, 5, 10):
+    for div in (2, 4, 5, 10):
         step = major / div
-        if step != int(step):
+        if not _whole(step):
             continue
         finer = _multiples(lo, hi, step)
         if 2 <= len(finer) <= max_labels:
@@ -134,16 +176,48 @@ class GridLabels:
         cam = self.p.renderer.GetActiveCamera().GetPosition()
         if cam[2] < z - 1e-3:                         # under the plate: the text would be back to front
             return []
-        major = major_step(xmax - xmin, ymax - ymin)
+        major = major_step(xmax - xmin, ymax - ymin, self.scene)
+        minor, drawn_major = getattr(self.scene, "grid_drawn", (0.0, 0.0))
         y_edge = ymin if cam[1] <= (ymin + ymax) / 2 else ymax       # the edges nearest the camera
         x_edge = xmin if cam[0] <= (xmin + xmax) / 2 else xmax
         cy, cx = (ymin + ymax) / 2, (xmin + xmax) / 2
         out = []
-        for x in label_values(xmin, xmax, major, step=self.step):
-            out.append((tr("{n} mm").format(n=num(x, 0)), (x, y_edge, z), (x, cy, z)))
-        for y in label_values(ymin, ymax, major, step=self.step):
-            out.append((tr("{n} mm").format(n=num(y, 0)), (x_edge, y, z), (cx, y, z)))
+        ox, oy = getattr(self.scene, "grid_origin", (0.0, 0.0))
+        eps = 1e-6
+        step_x = step_y = self.step
+        if not self.step and minor > 0 and drawn_major > 0:
+            # Automatic: as close as the zoom allows, measured along each edge on screen.
+            scale = device_scale(self.p)
+            span = max(xmax - xmin, ymax - ymin)
+            need = self._picture(text_for(span), scale)[1] + MIN_GAP_PX * scale
+            px_x = self._px_per_mm((xmin, y_edge, z), (xmax, y_edge, z))
+            px_y = self._px_per_mm((x_edge, ymin, z), (x_edge, ymax, z))
+            if px_x > 0:
+                step_x = auto_step(minor, drawn_major, px_x, need, xmax - xmin)
+            if px_y > 0:
+                step_y = auto_step(minor, drawn_major, px_y, need, ymax - ymin)
+        # 0 where the counting starts. When both edges' zeros are the same corner, it is written
+        # once, outside that corner (pushed away from the plate's centre).
+        corner = abs(y_edge - oy) < eps and abs(x_edge - ox) < eps
+        if xmin - eps <= ox <= xmax + eps:
+            out.append((text_for(0), (ox, y_edge, z), (cx, cy, z) if corner else (ox, cy, z)))
+        for d in label_values(xmin - ox, xmax - ox, major, step=step_x):
+            if d > 0:
+                out.append((text_for(d), (ox + d, y_edge, z), (ox + d, cy, z)))
+        if ymin - eps <= oy <= ymax + eps and not corner:
+            out.append((text_for(0), (x_edge, oy, z), (cx, oy, z)))
+        for d in label_values(ymin - oy, ymax - oy, major, step=step_y):
+            if d > 0:
+                out.append((text_for(d), (x_edge, oy + d, z), (cx, oy + d, z)))
         return out
+
+    def _px_per_mm(self, a, b) -> float:
+        """Screen pixels per mm along the line a -> b (on average: nearer parts look longer)."""
+        length = float(np.linalg.norm(np.subtract(b, a)))
+        if length <= 0:
+            return 0.0
+        (ax, ay), (bx, by) = self._to_screen(a), self._to_screen(b)
+        return float(np.hypot(bx - ax, by - ay)) / length
 
     def _layout(self, *_):
         scale = device_scale(self.p)

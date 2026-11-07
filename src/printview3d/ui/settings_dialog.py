@@ -1,7 +1,7 @@
 """Settings dialog: a sidebar with one page per topic.
 
 Language · Appearance · Slicer · FreeCAD · Files (default program) · Viewer (and graphics) ·
-Updates · About. MainWindow.open_settings(page="updates") opens a given page.
+Keyboard and mouse · Updates · About. MainWindow.open_settings(page="updates") opens a given page.
 """
 
 from __future__ import annotations
@@ -14,27 +14,30 @@ from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
     QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMessageBox,
-    QPushButton, QScrollArea, QSizePolicy, QSlider, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout,
+    QKeySequenceEdit, QPushButton, QScrollArea, QSizePolicy, QSlider, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout,
     QWidget,
 )
 
-from .. import APP_NAME, __version__, file_assoc, gpu, i18n
+from .. import APP_NAME, __version__, file_assoc, gpu, i18n, units
 from .. import updates as up
 from .. import freecad as fc
 from .. import slicer as sl
 from ..i18n import tr
-from . import theme
+from . import keys, theme
 from . import update_ui
 from .labels import assoc_status, plate_mode_label
 
-PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "updates", "about"]
+PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "keys", "updates", "about"]
 
 
 class SettingsDialog(QDialog):
+    applied = Signal()                      # Apply: saved; the main window shows the new settings now
+
     def __init__(self, settings, parent=None, gpu_info=None, page: str = ""):
         super().__init__(parent)
         self.settings = settings
         self.restart_now = False            # OK chose "Restart now" (MainWindow.open_settings restarts)
+        self._restart_asked = False         # asked once per dialog, not on every Apply
         self.setWindowTitle(tr("Settings"))
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         outer = QVBoxLayout(self)
@@ -74,7 +77,37 @@ class SettingsDialog(QDialog):
         help_lbl.setWordWrap(True)
         help_lbl.setOpenExternalLinks(True)
         l0.addRow(help_lbl)
-        self._add_page("language", tr("Language"), [g0])
+        # Millimetres or inches: for everything that shows a length (units.py).
+        gu = QGroupBox(tr("Units"))
+        lu = QFormLayout(gu)
+        self.units_combo = QComboBox()
+        for u in units.UNITS:
+            self.units_combo.addItem(tr(units.UNIT_NAMES[u]), u)
+        self.units_combo.setCurrentIndex(max(0, self.units_combo.findData(settings.get("units", "mm"))))
+        ku = QLabel(tr("Lengths in"))
+        ku.setObjectName("formKey")
+        # Nozzles are sold by their diameter in mm, also in inch countries: the nozzle width stays
+        # in mm unless this box (beside the unit, only with inches) says otherwise.
+        units_row = QWidget()
+        ur = QHBoxLayout(units_row)
+        ur.setContentsMargins(0, 0, 0, 0)
+        ur.addWidget(self.units_combo)
+        self.nozzle_in_cb = QCheckBox(tr("Nozzle width in inches too"))
+        self.nozzle_in_cb.setToolTip(tr("Nozzles are sold by their diameter in millimetres (0.4 mm), so the "
+                                        "Check section shows the nozzle width in millimetres unless this is "
+                                        "ticked."))
+        self.nozzle_in_cb.setChecked(bool(settings.get("nozzle_in_inches", False)))
+        ur.addWidget(self.nozzle_in_cb)
+        ur.addStretch(1)
+        self.units_combo.currentIndexChanged.connect(lambda _=0: self._nozzle_box_state())
+        self._nozzle_box_state()
+        lu.addRow(ku, units_row)
+        units_hint = QLabel(tr("Used for sizes, measurements, the grid and the plate size. Files are not "
+                               "changed: 3D files are always in millimetres."))
+        units_hint.setObjectName("muted")
+        units_hint.setWordWrap(True)
+        lu.addRow(units_hint)
+        self._add_page("language", tr("Language and units"), [g0, gu])
 
         # ---------------- Appearance ----------------
         # A mode (Light / Dark / System) and four style cards, each a small picture of PrintView3D
@@ -243,9 +276,10 @@ class SettingsDialog(QDialog):
         ke = QLabel(tr("When I click Export STL"))
         ke.setObjectName("formKey")
         le.addRow(ke, self.export_combo)
-        ex_note = QLabel(tr("{key} does the same. The arrow next to the button always offers all three "
-                            "ways. A file with only one object is always saved straight away.").format(
-                                key=_key("Ctrl+E")))
+        export_key = keys.native(keys.current(settings)["export"])
+        ex_note = QLabel(((tr("{key} does the same.").format(key=export_key) + " ") if export_key else "")
+                         + tr("The arrow next to the button always offers all three ways. A file with only "
+                              "one object is always saved straight away."))
         ex_note.setObjectName("muted")
         ex_note.setWordWrap(True)
         le.addRow(ex_note)
@@ -303,9 +337,16 @@ class SettingsDialog(QDialog):
         self.cube_cb = QCheckBox(tr("Show the view cube (top-right corner of the 3D view)"))
         self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
         l3.addWidget(self.travel_cb)
+        l3.addWidget(self.cube_cb)
         l3.addWidget(self.bed_cb)
+        # X/Y/Z arrows on the plate, beside the model (off by default).
+        self.plate_axes_cb = QCheckBox(tr("Also show the X, Y and Z axes on the build plate"))
+        self.plate_axes_cb.setChecked(bool(settings.get("show_plate_axes", False)))
+        self.plate_axes_cb.setToolTip(tr("Small arrows pointing along X, Y and Z, beside the back-right corner of the "
+                                         "model, in addition to the marker in the corner of the view."))
+        l3.addWidget(self.plate_axes_cb)
         # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
-        self.grid_labels_cb = QCheckBox(tr("Show distances (mm) along the grid"))
+        self.grid_labels_cb = QCheckBox(tr("Show scale numbers on the grid"))
         self.grid_labels_cb.setChecked(bool(settings.get("show_grid_labels", False)))
         self.grid_labels_cb.setToolTip(tr("Small numbers along the edges of the build plate, on its major "
                                           "grid lines. Hidden while you look from under the plate."))
@@ -320,19 +361,37 @@ class SettingsDialog(QDialog):
         self.grid_step_label = QLabel(tr("Spacing of the numbers"))
         self.grid_step_label.setObjectName("formKey")
         self.grid_step_combo = QComboBox()
-        self.grid_step_combo.addItem(tr("Automatic"), 0)
-        for mm in (5, 10, 20, 25, 50, 100):
-            self.grid_step_combo.addItem(tr("{n} mm").format(n=mm), mm)
-        at = self.grid_step_combo.findData(int(settings.get("grid_labels_step", 0) or 0))
-        self.grid_step_combo.setCurrentIndex(max(0, at))
-        self.grid_step_combo.setToolTip(tr("Automatic: on the grid's major lines (every 50 mm on a normal plate), "
-                                           "fewer on a big plate. Or choose a spacing of your own."))
+        self.grid_step_combo.setToolTip(tr("Automatic: as many numbers as fit at the zoom you look at, on the grid "
+                                           "lines and never closer than the fine lines. Or choose a spacing of "
+                                           "your own."))
+        # The three spacings (numbers, fine lines, main lines) are kept per unit: in millimetres
+        # and in inches the sensible values differ. Switching the unit above shows the other set.
+        self._spacing_choice = {u: {key: float(settings.get(key + ("_in" if u == "in" else ""), 0) or 0)
+                                    for key in ("grid_labels_step", "grid_minor", "grid_major")}
+                                for u in units.UNITS}
+        self._spacing_unit = settings.get("units", "mm") if settings.get("units", "mm") in units.UNITS else "mm"
         step_layout.addWidget(self.grid_step_combo)
         step_layout.addStretch(1)
         plate_form.addRow(self.grid_step_label, self.grid_step_row)
         for wdg in (self.grid_step_label, self.grid_step_row):
             wdg.setEnabled(self.grid_labels_cb.isChecked())
             self.grid_labels_cb.toggled.connect(wdg.setEnabled)
+        # Grid lines: a fine line every ..., a main line every ... (automatic: as before).
+        self.grid_minor_combo = QComboBox()
+        self.grid_major_combo = QComboBox()
+        kmin = QLabel(tr("Grid lines every"))
+        kmin.setObjectName("formKey")
+        kmaj = QLabel(tr("Main grid lines every"))
+        kmaj.setObjectName("formKey")
+        plate_form.addRow(kmin, self.grid_minor_combo)
+        plate_form.addRow(kmaj, self.grid_major_combo)
+        self._spacing_combos = {"grid_labels_step": self.grid_step_combo, "grid_minor": self.grid_minor_combo,
+                                "grid_major": self.grid_major_combo}
+        self._fill_spacing_combos()
+        for key, combo in self._spacing_combos.items():
+            combo.currentIndexChanged.connect(lambda _=0, k=key: self._remember_spacing(k))
+        self.grid_minor_combo.currentIndexChanged.connect(lambda _=0: self._match_major_spacing())
+        self.units_combo.currentIndexChanged.connect(lambda _=0: self._units_changed())
         # Which plate (also in the Plate button's menu), issue #61.
         from .scene import PLATE_MODES
         self.plate_combo = QComboBox()
@@ -346,15 +405,14 @@ class SettingsDialog(QDialog):
         self.plate_size_row = QWidget()
         size_layout = QHBoxLayout(self.plate_size_row)
         size_layout.setContentsMargins(0, 0, 0, 0)
-        self.plate_w_spin, self.plate_d_spin = QSpinBox(), QSpinBox()
+        from .length_spin import LengthSpin
+        self.plate_w_spin = LengthSpin(10, 5000, unit=self._spacing_unit)
+        self.plate_d_spin = LengthSpin(10, 5000, unit=self._spacing_unit)
         for spin, value in ((self.plate_w_spin, size[0]), (self.plate_d_spin, size[1])):
-            spin.setRange(10, 5000)
-            spin.setSingleStep(10)
-            spin.setSuffix(" mm")
             try:
-                spin.setValue(int(round(float(value))))
+                spin.set_mm(float(value))
             except (TypeError, ValueError):
-                spin.setValue(300)
+                spin.set_mm(300)
         size_layout.addWidget(self.plate_w_spin)
         size_layout.addWidget(QLabel("×"))
         size_layout.addWidget(self.plate_d_spin)
@@ -369,6 +427,14 @@ class SettingsDialog(QDialog):
         # View -> Clip: how strongly the cut-away part (ghost and outline) and the cutting plane
         # are drawn, each with its own slider (#66). They change the 3D view while you drag;
         # Cancel puts them back. Same columns as Build plate and Plate size.
+        # Measure: how thick its lines are (1 .. 10 pixels); also tried live, Cancel puts it back.
+        try:
+            self._line_at_open = min(10, max(1, int(round(float(settings.get("measure_line_width", 4))))))
+        except (TypeError, ValueError):
+            self._line_at_open = 4
+        self.line_slider = self._strength_row(
+            plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
+            tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
         from .scene import Scene
         self._ghost_at_open = Scene._strength(settings.get("ghost_strength"))
         self._plane_at_open = Scene._strength(settings.get("plane_strength"))
@@ -378,15 +444,26 @@ class SettingsDialog(QDialog):
         self.plane_slider = self._strength_row(
             plate_form, tr("Cutting plane"), self._plane_at_open, self._preview_plane_strength,
             tr("How strongly the cutting plane is drawn when you use Clip in the View menu."))
-        # Measure: how thick its lines are (1 .. 10 pixels); also tried live, Cancel puts it back.
-        try:
-            self._line_at_open = min(10, max(1, int(round(float(settings.get("measure_line_width", 4))))))
-        except (TypeError, ValueError):
-            self._line_at_open = 4
-        self.line_slider = self._strength_row(
-            plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
-            tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
-        l3.addWidget(self.cube_cb)
+        # Both cuts on (View section): normally each cutting plane stops where the other cut is, so
+        # the two meet in a clean corner. This keeps both planes whole instead.
+        self.cut_planes_cb = QCheckBox(tr("Don't let the two cutting planes cut each other"))
+        self.cut_planes_cb.setChecked(bool(settings.get("cut_planes_whole", False)))
+        self.cut_planes_cb.setToolTip(tr("With both cuts on, each cutting plane is drawn whole instead of "
+                                         "stopping where the other cut is."))
+        l3.addWidget(self.cut_planes_cb)
+        # View -> Clip: a knob on each cutting plane, to move the cut by dragging it in the 3D view
+        # (the sliders still work as well).
+        self.clip_handles_cb = QCheckBox(tr("Also move the cutting planes by dragging them in the 3D view"))
+        self.clip_handles_cb.setChecked(bool(settings.get("clip_handles", False)))
+        self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the plane; "
+                                           "the sliders still work too."))
+        l3.addWidget(self.clip_handles_cb)
+        # Check: keep the colours picked for the highlights (otherwise they are the defaults again
+        # at every start).
+        self.check_colors_cb = QCheckBox(tr("Remember the colours of the Check section"))
+        self.check_colors_cb.setChecked(bool(settings.get("check_keep_colors", False)))
+        self.check_colors_cb.setToolTip(tr("Off: the Check colours you pick last until PrintView3D closes."))
+        l3.addWidget(self.check_colors_cb)
 
         # ---------------- Graphics ----------------
         g4 = QGroupBox(tr("Graphics"))
@@ -417,20 +494,48 @@ class SettingsDialog(QDialog):
         l4.addWidget(self.gpu_hint)
         self._add_page("viewer", tr("Viewer"), [g3, g4], keep_titles=True)
 
-        self._add_page("updates", tr("Updates"), [self._build_updates()])
-        self._add_page("about", tr("About"), [self._build_about(gpu_info), self._build_shortcuts()],
+        self._add_page("keys", tr("Keyboard and mouse"), [self._build_mouse(), self._build_keys()],
                        keep_titles=True)
+        self._add_page("updates", tr("Updates"), [self._build_updates()])
+        self._add_page("about", tr("About"), [self._build_about(gpu_info)])
 
-        bb = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        # Apply saves and shows the settings without closing; OK does the same and closes.
+        bb = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Apply | QDialogButtonBox.Cancel)
         bb.button(QDialogButtonBox.Ok).setObjectName("primary")     # in the theme's primary colour
+        self.apply_btn = bb.button(QDialogButtonBox.Apply)
+        self.apply_btn.clicked.connect(lambda: self._save(close=False))
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
         outer.addWidget(bb)
 
         self._update_assoc_status()
         self._refresh_updates()
+        self._even_combo_widths()
+        # The page asked for, or the one open when Settings was last closed.
+        if page not in self._page_keys:
+            page = settings.get("settings_page", "")
         self.nav.setCurrentRow(self._page_keys.index(page) if page in self._page_keys else 0)
+        self.nav.currentRowChanged.connect(self._remember_page)
         self._initial_size()
+
+    def _remember_page(self, row: int):
+        if 0 <= row < len(self._page_keys):
+            self.settings.set("settings_page", self._page_keys[row])
+
+    def _even_combo_widths(self):
+        """The dropdowns of the Viewer page are all as wide as the widest needs to be, so they line
+        up (in every language and unit)."""
+        combos = [c for c in (getattr(self, "grid_step_combo", None), getattr(self, "grid_minor_combo", None),
+                              getattr(self, "grid_major_combo", None), getattr(self, "plate_combo", None))
+                  if c is not None]
+        if not combos:
+            return
+        for c in combos:
+            c.setMinimumWidth(0)
+            c.setMaximumWidth(16777215)
+        width = max(c.sizeHint().width() for c in combos)
+        for c in combos:
+            c.setFixedWidth(width)
 
     # ---------------------------------------------------------------- pages
     def _add_page(self, key: str, title: str, widgets: list, keep_titles: bool = False):
@@ -460,9 +565,16 @@ class SettingsDialog(QDialog):
         self._page_keys.append(key)
 
     def _initial_size(self):
+        """Wide enough for the pages and tall enough for the longest page of settings, so none of
+        them needs a scroll bar - unless the screen is too small for that (then the page scrolls).
+        The long list of keys doesn't count: it scrolls instead."""
         screen = (self.parent().screen() if self.parent() is not None else QApplication.primaryScreen())
         avail = screen.availableGeometry() if screen is not None else None
-        w, h = 860, 580
+        tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count())
+                      if self._page_keys[i] not in ("about", "keys"))
+        buttons = self.findChild(QDialogButtonBox).sizeHint().height()
+        m = self.layout().contentsMargins()
+        w, h = 860, max(580, tallest + buttons + m.top() + m.bottom() + 24)
         if avail is not None:
             w, h = min(w, int(avail.width() * 0.9)), min(h, int(avail.height() * 0.9))
         self.resize(w, h)
@@ -588,6 +700,58 @@ class SettingsDialog(QDialog):
             if selector is not None:
                 selector.refresh_icons()                    # their symbols use the text colour
 
+    # ---------------------------------------------------------------- units and grid spacing
+    SPACINGS = {
+        "mm": {"grid_labels_step": (5, 10, 20, 25, 50, 100), "grid_minor": (1, 2, 5, 10, 20, 50),
+               "grid_major": (10, 20, 25, 50, 100, 200, 250)},
+        "in": {"grid_labels_step": (0.25, 0.5, 1, 2, 5), "grid_minor": (0.1, 0.125, 0.25, 0.5, 1),
+               "grid_major": (0.5, 1, 2, 5, 10)},
+    }
+
+    def _fill_spacing_combos(self):
+        """The choices of the three spacing dropdowns, in the unit chosen above."""
+        u = self._spacing_unit
+        name = tr("in") if u == "in" else tr("mm")
+        for key, combo in self._spacing_combos.items():
+            combo.blockSignals(True)
+            combo.clear()
+            combo.addItem(tr("Automatic"), 0.0)
+            for v in self.SPACINGS[u][key]:
+                combo.addItem(tr("{d} {unit}").format(d=units.short(v), unit=name), float(v))
+            at = combo.findData(float(self._spacing_choice[u][key]))
+            combo.setCurrentIndex(max(0, at))
+            combo.blockSignals(False)
+        self._match_major_spacing()
+
+    def _match_major_spacing(self):
+        """Main grid lines fall on fine lines: only multiples of the fine spacing can be chosen
+        (20 mm fine lines: 20, 100, 200 mm main lines, not 25 or 50). A main spacing that no
+        longer fits goes back to Automatic."""
+        from .scene import is_multiple
+        minor = float(self.grid_minor_combo.currentData() or 0)
+        combo = self.grid_major_combo
+        model = combo.model()
+        for i in range(1, combo.count()):
+            ok = not minor or is_multiple(float(combo.itemData(i)), minor)
+            model.item(i).setEnabled(ok)
+        if not model.item(combo.currentIndex()).isEnabled():
+            combo.setCurrentIndex(0)
+
+    def _remember_spacing(self, key: str):
+        self._spacing_choice[self._spacing_unit][key] = float(self._spacing_combos[key].currentData() or 0)
+
+    def _nozzle_box_state(self):
+        """Nozzle width in inches too: only a choice while lengths are in inches."""
+        self.nozzle_in_cb.setEnabled(self.units_combo.currentData() == "in")
+
+    def _units_changed(self):
+        """Another unit chosen: the plate size and the spacings show in it at once."""
+        self._spacing_unit = self.units_combo.currentData()
+        for spin in (self.plate_w_spin, self.plate_d_spin):
+            spin.set_unit(self._spacing_unit)
+        self._fill_spacing_combos()
+        self._even_combo_widths()
+
     def theme_choice(self) -> str:
         """The theme chosen on the Appearance page."""
         return self._theme_choice
@@ -710,41 +874,113 @@ class SettingsDialog(QDialog):
         v.addWidget(built)
         return g
 
-    def _build_shortcuts(self) -> QGroupBox:
-        """Keyboard shortcuts and mouse controls of the main window (keep in step with
-        MainWindow._build_shortcuts and the README)."""
-        g = QGroupBox(tr("Keyboard and mouse"))
+    # ---------------------------------------------------- keyboard and mouse
+    def _build_keys(self) -> QGroupBox:
+        """Every key of the main window, each in a field that records a new one. A key the
+        system uses (Windows, macOS, Linux) or that another row already has is not taken; the
+        row says why. Saved with OK / Apply (keys.save); Reset to defaults puts all back."""
+        g = QGroupBox(tr("Keyboard"))
+        grid = QGridLayout(g)
+        grid.setHorizontalSpacing(14)
+        grid.setVerticalSpacing(4)
+        grid.setColumnStretch(0, 1)
+        hint = QLabel(tr("Click a field and press the new key. The clear button removes the key."))
+        hint.setObjectName("muted")
+        hint.setWordWrap(True)
+        grid.addWidget(hint, 0, 0, 1, 2)
+        names = keys.descriptions()
+        self._key_values = keys.current(self.settings)
+        self.key_edits: dict[str, QKeySequenceEdit] = {}
+        self.key_notes: dict[str, QLabel] = {}
+        row = 1
+        for kid in keys.IDS:
+            text = QLabel(names[kid])
+            text.setWordWrap(True)
+            text.setStyleSheet("font-weight: 400;")     # not the box title's bold
+            grid.addWidget(text, row, 0)
+            edit = QKeySequenceEdit(QKeySequence(self._key_values[kid]))
+            edit.setMaximumSequenceLength(1)            # one key (with Ctrl, Shift, Alt), no sequences
+            edit.setClearButtonEnabled(True)
+            edit.setFixedWidth(150)
+            edit.setToolTip(tr("Default: {key}").format(key=keys.native(keys.DEFAULT[kid])))
+            edit.keySequenceChanged.connect(lambda _seq, k=kid: self._key_edited(k))
+            grid.addWidget(edit, row, 1)
+            note = QLabel()
+            note.setObjectName("keyProblem")
+            note.setWordWrap(True)
+            note.hide()
+            grid.addWidget(note, row + 1, 0, 1, 2)
+            self.key_edits[kid] = edit
+            self.key_notes[kid] = note
+            row += 2
+        self.keys_reset_btn = QPushButton(tr("Reset to defaults"))
+        self.keys_reset_btn.setToolTip(tr("Puts every key back to the one PrintView3D comes with."))
+        self.keys_reset_btn.clicked.connect(self._reset_keys)
+        bottom = QHBoxLayout()
+        bottom.addStretch(1)
+        bottom.addWidget(self.keys_reset_btn)
+        grid.addLayout(bottom, row, 0, 1, 2)
+        return g
+
+    def _key_edited(self, kid: str):
+        """A key was recorded: take it, or say why not and keep the one before."""
+        edit = self.key_edits[kid]
+        seq = keys.normalize(edit.keySequence().toString(QKeySequence.PortableText))
+        why = keys.problem(seq)
+        if not why and seq:
+            other = next((k for k, v in self._key_values.items() if k != kid and v == seq), None)
+            if other:
+                why = tr("{key} is already used for: {what}").format(
+                    key=keys.native(seq), what=keys.descriptions()[other])
+        note = self.key_notes[kid]
+        if why:
+            note.setText(why)
+            note.setStyleSheet("color: %s;" % ("#ff5c5c" if theme.is_dark() else "#e02424"))
+            note.show()
+            edit.blockSignals(True)
+            edit.setKeySequence(QKeySequence(self._key_values[kid]))
+            edit.blockSignals(False)
+            return
+        note.hide()
+        self._key_values[kid] = seq
+
+    def _reset_keys(self):
+        self._key_values = dict(keys.DEFAULT)
+        for kid, edit in self.key_edits.items():
+            edit.blockSignals(True)
+            edit.setKeySequence(QKeySequence(keys.DEFAULT[kid]))
+            edit.blockSignals(False)
+            self.key_notes[kid].hide()
+
+    def _build_mouse(self) -> QGroupBox:
+        """The mouse controls of the 3D view. They are fixed: the list only shows them."""
+        g = QGroupBox(tr("Mouse"))
         grid = QGridLayout(g)
         grid.setHorizontalSpacing(14)
         grid.setVerticalSpacing(6)
         grid.setColumnStretch(1, 1)
-        row = 0
-        for heading, items in ((tr("Keyboard"), shortcut_rows()), (tr("Mouse"), mouse_rows())):
-            head = QLabel(heading)
-            head.setObjectName("formKey")
-            head.setStyleSheet("font-weight: 600;" + (" margin-top: 8px;" if row else ""))
-            grid.addWidget(head, row, 0, 1, 2)
-            row += 1
-            for keys, action in items:
-                caps = QWidget()
-                h = QHBoxLayout(caps)
-                h.setContentsMargins(0, 0, 0, 0)
-                h.setSpacing(4)
-                for i, k in enumerate(keys):
-                    if i:
-                        sep = QLabel("/")
-                        sep.setObjectName("muted")
-                        h.addWidget(sep)
-                    cap = QLabel(i18n.ltr(k))
-                    cap.setObjectName("keyCap")
-                    h.addWidget(cap)
-                h.addStretch(1)
-                grid.addWidget(caps, row, 0)
-                text = QLabel(action)
-                text.setWordWrap(True)
-                text.setStyleSheet("font-weight: 400;")     # not the box title's bold
-                grid.addWidget(text, row, 1)
-                row += 1
+        note = QLabel(tr("The mouse controls are fixed."))
+        note.setObjectName("muted")
+        grid.addWidget(note, 0, 0, 1, 2)
+        for row, (buttons, action) in enumerate(mouse_rows(), start=1):
+            caps = QWidget()
+            h = QHBoxLayout(caps)
+            h.setContentsMargins(0, 0, 0, 0)
+            h.setSpacing(4)
+            for i, k in enumerate(buttons):
+                if i:
+                    sep = QLabel("/")
+                    sep.setObjectName("muted")
+                    h.addWidget(sep)
+                cap = QLabel(i18n.ltr(k))
+                cap.setObjectName("keyCap")
+                h.addWidget(cap)
+            h.addStretch(1)
+            grid.addWidget(caps, row, 0)
+            text = QLabel(action)
+            text.setWordWrap(True)
+            text.setStyleSheet("font-weight: 400;")
+            grid.addWidget(text, row, 1)
         return g
 
     # ---------------------------------------------------------------- slicer
@@ -881,7 +1117,9 @@ class SettingsDialog(QDialog):
         self._update_assoc_status()
 
     # ------------------------------------------------------------------ save
-    def _save(self):
+    def _save(self, close: bool = True):
+        """OK (close=True) or Apply (close=False): store everything. After Apply, Cancel keeps
+        what was applied: it only takes back changes made since."""
         self._store_slicer_fields()
         sid = self._current_id
         if sid == sl.CUSTOM and not os.path.isfile(self._custom.get("path", "")):
@@ -893,10 +1131,19 @@ class SettingsDialog(QDialog):
         self.settings.set("freecad_path", self.freecad_edit.text().strip())
         self.settings.set("show_travel", self.travel_cb.isChecked())
         self.settings.set("show_bed", self.bed_cb.isChecked())
+        self.settings.set("show_plate_axes", self.plate_axes_cb.isChecked())
         self.settings.set("show_grid_labels", self.grid_labels_cb.isChecked())
-        self.settings.set("grid_labels_step", self.grid_step_combo.currentData() or 0)
+        for u, choice in self._spacing_choice.items():
+            for key, value in choice.items():
+                self.settings.set(key + ("_in" if u == "in" else ""), value)
+        self.settings.set("units", self.units_combo.currentData())
+        self.settings.set("nozzle_in_inches", self.nozzle_in_cb.isChecked())
+        self.settings.set("cut_planes_whole", self.cut_planes_cb.isChecked())
+        self.settings.set("clip_handles", self.clip_handles_cb.isChecked())
+        keys.save(self.settings, self._key_values)
+        self.settings.set("check_keep_colors", self.check_colors_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())
-        self.settings.set("plate_size", [self.plate_w_spin.value(), self.plate_d_spin.value()])
+        self.settings.set("plate_size", [round(self.plate_w_spin.mm(), 3), round(self.plate_d_spin.mm(), 3)])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
         self.settings.set("ghost_strength", self.ghost_slider.value())
         self.settings.set("plane_strength", self.plane_slider.value())
@@ -929,9 +1176,18 @@ class SettingsDialog(QDialog):
         choice = self._theme_choice
         if choice != self.settings.get("theme", "auto"):
             self.settings.set("theme", choice)      # already shown live (see _preview_theme)
-        if restart_for:
+        if restart_for and not self._restart_asked:
+            self._restart_asked = not close
             self.restart_now = self._ask_restart(restart_for)
-        self.accept()
+        if close or self.restart_now:
+            self.accept()
+            return
+        # Apply: what is applied now is what Cancel goes back to.
+        self._theme_at_open = self._theme_choice
+        self._ghost_at_open = self.ghost_slider.value()
+        self._plane_at_open = self.plane_slider.value()
+        self._line_at_open = self.line_slider.value()
+        self.applied.emit()
 
     def _ask_restart(self, what: list[str]) -> bool:
         """Restart now / Later. True for Restart now."""
@@ -954,38 +1210,6 @@ class SettingsDialog(QDialog):
         box.setEscapeButton(later)
         box.exec()
         return box.clickedButton() is now
-
-
-def _key(seq: str) -> str:
-    """A shortcut as the system writes it (Ctrl+O on Windows/Linux, ⌘O on a Mac)."""
-    return QKeySequence(seq).toString(QKeySequence.NativeText)
-
-
-def shortcut_rows() -> list[tuple[list[str], str]]:
-    """(keys, what they do) for the About page, in the order people need them."""
-    view = tr("{view} view")
-    return [
-        ([_key("Ctrl+O")], tr("Open a file")),
-        ([_key("Ctrl+W")], tr("Close the file (back to the start page)")),
-        ([_key("Ctrl+P")], tr("Open the file in your slicer")),
-        ([_key("Ctrl+E")], tr("Export STL (3MF, FreeCAD and STEP)")),
-        ([_key("Ctrl+T")], tr("Next theme style")),
-        ([_key("Ctrl+Shift+T")], tr("Switch between light and dark")),
-        (["F"], view.format(view=tr("Fit"))),
-        (["1"], view.format(view=tr("Iso"))),
-        (["2"], view.format(view=tr("Top"))),
-        (["3"], view.format(view=tr("Front"))),
-        (["4"], view.format(view=tr("Right"))),
-        (["W"], tr("Wireframe on / off (models)")),
-        (["X"], tr("X-ray (see-through) on / off (models)")),
-        (["C"], tr("Clip from the top on / off (models)")),
-        (["V"], tr("Clip facing you on / off (models)")),
-        (["R"], tr("Reset view: all of the above off, model fitted (models)")),
-        (["M"], tr("Measure on / off (models)")),
-        (["↑", "↓"], tr("Next / previous layer (G-code), or file (ZIP)")),
-        ([_key("PgUp"), _key("PgDown")], tr("10 layers up / down")),
-        ([_key("Home"), _key("End")], tr("First / last layer")),
-    ]
 
 
 def mouse_rows() -> list[tuple[list[str], str]]:

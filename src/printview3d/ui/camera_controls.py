@@ -131,6 +131,9 @@ class TurntableControls:
         # View -> Measure (measure.py): while it is on, a click on the model places a point
         # instead of setting the rotation centre; a drag still turns the view.
         self.measure = None
+        # View -> Clip with "drag the cuts" on (clip_handles.py): a press on a cut's knob moves
+        # that cut instead of turning the view.
+        self.clip_handles = None
         self._grabbed = False
         self._cube_part = None
         self._press = (0, 0)
@@ -349,6 +352,14 @@ class TurntableControls:
             if self.on_start:
                 self.on_start()
             return
+        if self.clip_handles is not None and not self.iren.GetShiftKey():
+            cut = self.clip_handles.hit(x, y)
+            if cut is not None and self.clip_handles.begin(cut, x, y):
+                self.stop_animation()
+                self.mode = "clip_handle"
+                self.last = (x, y)
+                self._set_cursor("drag")
+                return
         if self.measure is not None and self.measure.active and not self.iren.GetShiftKey():
             # Measuring: wait to see whether this is a click (a point) or a drag (turn the view).
             # A press on a placed point is a grab: a drag from there moves the point.
@@ -365,6 +376,11 @@ class TurntableControls:
 
     def _button_up(self, *_):
         if self.mode is None:
+            return
+        if self.mode == "clip_handle":               # a cut was moved by its knob
+            self.mode = None
+            self.clip_handles.end()
+            self._set_cursor("knob" if self.clip_handles.hover else None)
             return
         if self.mode == "measure":                   # never moved: a click
             self.mode = None
@@ -398,6 +414,10 @@ class TurntableControls:
         x, y = self.iren.GetEventPosition()
         if self.mode is None:
             self._hover(x, y)
+            return
+        if self.mode == "clip_handle":
+            self.last = (x, y)
+            self.clip_handles.drag_to(x, y)
             return
         if self.mode == "measure":
             if abs(x - self._press[0]) + abs(y - self._press[1]) < CLICK_SLOP_PX:
@@ -439,8 +459,12 @@ class TurntableControls:
         if self.cube is None:
             return
         part = self.cube.hit(x, y)
+        knob = self.clip_handles.hit(x, y) if self.clip_handles is not None and part is None else None
+        if self.clip_handles is not None and self.clip_handles.set_hover(knob):
+            self._set_cursor("knob" if knob else None)
+            self.request_render()
         if self.measure is not None and self.measure.active:
-            if part is None:
+            if part is None and knob is None:
                 self.measure.hover(x, y)             # the point a click would set
             else:
                 self.measure.leave()
@@ -459,6 +483,23 @@ class TurntableControls:
                 pass
             self._show_tip(part)
             self.request_render()
+
+    def _set_cursor(self, what):
+        """The 3D view's cursor: "knob" over a cut's knob, "drag" while moving one, otherwise
+        the normal one (a cross while measuring)."""
+        try:
+            from PySide6.QtCore import Qt
+            widget = self.p.interactor
+            if what == "knob":
+                widget.setCursor(Qt.OpenHandCursor)
+            elif what == "drag":
+                widget.setCursor(Qt.ClosedHandCursor)
+            elif self.measure is not None and self.measure.active:
+                widget.setCursor(Qt.CrossCursor)
+            else:
+                widget.unsetCursor()
+        except Exception:   # noqa: BLE001 - no Qt widget (tests)
+            pass
 
     def _show_tip(self, part):
         if part == self._tip_part:
@@ -481,6 +522,8 @@ class TurntableControls:
     def leave(self):
         """The mouse left the 3D view: nothing stays lit, the arrows hide."""
         self._hide_tip()
+        if self.clip_handles is not None and self.mode != "clip_handle" and self.clip_handles.set_hover(None):
+            self.request_render()
         if self.measure is not None and self.measure.active:
             self.measure.leave()
         if self.cube is not None and self.cube.set_hover(None, False):

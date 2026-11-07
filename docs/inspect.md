@@ -4,10 +4,11 @@ Hollow walls, hidden parts, channels, screw holes: the **View** button in the to
 inside a model before you print it. It works for STL, 3MF, OBJ and the other model formats
 (G-code has its layer slider for this). The button opens a **View** section in the side panel with
 every option as a button: Wireframe, X-ray, Clip from the top and Clip facing you. The controls of a
-cut (its slider, the cut-away part, the cutting plane and Freeze) appear in the same section while
-the cut is on, and the section ends with **Reset view** and **Close**. A button that is on is drawn
-darker, so you see at a glance what is active. In a narrow side panel the buttons get a smaller
-font; the panel never gets so narrow that an icon or a letter has to go.
+cut (its slider, the cut-away part, the cutting plane and Lock facing cut) appear in the same section while
+the cut is on, and the section ends with **Reset view** and **Close**. Close (or the View button) turns every view
+option off; Reset view does the same and fits the model. A button that is on is drawn darker, so you
+see at a glance what is active. In a narrow side panel the buttons get a smaller font; the panel never
+gets so narrow that an icon or a letter has to go.
 *New in PrintView3D 0.25; the View section is new in 0.28.*
 
 <video class="pv-video" src="assets/inside/clip-facing.mp4" poster="assets/inside/clip-facing.jpg"
@@ -22,9 +23,11 @@ as if you held the model up to a scanner. For a cut straight from the front or t
 that face on the view cube.
 
 The slider in the side panel moves the cut nearer or further; **Depth** shows how far the cut is
-into the model, out of the model's depth in that direction. **Freeze the cutting plane** (in the
-View section) keeps the cut where it is, so you can turn and move the model without the cut turning
-along. The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
+into the model, out of the model's depth in that direction. **Lock facing cut** (<kbd>L</kbd>, the
+button left of Reset view in the View section) stops the cut turning with the view, so you can turn
+and move the model and look at the cut from the side; its slider still moves it. Measuring on the
+cut? Lock it first: a point stays where you placed it, so when the view turns, an unlocked cut
+moves on and leaves the point in the air. While the cut is unlocked, the Measure section shows a red dot and *Facing cut not locked*, left of Clear; hover over it for the details. The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
 face.
 
 ![The cut and its slider in the side panel](assets/inside/clip-facing.png)
@@ -49,11 +52,21 @@ Under the sliders, **Show the cut-away part** and **Show the cutting plane** tur
 
 ## Both cuts at once
 
-<kbd>C</kbd> and <kbd>V</kbd> each turn their own cut on and off, so both can be on together: the
+<kbd>T</kbd> and <kbd>Y</kbd> each turn their own cut on and off, so both can be on together: the
 model then keeps only what both cuts keep, a corner cut away. The side panel has a slider for each,
 **Height** and **Depth**. What the cuts hide still shows as one even, see-through ghost, and each
-cutting plane stops where the other cut is. **Reset view** ends both cuts; the same key (or button)
-again ends just that one. *New in PrintView3D 0.27.*
+cutting plane stops where the other cut is (**Settings → Viewer → Don't let the two cutting planes
+cut each other** draws both whole, with a faint line where they meet). The cut buttons in the View section, or the keys, end each cut.
+*New in PrintView3D 0.27.*
+
+## Drag the cuts in the 3D view
+
+Rather move a cut where you are looking than on its slider? Tick **Settings → Viewer → Also move
+the cutting planes by dragging them in the 3D view**. Each cut then gets a small round handle on the edge of its
+cutting plane (a disc in the plane's colour with a light ring), with a short line through it that
+shows which way the cut moves: Clip from the top's on the side of the plane furthest right, Clip
+facing you's on the top edge of its plane. Under the mouse the disc and ring swap colours; drag it and the cut follows, with its slider. Seen straight from above
+(or the upright cut from eye level), drag up to move the cut up or further away. Off by default.
 
 ## X-ray
 
@@ -87,15 +100,18 @@ The **Measure** button next to **View** (or <kbd>M</kbd>) opens the Measure sect
 measure with the buttons in it:
 
 - **Distance**: click two points. The line follows the mouse and the distance is written next to
-  it. Tick **Show ΔX ΔY ΔZ** to write the distance along each axis under every distance, handy for
+  it. Turn on **Show ΔX ΔY ΔZ** to write the distance along each axis under every distance, handy for
   "how tall from here to there".
 - **Angle**: click a point on one side, the corner, then a point on the other side.
 - **Circle**: click three points on the edge of a circle or hole to read its diameter and radius.
 
-How to use the chosen tool is written at the bottom of the 3D view while Measure is on. A click places a point, a drag still turns the view, so you can turn the model between points.
+How to use the chosen tool is written at the bottom of the 3D view while Measure is on, after *Measure:* (the hints of Clip start with *Clip:*, so two at once stay apart). A click places a point, a drag still turns the view, so you can turn the model between points.
 Finished measurements stay on screen with their value written next to them, and the next click
-starts another; **Clear** removes them all. Drag a placed point to move it. **Snapping** (on at
-every start) jumps to the nearest corner, the middle of an edge or a point on an edge. **Dotted line**
+starts another; **Clear** (<kbd>K</kbd>) removes them all. Drag a placed point to move it. **Snapping** (on at
+every start) jumps to the nearest corner, the middle of an edge or a point on an edge. With a cut
+on (View → Clip), the outline of the cut counts as an edge too: its corners, the middles of its
+straight runs and any point on it, so you can measure walls and holes inside the model. Only the
+part you can see is snapped to. **Dotted line**
 draws the lines as dots. How thick the lines are is a slider in **Settings → Viewer**
 (**Measurement lines**). Values that would overlap, such as concentric circles, are stacked above
 each other. **Reset view** leaves your measurements in place. *New in PrintView3D 0.28.*
@@ -108,21 +124,75 @@ The **Objects** list comes first in the side panel and the **Details** last; cli
 them away (the choice is remembered). At the top you see the file type and size. Click the colour
 box of an object to pick another colour for that object alone; right-click it to go back to the
 colour from the file. Colours you pick are not saved: they are back to normal after you restart.
-*New in PrintView3D 0.28.*
+Next to the file type and size, *Preview picture* folds the picture the slicer saved away or opens it. *New in PrintView3D 0.28.*
 
 ![The housing and the impeller in colours of your own choice, seen with X-ray](assets/inside/colors.png)
 
-## Distances on the grid
+## Check before printing
 
-**Settings → Viewer → Show distances (mm) along the grid** (off by default) writes small numbers in
-millimetres along the build plate, on its major grid lines: every 50 mm on a normal plate, thinned
-to every 100 or 250 mm on a big one so a few readable numbers remain. They sit just outside the two
+The **Check** button (<kbd>C</kbd>, between Plate and View) opens the **Check model** section, below
+Measure, and colours what may cause trouble when printing:
+
+- **Overhangs**: faces that face down and lean further from vertical than an angle (45° by default)
+  usually need supports. Faces resting on the plate don't count.
+- **Thin walls**: walls and pins thinner than the nozzle (0.4 mm by default). This looks at every
+  face and runs in the background, so it is off until you tick it. The nozzle width stays in
+  millimetres when lengths are in inches (nozzles are sold as 0.4 mm, 0.6 mm ...), unless you tick
+  **Nozzle width in inches too** beside **Settings → Language and units → Lengths in**.
+- **Mesh problems**:
+  - **Holes**: edges with a face on one side only (technical term: open edges).
+  - **Tangled edges**: edges shared by three or more faces (non-manifold edges).
+  - **Inside-out faces**: faces whose front points into the model (flipped normals).
+  - **Loose parts**: small pieces not connected to the main body, up to a size you set (5 mm by
+    default, their longest side). Bigger pieces count as objects of their own, and a hollow inside
+    a part is not a loose part. The count is the number of loose parts, the ones coloured.
+
+  Triangles with no area (three corners on one line, common in exported files) are left out: they
+  don't change the shape and slicers ignore them.
+
+Each has a colour box (click to change it) and a count; a red dot marks the counts of problems
+found (thin walls and the mesh problems; not overhangs, which most models
+have). Hover over a name to see what it means and its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
+the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
+defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
+section**.
+
+## Open a folder
+
+**Menu → Open folder…** lists the 3D files of a folder in the side panel and opens the first one.
+<kbd>↑</kbd> / <kbd>↓</kbd> step through them, as in a ZIP, or click a name. ZIP files in the folder
+are not listed: open them with **Open file or ZIP…** (<kbd>Ctrl</kbd>+<kbd>O</kbd>).
+
+## Millimetres or inches
+
+**Settings → Language and units → Lengths in** shows every length in millimetres or in inches: sizes,
+measurements, the cuts, the grid and its numbers, and the plate size. Files are not changed; 3D
+files are always in millimetres.
+
+## Scale numbers on the grid
+
+**Settings → Viewer → Show scale numbers on the grid** (off by default) writes small numbers (in the
+unit you chose) along the build plate, as many as fit at the zoom you look at: zoom in on a small
+part and they come every 10 mm, zoom out and every 50, 100 or 250 mm. They are always on grid lines
+and never closer than the fine lines (**Grid lines every**). They sit just outside the two
 edges nearest to you, in the grid's own colour, stay upright whichever way you look, and hide when
-you look from under the plate. With the endless grid they follow the area around the model.
+you look from under the plate. They count from the plate's front-left corner (0 there, written once
+beside the corner), whatever coordinates the printer uses, so there are no negative numbers. With the endless grid they follow the
+area around the model and count from the model's front-left corner, where the grid's lines start too.
 **Spacing of the numbers** chooses another spacing, from 5 to 100 mm (for example 10 mm), instead
-of the automatic one. *New in PrintView3D 0.28.*
+of the automatic one. **Grid lines every** and **Main grid lines every** set the spacing of the grid
+itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). Main lines always fall
+on fine lines, so the grid stays even: with fine lines every 20 mm you can pick main lines every 20,
+100 or 200 mm, and *Automatic* then means every 100 mm. *New in PrintView3D 0.28.*
 
 ![Distances in millimetres along the edges of the build plate](assets/inside/grid-numbers.png)
+
+## X, Y and Z on the plate
+
+**Settings → Viewer → Also show the X, Y and Z axes on the build plate** (off by default, just under
+*Show build plate grid*) draws three small arrows (X red, Y green, Z blue, as in the marker in the
+corner of the view) just beside the back-right corner of the model, about a tenth of its size. They
+stay there as you turn the view and hide with the plate.
 
 ## Keys
 
@@ -130,12 +200,24 @@ of the automatic one. *New in PrintView3D 0.28.*
 |---|---|
 | <kbd>W</kbd> | Wireframe on / off |
 | <kbd>X</kbd> | X-ray on / off |
-| <kbd>C</kbd> | Clip from the top on / off |
-| <kbd>V</kbd> | Clip facing you on / off |
-| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay) |
+| <kbd>T</kbd> | Clip from the top on / off |
+| <kbd>Y</kbd> | Clip facing you on / off |
+| <kbd>F</kbd> | Fit: the whole model in the view (nothing else changes) |
+| <kbd>R</kbd> | Reset view: wireframe, X-ray and the cuts off, model fitted (measurements stay); on G-code it fits the view |
 | <kbd>M</kbd> | Measure on / off |
+| <kbd>D</kbd> / <kbd>A</kbd> / <kbd>O</kbd> | Measure a distance, an angle, a circle |
+| <kbd>V</kbd> | View section on / off |
+| <kbd>C</kbd> | Check model on / off |
+| <kbd>P</kbd> | Build plate on / off |
+| <kbd>S</kbd> | Settings |
 
-The options stay on when you open the next model.
+These are the keys PrintView3D comes with; **Settings → Keyboard and mouse** gives any of them a key
+of your own (and **Reset to defaults** puts them back).
+
+The toolbar buttons and the buttons of the View and Measure sections show their key, for example
+*Measure (M)*, *Fit (F)* and *Wireframe (W)*, and they follow when you change a key.
+
+Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed.
 
 ## Try it yourself
 

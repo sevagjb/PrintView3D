@@ -34,11 +34,28 @@ DEFAULTS = {
     "recent_files": [],
     "show_travel": False,
     "show_bed": True,
+    "show_plate_axes": False,   # Settings -> Viewer: X/Y/Z arrows on the plate, beside the model
+    "settings_page": "",        # the Settings page open when it was last closed (opens there next time)
     "plate_mode": "printer",    # Plate menu: "printer" (from the file), "fit", "custom" or "infinite"
     "plate_size": [300, 300],   # Plate menu -> Custom size: width and depth in mm
     "thumbnail_open": True,     # side panel: the file's preview picture shown (False: folded away)
     "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
+    "check_angle": 45,          # Check: overhangs lean further than this from vertical (degrees)
+    "check_nozzle": 0.4,        # Check: thin walls are thinner than this (mm)
+    "check_show": {},           # Check: which highlights are on (kind -> bool; missing: the default)
+    "check_keep_colors": False, # Settings -> Viewer: remember the Check colours (else: defaults at every start)
+    "check_colors": {},         # Check: the colours picked, kept only with check_keep_colors
+    "check_loose_max": 5.0,     # Check: loose parts are at most this big (mm, their longest side)
+    "units": "mm",              # Settings -> Language and units: "mm" or "in" (inches)
+    "nozzle_in_inches": False,  # ... the Check nozzle width in inches too (else always mm)
     "grid_labels_step": 0,      # Settings -> Viewer: spacing of those numbers in mm (0 = automatic)
+    "grid_labels_step_in": 0,   # ... the same in inches, while inches are in use
+    "grid_minor": 0,            # Settings -> Viewer: grid lines every ... mm (0 = automatic)
+    "grid_major": 0,            # ... and a major line every ... mm
+    "grid_minor_in": 0,         # ... the same two in inches, while inches are in use
+    "grid_major_in": 0,
+    "cut_planes_whole": False,  # Settings -> Viewer: with both cuts on, the two cutting planes don't cut each other
+    "clip_handles": False,      # Settings -> Viewer: move the cuts by dragging their knobs in the 3D view
     "show_grid_labels": False,  # Settings -> Viewer: millimetre numbers along the plate's major grid lines
     "clip_ghost": True,         # View -> Clip: show the cut-away part as a see-through ghost (#66)
     "clip_plane": True,         # View -> Clip: show the cutting plane as a faint sheet (#66)

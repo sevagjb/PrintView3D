@@ -11,6 +11,7 @@ import pyvista as pv
 from vtkmodules.vtkCommonDataModel import vtkPlane
 from vtkmodules.vtkRenderingCore import vtkProperty
 
+from .. import units
 from ..loaders import FEATURES, GcodeData, ModelData
 from ..loaders.gcode import TRAVEL
 from . import theme
@@ -30,6 +31,7 @@ GHOST_EDGE = {"dark": ("#e8eeed", 0.55), "light": (None, 0.65)}   # None: the th
 GHOST_EDGE_ANGLE = 40         # degrees between faces that makes an outlined edge
 CUT_PLANE_OPACITY = 0.12      # the cutting plane: a faint sheet in the theme's teal ...
 CUT_PLANE_EDGE_OPACITY = 0.75  # ... with a clearer outline
+CUT_LINE_OPACITY = 0.55       # where the two whole planes meet (both cuts on, planes not cut): faint
 GHOST_STRENGTH_DEFAULT = 50   # the setting, 0 (faintest) .. 100 (strongest)
 
 
@@ -51,8 +53,12 @@ def ghost_factor(strength) -> float:
     except (TypeError, ValueError):
         v = GHOST_STRENGTH_DEFAULT
     return 2.0 ** ((v - GHOST_STRENGTH_DEFAULT) / 25.0)
+BELOW_LIFT = 0.5              # mm: how far the grid lines move up while the camera is under the plate
 INFINITE_MIN = 2000.0         # the infinite grid reaches at least this far (mm, edge to edge)
 INFINITE_FACTOR = 20.0        # ... or this many times the model's size, whichever is larger
+# The X/Y/Z arrows on the plate (Settings -> Viewer, off by default): the colours of the corner marker.
+PLATE_AXES = (("X", (1.0, 0.0, 0.0), "tomato"), ("Y", (0.0, 1.0, 0.0), "seagreen"),
+              ("Z", (0.0, 0.0, 1.0), "#4a6cf7"))
 
 MODEL_COLORS = ["#4aa3df", "#f59f4c", "#69c66b", "#b98cff", "#ff6b6b", "#ffd166", "#3cc8c8", "#e88fc7"]
 
@@ -76,6 +82,14 @@ def _lines_polydata(a: np.ndarray, b: np.ndarray) -> pv.PolyData:
     cells[:, 1] = np.arange(0, 2 * n, 2)
     cells[:, 2] = cells[:, 1] + 1
     return pv.PolyData(pts, lines=cells.ravel())
+
+
+def is_multiple(major: float, minor: float) -> bool:
+    """Is `major` a whole multiple (1x, 2x, ...) of `minor`?"""
+    if minor <= 0 or major <= 0:
+        return False
+    k = major / minor
+    return round(k) >= 1 and abs(k - round(k)) < 1e-6
 
 
 class Scene:
@@ -107,6 +121,17 @@ class Scene:
         self._file_bed: Optional[tuple] = None      # the printer's plate saved in the file
         self._plate_for: Optional[tuple] = None     # (bounds, z) of what is shown
         self._infinite = False
+        # Settings -> Viewer: spacing of the grid lines in mm; 0 = automatic (see grid_spacing).
+        self.grid_minor = 0.0
+        self.grid_major = 0.0
+        self.planes_cut_each_other = True
+        self.show_plate_axes = False                 # Settings -> Viewer: X/Y/Z arrows on the plate
+        # Where the grid starts (its lines and the scale numbers count from here): the plate's
+        # front-left corner, or with the infinite grid the model's front-left corner.
+        self.grid_origin = (0.0, 0.0)
+        self.grid_drawn = (10.0, 50.0)        # (fine, main) spacing of the grid drawn now, in mm
+        self._axes_names: list[str] = []
+        self._axes_parts: list = []                  # (arrow, letter, letter offset) per axis
         # View menu (issue #60): how the model's parts are drawn. Kept when another file opens.
         self.wireframe = False
         self.xray = False
@@ -146,6 +171,7 @@ class Scene:
         self._ghosts: dict = {"top": [], "face": []}     # per cut, per part: (ghost, outline or None)
         # The cutting planes: a model-sized sheet per cut, each stopping where the other cut is.
         self._sheets: dict = {}                      # cut -> (quad, [sheet, frame])
+        self._cut_line = None                        # (line, actor): where the two whole planes meet
         self._peeling = False
         # Check before every frame whether the camera is under the plate.
         self.p.renderer.AddObserver("StartEvent", self._update_plate_side)
@@ -177,6 +203,7 @@ class Scene:
             key = "plate_edge" if self._real_bed else "grid_major"
             a.GetProperty().SetColor(*(v / 255 for v in _hex_to_rgb(c[key])))
         self._color_axes()
+        self._draw_plate_axes()              # their letters in the new theme's colour
 
     def _color_axes(self):
         """The small X/Y/Z marker in the corner: labels readable on any background."""
@@ -211,8 +238,11 @@ class Scene:
         self._part_colors0 = []
         self._ghosts = {"top": [], "face": []}
         self._sheets = {}
+        self._cut_line = None
         self.gcode = None
         self._bed_actor_names = []
+        self._axes_names = []
+        self._axes_parts = []
         self.focus_bounds = None
         self.bed_bounds = None
         self._file_bed = None
@@ -275,9 +305,72 @@ class Scene:
         b, z = self._plate_for
         if self.plate_mode == "infinite" and b:
             self.draw_infinite_grid(b, z)
+        else:
+            r = self.plate_rect()
+            self.draw_bed(r[0] if r else None, r[1] if r else 0.0, r[2] if r else True)
+        self._draw_plate_axes()
+
+    # --------------------------------------------------------------- X/Y/Z on the plate
+    def set_plate_axes(self, on: bool):
+        """Settings -> Viewer: arrows for X, Y and Z on the plate, next to the model."""
+        self.show_plate_axes = bool(on)
+        self._draw_plate_axes()
+
+    def plate_axes_frame(self) -> Optional[tuple]:
+        """(origin, length) of the arrows: at the model's back-right corner, a small gap outside
+        its footprint so they never touch it, pointing away from it. The usual view looks from the
+        front-right: the back-left corner, farthest away, is hidden behind the model there, so the
+        arrows take the farther of the two corners you see. They stay there whichever way the
+        view turns. Small: a tenth of the model's size (5 .. 20 mm), so they never outgrow it."""
+        if self._plate_for is None or not self._plate_for[0]:
+            return None
+        b, z = self._plate_for
+        size = max(b[1] - b[0], b[3] - b[2])
+        length = min(20.0, max(5.0, 0.1 * size))
+        gap = max(2.0, 0.03 * size)
+        return (b[1] + gap, b[3] + gap, z), length
+
+    def _draw_plate_axes(self):
+        for n in self._axes_names:
+            self.p.remove_actor(n, render=False)
+        self._axes_names = []
+        self._axes_parts = []
+        frame = self.plate_axes_frame() if self.show_plate_axes else None
+        if frame is None:
             return
-        r = self.plate_rect()
-        self.draw_bed(r[0] if r else None, r[1] if r else 0.0, r[2] if r else True)
+        from vtkmodules.vtkRenderingCore import vtkBillboardTextActor3D
+        _o, length = frame
+        for label, d, color in PLATE_AXES:
+            arrow = pv.Arrow(start=(0, 0, 0), direction=d, scale=length, tip_length=0.22, tip_radius=0.07,
+                             shaft_radius=0.025)
+            name = f"plate_axis_{label}"
+            a = self.p.add_mesh(arrow, color=color, name=name, pickable=False, reset_camera=False,
+                                show_scalar_bar=False)
+            a.SetUseBounds(False)                    # Fit and Reset view see the model only
+            text = vtkBillboardTextActor3D()         # upright letter, hidden behind the model like the arrow
+            text.SetInput(label)
+            prop = text.GetTextProperty()
+            prop.SetFontSize(12)
+            prop.SetBold(True)
+            prop.SetColor(*(v / 255 for v in _hex_to_rgb(self.c["axes_label"])))
+            prop.SetJustificationToCentered()
+            prop.SetVerticalJustificationToCentered()
+            text.SetUseBounds(False)
+            text.SetPickable(False)
+            self.p.add_actor(text, name=name + "_label", reset_camera=False, render=False, pickable=False)
+            self._axes_names += [name, name + "_label"]
+            self._axes_parts.append((a, text, [v * length * 1.18 for v in d]))
+        o = frame[0]
+        for arrow, text, tip in self._axes_parts:
+            arrow.SetPosition(*o)
+            text.SetPosition(o[0] + tip[0], o[1] + tip[1], o[2] + tip[2])
+        self._show_plate_axes()
+
+    def _show_plate_axes(self):
+        for n in self._axes_names:
+            a = self.p.actors.get(n)
+            if a is not None:
+                a.SetVisibility(self.bed_visible)
 
     # --------------------------------------------------------------- bed/grid
     def _remove_bed(self):
@@ -286,6 +379,34 @@ class Scene:
         self._bed_actor_names = []
         self.bed_bounds = None
         self._infinite = False
+
+    def grid_spacing(self, size: float) -> tuple:
+        """(minor, major) spacing of the grid lines in mm for a plate `size` mm across: what
+        Settings -> Viewer chose, or automatic. Automatic in millimetres: a line every 10 mm and a
+        major one every 50 mm (5 and 25 on a tiny plate, 50 and 250 on a huge one). In inches: a
+        line every 1/4 in and a major one every inch (0.1 and 0.5 in, 1 and 5 in)."""
+        if units.imperial():
+            inch = units.MM_PER_IN
+            auto = (0.1 * inch, 0.5 * inch) if size < 60 else (inch, 5 * inch) if size > 600 else (0.25 * inch, inch)
+        else:
+            step = self._grid_step(size)
+            auto = (step, step * 5)
+        return self.even_spacing(self.grid_minor or auto[0], self.grid_major or auto[1],
+                                 bool(self.grid_minor), bool(self.grid_major))
+
+    @staticmethod
+    def even_spacing(minor: float, major: float, minor_chosen: bool = True, major_chosen: bool = True) -> tuple:
+        """(minor, major) with the main lines on fine lines: major a whole multiple of minor, so
+        the grid stays even (fine lines every 20 mm and main ones every 50 mm would give lines at
+        0, 20, 40, 50, 60 ...). A chosen main spacing with automatic fine lines keeps the main
+        one and takes the widest even part of it up to the automatic fine one; otherwise the
+        fine lines stay and the main ones are every 5th."""
+        if is_multiple(major, minor):
+            return minor, major
+        if major_chosen and not minor_chosen:
+            parts = [major / k for k in (1, 2, 5, 10, 4) if major / k <= minor + 1e-9]
+            return (parts[0] if parts else major / 10), major
+        return minor, minor * 5
 
     @staticmethod
     def _grid_step(size: float) -> float:
@@ -303,13 +424,12 @@ class Scene:
         size = max(b[1] - b[0], b[3] - b[2], 10.0)
         half = max(INFINITE_MIN, INFINITE_FACTOR * size) / 2
         auto = self._auto_bed(b)
-        step = self._grid_step(max(auto[1] - auto[0], auto[3] - auto[2]))
-        major = step * 5
-        # Centred under the model, on the grid of world coordinates (lines at multiples of the
-        # step, like the normal plate).
-        cx = round((b[0] + b[1]) / 2 / major) * major
-        cy = round((b[2] + b[3]) / 2 / major) * major
-        # Grid lines on the same world positions as the normal plate (multiples of the step).
+        step, major = self.grid_drawn = self.grid_spacing(max(auto[1] - auto[0], auto[3] - auto[2]))
+        # The grid starts at the model's front-left corner (its 0 for the scale numbers), and is
+        # centred under the model on that grid.
+        ox, oy = self.grid_origin = (float(b[0]), float(b[2]))
+        cx = ox + round(((b[0] + b[1]) / 2 - ox) / major) * major
+        cy = oy + round(((b[2] + b[3]) / 2 - oy) / major) * major
         gz = z - 0.02
         def lines(spacing: float, reach: float, color: str, skip_major: bool):
             vals = np.arange(math.ceil((-reach) / spacing), math.floor(reach / spacing) + 1) * spacing
@@ -366,20 +486,28 @@ class Scene:
         self.p.add_mesh(plate, color=self.c["plate"], name="bed_plate", lighting=False,
                         pickable=False, reset_camera=False)
 
-        step = self._grid_step(max(w, h))
-        major_every = 5
+        step, major = self.grid_drawn = self.grid_spacing(max(w, h))
         # Grid sits just under z so it never flickers against the model's bottom face.
         gz = z - 0.02
         minor_a, minor_b, major_a, major_b = [], [], [], []
+        # The lines start at the plate's front-left corner (the scale numbers count from there).
+        self.grid_origin = (float(xmin), float(ymin))
 
-        def add_line(ax, bx, major):
-            (major_a if major else minor_a).append(ax)
-            (major_b if major else minor_b).append(bx)
+        def positions(lo: float, hi: float, spacing: float) -> np.ndarray:
+            return lo + np.arange(0, math.floor((hi - lo) / spacing + 1e-9) + 1) * spacing
 
-        for x in np.arange(math.ceil(xmin / step) * step, xmax + 1e-6, step):
-            add_line((x, ymin, gz), (x, ymax, gz), int(round(x / step)) % major_every == 0)
-        for y in np.arange(math.ceil(ymin / step) * step, ymax + 1e-6, step):
-            add_line((xmin, y, gz), (xmax, y, gz), int(round(y / step)) % major_every == 0)
+        def on_major(v: float, lo: float) -> bool:
+            return abs(round((v - lo) / major) * major - (v - lo)) < 1e-6
+
+        for lo, hi, along in ((xmin, xmax, "x"), (ymin, ymax, "y")):
+            majors = positions(lo, hi, major)
+            minors = positions(lo, hi, step)
+            if len(minors) > 3000:                   # a 1 mm grid on a huge plate: no fine lines
+                minors = minors[:0]
+            for v, is_major in [(m, True) for m in majors] + [(m, False) for m in minors if not on_major(m, lo)]:
+                a, b = (((v, ymin, gz), (v, ymax, gz)) if along == "x" else ((xmin, v, gz), (xmax, v, gz)))
+                (major_a if is_major else minor_a).append(a)
+                (major_b if is_major else minor_b).append(b)
 
         if minor_a:
             self.p.add_mesh(_lines_polydata(np.array(minor_a), np.array(minor_b)), color=self.c["grid_minor"],
@@ -404,6 +532,7 @@ class Scene:
             a = self.p.actors.get(n)
             if a is not None:
                 a.SetVisibility(visible)
+        self._show_plate_axes()              # the arrows are on the plate: shown with it
         self._update_plate_side()
 
     def _update_plate_side(self, *_):
@@ -427,6 +556,12 @@ class Scene:
             a = self.p.actors.get(n)
             if a is not None:
                 a.SetVisibility(self.bed_visible and not (below and n in hide_from_below))
+                # The lines lie just under the plate (z - 0.02). From below they would be in front of
+                # the model's bottom and drawn over it: there they move a little above the plate,
+                # behind the model's bottom - far enough (BELOW_LIFT) that depth precision can tell
+                # them apart, otherwise they flicker through it as dotted lines.
+                if n != "bed_plate":
+                    a.SetPosition(0.0, 0.0, BELOW_LIFT if below else 0.0)
 
     def pickable_actors(self) -> list:
         """Actors the mouse can 'grab' to choose the rotation centre."""
@@ -634,6 +769,17 @@ class Scene:
         """The planes every part is cut by: it keeps only what all of them keep."""
         return [{"top": self._top_plane, "face": self._face_plane}[k] for k in self._cuts()]
 
+    def cut_planes(self) -> list:
+        """(origin, normal) of every cut that is on, as numpy arrays; the normal points to the part
+        that is kept. Measure snaps to where they meet the model."""
+        return [(np.array(p.GetOrigin(), dtype=float), np.array(p.GetNormal(), dtype=float))
+                for p in self._model_planes()]
+
+    def face_plane(self) -> tuple:
+        """(origin, normal) of the Clip facing you cut as it is now drawn (it turns with the view)."""
+        return (np.array(self._face_plane.GetOrigin(), dtype=float),
+                np.array(self._face_plane.GetNormal(), dtype=float))
+
     def apply_view_options(self):
         """Wireframe, X-ray and the cuts on every part of the model (G-code toolpaths keep
         their look: they are lines already, and the layer slider is their cut)."""
@@ -706,10 +852,20 @@ class Scene:
             return [self._ghost_top_plane]
         return [self._ghost_face_plane] + ([self._top_plane] if self.clip_z is not None else [])
 
+    def set_planes_cut_each_other(self, on: bool):
+        """Settings -> Viewer: with both cuts on, does each cutting plane stop where the other cut
+        is (the default), or are both drawn whole?"""
+        self.planes_cut_each_other = bool(on)
+        if self.model_actors:
+            self.apply_view_options()
+
     def _sheet_planes(self, cut: str) -> list:
         """Each cutting plane stops where the other cut is: the flat sheet keeps to the part
         behind the upright cut, the upright sheet to the part below the height cut. Together
-        they meet in a clean corner instead of reaching into what is cut away."""
+        they meet in a clean corner instead of reaching into what is cut away. With
+        planes_cut_each_other off (Settings) both are drawn whole."""
+        if not self.planes_cut_each_other:
+            return []
         if cut == "top":
             return [self._face_plane] if self.clip_face is not None else []
         return [self._top_plane] if self.clip_z is not None else []
@@ -734,6 +890,7 @@ class Scene:
             for a in actors:
                 _set_planes(a.GetMapper(), planes)
                 a.SetVisibility(cut in cuts and self.show_cut_plane)
+        self._update_cut_line()
         self._sync_ghosts()
 
     def _make_ghosts(self, cut: str):
@@ -787,11 +944,61 @@ class Scene:
             self._ghosts[c] = []
 
     def _remove_cut_plane(self):
+        if "cut_line" in self.p.actors:
+            self.p.remove_actor("cut_line", render=False)
         for cut in list(self._sheets):
             for name in (f"cut_plane_{cut}", f"cut_plane_edge_{cut}"):
                 if name in self.p.actors:
                     self.p.remove_actor(name, render=False)
         self._sheets = {}
+        self._cut_line = None
+
+    def _update_cut_line(self):
+        """Both cuts on and both planes drawn whole (Settings): a faint line where they meet, so it
+        is clear where the corner of the cut is. Otherwise no line."""
+        want = (self.clip_z is not None and self.clip_face is not None and not self.planes_cut_each_other
+                and self.show_cut_plane and bool(self.model_actors) and bool(self.focus_bounds))
+        if self._cut_line is not None and "cut_line" not in self.p.actors:
+            self._cut_line = None                    # removed with the model (clear())
+        if not want:
+            if self._cut_line is not None:
+                self._cut_line[1].SetVisibility(False)
+            return
+        b = self.focus_bounds
+        pad = max(2.0, 0.04 * max(b[1] - b[0], b[3] - b[2], b[5] - b[4]))
+        n = np.array(self._face_plane.GetNormal(), dtype=float)
+        o = np.array(self._face_plane.GetOrigin(), dtype=float)
+        side = np.array([-n[1], n[0], 0.0])
+        corners = np.array([(x, y) for x in (b[0], b[1]) for y in (b[2], b[3])])
+        along = (corners - o[:2]) @ side[:2]
+        base = np.array([o[0], o[1], self.clip_z])
+        # Only where both planes are: the flat sheet covers the model's box plus pad, the upright
+        # one its width plus pad. Clip the line to the flat sheet's rectangle (Liang-Barsky).
+        t0, t1 = along.min() - pad, along.max() + pad
+        for k, (lo_, hi_) in enumerate(((b[0] - pad, b[1] + pad), (b[2] - pad, b[3] + pad))):
+            d = side[k]
+            if abs(d) < 1e-12:
+                if not lo_ <= base[k] <= hi_:
+                    t0, t1 = 1.0, 0.0            # parallel and outside: no line
+                continue
+            ta, tb = (lo_ - base[k]) / d, (hi_ - base[k]) / d
+            t0, t1 = max(t0, min(ta, tb)), min(t1, max(ta, tb))
+        if t1 <= t0:
+            if self._cut_line is not None:
+                self._cut_line[1].SetVisibility(False)
+            return
+        pts = np.array([base + side * t0, base + side * t1], dtype=float)
+        if self._cut_line is None:
+            line = pv.PolyData(pts, lines=np.array([2, 0, 1]))
+            actor = self.p.add_mesh(line, name="cut_line", line_width=2, lighting=False, pickable=False,
+                                    reset_camera=False, show_scalar_bar=False)
+            actor.SetUseBounds(False)
+            self._cut_line = (line, actor)
+            self._color_ghosts()
+        else:
+            self._cut_line[0].points = pts
+            self._cut_line[0].Modified()
+        self._cut_line[1].SetVisibility(True)
 
     def _color_ghosts(self):
         mode = self._ghost_mode()
@@ -812,6 +1019,10 @@ class Scene:
             sheet.GetProperty().SetOpacity(min(1.0, CUT_PLANE_OPACITY * kp))
             frame.GetProperty().SetColor(*teal)
             frame.GetProperty().SetOpacity(min(1.0, CUT_PLANE_EDGE_OPACITY * kp))
+        if self._cut_line is not None:
+            prop = self._cut_line[1].GetProperty()
+            prop.SetColor(*teal)
+            prop.SetOpacity(min(1.0, CUT_LINE_OPACITY * kp))
 
     def _sync_ghosts(self, *_):
         """A ghost is shown while its part is, its cut is on and the ghost is wanted."""
@@ -853,6 +1064,7 @@ class Scene:
             pts = [base + side * lo + (0, 0, z0), base + side * hi + (0, 0, z0),
                    base + side * hi + (0, 0, z1), base + side * lo + (0, 0, z1)]
             self._set_sheet("face", pts)
+        self._update_cut_line()
 
     def _set_sheet(self, cut: str, pts):
         quad = self._sheets[cut][0]

@@ -29,6 +29,23 @@ from PySide6.QtGui import (QColor, QGuiApplication, QIcon, QLinearGradient, QPai
 
 from ..i18n import tr_noop
 
+
+TOOLTIP_DELAY_MS = 300        # how long the mouse rests before a tooltip shows (Qt's default: 700)
+
+
+def _style():
+    """Fusion, with tooltips that show a little sooner: at Qt's 700 ms the explanations in the
+    side panel felt slow to come."""
+    from PySide6.QtWidgets import QProxyStyle, QStyle
+
+    class _Style(QProxyStyle):
+        def styleHint(self, hint, option=None, widget=None, returnData=None):
+            if hint == QStyle.SH_ToolTip_WakeUpDelay:
+                return TOOLTIP_DELAY_MS
+            return super().styleHint(hint, option, widget, returnData)
+
+    return _Style("Fusion")
+
 # The classic teal. Every theme has its own "accent"/"primary" keys; these stay for older callers.
 ACCENT = "#2fa4a0"
 ACCENT_HOVER = "#38bbb6"
@@ -384,7 +401,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     _current = resolve(_setting)
     _tell_qt_light_or_dark(hints)
     t = THEMES[_current]
-    app.setStyle("Fusion")
+    app.setStyle(_style())
+    from . import tooltips
+    tooltips.install(app)                   # tooltips wrap and stay inside the window
     pal = QPalette()
     c = QColor
     pal.setColor(QPalette.Window, c(t["window"]))
@@ -411,6 +430,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         pal.setColor(QPalette.Disabled, role, c(t["disabled"]))
     app.setPalette(pal)
     accent, accent_hover = t["accent"], t["accent_hover"]
+    # An option button that is on (View and Measure sections): the accent, lightly, as its background.
+    _r, _g, _b = (int(accent.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
+    toggle_on = f"rgba({_r}, {_g}, {_b}, {0.32 if is_dark() else 0.26})"
     primary, primary_hover = t["primary"], t["primary_hover"]
     # The line between Export STL and its arrow: white-ish on a filled button.
     divider = "rgba(255,255,255,0.35)" if filled_view_buttons() else t["button_border"]
@@ -425,7 +447,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
             padding: 4px 10px; margin: 1px 2px; font-weight: 600; }}
         QToolBar QToolButton:hover {{ background: {t['button_hover']}; border-color: {t['muted']}; }}
         QToolBar QToolButton:checked {{ background: {t['tool_checked']}; border-color: {accent}; }}
-        QToolBar QToolButton#iconButton {{ padding: 2px 3px; }}
+        QToolBar QToolButton#iconButton {{ padding: 2px 0px; }}    /* the icon box is 28 wide (theme.ICON_GAP) */
         QToolBar QToolButton#iconButton::menu-indicator {{ image: none; width: 0; }}
         QToolBar QToolButton#exportButton {{ padding: 2px 10px 2px 3px; }}
         QToolBar QToolButton#exportButton[popupMode="1"] {{ padding-right: 26px; }}
@@ -439,7 +461,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         /* All view buttons as tall as the other toolbar buttons; the ones with an icon (Plate, View,
            Measure, Fit) sit closer around it, like Export STL. */
         QToolBar QToolButton#viewButton {{ padding: 2px 10px; min-height: 22px; }}
-        QToolBar QToolButton#viewButton[hasIcon="true"] {{ padding: 2px 10px 2px 3px; }}
+        QToolBar QToolButton#viewButton[hasIcon="true"] {{ padding: 2px 0px 2px 3px; }}
         QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
         QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
             border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
@@ -452,15 +474,26 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QGroupBox::title {{ subcontrol-origin: margin; left: 10px; padding: 0 4px; color: {t['group_title']}; }}
         QLabel#fileName {{ font-size: 15px; font-weight: 600; }}
         QLabel#muted, QLabel#formKey, QLabel#objectSize {{ color: {t['muted']}; }}
+        QLabel#muted:disabled {{ color: {t['disabled']}; }}
         QLabel#kindLabel {{ color: {t['muted']}; font-weight: 700; }}
         QLabel#objectSize {{ font-weight: 400; }}
         QLabel#thumbnail {{ background: {t['thumb']}; border-radius: 6px; padding: 6px; }}
         QPushButton {{ padding: 5px 12px; border-radius: 5px; background: {t['button']}; border: 1px solid {t['button_border']}; }}
         QPushButton:hover {{ background: {t['button_hover']}; }}
+        QPushButton:checked {{ background: {t['tool_checked']}; border: 1px solid {t['accent']}; }}
+        QPushButton#toggleButton {{ padding: 3px 10px; }}
+        /* An option button that is on: only its background changes (no accent border). */
+        QPushButton#toggleButton:checked {{ background: {toggle_on}; border: 1px solid {t['button_border']}; }}
+        QLabel#cutNote {{ color: {t['muted']}; font-size: 12px; }}
         QPushButton#primary {{ background: {primary}; border: none; color: white; font-weight: 600; }}
         QPushButton#primary:hover {{ background: {primary_hover}; }}
         QPushButton#link {{ color: {t['link']}; border: none; background: transparent; }}
         QPushButton#link:hover {{ text-decoration: underline; }}
+        /* The preview card of a recent file on the start page. */
+        QFrame#recentPreview {{ background: {t['base']}; border: 1px solid {t['border']}; border-radius: 10px; }}
+        QLabel#recentPreviewPicture {{ background: {t['alt']}; border-radius: 6px; color: {t['muted']}; }}
+        QLabel#recentPreviewName {{ font-weight: 600; font-size: 14px; }}
+        QLabel#recentPreviewFolder {{ color: {t['text']}; }}
         QScrollArea {{ border: none; }}
         QScrollArea#objectsScroll, QScrollArea#objectsScroll > QWidget, QWidget#objectsList {{ background: transparent; }}
         /* The handle (16 x 16 with its border: a round thumb) sticks out 5 px above and below the
@@ -471,6 +504,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QSlider::sub-page:horizontal {{ background: {accent}; border-radius: 3px; }}
         QSlider::handle:horizontal {{ background: {t['handle']}; border: 1px solid {t['handle_border']};
             width: 14px; margin: -5px 0; border-radius: 8px; }}
+        /* A slider that is switched off (the slider of a cut that is off): greyed out. */
+        QSlider::sub-page:horizontal:disabled {{ background: {t['disabled']}; }}
+        QSlider::handle:horizontal:disabled {{ background: {t['groove']}; border: 1px solid {t['disabled']}; }}
         QStatusBar {{ background: {t['bar']}; color: {t['group_title']}; }}
         QListWidget {{ border: 1px solid {t['border']}; border-radius: 6px; }}
         QListWidget#zipList {{ background: {t['base']}; outline: none; }}
@@ -866,6 +902,15 @@ def _nav_pixmap(kind: str, dot: bool, color: str, ring: str) -> QPixmap:
         head.lineTo(36, 20)
         head.closeSubpath()
         p.fillPath(head, fg)
+    elif kind == "keys":                         # keyboard: frame, two rows of keys, space bar
+        p.drawRoundedRect(QRectF(6, 16, 52, 34), 6, 6)
+        p.setBrush(fg)
+        p.setPen(Qt.NoPen)
+        for y in (25, 33):
+            for x in (15, 23, 31, 39, 47):
+                p.drawEllipse(QPointF(x, y), 2.6, 2.6)
+        p.setPen(pen)
+        p.drawLine(QPointF(22, 42), QPointF(42, 42))
     elif kind == "about":                        # (i)
         p.drawEllipse(c, 24, 24)
         p.drawLine(QPointF(32, 28), QPointF(32, 44))
@@ -1000,6 +1045,14 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
         p.setBrush(fg)
         p.drawEllipse(QPointF(32, 32), 7, 7)
         p.restore()
+    elif kind == "check":                        # a magnifier with a tick in it
+        p.drawEllipse(QPointF(27, 27), 18, 18)
+        p.drawLine(QPointF(40, 40), QPointF(55, 55))
+        tick = QPainterPath()
+        tick.moveTo(18, 27)
+        tick.lineTo(25, 34)
+        tick.lineTo(36, 21)
+        p.drawPath(tick)
     elif kind == "fit":                          # four corners around a small cube: fit to the view
         for cx, cy, dx, dy in ((8, 8, 1, 1), (56, 8, -1, 1), (8, 56, 1, -1), (56, 56, -1, -1)):
             corner = QPainterPath()
@@ -1100,17 +1153,23 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
 
 TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
               "settings", "updates", "about", "whats_new",
-              "view", "plate", "measure", "fit", "distance", "angle", "circle",
+              "view", "plate", "measure", "fit", "check", "distance", "angle", "circle",
               "wireframe", "xray", "clip_top", "clip_face", "reset")
 
 
-def tool_icon(kind: str, on_accent: bool = False, warm: bool = False) -> QIcon:
+ICON_GAP = 6                  # px between an icon and the text beside it (at 22 px icons)
+
+
+def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False) -> QIcon:
     """Toolbar icon: the symbol in the accent colour on a soft accent-tinted tile.
     on_accent=True is for the slicer button: a white symbol on a soft white tile.
     warm=True uses the theme's primary colour instead (the orange tiles of the Ember themes; the
-    classic themes have the same teal for both, so there it looks the same)."""
+    classic themes have the same teal for both, so there it looks the same).
+    gap=True is for buttons with text beside the icon: the picture is wider by ICON_GAP (empty
+    on the right), so the text keeps some room from the icon. Its buttons use an icon size of
+    (22 + ICON_GAP) x 22."""
     size = 64
-    pm = QPixmap(size, size)
+    pm = QPixmap(size + (round(size * ICON_GAP / 22) if gap else 0), size)
     pm.fill(Qt.transparent)
     p = QPainter(pm)
     p.setRenderHint(QPainter.Antialiasing)

@@ -90,10 +90,216 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/grid_labels.py"></location>
+        <location filename="../src/printview3d/ui/measure.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{n} mm</source>
-        <extracomment>A length in millimetres written on the build plate&apos;s grid in the 3D view; {n} is the number (for example 50).</extracomment>
-        <translation>{n} مم</translation>
+        <source>{d} {unit}</source>
+        <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
+        <translation>{d} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{view} view</source>
+        <translation>عرض {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Open a file</source>
+        <translation>فتح ملف</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Close the file (back to the start page)</source>
+        <translation>إغلاق الملف (العودة إلى صفحة البداية)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Open the file in your slicer</source>
+        <translation>فتح الملف في برنامج التقطيع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Export STL (3MF, FreeCAD and STEP)</source>
+        <translation>تصدير STL ‏(3MF وFreeCAD وSTEP)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Settings</source>
+        <translation>الإعدادات</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Save a screenshot of the 3D view</source>
+        <translation type="unfinished">حفظ لقطة شاشة للعرض ثلاثي الأبعاد</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Next theme style</source>
+        <translation>نمط السمة التالي</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Switch between light and dark</source>
+        <translation>التبديل بين الفاتح والداكن</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Fit</source>
+        <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
+        <translation>ملاءمة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Iso</source>
+        <extracomment>Toolbar button: isometric camera view (seen from a corner, slightly above).</extracomment>
+        <translation>متساوي القياس</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Top</source>
+        <extracomment>Toolbar button: camera view from above.</extracomment>
+        <translation>أعلى</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Front</source>
+        <extracomment>Toolbar button: camera view from the front.</extracomment>
+        <translation>أمام</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Right</source>
+        <extracomment>Toolbar button: camera view from the right side (not &apos;correct&apos;).</extracomment>
+        <translation>يمين</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">لوحة الطباعة تشغيل / إيقاف</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">فحص النموذج تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">قسم العرض تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Wireframe on / off (models)</source>
+        <translation>الإطار السلكي تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>X-ray (see-through) on / off (models)</source>
+        <translation>الأشعة السينية (شفاف) تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Clip from the top on / off (models)</source>
+        <translation>القطع من الأعلى تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Clip facing you on / off (models)</source>
+        <translation>القطع المواجه لك تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">تثبيت القطع المواجه: يتوقف عن الدوران مع العرض (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Reset view: all of the above off, model fitted (models)</source>
+        <translation>إعادة ضبط العرض: إيقاف كل ما سبق وملاءمة النموذج (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure on / off (models)</source>
+        <translation>القياس تشغيل / إيقاف (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure a distance</source>
+        <translation type="unfinished">قياس مسافة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">إزالة كل القياسات (يبقى القياس مفعّلاً)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure an angle</source>
+        <translation type="unfinished">قياس زاوية</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure a circle</source>
+        <translation type="unfinished">قياس دائرة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Next layer (G-code), or the file above in the list (ZIP or folder)</source>
+        <translation type="unfinished">الطبقة التالية (G-code)، أو الملف الأعلى في القائمة (ZIP أو مجلد)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Previous layer (G-code), or the file below in the list (ZIP or folder)</source>
+        <translation type="unfinished">الطبقة السابقة (G-code)، أو الملف الأدنى في القائمة (ZIP أو مجلد)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>10 layers up</source>
+        <translation type="unfinished">10 طبقات للأعلى</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>10 layers down</source>
+        <translation type="unfinished">10 طبقات للأسفل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>First layer</source>
+        <translation type="unfinished">الطبقة الأولى</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Last layer</source>
+        <translation type="unfinished">الطبقة الأخيرة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>A key like Ctrl, Shift or Alt needs another key with it.</source>
+        <translation type="unfinished">مفتاح مثل Ctrl أو Shift أو Alt يحتاج إلى مفتاح آخر معه.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>{key} is kept for the system or for moving around in the window.</source>
+        <translation type="unfinished">{key} محجوز للنظام أو للتنقل في النافذة.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Keys with the Windows or Super key belong to the system.</source>
+        <translation type="unfinished">المفاتيح مع مفتاح Windows أو Super تخص النظام.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>{key} is used by the system.</source>
+        <translation type="unfinished">يستخدم النظام {key}.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
@@ -394,14 +600,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{x} × {y} × {z} mm</source>
-        <translation>{x} × {y} × {z} مم</translation>
+        <source>{x} × {y} × {z} {unit}</source>
+        <translation type="unfinished">{x} × {y} × {z} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation>اللوحة {n}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Folder</source>
+        <translation type="unfinished">المجلد</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No preview picture</source>
+        <translation type="unfinished">لا توجد صورة معاينة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -426,21 +642,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme style</source>
-        <translation>نمط السمة التالي</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Switch between light and dark</source>
-        <translation>التبديل بين الفاتح والداكن</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} (Ctrl+T: next theme)</source>
-        <extracomment>Tooltip of the theme icon. {name} is the current theme (Dark, Gray...).</extracomment>
-        <translation>السمة: {name} (Ctrl+T: السمة التالية)</translation>
+        <source>Theme: {name}</source>
+        <translation type="unfinished">السمة: {name}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -464,8 +667,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation>فتح…</translation>
+        <source>Click to pick another colour (right-click: the original colour)</source>
+        <translation>انقر لاختيار لون آخر (النقر بزر الماوس الأيمن: اللون الأصلي)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tip: the {up} / {down} keys move through it</source>
+        <translation type="unfinished">تلميح: المفتاحان {up} / {down} يتنقلان في القائمة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">فتح ملف أو ZIP…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open folder…</source>
+        <translation type="unfinished">فتح مجلد…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -480,9 +698,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Close the file and go back to the start page ({key})</source>
-        <extracomment>Tooltip of the Home button. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
-        <translation>إغلاق الملف والعودة إلى صفحة البداية ‏({key})</translation>
+        <source>Close the file and go back to the start page</source>
+        <translation type="unfinished">إغلاق الملف والعودة إلى صفحة البداية</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -492,54 +709,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Fit</source>
-        <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
-        <translation>ملاءمة</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Iso</source>
-        <extracomment>Toolbar button: isometric camera view (seen from a corner, slightly above).</extracomment>
-        <translation>متساوي القياس</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Top</source>
-        <extracomment>Toolbar button: camera view from above.</extracomment>
-        <translation>أعلى</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Front</source>
-        <extracomment>Toolbar button: camera view from the front.</extracomment>
-        <translation>أمام</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Right</source>
-        <extracomment>Toolbar button: camera view from the right side (not &apos;correct&apos;).</extracomment>
-        <translation>يمين</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{view} view ({key})</source>
-        <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
-        <translation>عرض {view} ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
-        <translation>حفظ أجسام ملف CAD هذا كملفات STL ‏(Ctrl+E)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
-        <translation>حفظ أجسام مشروع 3MF هذا كملفات STL (Ctrl+E)</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">ملاءمة النموذج مع العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -570,14 +741,132 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>العرض</translation>
+        <source>Check</source>
+        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
+        <translation type="unfinished">فحص</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check the model before printing: overhangs, thin walls and problems in the mesh</source>
+        <translation type="unfinished">افحص النموذج قبل الطباعة: البروزات والجدران الرقيقة ومشكلات الشبكة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">فحص النموذج</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>from vertical</source>
+        <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
+        <translation type="unfinished">عن العمودي</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>nozzle</source>
+        <extracomment>Check section, before the nozzle width (0.40 mm) used to find thin walls.</extracomment>
+        <translation type="unfinished">الفوهة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">حتى</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Mesh problems</source>
+        <translation type="unfinished">مشكلات الشبكة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Close</source>
+        <translation>إغلاق</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Overhangs</source>
+        <translation type="unfinished">البروزات</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Faces that face down and lean further from vertical than the angle: they usually need supports. Faces on the plate are not counted.</source>
+        <translation type="unfinished">أوجه تتجه إلى الأسفل وتميل عن العمودي أكثر من الزاوية: تحتاج عادةً إلى دعامات. الأوجه الموضوعة على اللوحة لا تُحسب.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Thin walls</source>
+        <translation type="unfinished">جدران رقيقة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Walls and pins thinner than the nozzle: one line of plastic or less.</source>
+        <translation type="unfinished">جدران ودبابيس أرق من الفوهة: خط واحد من البلاستيك أو أقل.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Holes</source>
+        <translation type="unfinished">ثقوب</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">ثقوب في السطح: حواف لها وجه من جهة واحدة فقط. النموذج غير مغلق، لذا على برنامج التقطيع أن يخمّن ما بداخله.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>open edges</source>
+        <translation type="unfinished">حواف مفتوحة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">حواف متشابكة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">حواف يشترك فيها ثلاثة أوجه أو أكثر، مثلاً حيث يلتقي جزآن على طول خط. قد تقرأها برامج التقطيع خطأً.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">حواف غير متشعبة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">أوجه مقلوبة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">أوجه مقلوبة: واجهتها تشير إلى داخل النموذج. قد تتجاهلها برامج التقطيع أو تملؤها خطأً.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">متجهات عمودية مقلوبة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Loose parts</source>
+        <translation type="unfinished">أجزاء منفصلة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي، حتى الحجم المحدد. تُطبع كقطع منفصلة أو لا تُطبع أبداً. التجاويف داخل الجزء لا تُحسب.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>How the model is drawn: wireframe, X-ray, clip</source>
         <translation>طريقة رسم النموذج: الإطار السلكي، الأشعة السينية، القطع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -615,19 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Close</source>
-        <translation>إغلاق</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">يتوقف القطع المواجه عن الدوران مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة. يبقى شريط التمرير يحرّكه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation>تجميد مستوى القطع</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation>يُبقي «القطع المواجه لك» في مكانه، حتى تتمكن من تدوير النموذج وتحريكه دون أن يدور القطع معه.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">تثبيت القطع المواجه</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -653,18 +936,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation>قياس</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure on the model: distance, angle, circle</source>
         <translation>القياس على النموذج: المسافة، الزاوية، الدائرة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation>انقر على مربع اللون لتغيير لونه.</translation>
+        <source>Measure</source>
+        <translation>قياس</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -704,14 +982,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Screenshot</source>
-        <translation>لقطة شاشة</translation>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">يزيل كل القياسات؛ يبقى القياس مفعّلاً.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Settings</source>
-        <translation>الإعدادات</translation>
+        <source>Screenshot</source>
+        <translation>لقطة شاشة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -770,11 +1047,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show only this layer</source>
         <translation>عرض هذه الطبقة فقط</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Tip: ↑ / ↓ arrow keys move through layers</source>
-        <translation>تلميح: مفاتيح الأسهم ↑ / ↓ للتنقل بين الطبقات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -844,6 +1116,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open folder</source>
+        <translation type="unfinished">فتح مجلد</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No 3D files in this folder</source>
+        <translation type="unfinished">لا توجد ملفات ثلاثية الأبعاد في هذا المجلد</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>This folder contains no files PrintView3D can open.</source>
+        <translation type="unfinished">لا يحتوي هذا المجلد على ملفات يستطيع PrintView3D فتحها.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>In this folder ({n})</source>
+        <translation type="unfinished">في هذا المجلد ({n})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>In this ZIP ({n})</source>
         <translation>في ملف ZIP هذا ({n})</translation>
     </message>
@@ -876,11 +1168,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Untick a model to hide it; click a G-code to open it.</source>
         <translation>ألغِ تحديد نموذج لإخفائه؛ انقر على ملف G-code لفتحه.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Tip: ↑ / ↓ keys move through the list</source>
-        <translation>تلميح: مفتاحا ↑ / ↓ للتنقل في القائمة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -941,16 +1228,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Volume</source>
         <translation>الحجم الكلي</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{v} cm³</source>
-        <translation>{v} سم³</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click to pick another colour (right-click: the original colour)</source>
-        <translation>انقر لاختيار لون آخر (النقر بزر الماوس الأيمن: اللون الأصلي)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1106,9 +1383,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} mm</source>
-        <extracomment>Keep &lt;b&gt;...&lt;/b&gt; around the layer number.</extracomment>
-        <translation>&lt;b&gt;الطبقة {n}&lt;/b&gt; من {total}  ·  Z = {z} مم</translation>
+        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} {unit}</source>
+        <translation type="unfinished">&lt;b&gt;الطبقة {n}&lt;/b&gt; من {total}  ·  Z = {z} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1155,6 +1431,42 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Colour</source>
+        <translation type="unfinished">اللون</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} faces</source>
+        <translation type="unfinished">{n} أوجه</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} edges</source>
+        <translation type="unfinished">{n} حواف</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} parts</source>
+        <translation type="unfinished">{n} أجزاء</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">لا شيء</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Checking the mesh…</source>
+        <translation type="unfinished">جارٍ فحص الشبكة…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Checking thin walls… {p} %</source>
+        <translation type="unfinished">جارٍ فحص الجدران الرقيقة… {p} %</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Distance</source>
         <translation>المسافة</translation>
     </message>
@@ -1174,6 +1486,31 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation>الدائرة (القطر، نصف القطر)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} يوقف دوران القطع المواجه مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">إن لم يُثبَّت، يدور القطع مع كل دوران للعرض، لكن القياس يبقى حيث وضعته: فيبقى معلّقاً في الهواء بعيداً عن القطع الذي قيس عليه.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Hover for details</source>
+        <translation type="unfinished">مرّر المؤشر للتفاصيل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">القطع المواجه غير مثبّت.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section}: {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1197,20 +1534,44 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation>أدِر العرض أو حرّكه لتمرير النموذج عبر القطع.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">مستوى القطع المواجه مثبّت: دوّر العرض للنظر إلى القطع من أي جهة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Depth {d} of {total} mm</source>
-        <extracomment>Clip facing you: how far the cut is into the model ({d}), out of the depth of the model in that direction ({total}).</extracomment>
-        <translation>العمق {d} من {total} مم</translation>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">دوّر العرض أو حرّكه لتمرير النموذج عبر مستوى القطع.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Height {z} of {top} mm</source>
-        <extracomment>Clip slider: {z} is the height of the cut above the model&apos;s bottom, {top} its full height.</extracomment>
-        <translation>الارتفاع {z} من {top} مم</translation>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">اسحب مقبضاً دائرياً لتحريك مستوى القطع الخاص به.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">القطع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">العمق</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth {d} of {total} {unit}</source>
+        <translation type="unfinished">العمق {d} من {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">الارتفاع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height {z} of {top} {unit}</source>
+        <translation type="unfinished">الارتفاع {z} من {top} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1220,8 +1581,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open this file in FreeCAD (Ctrl+P). Use the arrow to send the model to a slicer as STL.</source>
-        <translation>افتح هذا الملف في FreeCAD (Ctrl+P). استخدم السهم لإرسال النموذج إلى برنامج التقطيع بصيغة STL.</translation>
+        <source>Save the objects of this CAD file as STL files</source>
+        <translation type="unfinished">حفظ كائنات ملف CAD هذا كملفات STL</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Save the objects of this 3MF project as STL files</source>
+        <translation type="unfinished">حفظ كائنات مشروع 3MF هذا كملفات STL</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open this file in FreeCAD</source>
+        <translation type="unfinished">فتح هذا الملف في FreeCAD</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Use the arrow to send the model to a slicer as STL.</source>
+        <translation type="unfinished">استخدم السهم لإرسال النموذج إلى برنامج تقطيع بصيغة STL.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1230,8 +1606,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open this file in {slicer} (Ctrl+P). Use the arrow to pick another slicer.</source>
-        <translation>افتح هذا الملف في {slicer} (Ctrl+P). استخدم السهم لاختيار برنامج تقطيع آخر.</translation>
+        <source>Open this file in {slicer}</source>
+        <translation type="unfinished">فتح هذا الملف في {slicer}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Use the arrow to pick another slicer.</source>
+        <translation type="unfinished">استخدم السهم لاختيار برنامج تقطيع آخر.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1240,8 +1621,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>No slicer found yet — choose one in Settings (Ctrl+P)</source>
-        <translation>لم يتم العثور على برنامج تقطيع بعد — اختر واحدًا من الإعدادات (Ctrl+P)</translation>
+        <source>No slicer found yet — choose one in Settings</source>
+        <translation type="unfinished">لم يُعثر على برنامج تقطيع بعد — اختر واحداً في الإعدادات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1459,12 +1840,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/measure.py"></location>
-        <source>{d} {unit}</source>
-        <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
-        <translation>{d} {unit}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/measure.py"></location>
         <source>ΔX {x}   ΔY {y}   ΔZ {z}</source>
         <extracomment>Measure: the distance along each axis, written under the value of a distance. Δ is the difference.</extracomment>
         <translation>ΔX {x}   ΔY {y}   ΔZ {z}</translation>
@@ -1551,6 +1926,37 @@
         <source>Missing or wrong translation? Anyone can correct it on GitHub: {guide}</source>
         <extracomment>Settings → Language. {guide} becomes the link &apos;How to translate on GitHub&apos;.</extracomment>
         <translation>ترجمة ناقصة أو خاطئة؟ يمكن لأي شخص تصحيحها على GitHub: {guide}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Units</source>
+        <translation type="unfinished">الوحدات</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Lengths in</source>
+        <extracomment>Settings -&gt; Language and units: the label before the choice Millimetres (mm) / Inches (in).</extracomment>
+        <translation type="unfinished">الأطوال بـ</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">عرض الفوهة بالبوصة أيضاً</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">تُباع الفوهات حسب قطرها بالمليمتر (0.4 مم)، لذلك يعرض قسم الفحص عرض الفوهة بالمليمتر ما لم يتم تحديد هذا الخيار.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
+        <translation type="unfinished">تُستخدم للأحجام والقياسات والشبكة وحجم اللوحة. لا تتغير الملفات: الملفات ثلاثية الأبعاد دائماً بالمليمتر.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Language and units</source>
+        <translation type="unfinished">اللغة والوحدات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1700,9 +2106,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
-        <extracomment>Settings → Files → Export STL. {key} is the keyboard shortcut (Ctrl+E).</extracomment>
-        <translation>يفعل {key} الشيء نفسه. يعرض السهم بجانب الزر دائمًا الطرق الثلاث كلها. الملف الذي يحتوي على جسم واحد فقط يُحفظ مباشرةً دائمًا.</translation>
+        <source>{key} does the same.</source>
+        <translation type="unfinished">{key} يفعل الشيء نفسه.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
+        <translation type="unfinished">السهم بجانب الزر يعرض دائماً الطرق الثلاث. الملف الذي فيه كائن واحد فقط يُحفظ دائماً مباشرة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1769,8 +2179,19 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show distances (mm) along the grid</source>
-        <translation>إظهار المسافات (مم) على الشبكة</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">إظهار المحاور X وY وZ على لوحة الطباعة أيضاً</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">أسهم صغيرة على امتداد X وY وZ بجانب الزاوية الخلفية اليمنى للنموذج، إضافةً إلى المؤشر في زاوية العرض.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show scale numbers on the grid</source>
+        <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
+        <translation type="unfinished">إظهار أرقام المقياس على الشبكة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1784,18 +2205,43 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation>تلقائي</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">تلقائي: أكبر عدد من الأرقام يتسع عند التكبير الحالي، على خطوط الشبكة ولا تكون أقرب من الخطوط الدقيقة. أو اختر تباعداً خاصاً بك.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation>تلقائي: عند خطوط الشبكة الرئيسية (كل 50 مم على لوحة عادية)، وبعدد أقل على لوحة كبيرة. أو اختر مسافة خاصة بك.</translation>
+        <source>Grid lines every</source>
+        <translation type="unfinished">خطوط الشبكة كل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Main grid lines every</source>
+        <translation type="unfinished">الخطوط الرئيسية كل</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Build plate</source>
         <translation>لوحة الطباعة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation>خطوط القياس</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation>مدى سماكة خطوط القياس.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation>أرفع</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation>أسمك</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1821,23 +2267,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation>خطوط القياس</translation>
+        <source>Don&apos;t let the two cutting planes cut each other</source>
+        <translation type="unfinished">لا تدع مستويي القطع يقطع أحدهما الآخر</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation>مدى سماكة خطوط القياس.</translation>
+        <source>With both cuts on, each cutting plane is drawn whole instead of stopping where the other cut is.</source>
+        <translation type="unfinished">عند تشغيل القطعين، يُرسم كل مستوى قطع كاملاً بدلاً من أن يتوقف حيث يكون القطع الآخر.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation>أرفع</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">تحريك مستويات القطع أيضاً بسحبها في العرض ثلاثي الأبعاد</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation>أسمك</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">يحصل كل مستوى قطع على مقبض دائري. اسحبه لتحريك المستوى؛ أشرطة التمرير تعمل أيضاً.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">تذكّر ألوان قسم الفحص</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">عند الإيقاف: تبقى ألوان الفحص التي تختارها حتى يُغلق PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1878,6 +2334,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
         <translation>يبدو أن هذه هي الرسوميات المدمجة (الأبطأ). فعّل الخيار وأعد التشغيل لدوران أكثر سلاسة.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Keyboard and mouse</source>
+        <translation>لوحة المفاتيح والماوس</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1952,6 +2413,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Automatic</source>
+        <translation>تلقائي</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fainter</source>
         <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
         <translation>أخفت</translation>
@@ -2002,18 +2468,43 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Keyboard and mouse</source>
-        <translation>لوحة المفاتيح والماوس</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Keyboard</source>
         <translation>لوحة المفاتيح</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click a field and press the new key. The clear button removes the key.</source>
+        <translation type="unfinished">انقر في حقل واضغط المفتاح الجديد. زر المسح يزيل المفتاح.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Default: {key}</source>
+        <translation type="unfinished">الافتراضي: {key}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset to defaults</source>
+        <translation type="unfinished">إعادة إلى الافتراضي</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Puts every key back to the one PrintView3D comes with.</source>
+        <translation type="unfinished">يعيد كل مفتاح كما يأتي مع PrintView3D.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{key} is already used for: {what}</source>
+        <translation type="unfinished">{key} مستخدم بالفعل لـ: {what}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse</source>
         <translation>الماوس</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>The mouse controls are fixed.</source>
+        <translation type="unfinished">عناصر التحكم بالفأرة ثابتة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2170,76 +2661,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Later</source>
         <translation>لاحقًا</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>عرض {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Open a file</source>
-        <translation>فتح ملف</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Close the file (back to the start page)</source>
-        <translation>إغلاق الملف (العودة إلى صفحة البداية)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Open the file in your slicer</source>
-        <translation>فتح الملف في برنامج التقطيع</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Export STL (3MF, FreeCAD and STEP)</source>
-        <translation>تصدير STL ‏(3MF وFreeCAD وSTEP)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Wireframe on / off (models)</source>
-        <translation>الإطار السلكي تشغيل / إيقاف (النماذج)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>X-ray (see-through) on / off (models)</source>
-        <translation>الأشعة السينية (شفاف) تشغيل / إيقاف (النماذج)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Clip from the top on / off (models)</source>
-        <translation>القطع من الأعلى تشغيل / إيقاف (النماذج)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Clip facing you on / off (models)</source>
-        <translation>القطع المواجه لك تشغيل / إيقاف (النماذج)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Reset view: all of the above off, model fitted (models)</source>
-        <translation>إعادة ضبط العرض: إيقاف كل ما سبق وملاءمة النموذج (النماذج)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measure on / off (models)</source>
-        <translation>القياس تشغيل / إيقاف (النماذج)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next / previous layer (G-code), or file (ZIP)</source>
-        <translation>الطبقة التالية / السابقة (G-code)، أو الملف (ZIP)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>10 layers up / down</source>
-        <translation>10 طبقات للأعلى / للأسفل</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>First / last layer</source>
-        <translation>الطبقة الأولى / الأخيرة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2411,16 +2832,260 @@
         <translation>تنزيل التحديث</translation>
     </message>
     <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>Millimetres (mm)</source>
+        <translation type="unfinished">المليمتر (مم)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>Inches (in)</source>
+        <translation type="unfinished">البوصة (in)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <location filename="../src/printview3d/ui/length_spin.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>in</source>
+        <extracomment>The unit inches, written after a number (2 in). Keep it short.</extracomment>
+        <translation type="unfinished">بوصة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <location filename="../src/printview3d/ui/length_spin.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>mm</source>
+        <extracomment>The unit millimetres, written after a number (50 mm). Keep it short.</extracomment>
+        <translation type="unfinished">مم</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>{v} in³</source>
+        <translation type="unfinished">{v} بوصة³</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>{v} cm³</source>
+        <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">السمة: {name} ({key}: السمة التالية)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">انقر على مربع اللون لتغيير لونه.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">تثبيت القطع المواجه ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">القطع المواجه غير مثبّت</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="vanished">القطع المواجه غير مثبّت · مرّر المؤشر للتفاصيل</translation>
+    </message>
+    <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">ثبّت القطع قبل القياس عليه.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">أدِر العرض أو حرّكه لتمرير النموذج عبر القطع.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">تحريك القطع أيضاً بسحبها في العرض ثلاثي الأبعاد</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">يحصل كل مستوى قطع على مقبض دائري. اسحبه لتحريك القطع؛ أشرطة التمرير تعمل أيضاً.</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">القطع المواجه يدور مع العرض: النقاط الموضوعة على القطع تبقى مكانها والقطع يتحرك.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">ثبّت القطع المواجه ({key}) للقياس عليه.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">ثبّت القطع المواجه للقياس عليه.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">تحريك القطع بسحبها في العرض ثلاثي الأبعاد</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">يحصل كل مستوى قطع على مقبض دائري. اسحبه لتحريك القطع، كما يفعل شريط التمرير الخاص به.</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">تجميد مستوى القطع</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">يُبقي «القطع المواجه لك» في مكانه، حتى تتمكن من تدوير النموذج وتحريكه دون أن يدور القطع معه.</translation>
+    </message>
+    <message>
+        <source>Theme: {name} (Ctrl+T: next theme)</source>
+        <translation type="vanished">السمة: {name} (Ctrl+T: السمة التالية)</translation>
+    </message>
+    <message>
+        <source>Close the file and go back to the start page ({key})</source>
+        <translation type="vanished">إغلاق الملف والعودة إلى صفحة البداية ‏({key})</translation>
+    </message>
+    <message>
+        <source>{view} view ({key})</source>
+        <translation type="vanished">عرض {view} ({key})</translation>
+    </message>
+    <message>
+        <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
+        <translation type="vanished">حفظ أجسام ملف CAD هذا كملفات STL ‏(Ctrl+E)</translation>
+    </message>
+    <message>
+        <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
+        <translation type="vanished">حفظ أجسام مشروع 3MF هذا كملفات STL (Ctrl+E)</translation>
+    </message>
+    <message>
+        <source>Tip: ↑ / ↓ arrow keys move through layers</source>
+        <translation type="vanished">تلميح: مفاتيح الأسهم ↑ / ↓ للتنقل بين الطبقات</translation>
+    </message>
+    <message>
+        <source>Tip: ↑ / ↓ keys move through the list</source>
+        <translation type="vanished">تلميح: مفتاحا ↑ / ↓ للتنقل في القائمة</translation>
+    </message>
+    <message>
+        <source>Open this file in FreeCAD (Ctrl+P). Use the arrow to send the model to a slicer as STL.</source>
+        <translation type="vanished">افتح هذا الملف في FreeCAD (Ctrl+P). استخدم السهم لإرسال النموذج إلى برنامج التقطيع بصيغة STL.</translation>
+    </message>
+    <message>
+        <source>Open this file in {slicer} (Ctrl+P). Use the arrow to pick another slicer.</source>
+        <translation type="vanished">افتح هذا الملف في {slicer} (Ctrl+P). استخدم السهم لاختيار برنامج تقطيع آخر.</translation>
+    </message>
+    <message>
+        <source>No slicer found yet — choose one in Settings (Ctrl+P)</source>
+        <translation type="vanished">لم يتم العثور على برنامج تقطيع بعد — اختر واحدًا من الإعدادات (Ctrl+P)</translation>
+    </message>
+    <message>
+        <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
+        <translation type="vanished">يفعل {key} الشيء نفسه. يعرض السهم بجانب الزر دائمًا الطرق الثلاث كلها. الملف الذي يحتوي على جسم واحد فقط يُحفظ مباشرةً دائمًا.</translation>
+    </message>
+    <message>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="vanished">قياس مسافة أو زاوية أو دائرة</translation>
+    </message>
+    <message>
+        <source>Next / previous layer (G-code), or file (ZIP)</source>
+        <translation type="vanished">الطبقة التالية / السابقة (G-code)، أو الملف (ZIP)</translation>
+    </message>
+    <message>
+        <source>10 layers up / down</source>
+        <translation type="vanished">10 طبقات للأعلى / للأسفل</translation>
+    </message>
+    <message>
+        <source>First / last layer</source>
+        <translation type="vanished">الطبقة الأولى / الأخيرة</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">الشبكة</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">تلقائي: عند خطوط الشبكة الرئيسية (كل 50 مم على لوحة عادية)، وبعدد أقل على لوحة كبيرة. أو اختر مسافة خاصة بك.</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">إظهار المحاور X وY وZ على لوحة الطباعة</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">ثلاثة أسهم على امتداد X وY وZ، بجانب النموذج مباشرة عند الزاوية الأقرب إليك.</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">فتح…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">فتح أرشيف…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">المصطلح التقني: {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">فتح أرشيف</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">حواف مفتوحة</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">حواف غير متشعبة</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">متجهات عمودية مقلوبة</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">قطع صغيرة غير متصلة بالجسم الرئيسي. تُطبع كقطع منفصلة أو لا تُطبع أبداً.</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">حواف لها وجه من جهة واحدة فقط: ثقوب في السطح.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">حواف يشترك فيها أكثر من وجهين.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">أوجه مقلوبة عكس جيرانها، أو جزء مغلق مقلوب من الداخل إلى الخارج.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">قطع غير متصلة بأكبر قطعة.</translation>
+    </message>
+    <message>
+        <source>{n} mm</source>
+        <translation type="vanished">{n} مم</translation>
+    </message>
+    <message>
+        <source>{x} × {y} × {z} mm</source>
+        <translation type="vanished">{x} × {y} × {z} مم</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} mm</source>
+        <translation type="vanished">&lt;b&gt;الطبقة {n}&lt;/b&gt; من {total}  ·  Z = {z} مم</translation>
+    </message>
+    <message>
+        <source>Depth {d} of {total} mm</source>
+        <translation type="vanished">العمق {d} من {total} مم</translation>
+    </message>
+    <message>
+        <source>Height {z} of {top} mm</source>
+        <translation type="vanished">الارتفاع {z} من {top} مم</translation>
+    </message>
+    <message>
+        <source>Show distances (mm) along the grid</source>
+        <translation type="vanished">إظهار المسافات (مم) على الشبكة</translation>
+    </message>
+    <message>
         <source>Click the colour box of an object to change its colour.</source>
         <translation type="vanished">انقر على مربع اللون لجسم ما لتغيير لونه.</translation>
     </message>
     <message>
         <source>Turn off</source>
         <translation type="vanished">إيقاف</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">القطع</translation>
     </message>
     <message>
         <source>Snap to corners and edges</source>

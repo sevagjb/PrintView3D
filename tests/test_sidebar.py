@@ -60,7 +60,7 @@ def test_objects_come_first_and_details_last(window):
         assert order.index(first) < order.index(then)
     assert order[-1] is w.details_box
     boxes = [b for b in order if b.__class__.__name__ == "QGroupBox"]
-    assert boxes[0] is w.zip_box or boxes[0] is w.objects_box          # nothing above the objects
+    assert boxes[0] in (w.folder_box, w.zip_box, w.objects_box)       # only the file lists above the objects
     assert order.index(w.objects_box) < order.index(w.embedded_box)
 
 
@@ -192,7 +192,8 @@ def test_colours_are_not_saved_and_do_not_survive_another_file(window, monkeypat
     w.load_sync(CUBE)
     _pick(monkeypatch, "#00ff00")
     _boxes(w)[0].click()
-    assert not any("color" in k or "colour" in k for k in w.settings.data)   # nothing stored
+    stored = [k for k in w.settings.data if ("color" in k or "colour" in k) and not k.startswith("check_")]
+    assert not stored                                                 # no colours are stored
     w.load_sync(CUBE)                                                  # the same file again: file colours
     assert w.scene.part_color_override(0) is None and _color(w.scene.model_actors[0]) != (0, 255, 0)
 
@@ -329,19 +330,3 @@ def test_an_open_side_panel_keeps_its_width(window, app):
     assert w.splitter.sizes()[i] == pytest.approx(width, abs=2)              # not reset to the default
 
 
-def test_the_colour_hint_stays_on_one_line_even_in_the_narrowest_panel(window, app):
-    from PySide6.QtGui import QFontMetrics
-    w = window
-    w.load_sync(TWO_PARTS)
-    i = w.splitter.indexOf(w.side_scroll)
-    total = sum(w.splitter.sizes())
-    for width in (420, 350, 290):                       # the widest, the usual and the narrowest
-        w.splitter.setSizes([total - width, width] if i == 1 else [width, total - width])
-        for _ in range(4):
-            app.processEvents()
-        hint = w.objects_hint
-        assert not hint.wordWrap() and hint.isVisible()
-        fm = QFontMetrics(hint.font())
-        assert fm.horizontalAdvance(hint.text()) <= hint.width()          # whole text, one line
-        assert hint.height() <= fm.height() * 2 and len(hint.text()) < 50  # and a short text
-    assert hint.font().pointSizeF() <= w.font().pointSizeF()

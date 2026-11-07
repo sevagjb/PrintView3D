@@ -90,10 +90,216 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/grid_labels.py"></location>
+        <location filename="../src/printview3d/ui/measure.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{n} mm</source>
-        <extracomment>A length in millimetres written on the build plate&apos;s grid in the 3D view; {n} is the number (for example 50).</extracomment>
-        <translation>{n} mm</translation>
+        <source>{d} {unit}</source>
+        <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
+        <translation>{d} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{view} view</source>
+        <translation>Weergave {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Open a file</source>
+        <translation>Een bestand openen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Close the file (back to the start page)</source>
+        <translation>Het bestand sluiten (terug naar de startpagina)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Open the file in your slicer</source>
+        <translation>Het bestand openen in je slicer</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Export STL (3MF, FreeCAD and STEP)</source>
+        <translation>STL exporteren (3MF, FreeCAD en STEP)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Settings</source>
+        <translation>Instellingen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Save a screenshot of the 3D view</source>
+        <translation type="unfinished">Een schermafbeelding van de 3D-weergave opslaan</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Next theme style</source>
+        <translation>Volgende themastijl</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Switch between light and dark</source>
+        <translation>Wisselen tussen licht en donker</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Fit</source>
+        <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
+        <translation>Passend</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Iso</source>
+        <extracomment>Toolbar button: isometric camera view (seen from a corner, slightly above).</extracomment>
+        <translation>Iso</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Top</source>
+        <extracomment>Toolbar button: camera view from above.</extracomment>
+        <translation>Boven</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Front</source>
+        <extracomment>Toolbar button: camera view from the front.</extracomment>
+        <translation>Voor</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Right</source>
+        <extracomment>Toolbar button: camera view from the right side (not &apos;correct&apos;).</extracomment>
+        <translation>Rechts</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">Printbed aan / uit</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">Model controleren aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">Onderdeel Weergave aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Wireframe on / off (models)</source>
+        <translation>Draadmodel aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>X-ray (see-through) on / off (models)</source>
+        <translation>Röntgen (doorzichtig) aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Clip from the top on / off (models)</source>
+        <translation>Van boven afsnijden aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Clip facing you on / off (models)</source>
+        <translation>Afsnijden vanaf jouw kant aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">Snede naar je toe vastzetten: hij draait niet meer mee met de weergave (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Reset view: all of the above off, model fitted (models)</source>
+        <translation>Weergave herstellen: alles hierboven uit, model passend (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure on / off (models)</source>
+        <translation>Meten aan / uit (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure a distance</source>
+        <translation type="unfinished">Een afstand meten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">Alle metingen verwijderen (Meten blijft aan)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure an angle</source>
+        <translation type="unfinished">Een hoek meten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure a circle</source>
+        <translation type="unfinished">Een cirkel meten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Next layer (G-code), or the file above in the list (ZIP or folder)</source>
+        <translation type="unfinished">Volgende laag (G-code), of het bestand erboven in de lijst (ZIP of map)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Previous layer (G-code), or the file below in the list (ZIP or folder)</source>
+        <translation type="unfinished">Vorige laag (G-code), of het bestand eronder in de lijst (ZIP of map)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>10 layers up</source>
+        <translation type="unfinished">10 lagen omhoog</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>10 layers down</source>
+        <translation type="unfinished">10 lagen omlaag</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>First layer</source>
+        <translation type="unfinished">Eerste laag</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Last layer</source>
+        <translation type="unfinished">Laatste laag</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>A key like Ctrl, Shift or Alt needs another key with it.</source>
+        <translation type="unfinished">Een toets als Ctrl, Shift of Alt heeft nog een toets nodig.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>{key} is kept for the system or for moving around in the window.</source>
+        <translation type="unfinished">{key} is voor het systeem of voor het bewegen in het venster.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Keys with the Windows or Super key belong to the system.</source>
+        <translation type="unfinished">Toetsen met de Windows- of Super-toets zijn van het systeem.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>{key} is used by the system.</source>
+        <translation type="unfinished">{key} wordt door het systeem gebruikt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
@@ -394,14 +600,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{x} × {y} × {z} mm</source>
-        <translation>{x} × {y} × {z} mm</translation>
+        <source>{x} × {y} × {z} {unit}</source>
+        <translation type="unfinished">{x} × {y} × {z} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation>Plaat {n}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Folder</source>
+        <translation type="unfinished">Map</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No preview picture</source>
+        <translation type="unfinished">Geen voorbeeldafbeelding</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -426,21 +642,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme style</source>
-        <translation>Volgende themastijl</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Switch between light and dark</source>
-        <translation>Wisselen tussen licht en donker</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} (Ctrl+T: next theme)</source>
-        <extracomment>Tooltip of the theme icon. {name} is the current theme (Dark, Gray...).</extracomment>
-        <translation>Thema: {name} (Ctrl+T: volgend thema)</translation>
+        <source>Theme: {name}</source>
+        <translation type="unfinished">Thema: {name}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -464,8 +667,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation>Openen…</translation>
+        <source>Click to pick another colour (right-click: the original colour)</source>
+        <translation>Klik om een andere kleur te kiezen (rechtsklik: de oorspronkelijke kleur)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tip: the {up} / {down} keys move through it</source>
+        <translation type="unfinished">Tip: de toetsen {up} / {down} gaan door de lijst</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">Bestand of ZIP openen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open folder…</source>
+        <translation type="unfinished">Map openen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -480,9 +698,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Close the file and go back to the start page ({key})</source>
-        <extracomment>Tooltip of the Home button. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
-        <translation>Het bestand sluiten en teruggaan naar de startpagina ({key})</translation>
+        <source>Close the file and go back to the start page</source>
+        <translation type="unfinished">Bestand sluiten en terug naar de startpagina</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -492,54 +709,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Fit</source>
-        <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
-        <translation>Passend</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Iso</source>
-        <extracomment>Toolbar button: isometric camera view (seen from a corner, slightly above).</extracomment>
-        <translation>Iso</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Top</source>
-        <extracomment>Toolbar button: camera view from above.</extracomment>
-        <translation>Boven</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Front</source>
-        <extracomment>Toolbar button: camera view from the front.</extracomment>
-        <translation>Voor</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Right</source>
-        <extracomment>Toolbar button: camera view from the right side (not &apos;correct&apos;).</extracomment>
-        <translation>Rechts</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{view} view ({key})</source>
-        <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
-        <translation>Weergave {view} ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
-        <translation>De objecten van dit CAD-bestand als STL-bestanden opslaan (Ctrl+E)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
-        <translation>De objecten van dit 3MF-project opslaan als STL-bestanden (Ctrl+E)</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">Model passend in beeld</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -570,14 +741,132 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>Weergave</translation>
+        <source>Check</source>
+        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
+        <translation type="unfinished">Controleren</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check the model before printing: overhangs, thin walls and problems in the mesh</source>
+        <translation type="unfinished">Het model controleren voor het printen: overhangen, dunne wanden en fouten in het net</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">Model controleren</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>from vertical</source>
+        <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
+        <translation type="unfinished">van verticaal</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>nozzle</source>
+        <extracomment>Check section, before the nozzle width (0.40 mm) used to find thin walls.</extracomment>
+        <translation type="unfinished">nozzle</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">tot</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Mesh problems</source>
+        <translation type="unfinished">Problemen in het net</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Close</source>
+        <translation>Sluiten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Overhangs</source>
+        <translation type="unfinished">Overhangen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Faces that face down and lean further from vertical than the angle: they usually need supports. Faces on the plate are not counted.</source>
+        <translation type="unfinished">Vlakken die naar beneden wijzen en verder dan de hoek van verticaal hellen: die hebben meestal support nodig. Vlakken op het bed tellen niet mee.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Thin walls</source>
+        <translation type="unfinished">Dunne wanden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Walls and pins thinner than the nozzle: one line of plastic or less.</source>
+        <translation type="unfinished">Wanden en pinnen dunner dan de nozzle: één lijn plastic of minder.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Holes</source>
+        <translation type="unfinished">Gaten</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">Gaten in het oppervlak: randen met maar aan één kant een vlak. Het model is niet gesloten, dus de slicer moet raden wat er binnen is.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>open edges</source>
+        <translation type="unfinished">open randen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">Verwarde randen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">Randen die door drie of meer vlakken gedeeld worden, bijvoorbeeld waar twee delen elkaar langs een lijn raken. Slicers kunnen ze verkeerd lezen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">niet-manifold randen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">Binnenstebuiten vlakken</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">Vlakken die binnenstebuiten liggen: hun voorkant wijst het model in. Slicers laten ze misschien weg of vullen ze verkeerd.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">omgedraaide normalen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Loose parts</source>
+        <translation type="unfinished">Losse delen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">Kleine stukken die niet aan het hoofddeel vastzitten, tot de opgegeven grootte. Ze worden als losse stukjes geprint, of helemaal niet. Holtes in een onderdeel tellen niet mee.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>How the model is drawn: wireframe, X-ray, clip</source>
         <translation>Hoe het model wordt getekend: draadmodel, röntgen, afsnijden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>Weergave</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -615,19 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Close</source>
-        <translation>Sluiten</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">De snede naar je toe draait niet meer mee met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken. De schuifregelaar verplaatst hem nog steeds.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation>Snijvlak bevriezen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation>Houdt de snede „Afsnijden vanaf jouw kant” op zijn plaats, zodat je het model kunt draaien en verschuiven zonder dat de snede meedraait.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Snede vastzetten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -653,18 +936,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation>Meten</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure on the model: distance, angle, circle</source>
         <translation>Meten op het model: afstand, hoek, cirkel</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation>Klik op een kleurvak om de kleur te wijzigen.</translation>
+        <source>Measure</source>
+        <translation>Meten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -704,14 +982,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Screenshot</source>
-        <translation>Schermafbeelding</translation>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Verwijdert alle metingen; Meten blijft aan.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Settings</source>
-        <translation>Instellingen</translation>
+        <source>Screenshot</source>
+        <translation>Schermafbeelding</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -770,11 +1047,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show only this layer</source>
         <translation>Alleen deze laag tonen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Tip: ↑ / ↓ arrow keys move through layers</source>
-        <translation>Tip: met de pijltjestoetsen ↑ / ↓ blader je door de lagen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -844,6 +1116,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open folder</source>
+        <translation type="unfinished">Map openen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No 3D files in this folder</source>
+        <translation type="unfinished">Geen 3D-bestanden in deze map</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>This folder contains no files PrintView3D can open.</source>
+        <translation type="unfinished">Deze map bevat geen bestanden die PrintView3D kan openen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>In this folder ({n})</source>
+        <translation type="unfinished">In deze map ({n})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>In this ZIP ({n})</source>
         <translation>In deze ZIP ({n})</translation>
     </message>
@@ -876,11 +1168,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Untick a model to hide it; click a G-code to open it.</source>
         <translation>Vink een model uit om het te verbergen; klik op een G-code om die te openen.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Tip: ↑ / ↓ keys move through the list</source>
-        <translation>Tip: met ↑ / ↓ door de lijst bladeren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -941,16 +1228,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Volume</source>
         <translation>Volume</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{v} cm³</source>
-        <translation>{v} cm³</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click to pick another colour (right-click: the original colour)</source>
-        <translation>Klik om een andere kleur te kiezen (rechtsklik: de oorspronkelijke kleur)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1106,9 +1383,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} mm</source>
-        <extracomment>Keep &lt;b&gt;...&lt;/b&gt; around the layer number.</extracomment>
-        <translation>&lt;b&gt;Laag {n}&lt;/b&gt; van {total}  ·  Z = {z} mm</translation>
+        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} {unit}</source>
+        <translation type="unfinished">&lt;b&gt;Laag {n}&lt;/b&gt; van {total}  ·  Z = {z} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1155,6 +1431,42 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Colour</source>
+        <translation type="unfinished">Kleur</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} faces</source>
+        <translation type="unfinished">{n} vlakken</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} edges</source>
+        <translation type="unfinished">{n} randen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} parts</source>
+        <translation type="unfinished">{n} delen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">geen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Checking the mesh…</source>
+        <translation type="unfinished">Net wordt gecontroleerd…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Checking thin walls… {p} %</source>
+        <translation type="unfinished">Dunne wanden worden gecontroleerd… {p} %</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Distance</source>
         <translation>Afstand</translation>
     </message>
@@ -1174,6 +1486,31 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation>Cirkel (diameter, straal)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} zorgt dat de snede naar je toe niet meer meedraait met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Niet vastgezet draait de snede mee bij elke draai van de weergave, maar een meting blijft waar je hem plaatste: hij blijft in de lucht hangen, los van de snede waarop gemeten is.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Hover for details</source>
+        <translation type="unfinished">Beweeg erover voor details</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Snede naar je toe niet vastgezet.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section}: {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1197,20 +1534,44 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation>Draai of verschuif de weergave om het model door de snede te halen.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">Het snijvlak naar je toe staat vast: draai de weergave om de snede van elke kant te bekijken.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Depth {d} of {total} mm</source>
-        <extracomment>Clip facing you: how far the cut is into the model ({d}), out of the depth of the model in that direction ({total}).</extracomment>
-        <translation>Diepte {d} van {total} mm</translation>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">Draai of verschuif de weergave om het model door het snijvlak te halen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Height {z} of {top} mm</source>
-        <extracomment>Clip slider: {z} is the height of the cut above the model&apos;s bottom, {top} its full height.</extracomment>
-        <translation>Hoogte {z} van {top} mm</translation>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">Sleep aan een ronde greep om zijn snijvlak te verplaatsen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Snijden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">Diepte</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth {d} of {total} {unit}</source>
+        <translation type="unfinished">Diepte {d} van {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">Hoogte</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height {z} of {top} {unit}</source>
+        <translation type="unfinished">Hoogte {z} van {top} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1220,8 +1581,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open this file in FreeCAD (Ctrl+P). Use the arrow to send the model to a slicer as STL.</source>
-        <translation>Open dit bestand in FreeCAD (Ctrl+P). Gebruik de pijl om het model als STL naar een slicer te sturen.</translation>
+        <source>Save the objects of this CAD file as STL files</source>
+        <translation type="unfinished">De objecten van dit CAD-bestand als STL-bestanden opslaan</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Save the objects of this 3MF project as STL files</source>
+        <translation type="unfinished">De objecten van dit 3MF-project als STL-bestanden opslaan</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open this file in FreeCAD</source>
+        <translation type="unfinished">Dit bestand openen in FreeCAD</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Use the arrow to send the model to a slicer as STL.</source>
+        <translation type="unfinished">Met de pijl stuur je het model als STL naar een slicer.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1230,8 +1606,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open this file in {slicer} (Ctrl+P). Use the arrow to pick another slicer.</source>
-        <translation>Open dit bestand in {slicer} (Ctrl+P). Kies met de pijl een andere slicer.</translation>
+        <source>Open this file in {slicer}</source>
+        <translation type="unfinished">Dit bestand openen in {slicer}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Use the arrow to pick another slicer.</source>
+        <translation type="unfinished">Met de pijl kies je een andere slicer.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1240,8 +1621,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>No slicer found yet — choose one in Settings (Ctrl+P)</source>
-        <translation>Nog geen slicer gevonden — kies er een in Instellingen (Ctrl+P)</translation>
+        <source>No slicer found yet — choose one in Settings</source>
+        <translation type="unfinished">Nog geen slicer gevonden — kies er een in Instellingen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1459,12 +1840,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/measure.py"></location>
-        <source>{d} {unit}</source>
-        <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
-        <translation>{d} {unit}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/measure.py"></location>
         <source>ΔX {x}   ΔY {y}   ΔZ {z}</source>
         <extracomment>Measure: the distance along each axis, written under the value of a distance. Δ is the difference.</extracomment>
         <translation>ΔX {x}   ΔY {y}   ΔZ {z}</translation>
@@ -1551,6 +1926,37 @@
         <source>Missing or wrong translation? Anyone can correct it on GitHub: {guide}</source>
         <extracomment>Settings → Language. {guide} becomes the link &apos;How to translate on GitHub&apos;.</extracomment>
         <translation>Ontbrekende of foute vertaling? Iedereen kan die op GitHub verbeteren: {guide}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Units</source>
+        <translation type="unfinished">Eenheden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Lengths in</source>
+        <extracomment>Settings -&gt; Language and units: the label before the choice Millimetres (mm) / Inches (in).</extracomment>
+        <translation type="unfinished">Lengtes in</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">Spuitmondbreedte ook in inch</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">Spuitmonden worden verkocht op hun diameter in millimeters (0,4 mm), dus het deel Controleren toont de spuitmondbreedte in millimeters, tenzij dit is aangevinkt.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
+        <translation type="unfinished">Voor afmetingen, metingen, het raster en de bedgrootte. Bestanden veranderen niet: 3D-bestanden zijn altijd in millimeters.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Language and units</source>
+        <translation type="unfinished">Taal en eenheden</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1700,9 +2106,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
-        <extracomment>Settings → Files → Export STL. {key} is the keyboard shortcut (Ctrl+E).</extracomment>
-        <translation>{key} doet hetzelfde. Het pijltje naast de knop biedt altijd alle drie de manieren. Een bestand met maar één object wordt altijd direct opgeslagen.</translation>
+        <source>{key} does the same.</source>
+        <translation type="unfinished">{key} doet hetzelfde.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
+        <translation type="unfinished">De pijl naast de knop biedt altijd alle drie de manieren. Een bestand met maar één object wordt altijd meteen opgeslagen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1769,8 +2179,19 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show distances (mm) along the grid</source>
-        <translation>Afstanden (mm) langs het raster tonen</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Ook de X-, Y- en Z-as op het printbed tonen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">Kleine pijlen langs X, Y en Z naast de achterste rechterhoek van het model, naast de markering in de hoek van de weergave.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show scale numbers on the grid</source>
+        <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
+        <translation type="unfinished">Schaalgetallen op het raster tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1784,18 +2205,43 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation>Automatisch</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">Automatisch: zoveel getallen als passen bij de huidige zoom, op de rasterlijnen en nooit dichter dan de fijne lijnen. Of kies zelf een afstand.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation>Automatisch: op de hoofdlijnen van het raster (elke 50 mm bij een gewone plaat), minder bij een grote plaat. Of kies een eigen afstand.</translation>
+        <source>Grid lines every</source>
+        <translation type="unfinished">Rasterlijnen om de</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Main grid lines every</source>
+        <translation type="unfinished">Hoofdlijnen om de</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Build plate</source>
         <translation>Printplaat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation>Meetlijnen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation>Hoe dik de lijnen van Meten zijn.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation>Dunner</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation>Dikker</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1821,23 +2267,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation>Meetlijnen</translation>
+        <source>Don&apos;t let the two cutting planes cut each other</source>
+        <translation type="unfinished">De twee snijvlakken elkaar niet laten snijden</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation>Hoe dik de lijnen van Meten zijn.</translation>
+        <source>With both cuts on, each cutting plane is drawn whole instead of stopping where the other cut is.</source>
+        <translation type="unfinished">Met beide sneden aan wordt elk snijvlak heel getekend in plaats van te stoppen waar de andere snede is.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation>Dunner</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">De snijvlakken ook verplaatsen door ze in de 3D-weergave te slepen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation>Dikker</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">Elk snijvlak krijgt een ronde greep. Sleep eraan om het vlak te verplaatsen; de schuifregelaars werken ook nog.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">De kleuren van het onderdeel Controleren onthouden</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">Uit: de gekozen kleuren van Controleren gelden tot PrintView3D sluit.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1878,6 +2334,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
         <translation>Dit lijkt de ingebouwde (tragere) grafische chip te zijn. Vink het vakje aan en herstart voor soepeler draaien.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Keyboard and mouse</source>
+        <translation>Toetsenbord en muis</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1952,6 +2413,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Automatic</source>
+        <translation>Automatisch</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fainter</source>
         <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
         <translation>Vager</translation>
@@ -2002,18 +2468,43 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Keyboard and mouse</source>
-        <translation>Toetsenbord en muis</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Keyboard</source>
         <translation>Toetsenbord</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click a field and press the new key. The clear button removes the key.</source>
+        <translation type="unfinished">Klik in een veld en druk op de nieuwe toets. De wisknop haalt de toets weg.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Default: {key}</source>
+        <translation type="unfinished">Standaard: {key}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset to defaults</source>
+        <translation type="unfinished">Standaardwaarden herstellen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Puts every key back to the one PrintView3D comes with.</source>
+        <translation type="unfinished">Zet elke toets terug zoals PrintView3D hem meelevert.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{key} is already used for: {what}</source>
+        <translation type="unfinished">{key} wordt al gebruikt voor: {what}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse</source>
         <translation>Muis</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>The mouse controls are fixed.</source>
+        <translation type="unfinished">De muisbediening ligt vast.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2170,76 +2661,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Later</source>
         <translation>Later</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>Weergave {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Open a file</source>
-        <translation>Een bestand openen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Close the file (back to the start page)</source>
-        <translation>Het bestand sluiten (terug naar de startpagina)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Open the file in your slicer</source>
-        <translation>Het bestand openen in je slicer</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Export STL (3MF, FreeCAD and STEP)</source>
-        <translation>STL exporteren (3MF, FreeCAD en STEP)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Wireframe on / off (models)</source>
-        <translation>Draadmodel aan / uit (modellen)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>X-ray (see-through) on / off (models)</source>
-        <translation>Röntgen (doorzichtig) aan / uit (modellen)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Clip from the top on / off (models)</source>
-        <translation>Van boven afsnijden aan / uit (modellen)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Clip facing you on / off (models)</source>
-        <translation>Afsnijden vanaf jouw kant aan / uit (modellen)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Reset view: all of the above off, model fitted (models)</source>
-        <translation>Weergave herstellen: alles hierboven uit, model passend (modellen)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measure on / off (models)</source>
-        <translation>Meten aan / uit (modellen)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next / previous layer (G-code), or file (ZIP)</source>
-        <translation>Volgende / vorige laag (G-code) of bestand (ZIP)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>10 layers up / down</source>
-        <translation>10 lagen omhoog / omlaag</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>First / last layer</source>
-        <translation>Eerste / laatste laag</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2411,16 +2832,260 @@
         <translation>Update downloaden</translation>
     </message>
     <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>Millimetres (mm)</source>
+        <translation type="unfinished">Millimeters (mm)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>Inches (in)</source>
+        <translation type="unfinished">Inches (in)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <location filename="../src/printview3d/ui/length_spin.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>in</source>
+        <extracomment>The unit inches, written after a number (2 in). Keep it short.</extracomment>
+        <translation type="unfinished">in</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <location filename="../src/printview3d/ui/length_spin.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>mm</source>
+        <extracomment>The unit millimetres, written after a number (50 mm). Keep it short.</extracomment>
+        <translation type="unfinished">mm</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>{v} in³</source>
+        <translation type="unfinished">{v} in³</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>{v} cm³</source>
+        <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">Thema: {name} ({key}: volgend thema)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">Klik op een kleurvak om de kleur te wijzigen.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">Snede vastzetten ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">Snede naar je toe niet vastgezet</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="vanished">Snede niet vastgezet · beweeg erover voor details</translation>
+    </message>
+    <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">Zet de snede vast voordat je erop meet.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">Draai of verschuif de weergave om het model door de snede te halen.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">De snedes ook verplaatsen door ze in de 3D-weergave te slepen</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen; de schuifregelaars werken ook nog.</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">De snede naar je toe draait mee met de weergave: punten op de snede blijven staan en de snede beweegt verder.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Zet de snede vast ({key}) om erop te meten.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Zet de snede vast om erop te meten.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">De snedes verplaatsen door ze in de 3D-weergave te slepen</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen, zoals met de schuifregelaar.</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">Snijvlak bevriezen</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">Houdt de snede „Afsnijden vanaf jouw kant” op zijn plaats, zodat je het model kunt draaien en verschuiven zonder dat de snede meedraait.</translation>
+    </message>
+    <message>
+        <source>Theme: {name} (Ctrl+T: next theme)</source>
+        <translation type="vanished">Thema: {name} (Ctrl+T: volgend thema)</translation>
+    </message>
+    <message>
+        <source>Close the file and go back to the start page ({key})</source>
+        <translation type="vanished">Het bestand sluiten en teruggaan naar de startpagina ({key})</translation>
+    </message>
+    <message>
+        <source>{view} view ({key})</source>
+        <translation type="vanished">Weergave {view} ({key})</translation>
+    </message>
+    <message>
+        <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
+        <translation type="vanished">De objecten van dit CAD-bestand als STL-bestanden opslaan (Ctrl+E)</translation>
+    </message>
+    <message>
+        <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
+        <translation type="vanished">De objecten van dit 3MF-project opslaan als STL-bestanden (Ctrl+E)</translation>
+    </message>
+    <message>
+        <source>Tip: ↑ / ↓ arrow keys move through layers</source>
+        <translation type="vanished">Tip: met de pijltjestoetsen ↑ / ↓ blader je door de lagen</translation>
+    </message>
+    <message>
+        <source>Tip: ↑ / ↓ keys move through the list</source>
+        <translation type="vanished">Tip: met ↑ / ↓ door de lijst bladeren</translation>
+    </message>
+    <message>
+        <source>Open this file in FreeCAD (Ctrl+P). Use the arrow to send the model to a slicer as STL.</source>
+        <translation type="vanished">Open dit bestand in FreeCAD (Ctrl+P). Gebruik de pijl om het model als STL naar een slicer te sturen.</translation>
+    </message>
+    <message>
+        <source>Open this file in {slicer} (Ctrl+P). Use the arrow to pick another slicer.</source>
+        <translation type="vanished">Open dit bestand in {slicer} (Ctrl+P). Kies met de pijl een andere slicer.</translation>
+    </message>
+    <message>
+        <source>No slicer found yet — choose one in Settings (Ctrl+P)</source>
+        <translation type="vanished">Nog geen slicer gevonden — kies er een in Instellingen (Ctrl+P)</translation>
+    </message>
+    <message>
+        <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
+        <translation type="vanished">{key} doet hetzelfde. Het pijltje naast de knop biedt altijd alle drie de manieren. Een bestand met maar één object wordt altijd direct opgeslagen.</translation>
+    </message>
+    <message>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="vanished">Een afstand, een hoek, een cirkel meten</translation>
+    </message>
+    <message>
+        <source>Next / previous layer (G-code), or file (ZIP)</source>
+        <translation type="vanished">Volgende / vorige laag (G-code) of bestand (ZIP)</translation>
+    </message>
+    <message>
+        <source>10 layers up / down</source>
+        <translation type="vanished">10 lagen omhoog / omlaag</translation>
+    </message>
+    <message>
+        <source>First / last layer</source>
+        <translation type="vanished">Eerste / laatste laag</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">Net</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">Automatisch: op de hoofdlijnen van het raster (elke 50 mm bij een gewone plaat), minder bij een grote plaat. Of kies een eigen afstand.</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">De X-, Y- en Z-as op het printbed tonen</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">Drie pijlen langs X, Y en Z, vlak naast het model bij de hoek die het dichtst bij je is.</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">Openen…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">Archief openen…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">Vakterm: {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">Archief openen</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">Open randen</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">Niet-manifold randen</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">Omgedraaide normalen</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">Kleine stukken die niet aan het hoofddeel vastzitten. Ze worden als losse stukjes geprint, of helemaal niet.</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">Randen met maar aan één kant een vlak: gaten in het oppervlak.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">Randen die door meer dan twee vlakken gedeeld worden.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">Vlakken die andersom liggen dan hun buren, of een gesloten onderdeel dat binnenstebuiten is.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">Stukken die niet aan het grootste vastzitten.</translation>
+    </message>
+    <message>
+        <source>{n} mm</source>
+        <translation type="vanished">{n} mm</translation>
+    </message>
+    <message>
+        <source>{x} × {y} × {z} mm</source>
+        <translation type="vanished">{x} × {y} × {z} mm</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} mm</source>
+        <translation type="vanished">&lt;b&gt;Laag {n}&lt;/b&gt; van {total}  ·  Z = {z} mm</translation>
+    </message>
+    <message>
+        <source>Depth {d} of {total} mm</source>
+        <translation type="vanished">Diepte {d} van {total} mm</translation>
+    </message>
+    <message>
+        <source>Height {z} of {top} mm</source>
+        <translation type="vanished">Hoogte {z} van {top} mm</translation>
+    </message>
+    <message>
+        <source>Show distances (mm) along the grid</source>
+        <translation type="vanished">Afstanden (mm) langs het raster tonen</translation>
+    </message>
+    <message>
         <source>Click the colour box of an object to change its colour.</source>
         <translation type="vanished">Klik op het kleurvak van een object om de kleur te wijzigen.</translation>
     </message>
     <message>
         <source>Turn off</source>
         <translation type="vanished">Uitzetten</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">Afsnijden</translation>
     </message>
     <message>
         <source>Snap to corners and edges</source>

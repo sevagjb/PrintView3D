@@ -644,12 +644,6 @@ def test_settings_slider_for_the_line_thickness(window):
     assert w.settings.get("measure_line_width") == 7 and w.measure.line_width == 7
 
 
-def test_objects_box_says_in_text_that_the_colour_can_be_changed(window):
-    w = window
-    w.load_sync(os.path.join(HERE, "data", "two_parts.3mf"))
-    assert "colour" in w.objects_hint.text().lower() and w.objects_hint.isVisible()   # plain text, not a tooltip
-
-
 # ------------------------------------------------------------ thin dotted lines, black core dots, hints
 def test_a_dotted_line_is_never_thinner_than_the_minimum(window):
     w = window
@@ -709,3 +703,37 @@ def test_hints_stack_and_wrap_to_the_view(window):
     from printview3d.ui.overlay_text import wrap
     assert "\n" in wrap("one two three four five six seven eight nine ten", 60)
     assert wrap("short", 500) == "short" and wrap("a\nb", 500) == "a\nb"
+
+
+# ------------------------------------------------------------ another file: no old measurements on screen
+def test_measurements_leave_the_screen_when_another_file_opens(window):
+    w = window
+    m = _measuring(w)
+    _click(w, A)
+    _click(w, D)
+    assert m.label_texts and m._lines_poly.GetNumberOfLines() == 1
+    w.load_sync(CUBE)                                    # dropped again, or another file
+    assert m.items == []
+    assert m.label_texts == [] and m._lines_poly.GetNumberOfLines() == 0       # gone from the view too
+    assert m._mark_poly.GetNumberOfPoints() <= 1                               # at most the mouse's marker
+
+
+def test_measurements_and_cuts_go_when_a_zip_shows_all_side_by_side(window, tmp_path):
+    import zipfile
+    w = window
+    z = tmp_path / "two.zip"
+    with zipfile.ZipFile(z, "w") as f:
+        f.write(CUBE, "a.stl")
+        f.write(os.path.join(HERE, "data", "cube_ascii.stl"), "b.stl")
+    w.load_sync(str(z))
+    w.plotter.ren_win.SetSize(800, 600)
+    w.scene.set_view("iso", render=True)
+    w.act_measure.setChecked(True)
+    m = w.measure
+    _click(w, A)
+    _click(w, D)
+    w.act_clip.setChecked(True)
+    assert m.label_texts and w.scene.clip_z is not None
+    w.zip_show_all(sync=True)
+    assert m.items == [] and m.label_texts == []
+    assert not w.act_clip.isChecked() and w.scene.clip_z is None

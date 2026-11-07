@@ -90,10 +90,216 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/grid_labels.py"></location>
+        <location filename="../src/printview3d/ui/measure.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{n} mm</source>
-        <extracomment>A length in millimetres written on the build plate&apos;s grid in the 3D view; {n} is the number (for example 50).</extracomment>
-        <translation type="unfinished">{n} mm</translation>
+        <source>{d} {unit}</source>
+        <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
+        <translation type="unfinished">{d} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{view} view</source>
+        <translation>Vedere {view}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Open a file</source>
+        <translation>Deschide un fișier</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Close the file (back to the start page)</source>
+        <translation>Închide fișierul (înapoi la pagina de start)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Open the file in your slicer</source>
+        <translation>Deschide fișierul în slicer</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Export STL (3MF, FreeCAD and STEP)</source>
+        <translation>Export STL (3MF, FreeCAD și STEP)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Settings</source>
+        <translation>Setări</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Save a screenshot of the 3D view</source>
+        <translation type="unfinished">Salvează o captură a vizualizării 3D</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Next theme style</source>
+        <translation>Următorul stil de temă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Switch between light and dark</source>
+        <translation>Comută între tema luminoasă și cea întunecată</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Fit</source>
+        <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
+        <translation>Încadrează</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Iso</source>
+        <extracomment>Toolbar button: isometric camera view (seen from a corner, slightly above).</extracomment>
+        <translation>Izo</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Top</source>
+        <extracomment>Toolbar button: camera view from above.</extracomment>
+        <translation>Sus</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Front</source>
+        <extracomment>Toolbar button: camera view from the front.</extracomment>
+        <translation>Față</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Right</source>
+        <extracomment>Toolbar button: camera view from the right side (not &apos;correct&apos;).</extracomment>
+        <translation>Dreapta</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Build plate on / off</source>
+        <translation type="unfinished">Placa de construcție pornită / oprită</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Check model on / off (models)</source>
+        <translation type="unfinished">Verifică modelul pornit / oprit (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>View section on / off (models)</source>
+        <translation type="unfinished">Secțiunea Vizualizare pornită / oprită (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Wireframe on / off (models)</source>
+        <translation>Wireframe pornit / oprit (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>X-ray (see-through) on / off (models)</source>
+        <translation>Raze X (transparent) pornite / oprite (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Clip from the top on / off (models)</source>
+        <translation>Tăiere de sus pornită / oprită (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Clip facing you on / off (models)</source>
+        <translation>Tăiere din față pornită / oprită (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">Blochează tăietura spre tine: nu se mai rotește cu vizualizarea (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Reset view: all of the above off, model fitted (models)</source>
+        <translation>Resetează vizualizarea: toate cele de mai sus oprite, modelul încadrat (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure on / off (models)</source>
+        <translation type="unfinished">Măsurare pornită / oprită (modele)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure a distance</source>
+        <translation type="unfinished">Măsoară o distanță</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">Șterge toate măsurătorile (Măsurare rămâne pornită)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure an angle</source>
+        <translation type="unfinished">Măsoară un unghi</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Measure a circle</source>
+        <translation type="unfinished">Măsoară un cerc</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Next layer (G-code), or the file above in the list (ZIP or folder)</source>
+        <translation type="unfinished">Stratul următor (G-code) sau fișierul de deasupra din listă (ZIP sau dosar)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Previous layer (G-code), or the file below in the list (ZIP or folder)</source>
+        <translation type="unfinished">Stratul anterior (G-code) sau fișierul de dedesubt din listă (ZIP sau dosar)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>10 layers up</source>
+        <translation type="unfinished">10 straturi în sus</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>10 layers down</source>
+        <translation type="unfinished">10 straturi în jos</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>First layer</source>
+        <translation type="unfinished">Primul strat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Last layer</source>
+        <translation type="unfinished">Ultimul strat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>A key like Ctrl, Shift or Alt needs another key with it.</source>
+        <translation type="unfinished">O tastă precum Ctrl, Shift sau Alt are nevoie de încă o tastă.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>{key} is kept for the system or for moving around in the window.</source>
+        <translation type="unfinished">{key} este rezervată sistemului sau deplasării în fereastră.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Keys with the Windows or Super key belong to the system.</source>
+        <translation type="unfinished">Combinațiile cu tasta Windows sau Super aparțin sistemului.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>{key} is used by the system.</source>
+        <translation type="unfinished">{key} este folosită de sistem.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/labels.py"></location>
@@ -394,14 +600,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{x} × {y} × {z} mm</source>
-        <translation>{x} × {y} × {z} mm</translation>
+        <source>{x} × {y} × {z} {unit}</source>
+        <translation type="unfinished">{x} × {y} × {z} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Plate {n}</source>
         <extracomment>A build plate inside a slicer project; {n} is its number.</extracomment>
         <translation>Placa {n}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Folder</source>
+        <translation type="unfinished">Dosar</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No preview picture</source>
+        <translation type="unfinished">Nicio imagine de previzualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -426,21 +642,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next theme style</source>
-        <translation>Următorul stil de temă</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Switch between light and dark</source>
-        <translation>Comută între tema luminoasă și cea întunecată</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} (Ctrl+T: next theme)</source>
-        <extracomment>Tooltip of the theme icon. {name} is the current theme (Dark, Gray...).</extracomment>
-        <translation>Tema: {name} (Ctrl+T: tema următoare)</translation>
+        <source>Theme: {name}</source>
+        <translation type="unfinished">Temă: {name}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -464,8 +667,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open…</source>
-        <translation>Deschide…</translation>
+        <source>Click to pick another colour (right-click: the original colour)</source>
+        <translation type="unfinished">Fă clic pentru a alege altă culoare (clic dreapta: culoarea originală)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tip: the {up} / {down} keys move through it</source>
+        <translation type="unfinished">Sfat: tastele {up} / {down} parcurg lista</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open file or ZIP…</source>
+        <translation type="unfinished">Deschide un fișier sau un ZIP…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open folder…</source>
+        <translation type="unfinished">Deschide un dosar…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -480,9 +698,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Close the file and go back to the start page ({key})</source>
-        <extracomment>Tooltip of the Home button. {key} is its keyboard shortcut (Ctrl+W).</extracomment>
-        <translation>Închide fișierul și revino la pagina de start ({key})</translation>
+        <source>Close the file and go back to the start page</source>
+        <translation type="unfinished">Închide fișierul și revino la pagina de start</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -492,54 +709,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Fit</source>
-        <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
-        <translation>Încadrează</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Iso</source>
-        <extracomment>Toolbar button: isometric camera view (seen from a corner, slightly above).</extracomment>
-        <translation>Izo</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Top</source>
-        <extracomment>Toolbar button: camera view from above.</extracomment>
-        <translation>Sus</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Front</source>
-        <extracomment>Toolbar button: camera view from the front.</extracomment>
-        <translation>Față</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Right</source>
-        <extracomment>Toolbar button: camera view from the right side (not &apos;correct&apos;).</extracomment>
-        <translation>Dreapta</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{view} view ({key})</source>
-        <extracomment>Tooltip. {view} is a translated view name (Top, Front...), {key} a keyboard key.</extracomment>
-        <translation>Vedere {view} ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
-        <translation>Salvează obiectele acestui fișier CAD ca fișiere STL (Ctrl+E)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
-        <translation>Salvează obiectele acestui proiect 3MF ca fișiere STL (Ctrl+E)</translation>
+        <source>Fit the model in the view</source>
+        <translation type="unfinished">Încadrează modelul în vizualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -570,14 +741,132 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>Vizualizare</translation>
+        <source>Check</source>
+        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
+        <translation type="unfinished">Verifică</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check the model before printing: overhangs, thin walls and problems in the mesh</source>
+        <translation type="unfinished">Verifică modelul înainte de tipărire: consolă, pereți subțiri și probleme ale rețelei</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Check model</source>
+        <translation type="unfinished">Verifică modelul</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>from vertical</source>
+        <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
+        <translation type="unfinished">față de verticală</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>nozzle</source>
+        <extracomment>Check section, before the nozzle width (0.40 mm) used to find thin walls.</extracomment>
+        <translation type="unfinished">duză</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>up to</source>
+        <translation type="unfinished">până la</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Mesh problems</source>
+        <translation type="unfinished">Probleme ale rețelei</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Close</source>
+        <translation type="unfinished">Închide</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Overhangs</source>
+        <translation type="unfinished">Consolă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Faces that face down and lean further from vertical than the angle: they usually need supports. Faces on the plate are not counted.</source>
+        <translation type="unfinished">Fețe orientate în jos și înclinate față de verticală mai mult decât unghiul: de obicei au nevoie de suporturi. Fețele de pe placă nu se numără.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Thin walls</source>
+        <translation type="unfinished">Pereți subțiri</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Walls and pins thinner than the nozzle: one line of plastic or less.</source>
+        <translation type="unfinished">Pereți și știfturi mai subțiri decât duza: o linie de plastic sau mai puțin.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Holes</source>
+        <translation type="unfinished">Găuri</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
+        <translation type="unfinished">Găuri în suprafață: muchii cu o față doar pe o parte. Modelul nu este închis, așa că slicerul trebuie să ghicească ce este înăuntru.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>open edges</source>
+        <translation type="unfinished">muchii deschise</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Tangled edges</source>
+        <translation type="unfinished">Muchii încurcate</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
+        <translation type="unfinished">Muchii comune pentru trei sau mai multe fețe, de exemplu unde două piese se ating de-a lungul unei linii. Slicerele le pot citi greșit.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>non-manifold edges</source>
+        <translation type="unfinished">muchii non-manifold</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Inside-out faces</source>
+        <translation type="unfinished">Fețe pe dos</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
+        <translation type="unfinished">Fețe întoarse pe dos: partea din față arată spre interiorul modelului. Slicerele le pot omite sau umple greșit.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>flipped normals</source>
+        <translation type="unfinished">normale inversate</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Loose parts</source>
+        <translation type="unfinished">Părți desprinse</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
+        <translation type="unfinished">Bucăți mici care nu sunt legate de corpul principal, până la dimensiunea dată. Se tipăresc ca bucăți separate sau deloc. Golurile din interiorul unei piese nu se numără.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>How the model is drawn: wireframe, X-ray, clip</source>
         <translation>Cum este desenat modelul: wireframe, raze X, tăiere</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>Vizualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -615,19 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Close</source>
-        <translation type="unfinished">Închide</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">Tăietura spre tine nu se mai rotește cu vizualizarea, așa că poți roti modelul și privi tăietura din orice parte. Glisorul ei o mută în continuare.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation type="unfinished">Îngheață planul de tăiere</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation type="unfinished">Păstrează tăierea „Tăiere dinspre tine” pe loc, ca să poți roti și muta modelul fără ca tăierea să se rotească odată cu el.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Blochează tăietura</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -653,18 +936,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation type="unfinished">Măsoară</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure on the model: distance, angle, circle</source>
         <translation type="unfinished">Măsoară pe model: distanță, unghi, cerc</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation type="unfinished">Fă clic pe un pătrat de culoare ca să schimbi culoarea.</translation>
+        <source>Measure</source>
+        <translation type="unfinished">Măsoară</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -704,14 +982,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Screenshot</source>
-        <translation>Captură de ecran</translation>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Șterge toate măsurătorile; Măsurare rămâne pornită.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Settings</source>
-        <translation>Setări</translation>
+        <source>Screenshot</source>
+        <translation>Captură de ecran</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -770,11 +1047,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show only this layer</source>
         <translation>Arată doar acest strat</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Tip: ↑ / ↓ arrow keys move through layers</source>
-        <translation>Sfat: săgețile ↑ / ↓ trec prin straturi</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -844,6 +1116,26 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open folder</source>
+        <translation type="unfinished">Deschide un dosar</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>No 3D files in this folder</source>
+        <translation type="unfinished">Niciun fișier 3D în acest dosar</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>This folder contains no files PrintView3D can open.</source>
+        <translation type="unfinished">Acest dosar nu conține fișiere pe care PrintView3D le poate deschide.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>In this folder ({n})</source>
+        <translation type="unfinished">În acest dosar ({n})</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>In this ZIP ({n})</source>
         <translation>În acest ZIP ({n})</translation>
     </message>
@@ -876,11 +1168,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Untick a model to hide it; click a G-code to open it.</source>
         <translation>Debifează un model ca să-l ascunzi; clic pe un G-code ca să-l deschizi.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Tip: ↑ / ↓ keys move through the list</source>
-        <translation>Sfat: tastele ↑ / ↓ trec prin listă</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -941,16 +1228,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Volume</source>
         <translation>Volum</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>{v} cm³</source>
-        <translation>{v} cm³</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click to pick another colour (right-click: the original colour)</source>
-        <translation type="unfinished">Fă clic pentru a alege altă culoare (clic dreapta: culoarea originală)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1106,9 +1383,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} mm</source>
-        <extracomment>Keep &lt;b&gt;...&lt;/b&gt; around the layer number.</extracomment>
-        <translation>&lt;b&gt;Stratul {n}&lt;/b&gt; din {total}  ·  Z = {z} mm</translation>
+        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} {unit}</source>
+        <translation type="unfinished">&lt;b&gt;Stratul {n}&lt;/b&gt; din {total}  ·  Z = {z} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1155,6 +1431,42 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Colour</source>
+        <translation type="unfinished">Culoare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} faces</source>
+        <translation type="unfinished">{n} fețe</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} edges</source>
+        <translation type="unfinished">{n} muchii</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{n} parts</source>
+        <translation type="unfinished">{n} părți</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>none</source>
+        <extracomment>Check section: a count of zero problems.</extracomment>
+        <translation type="unfinished">niciuna</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Checking the mesh…</source>
+        <translation type="unfinished">Se verifică rețeaua…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Checking thin walls… {p} %</source>
+        <translation type="unfinished">Se verifică pereții subțiri… {p} %</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Distance</source>
         <translation type="unfinished">Distanță</translation>
     </message>
@@ -1174,6 +1486,31 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation type="unfinished">Cerc (diametru, rază)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} oprește rotirea tăieturii spre tine odată cu vizualizarea, așa că poți roti modelul și privi tăietura din orice parte.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Neblocată, tăietura se rotește la fiecare rotire a vizualizării, dar o măsurătoare rămâne unde ai pus-o: rămâne suspendată în aer, departe de tăietura pe care a fost făcută.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Hover for details</source>
+        <translation type="unfinished">Treci cu mouse-ul pentru detalii</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Tăietura spre tine nu este blocată.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section}: {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1197,20 +1534,44 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation>Rotește sau mută vederea pentru a trece modelul prin tăietură.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">Planul de tăiere spre tine este blocat: rotește vizualizarea ca să privești tăietura din orice parte.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Depth {d} of {total} mm</source>
-        <extracomment>Clip facing you: how far the cut is into the model ({d}), out of the depth of the model in that direction ({total}).</extracomment>
-        <translation type="unfinished">Adâncime {d} din {total} mm</translation>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">Rotește sau mută vizualizarea ca să treci modelul prin planul de tăiere.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Height {z} of {top} mm</source>
-        <extracomment>Clip slider: {z} is the height of the cut above the model&apos;s bottom, {top} its full height.</extracomment>
-        <translation>Înălțime {z} din {top} mm</translation>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">Trage de un mâner rotund ca să muți planul lui de tăiere.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Tăiere</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">Adâncime</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth {d} of {total} {unit}</source>
+        <translation type="unfinished">Adâncime {d} din {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">Înălțime</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height {z} of {top} {unit}</source>
+        <translation type="unfinished">Înălțime {z} din {top} {unit}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1220,8 +1581,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open this file in FreeCAD (Ctrl+P). Use the arrow to send the model to a slicer as STL.</source>
-        <translation>Deschide acest fișier în FreeCAD (Ctrl+P). Folosește săgeata ca să trimiți modelul într-un slicer ca STL.</translation>
+        <source>Save the objects of this CAD file as STL files</source>
+        <translation type="unfinished">Salvează obiectele acestui fișier CAD ca fișiere STL</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Save the objects of this 3MF project as STL files</source>
+        <translation type="unfinished">Salvează obiectele acestui proiect 3MF ca fișiere STL</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Open this file in FreeCAD</source>
+        <translation type="unfinished">Deschide acest fișier în FreeCAD</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Use the arrow to send the model to a slicer as STL.</source>
+        <translation type="unfinished">Folosiți săgeata pentru a trimite modelul la un slicer ca STL.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1230,8 +1606,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Open this file in {slicer} (Ctrl+P). Use the arrow to pick another slicer.</source>
-        <translation>Deschide acest fișier în {slicer} (Ctrl+P). Folosește săgeata ca să alegi alt slicer.</translation>
+        <source>Open this file in {slicer}</source>
+        <translation type="unfinished">Deschide acest fișier în {slicer}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Use the arrow to pick another slicer.</source>
+        <translation type="unfinished">Folosiți săgeata pentru a alege alt slicer.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1240,8 +1621,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>No slicer found yet — choose one in Settings (Ctrl+P)</source>
-        <translation>Niciun slicer găsit încă — alege unul în Setări (Ctrl+P)</translation>
+        <source>No slicer found yet — choose one in Settings</source>
+        <translation type="unfinished">Niciun slicer găsit încă — alegeți unul în Setări</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1459,12 +1840,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/measure.py"></location>
-        <source>{d} {unit}</source>
-        <extracomment>Measure: the length written next to a measured line in the 3D view; {d} is the number, {unit} the unit (mm).</extracomment>
-        <translation type="unfinished">{d} {unit}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/measure.py"></location>
         <source>ΔX {x}   ΔY {y}   ΔZ {z}</source>
         <extracomment>Measure: the distance along each axis, written under the value of a distance. Δ is the difference.</extracomment>
         <translation type="unfinished">ΔX {x}   ΔY {y}   ΔZ {z}</translation>
@@ -1551,6 +1926,37 @@
         <source>Missing or wrong translation? Anyone can correct it on GitHub: {guide}</source>
         <extracomment>Settings → Language. {guide} becomes the link &apos;How to translate on GitHub&apos;.</extracomment>
         <translation>Traducere lipsă sau greșită? Oricine o poate corecta pe GitHub: {guide}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Units</source>
+        <translation type="unfinished">Unități</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Lengths in</source>
+        <extracomment>Settings -&gt; Language and units: the label before the choice Millimetres (mm) / Inches (in).</extracomment>
+        <translation type="unfinished">Lungimi în</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzle width in inches too</source>
+        <translation type="unfinished">Lățimea duzei tot în inci</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
+        <translation type="unfinished">Duzele se vând după diametrul în milimetri (0,4 mm), așa că secțiunea Verificare arată lățimea duzei în milimetri, dacă nu bifați aceasta.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
+        <translation type="unfinished">Folosit pentru dimensiuni, măsurători, grilă și dimensiunea plăcii. Fișierele nu se schimbă: fișierele 3D sunt mereu în milimetri.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Language and units</source>
+        <translation type="unfinished">Limbă și unități</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1700,9 +2106,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
-        <extracomment>Settings → Files → Export STL. {key} is the keyboard shortcut (Ctrl+E).</extracomment>
-        <translation>{key} face același lucru. Săgeata de lângă buton oferă mereu toate cele trei variante. Un fișier cu un singur obiect se salvează mereu direct.</translation>
+        <source>{key} does the same.</source>
+        <translation type="unfinished">{key} face același lucru.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
+        <translation type="unfinished">Săgeata de lângă buton oferă mereu toate cele trei variante. Un fișier cu un singur obiect este salvat mereu direct.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1769,8 +2179,19 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Show distances (mm) along the grid</source>
-        <translation type="unfinished">Arată distanțele (mm) pe grilă</translation>
+        <source>Also show the X, Y and Z axes on the build plate</source>
+        <translation type="unfinished">Arată și axele X, Y și Z pe placa de construcție</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
+        <translation type="unfinished">Săgeți mici de-a lungul axelor X, Y și Z, lângă colțul din spate-dreapta al modelului, pe lângă marcajul din colțul vizualizării.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show scale numbers on the grid</source>
+        <extracomment>Settings -&gt; Viewer: numbers (50 mm, 100 mm, ...) along the edges of the build plate&apos;s grid.</extracomment>
+        <translation type="unfinished">Arată numerele de scară pe grilă</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1784,18 +2205,43 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic</source>
-        <translation type="unfinished">Automat</translation>
+        <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
+        <translation type="unfinished">Automat: atâtea numere câte încap la zoomul actual, pe liniile grilei și niciodată mai dese decât liniile fine. Sau alegeți propria distanță.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automat: pe liniile principale ale grilei (la 50 mm pe o placă obișnuită), mai rar pe o placă mare. Sau alege o distanță proprie.</translation>
+        <source>Grid lines every</source>
+        <translation type="unfinished">Linii de grilă la fiecare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Main grid lines every</source>
+        <translation type="unfinished">Linii principale la fiecare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Build plate</source>
         <translation>Placa de imprimare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measurement lines</source>
+        <translation type="unfinished">Linii de măsurare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>How thick the lines of Measure are.</source>
+        <translation type="unfinished">Cât de groase sunt liniile de la Măsoară.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thinner</source>
+        <translation type="unfinished">Mai subțiri</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Thicker</source>
+        <translation type="unfinished">Mai groase</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1821,23 +2267,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measurement lines</source>
-        <translation type="unfinished">Linii de măsurare</translation>
+        <source>Don&apos;t let the two cutting planes cut each other</source>
+        <translation type="unfinished">Cele două planuri de tăiere să nu se taie între ele</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>How thick the lines of Measure are.</source>
-        <translation type="unfinished">Cât de groase sunt liniile de la Măsoară.</translation>
+        <source>With both cuts on, each cutting plane is drawn whole instead of stopping where the other cut is.</source>
+        <translation type="unfinished">Cu ambele tăieri pornite, fiecare plan de tăiere este desenat întreg în loc să se oprească unde este cealaltă tăiere.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thinner</source>
-        <translation type="unfinished">Mai subțiri</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">Mută și planurile de tăiere trăgându-le în vizualizarea 3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Thicker</source>
-        <translation type="unfinished">Mai groase</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta planul; glisoarele funcționează în continuare.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Remember the colours of the Check section</source>
+        <translation type="unfinished">Ține minte culorile secțiunii Verifică</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished">Oprit: culorile alese în Verifică rămân până se închide PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1878,6 +2334,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
         <translation>Pare să fie placa video integrată (mai lentă). Bifează căsuța și repornește pentru o rotire mai fluidă.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Keyboard and mouse</source>
+        <translation>Tastatură și mouse</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1952,6 +2413,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Automatic</source>
+        <translation type="unfinished">Automat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fainter</source>
         <extracomment>Left end of the Cut-away part and Cutting plane sliders: more see-through.</extracomment>
         <translation>Mai slab</translation>
@@ -2002,18 +2468,43 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Keyboard and mouse</source>
-        <translation>Tastatură și mouse</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Keyboard</source>
         <translation>Tastatură</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Click a field and press the new key. The clear button removes the key.</source>
+        <translation type="unfinished">Faceți clic într-un câmp și apăsați tasta nouă. Butonul de ștergere elimină tasta.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Default: {key}</source>
+        <translation type="unfinished">Implicit: {key}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset to defaults</source>
+        <translation type="unfinished">Revino la valorile implicite</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Puts every key back to the one PrintView3D comes with.</source>
+        <translation type="unfinished">Readuce fiecare tastă la cea cu care vine PrintView3D.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{key} is already used for: {what}</source>
+        <translation type="unfinished">{key} este deja folosită pentru: {what}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Mouse</source>
         <translation>Mouse</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>The mouse controls are fixed.</source>
+        <translation type="unfinished">Comenzile mouse-ului sunt fixe.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2170,76 +2661,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Later</source>
         <translation>Mai târziu</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>{view} view</source>
-        <translation>Vedere {view}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Open a file</source>
-        <translation>Deschide un fișier</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Close the file (back to the start page)</source>
-        <translation>Închide fișierul (înapoi la pagina de start)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Open the file in your slicer</source>
-        <translation>Deschide fișierul în slicer</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Export STL (3MF, FreeCAD and STEP)</source>
-        <translation>Export STL (3MF, FreeCAD și STEP)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Wireframe on / off (models)</source>
-        <translation>Wireframe pornit / oprit (modele)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>X-ray (see-through) on / off (models)</source>
-        <translation>Raze X (transparent) pornite / oprite (modele)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Clip from the top on / off (models)</source>
-        <translation>Tăiere de sus pornită / oprită (modele)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Clip facing you on / off (models)</source>
-        <translation>Tăiere din față pornită / oprită (modele)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Reset view: all of the above off, model fitted (models)</source>
-        <translation>Resetează vizualizarea: toate cele de mai sus oprite, modelul încadrat (modele)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Measure on / off (models)</source>
-        <translation type="unfinished">Măsurare pornită / oprită (modele)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Next / previous layer (G-code), or file (ZIP)</source>
-        <translation>Stratul următor / anterior (G-code) sau fișierul (ZIP)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>10 layers up / down</source>
-        <translation>10 straturi în sus / în jos</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>First / last layer</source>
-        <translation>Primul / ultimul strat</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2411,16 +2832,260 @@
         <translation>Descarcă actualizarea</translation>
     </message>
     <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>Millimetres (mm)</source>
+        <translation type="unfinished">Milimetri (mm)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>Inches (in)</source>
+        <translation type="unfinished">Inci (in)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <location filename="../src/printview3d/ui/length_spin.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>in</source>
+        <extracomment>The unit inches, written after a number (2 in). Keep it short.</extracomment>
+        <translation type="unfinished">in</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <location filename="../src/printview3d/ui/length_spin.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>mm</source>
+        <extracomment>The unit millimetres, written after a number (50 mm). Keep it short.</extracomment>
+        <translation type="unfinished">mm</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>{v} in³</source>
+        <translation type="unfinished">{v} in³</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/units.py"></location>
+        <source>{v} cm³</source>
+        <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">Temă: {name} ({key}: tema următoare)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">Fă clic pe un pătrat de culoare ca să schimbi culoarea.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">Blochează tăietura ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">Tăietura spre tine nu este blocată</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="vanished">Tăietura nu este blocată · treci cu mouse-ul pentru detalii</translation>
+    </message>
+    <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">Blochează tăietura înainte să măsori pe ea.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">Rotește sau mută vederea pentru a trece modelul prin tăietură.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Mută și tăieturile trăgându-le în vizualizarea 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura; glisoarele funcționează în continuare.</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">Tăietura spre tine se rotește cu vizualizarea: punctele puse pe tăietură rămân pe loc, iar tăietura se mută.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Blochează tăietura ({key}) ca să măsori pe ea.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Blochează tăietura ca să măsori pe ea.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Mută tăieturile trăgându-le în vizualizarea 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura, ca glisorul său.</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">Îngheață planul de tăiere</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">Păstrează tăierea „Tăiere dinspre tine” pe loc, ca să poți roti și muta modelul fără ca tăierea să se rotească odată cu el.</translation>
+    </message>
+    <message>
+        <source>Theme: {name} (Ctrl+T: next theme)</source>
+        <translation type="vanished">Tema: {name} (Ctrl+T: tema următoare)</translation>
+    </message>
+    <message>
+        <source>Close the file and go back to the start page ({key})</source>
+        <translation type="vanished">Închide fișierul și revino la pagina de start ({key})</translation>
+    </message>
+    <message>
+        <source>{view} view ({key})</source>
+        <translation type="vanished">Vedere {view} ({key})</translation>
+    </message>
+    <message>
+        <source>Save the objects of this CAD file as STL files (Ctrl+E)</source>
+        <translation type="vanished">Salvează obiectele acestui fișier CAD ca fișiere STL (Ctrl+E)</translation>
+    </message>
+    <message>
+        <source>Save the objects of this 3MF project as STL files (Ctrl+E)</source>
+        <translation type="vanished">Salvează obiectele acestui proiect 3MF ca fișiere STL (Ctrl+E)</translation>
+    </message>
+    <message>
+        <source>Tip: ↑ / ↓ arrow keys move through layers</source>
+        <translation type="vanished">Sfat: săgețile ↑ / ↓ trec prin straturi</translation>
+    </message>
+    <message>
+        <source>Tip: ↑ / ↓ keys move through the list</source>
+        <translation type="vanished">Sfat: tastele ↑ / ↓ trec prin listă</translation>
+    </message>
+    <message>
+        <source>Open this file in FreeCAD (Ctrl+P). Use the arrow to send the model to a slicer as STL.</source>
+        <translation type="vanished">Deschide acest fișier în FreeCAD (Ctrl+P). Folosește săgeata ca să trimiți modelul într-un slicer ca STL.</translation>
+    </message>
+    <message>
+        <source>Open this file in {slicer} (Ctrl+P). Use the arrow to pick another slicer.</source>
+        <translation type="vanished">Deschide acest fișier în {slicer} (Ctrl+P). Folosește săgeata ca să alegi alt slicer.</translation>
+    </message>
+    <message>
+        <source>No slicer found yet — choose one in Settings (Ctrl+P)</source>
+        <translation type="vanished">Niciun slicer găsit încă — alege unul în Setări (Ctrl+P)</translation>
+    </message>
+    <message>
+        <source>{key} does the same. The arrow next to the button always offers all three ways. A file with only one object is always saved straight away.</source>
+        <translation type="vanished">{key} face același lucru. Săgeata de lângă buton oferă mereu toate cele trei variante. Un fișier cu un singur obiect se salvează mereu direct.</translation>
+    </message>
+    <message>
+        <source>Measure a distance, an angle, a circle</source>
+        <translation type="vanished">Măsoară o distanță, un unghi, un cerc</translation>
+    </message>
+    <message>
+        <source>Next / previous layer (G-code), or file (ZIP)</source>
+        <translation type="vanished">Stratul următor / anterior (G-code) sau fișierul (ZIP)</translation>
+    </message>
+    <message>
+        <source>10 layers up / down</source>
+        <translation type="vanished">10 straturi în sus / în jos</translation>
+    </message>
+    <message>
+        <source>First / last layer</source>
+        <translation type="vanished">Primul / ultimul strat</translation>
+    </message>
+    <message>
+        <source>Mesh</source>
+        <translation type="vanished">Rețea</translation>
+    </message>
+    <message>
+        <source>Automatic: on the grid&apos;s major lines (every 50 mm on a normal plate), fewer on a big plate. Or choose a spacing of your own.</source>
+        <translation type="vanished">Automat: pe liniile principale ale grilei (la 50 mm pe o placă obișnuită), mai rar pe o placă mare. Sau alege o distanță proprie.</translation>
+    </message>
+    <message>
+        <source>Show the X, Y and Z axes on the build plate</source>
+        <translation type="vanished">Arată axele X, Y și Z pe placa de construcție</translation>
+    </message>
+    <message>
+        <source>Three arrows pointing along X, Y and Z, just beside the model at its corner nearest to you.</source>
+        <translation type="vanished">Trei săgeți de-a lungul axelor X, Y și Z, chiar lângă model, la colțul cel mai apropiat de tine.</translation>
+    </message>
+    <message>
+        <source>Open…</source>
+        <translation type="vanished">Deschide…</translation>
+    </message>
+    <message>
+        <source>Open archive…</source>
+        <translation type="vanished">Deschide o arhivă…</translation>
+    </message>
+    <message>
+        <source>Technical term: {term}.</source>
+        <translation type="vanished">Termen tehnic: {term}.</translation>
+    </message>
+    <message>
+        <source>Open archive</source>
+        <translation type="vanished">Deschide o arhivă</translation>
+    </message>
+    <message>
+        <source>Open edges</source>
+        <translation type="vanished">Muchii deschise</translation>
+    </message>
+    <message>
+        <source>Non-manifold edges</source>
+        <translation type="vanished">Muchii non-manifold</translation>
+    </message>
+    <message>
+        <source>Flipped normals</source>
+        <translation type="vanished">Normale inversate</translation>
+    </message>
+    <message>
+        <source>Small pieces not connected to the main body. They print as separate bits, or not at all.</source>
+        <translation type="vanished">Bucăți mici care nu sunt legate de corpul principal. Se tipăresc ca bucăți separate sau deloc.</translation>
+    </message>
+    <message>
+        <source>Edges with a face on one side only: holes in the surface.</source>
+        <translation type="vanished">Muchii cu o față doar pe o parte: găuri în suprafață.</translation>
+    </message>
+    <message>
+        <source>Edges shared by more than two faces.</source>
+        <translation type="vanished">Muchii comune pentru mai mult de două fețe.</translation>
+    </message>
+    <message>
+        <source>Faces turned the other way than their neighbours, or a closed part that is inside out.</source>
+        <translation type="vanished">Fețe întoarse invers față de vecinele lor, sau o piesă închisă întoarsă pe dos.</translation>
+    </message>
+    <message>
+        <source>Pieces not connected to the biggest one.</source>
+        <translation type="vanished">Bucăți care nu sunt legate de cea mai mare.</translation>
+    </message>
+    <message>
+        <source>{n} mm</source>
+        <translation type="vanished">{n} mm</translation>
+    </message>
+    <message>
+        <source>{x} × {y} × {z} mm</source>
+        <translation type="vanished">{x} × {y} × {z} mm</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Layer {n}&lt;/b&gt; of {total}  ·  Z = {z} mm</source>
+        <translation type="vanished">&lt;b&gt;Stratul {n}&lt;/b&gt; din {total}  ·  Z = {z} mm</translation>
+    </message>
+    <message>
+        <source>Depth {d} of {total} mm</source>
+        <translation type="vanished">Adâncime {d} din {total} mm</translation>
+    </message>
+    <message>
+        <source>Height {z} of {top} mm</source>
+        <translation type="vanished">Înălțime {z} din {top} mm</translation>
+    </message>
+    <message>
+        <source>Show distances (mm) along the grid</source>
+        <translation type="vanished">Arată distanțele (mm) pe grilă</translation>
+    </message>
+    <message>
         <source>Turn off</source>
         <translation type="vanished">Oprește</translation>
     </message>
     <message>
         <source>{kind} · {size} MB</source>
         <translation type="vanished">{kind} · {size} MB</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">Tăiere</translation>
     </message>
     <message>
         <source>Depth {d} mm</source>

@@ -100,9 +100,18 @@ def test_the_clip_controls_live_in_the_view_section_and_open_it(window):
     w.act_clip_face.trigger()                                             # V with the section closed
     assert w.view_box.isVisible() and w.act_view.isChecked()              # opens it
     assert w.view_box.isAncestorOf(w.clip_box) and w.clip_box.isVisible()
-    # the freeze checkbox is under the other two (cut-away part, cutting plane)
-    ys = [cb.mapTo(w.view_box, cb.rect().topLeft()).y() for cb in (w.clip_ghost_cb, w.clip_plane_cb, w.view_freeze_cb)]
-    assert ys == sorted(ys) and len(set(ys)) == 3
+    # the two checkboxes (cut-away part, cutting plane), then the lock button: under them, at their
+    # left, in the row of Reset view and as tall as it
+    from PySide6.QtCore import QPoint
+    at = {b: b.mapTo(w.view_box, QPoint(0, 0)) for b in (w.clip_ghost_cb, w.clip_plane_cb, w.view_lock_btn,
+                                                          w.view_reset_btn)}
+    # the two checkboxes side by side, the lock button under them
+    assert at[w.clip_ghost_cb].y() == at[w.clip_plane_cb].y() < at[w.view_lock_btn].y()
+    assert at[w.clip_ghost_cb].x() < at[w.clip_plane_cb].x()
+    assert at[w.view_lock_btn].x() == w.clip_top_row.mapTo(w.view_box, QPoint(0, 0)).x()   # bottom left
+    assert at[w.view_lock_btn].y() + w.view_lock_btn.height() == at[w.view_reset_btn].y() + w.view_reset_btn.height()
+    assert w.view_lock_btn.height() == w.view_reset_btn.height()
+    assert w.view_lock_btn.text() == "Lock facing cut (L)"
     w.act_clip_face.trigger()
     assert w.clip_box.isHidden()                                          # no cut: no cut controls
 
@@ -110,7 +119,7 @@ def test_the_clip_controls_live_in_the_view_section_and_open_it(window):
 def test_menu_and_shortcuts(window):
     w = window
     actions = [w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face, w.act_reset_view]
-    assert [a.shortcut().toString() for a in actions] == ["W", "X", "C", "V", "R"]
+    assert [a.shortcut().toString() for a in actions] == ["W", "X", "T", "Y", "R"]
     assert w.act_measure in w.actions() and w.act_measure.shortcut().toString() == "M"
     for a in actions:
         assert a in w.actions()                           # work wherever the focus is
@@ -181,21 +190,19 @@ def test_clip_turn_off_button_and_shortcut(window):
     assert all(a.GetBackfaceProperty() is None for a in w.scene.model_actors)
 
 
-def test_options_stay_on_for_the_next_model_but_not_for_gcode(window):
+def test_wireframe_and_xray_stay_for_the_next_model_but_the_cuts_go(window):
     w = window
     w.load_sync(INSIDE)
     w.act_xray.trigger()
     w.act_clip.trigger()
     w.clip_slider.setValue(250)
     w.load_sync(GCODE)
-    assert w.clip_box.isHidden()
+    assert w.clip_box.isHidden() and not w.act_clip.isChecked()
     a = w.scene.p.actors.get("gcode")
     assert a is None or a.GetMapper().GetNumberOfClippingPlanes() == 0   # toolpaths untouched
     w.load_sync(CUBE)                                                    # 20 mm cube
-    assert w.clip_box.isVisible()
-    assert all(p.GetOpacity() < 1 for p in _props(w))
-    assert w.scene.clip_z == pytest.approx(5.0)                          # same slider place, its height
-    assert _planes(w) == [1]
+    assert all(p.GetOpacity() < 1 for p in _props(w))                    # X-ray stays
+    assert w.clip_box.isHidden() and w.scene.clip_z is None and _planes(w) == [0]   # the cut is gone
 
 
 def test_options_combine(window):
@@ -219,11 +226,9 @@ def test_hiding_an_object_keeps_the_view_options(window, app):
     assert _planes(w) == [1, 1, 1]
 
 
-def test_shortcuts_on_the_about_page(app):
-    from printview3d.ui.settings_dialog import shortcut_rows
-    keys = [k for row, _ in shortcut_rows() for k in row]
-    for k in ("W", "X", "C", "V"):
-        assert k in keys
+def test_view_keys_have_defaults(app):
+    from printview3d.ui import keys
+    assert [keys.DEFAULT[i] for i in ("wireframe", "xray", "clip_top", "clip_face")] == ["W", "X", "T", "Y"]
 
 
 def test_arabic_keeps_the_slider_left_to_right(window, app):
@@ -243,7 +248,7 @@ def test_clip_facing_you_starts_through_the_centre_and_follows_the_slider(window
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    assert w.clip_box.isVisible() and any('pass the model through the cut' in t for t in w.hints.texts)
+    assert w.clip_box.isVisible() and any('pass the model through the cutting plane' in t for t in w.hints.texts)
     assert w.scene.clip_face == pytest.approx(0.0) and w.scene.clip_z is None
     assert _planes(w) == [1, 1, 1]
     assert all(a.GetBackfaceProperty() is not None for a in w.scene.model_actors)
@@ -305,7 +310,7 @@ def test_both_cuts_at_the_same_time(window):
     assert w.scene.clip_face == pytest.approx(0.0)            # the new one starts in the middle
     assert _planes(w) == [2, 2, 2]                            # keeps what both keep
     assert w.clip_top_row.isVisible() and w.clip_face_row.isVisible()
-    assert any('pass the model through the cut' in t for t in w.hints.texts)
+    assert any('pass the model through the cutting plane' in t for t in w.hints.texts)
     assert "10" in w.clip_info.text() and "Depth" in w.face_info.text()
     w.face_slider.setValue(750)                               # each slider moves its own cut
     assert w.scene.clip_z == pytest.approx(10.0) and w.scene.clip_face > 0
@@ -315,13 +320,15 @@ def test_both_cuts_at_the_same_time(window):
     assert not w.act_clip.isChecked() and w.act_clip_face.isChecked()
     assert w.scene.clip_z is None and w.scene.clip_face is not None and _planes(w) == [1, 1, 1]
     assert w.clip_box.isVisible()
-    assert not w.clip_top_row.isVisible() and w.clip_face_row.isVisible()
+    # both sliders stay; the one whose cut is off is greyed out and disabled
+    assert w.clip_top_row.isVisible() and not w.clip_top_row.isEnabled() and not w.clip_slider.isEnabled()
+    assert w.clip_face_row.isEnabled() and w.clip_info.text() == "Height"
     w.act_clip.trigger()                                      # and back, from the middle
     assert w.scene.clip_z == pytest.approx(20.0) and _planes(w) == [2, 2, 2]
     w.act_clip_face.trigger()                                 # V: only the upright cut goes off
     assert w.scene.clip_face is None and w.scene.clip_z is not None and _planes(w) == [1, 1, 1]
     assert w.scene.model_actors[0].GetMapper().GetClippingPlanes().GetItem(0) is w.scene._top_plane
-    assert not any('pass the model through the cut' in t for t in w.hints.texts)
+    assert not any('pass the model through the cutting plane' in t for t in w.hints.texts)
 
 
 def test_turn_off_and_reset_view_end_both_cuts(window):
@@ -340,16 +347,16 @@ def test_turn_off_and_reset_view_end_both_cuts(window):
     assert w.scene.clip_z is None and w.scene.clip_face is None and _planes(w) == [0, 0, 0]
 
 
-def test_both_cuts_stay_on_for_the_next_model(window):
+def test_both_cuts_and_the_freeze_go_when_another_file_opens(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip.trigger()
     w.act_clip_face.trigger()
-    w.load_sync(GCODE)
-    assert w.clip_box.isHidden()
+    w.view_lock_btn.setChecked(True)
     w.load_sync(CUBE)
-    assert w.clip_box.isVisible()
-    assert w.scene.clip_z is not None and w.scene.clip_face is not None and _planes(w) == [2]
+    assert not w.act_clip.isChecked() and not w.act_clip_face.isChecked() and not w.view_lock_btn.isChecked()
+    assert w.scene.clip_z is None and w.scene.clip_face is None and _planes(w) == [0]
+    assert w.clip_box.isHidden()
 
 
 def test_clip_facing_you_turn_off(window):
@@ -365,15 +372,12 @@ def test_clip_facing_you_turn_off(window):
     assert w.scene.clip_face is None and _planes(w) == [0, 0, 0]
 
 
-def test_clip_facing_you_stays_on_for_the_next_model(window):
+def test_clip_facing_you_goes_when_another_file_opens(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    w.load_sync(GCODE)
-    assert w.clip_box.isHidden()
-    w.load_sync(CUBE)
-    assert w.clip_box.isVisible()
-    assert w.scene.clip_face is not None and _planes(w) == [1]
+    w.load_sync(INSIDE)                                  # even the same file again
+    assert not w.act_clip_face.isChecked() and w.scene.clip_face is None and _planes(w) == [0, 0, 0]
 
 
 # ---------------------------------------------------------------- Reset view (#66)
@@ -403,16 +407,17 @@ def test_reset_view_also_ends_clip_facing_you(window):
 
 
 def test_reset_view_key_and_shortcut_list(window, app):
-    from printview3d.ui.settings_dialog import shortcut_rows
+    from printview3d.ui import keys
     assert window.act_reset_view.shortcut().toString() == "R"
-    assert "R" in [k for row, _ in shortcut_rows() for k in row]
+    assert keys.DEFAULT["reset_view"] == "R"
 
 
-def test_reset_view_off_for_gcode(window):
+def test_reset_view_on_gcode_only_fits(window):
     w = window
     w.load_sync(GCODE)
-    assert not w.act_reset_view.isEnabled()
-    w.reset_view()                                                      # harmless anyway
+    assert w.act_reset_view.isEnabled()                                 # R is also Fit's key
+    assert not w.act_wireframe.isEnabled()                              # ... the view options are off
+    w.reset_view()
 
 
 # ---------------------------------------------------------------- freeze the cutting plane
@@ -421,11 +426,11 @@ def test_freezing_the_cut_keeps_it_while_the_view_turns(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    w.view_freeze_cb.setChecked(True)
+    w.view_lock_btn.setChecked(True)
     before = np.array(_face_normal_after(w, "front")), np.array(w.scene._face_plane.GetOrigin())
     after = np.array(_face_normal_after(w, "right")), np.array(w.scene._face_plane.GetOrigin())
     assert np.allclose(before[0], after[0]) and np.allclose(before[1], after[1])       # did not turn
-    w.view_freeze_cb.setChecked(False)
+    w.view_lock_btn.setChecked(False)
     free = np.array(_face_normal_after(w, "right"))
     assert not np.allclose(free, before[0])                                            # follows again
 
@@ -434,7 +439,7 @@ def test_a_frozen_cut_still_follows_its_slider(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    w.view_freeze_cb.setChecked(True)
+    w.view_lock_btn.setChecked(True)
     n = np.array(w.scene._face_plane.GetNormal())
     o0 = np.array(w.scene._face_plane.GetOrigin()) @ n
     w.face_slider.setValue(w.CLIP_STEPS)
@@ -444,13 +449,13 @@ def test_a_frozen_cut_still_follows_its_slider(window):
 def test_freeze_waits_for_the_cut_and_reset_view_clears_it(window):
     w = window
     w.load_sync(INSIDE)
-    w.view_freeze_cb.setChecked(True)                        # no cut yet: nothing to freeze
+    w.view_lock_btn.setChecked(True)                        # no cut yet: nothing to freeze
     w.scene.set_view("front", render=False)
     w.act_clip_face.trigger()                                # freezes at the view it starts in
     n0 = np.array(w.scene._face_plane.GetNormal())
     assert np.allclose(_face_normal_after(w, "right"), n0)
     w.reset_view()
-    assert not w.view_freeze_cb.isChecked() and w.scene.freeze_face is False
+    assert not w.view_lock_btn.isChecked() and w.scene.freeze_face is False
 
 
 # ---------------------------------------------------------------- toolbar
@@ -462,7 +467,7 @@ def test_fit_has_an_icon_and_comes_after_measure(window):
     order = [o for o in order if o is not None]
     assert order.index(fit) == order.index(w.measure_btn) + 1
     assert order.index(w.view_btn) < order.index(w.measure_btn)
-    assert not w.act_fit.icon().isNull() and w.act_fit.shortcut().toString() in ("", "F")
+    assert not w.act_fit.icon().isNull() and w.act_fit.text().endswith("(F)")
     assert w.act_fit in [a for a, _, v in w.view_actions if v is None]
 
 
@@ -479,4 +484,42 @@ def test_view_buttons_are_as_tall_as_the_other_toolbar_buttons(window, app):
         if b is not None and b.isVisible() and b.objectName() in ("viewButton", "exportButton", "slicerButton", "iconButton"):
             heights[b.objectName() + ":" + (getattr(b, "text", lambda: "")() or "?")] = b.sizeHint().height()
     assert len(set(heights.values())) == 1, heights
+
+
+# ---------------------------------------------------------------- closing the View section ends it all
+def test_close_ends_every_view_option(window):
+    w = window
+    w.load_sync(INSIDE)
+    for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face):
+        a.trigger()
+    w.view_lock_btn.setChecked(True)
+    assert w.act_view.isChecked()
+    w.view_close_btn.click()
+    assert not any(a.isChecked() for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face))
+    assert not w.view_lock_btn.isChecked() and w.scene.clip_z is None and w.scene.clip_face is None
+    assert all(p.GetRepresentation() == 2 and p.GetOpacity() == 1.0 for p in _props(w))
+
+
+def test_the_view_button_off_ends_every_view_option_too(window, monkeypatch):
+    w = window
+    w.load_sync(INSIDE)
+    fitted = []
+    monkeypatch.setattr(w, "set_view", lambda view, animate=False: fitted.append(view))
+    w.act_view.trigger()
+    w.act_wireframe.trigger()
+    w.act_clip.trigger()
+    w.act_view.trigger()                                  # the toolbar button off
+    assert not w.act_wireframe.isChecked() and not w.act_clip.isChecked() and fitted == []   # no fit
+    w.act_view.trigger()
+    w.act_xray.trigger()
+    w.reset_view()                                        # Reset view: the same, and a fit
+    assert not w.act_xray.isChecked() and fitted == [None] and w.view_box.isVisible()
+
+
+def test_a_view_key_opens_the_view_section(window):
+    w = window
+    w.load_sync(INSIDE)
+    assert not w.act_view.isChecked()
+    w.act_wireframe.trigger()                             # W
+    assert w.act_view.isChecked() and w.view_box.isVisible()
 

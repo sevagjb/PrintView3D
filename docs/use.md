@@ -7,6 +7,10 @@
 your recent files. It also gives back the memory the file took, which matters most after a large
 G-code or ZIP.
 
+On the start page, hold the mouse over a recent file and a card in the bottom right corner shows its preview
+picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
+The card stays in the same place for every file, so you can run down the list and compare.
+
 **One window:** a file you double-click while PrintView3D is already open is shown in that window,
 which comes to the front. To give every file its own window (to compare two models side by side),
 tick **Settings → Files → Open each file in a new window**. Starting PrintView3D from the Start
@@ -24,7 +28,12 @@ Looking from underneath? The plate gets out of the way so you can see the bottom
 
 ## Keyboard
 
-The same list is in the program under **Settings → About → Keyboard and mouse**.
+These are the keys PrintView3D comes with. **Settings → Keyboard and mouse** lists them all, and
+you can give any of them a key of your own there: click its field and press the new key (the
+clear button removes it). The buttons then show your key (tooltips name no keys). **Reset to defaults** puts
+them all back. Keys the system uses (the Windows or Super key, Alt+F4, Alt+Tab, ⌘Q, Ctrl+Alt+Del
+and the like), Tab, Enter, Esc and Space can't be chosen, and neither can a key another action
+already has. The mouse controls are fixed.
 
 | Key | Action |
 |---|---|
@@ -32,13 +41,21 @@ The same list is in the program under **Settings → About → Keyboard and mous
 | `Ctrl+W` | Close the file (back to the start page) |
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
+| `S` | Settings |
+| `Ctrl+Shift+S` | Save a screenshot of the 3D view |
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
-| `F` · `1` · `2` · `3` · `4` | Fit · Iso · Top · Front · Right view |
-| `W` · `X` · `C` · `V` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
-| `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (models) |
+| `F` | Fit the model in the view |
+| `1` · `2` · `3` · `4` | Iso · Top · Front · Right view |
+| `P` | Build plate on / off |
+| `C` · `V` | Check section · View section, on / off (models) |
+| `W` · `X` · `T` · `Y` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
+| `L` | Lock the facing cut: it stops turning with the view (models) |
+| `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (on G-code: fit) |
 | `M` | Measure on / off (models) |
-| `↑` / `↓` | Next / previous layer (G-code), or the previous / next file in a ZIP |
+| `D` · `A` · `O` | Measure a distance · an angle · a circle |
+| `K` | Remove all measurements (Measure stays on) |
+| `↑` / `↓` | Next / previous layer (G-code), or the file above / below in a ZIP or folder |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
 
@@ -51,16 +68,19 @@ and the other model formats; G-code has its layer slider instead):
 - **Wireframe** (`W`): the triangles of the mesh, to see how fine it is or spot broken geometry.
 - **X-ray** (`X`): the parts become see-through, so parts inside other parts, cavities and
   hollow walls show.
-- **Clip from the top** (`C`): hides everything above a height. A slider in the side panel moves
-  the cut; the inside of the walls that the cut lays open is drawn in red. `C` or the button
+- **Clip from the top** (`T`): hides everything above a height. A slider in the side panel moves
+  the cut; the inside of the walls that the cut lays open is drawn in red. `T` or the button
   again shows the whole model.
-- **Clip facing you** (`V`): an upright cut that always faces you and hides the part of the model
+- **Clip facing you** (`Y`): an upright cut that always faces you and hides the part of the model
   in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
   click that face on the view cube. The slider moves the cut nearer or further, and **Depth**
-  shows how far it is into the model. **Freeze the cutting plane** keeps the cut where it is
-  while you turn and move the model.
-- **Both cuts at once**: `C` and `V` each turn their own cut on and off, so both can be on together
+  shows how far it is into the model. **Lock facing cut** (`L`, the button left of Reset view)
+  stops the cut turning with the view, so you can turn the model and look at the cut from the side;
+  the slider still moves it. While the cut is not locked, the Measure section shows a red dot and
+  *Facing cut not locked*; hover over it for why: points placed on the cut stay behind when the
+  view turns.
+- **Both cuts at once**: `T` and `Y` each turn their own cut on and off, so both can be on together
   for a corner cut away, with a **Height** and a **Depth** slider in the side panel. **Reset view**
   ends both.
 - **Show the cut-away part** and **Show the cutting plane** (under the sliders, both on by
@@ -68,21 +88,27 @@ and the other model formats; G-code has its layer slider instead):
   cutting plane shows as a faint sheet the size of the model. Your choice is remembered. In
   **Settings → Viewer**, **Cut-away part** and **Cutting plane** each have a Fainter … Stronger
   slider; the 3D view changes while you drag.
+- **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Also move the cutting
+  planes by dragging them in the 3D view** and each cut gets a small round handle on the edge of its cutting
+  plane, with a short line showing which way it moves. Under the mouse its colours swap. Drag it
+  to move the cut; its slider moves along.
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
   Measurements stay.
 
-The options stay on when you open the next model, and work together (X-ray and clip, for example).
+Wireframe and X-ray stay on when you open the next model; the cuts and the measurements are removed. The options work together (X-ray and clip, for example).
 
 ## Measure, object colours and grid numbers
 
 - **Measure** (`M`, the button next to **View**): **Distance** (with ΔX ΔY ΔZ if you like),
   **Angle** and **Circle** (diameter and radius). A click places a point, a drag still turns the
-  view, and a placed point can be dragged. Points snap to corners and edges; the value is written
-  next to every measurement, and **Clear** removes them all.
+  view, and a placed point can be dragged. Points snap to corners and edges, and with a cut on also
+  to the outline of the cut, so you can measure inside the model; the value is written next to
+  every measurement, and **Clear** (`K`) removes them all.
 - **Object colours**: click the colour box of an object in the **Objects** list to give it another
   colour; right-click goes back to the file's colour. Not saved.
-- **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres
-  along the build plate.
+- **Grid numbers**: **Settings → Viewer → Show scale numbers on the grid** writes millimetres
+  along the build plate, as many as fit at the zoom you look at.
+- **Settings** is also the gear icon at the right end of the toolbar, next to the theme icon.
 
 More, with pictures: [Look inside your models](inspect.md). Built by [@covrig](https://github.com/covrig).
 
@@ -119,7 +145,7 @@ files, for example to share a model or open it in a program that does not read 3
 
 ## ZIP files
 
-Model downloads often come as a ZIP. Open it like any other file (**Open…** or drag it onto the
+Model downloads often come as a ZIP. Open it like any other file (**Open file or ZIP…** or drag it onto the
 window); there is no need to unpack it first.
 
 <table>

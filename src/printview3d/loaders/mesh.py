@@ -393,6 +393,25 @@ def _picture(z: zipfile.ZipFile, name: str) -> Optional[bytes]:
         return None
 
 
+def _3mf_picture(z: zipfile.ZipFile, names: list[str]) -> Optional[bytes]:
+    """A 3MF project's preview picture (the first plate's, if there are several)."""
+    lower = {n.lower(): n for n in names}
+    for cand in ("metadata/plate_1.png", "metadata/thumbnail.png", "metadata/top_1.png"):
+        if cand in lower:
+            return _picture(z, lower[cand])
+    for n in names:
+        nl = n.lower()
+        if (nl.startswith("metadata/") or nl.startswith("thumbnails/")) and nl.endswith((".png", ".jpg", ".jpeg")):
+            return _picture(z, n)
+    return None
+
+
+def read_3mf_thumbnail(path: str) -> Optional[bytes]:
+    """Only the preview picture of a 3MF file (for the start page), not its objects."""
+    with zipfile.ZipFile(path) as z:
+        return _3mf_picture(z, z.namelist())
+
+
 def load_3mf(path: str, progress: Optional[Callable[[float], None]] = None) -> ModelData:
     with zipfile.ZipFile(path) as z:
         names = z.namelist()
@@ -433,19 +452,7 @@ def load_3mf(path: str, progress: Optional[Callable[[float], None]] = None) -> M
             except (ValueError, KeyError):
                 pass
 
-        # ---- thumbnail ----
-        thumb = None
-        for cand in ("metadata/plate_1.png", "metadata/thumbnail.png", "metadata/top_1.png"):
-            if cand in lower:
-                thumb = _picture(z, lower[cand])
-                break
-        if thumb is None:
-            for n in names:
-                nl = n.lower()
-                if (nl.startswith("metadata/") or nl.startswith("thumbnails/")) and nl.endswith((".png", ".jpg", ".jpeg")):
-                    thumb = _picture(z, n)
-                    break
-
+        thumb = _3mf_picture(z, names)
         gcodes = sorted(n for n in names if re.match(r"(?i)metadata/plate_\d+\.gcode$", n))
 
     if progress:

@@ -68,9 +68,9 @@ def test_off_by_default_and_in_the_viewer_settings(window):
     assert DEFAULTS["show_grid_labels"] is False and not w.grid_labels.enabled
     dlg = SettingsDialog(w.settings, w, {}, page="viewer")
     assert not dlg.grid_labels_cb.isChecked()
-    # next to the "Show build plate grid" checkbox
+    # under the "Show build plate grid" checkbox, after the X/Y/Z arrows on the plate
     layout = dlg.bed_cb.parentWidget().layout()
-    assert layout.indexOf(dlg.grid_labels_cb) == layout.indexOf(dlg.bed_cb) + 1
+    assert layout.indexOf(dlg.grid_labels_cb) == layout.indexOf(dlg.plate_axes_cb) + 1 == layout.indexOf(dlg.bed_cb) + 2
     dlg.grid_labels_cb.setChecked(True)
     dlg._save()
     assert w.settings.get("show_grid_labels") is True
@@ -110,17 +110,21 @@ def test_numbers_sit_on_the_edges_nearest_the_camera(window):
     g = w.grid_labels
     g.set_enabled(True)
     b = w.scene.bed_bounds
-    n_x = len(gl.label_values(b[0], b[1], gl.major_step(b[1] - b[0], b[3] - b[2])))   # X numbers come first
     cx, cy = (b[0] + b[1]) / 2, (b[2] + b[3]) / 2
     cam = w.plotter.renderer.GetActiveCamera()
+
+    def edges():
+        """The X numbers' y and the Y numbers' x (X numbers first, each row from its 0)."""
+        g._layout()
+        zeros = [i for i, (t, _a) in enumerate(g.items) if t == "0 mm"]
+        assert len(zeros) == 2 and zeros[0] == 0              # these corners are not where 0 is
+        xs = [a for t, a in g.items]
+        return {a[1] for a in xs[:zeros[1]]}, {a[0] for a in xs[zeros[1]:]}
+
     cam.SetPosition(cx + 80, cy - 200, b[4] + 150)          # in front, to the right
-    g._layout()
-    assert all(a[1] == b[2] for t, a in g.items[:n_x])      # X numbers along the front edge ...
-    assert all(a[0] == b[1] for t, a in g.items[n_x:])      # ... Y numbers along the right edge
+    assert edges() == ({b[2]}, {b[1]})                      # front edge, right edge
     cam.SetPosition(cx - 80, cy + 300, b[4] + 150)          # from behind, to the left
-    g._layout()
-    assert all(a[1] == b[3] for t, a in g.items[:n_x])      # the other edges now
-    assert all(a[0] == b[0] for t, a in g.items[n_x:])
+    assert edges() == ({b[3]}, {b[0]})                      # the other edges now
 
 
 def test_hidden_from_under_the_plate_and_with_the_plate_hidden(window):
@@ -176,7 +180,7 @@ def test_the_spacing_setting_changes_the_numbers(window, app):
     assert dlg.grid_step_combo.currentData() == 0 and dlg.grid_step_combo.itemData(0) == 0
     assert [dlg.grid_step_combo.itemData(i) for i in range(dlg.grid_step_combo.count())] == [0, 5, 10, 20, 25, 50, 100]
     dlg.grid_labels_cb.setChecked(True)
-    dlg.grid_step_combo.setCurrentIndex(dlg.grid_step_combo.findData(5))
+    dlg.grid_step_combo.setCurrentIndex(dlg.grid_step_combo.findData(5.0))
     dlg._save()
     w._apply_grid_label_settings()                          # what open_settings does after OK
     assert w.settings.get("grid_labels_step") == 5 and g.step == 5

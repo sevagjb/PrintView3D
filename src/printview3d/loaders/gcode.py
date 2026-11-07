@@ -176,6 +176,41 @@ class GcodeData:
 # --------------------------------------------------------------------------
 # Parser
 # --------------------------------------------------------------------------
+def read_thumbnail(path: str, limit: int = 4 * 1024 * 1024) -> Optional[bytes]:
+    """The largest preview picture in a G-code file's header, without reading the toolpath.
+    Slicers write the pictures at the top, so only the first `limit` bytes are read."""
+    with open(path, "rb") as f:
+        head = f.read(limit).decode("utf-8", errors="replace")
+    best: tuple[int, bytes] | None = None
+    word, size, buf = None, 0, []
+    for raw in head.splitlines():
+        sc = raw.find(";")
+        if sc < 0:
+            if word is None and raw.strip():
+                # The first move: the pictures are all above it.
+                if raw.lstrip()[:2] in ("G0", "G1", "G2", "G3"):
+                    break
+            continue
+        c = raw[sc + 1:].strip()
+        if word is not None:
+            if c.lower().startswith(word + " end"):
+                try:
+                    data = base64.b64decode("".join(buf))
+                    if (data[:8] == b"\x89PNG\r\n\x1a\n" or data[:3] == b"\xff\xd8\xff") and (
+                            best is None or size > best[0]):
+                        best = (size, data)
+                except Exception:
+                    pass
+                word, buf = None, []
+            else:
+                buf.append(c)
+            continue
+        m = _THUMB_BEGIN.match(c)
+        if m:
+            word, size, buf = m.group(1).lower(), int(m.group(2)) * int(m.group(3)), []
+    return best[1] if best else None
+
+
 def parse_gcode_file(path: str, progress: Optional[Callable[[float], None]] = None) -> GcodeData:
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = f.read()

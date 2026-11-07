@@ -174,7 +174,7 @@ class HintOverlay:
     """Short instructions in the bottom centre of the 3D view, in the same boxes as the values
     written next to measurements. Several at once are stacked; long ones wrap to the view's width."""
 
-    MARGIN_PX = 18                # from the bottom edge
+    MARGIN_PX = 8                 # from the bottom edge
     GAP_PX = 6                    # between stacked hints
 
     def __init__(self, plotter, request_render=None):
