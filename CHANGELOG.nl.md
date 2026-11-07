@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.29.0
+- **Controleren voor het printen** (`C`, de nieuwe knop **Controleren** tussen Plaat en Weergave):
+  het onderdeel **Model controleren** kleurt wat bij het printen problemen kan geven, met een aantal
+  per controle: **Overhangen** steiler dan een hoek die je kiest (standaard 45°), **Dunne wanden**
+  dunner dan je nozzle (standaard 0,4 mm, op de achtergrond gecontroleerd) en **Meshproblemen**:
+  gaten, verwarde (non-manifold) randen, binnenstebuiten gekeerde vlakken en kleine losse delen. Een
+  rode stip markeert de gevonden problemen, en de kleuren volgen de sneden en de objecten die je
+  verbergt.
+- **Millimeter of inch** (**Instellingen → Taal en eenheden → Lengtes in**): afmetingen, metingen,
+  sneden, het raster en de plaat volgen het allemaal. Bestanden veranderen niet.
+- **Je eigen sneltoetsen** (**Instellingen → Toetsenbord en muis**): geef elke actie van het
+  hoofdvenster een andere toets, of geen. Toetsen die het systeem gebruikt worden geweigerd, met de
+  reden erbij, en **Standaardwaarden herstellen** zet ze allemaal terug. Knoppen en tooltips tonen hun
+  toets, en veranderen mee als je die wijzigt.
+- **Nieuwe toetsen**: `C` Controleren, `V` het onderdeel Weergave, `P` de plaat, `S` Instellingen,
+  `L` snede vastzetten, `D` · `A` · `O` een afstand, hoek of cirkel meten, `K` haalt alle metingen
+  weg, `Ctrl+Shift+S` slaat een schermafbeelding op. **Van boven afsnijden** is nu `T` en
+  **Afsnijden vanaf jouw kant** `Y` (dat waren `C` en `V`); in Instellingen kun je ze terugzetten.
+- **Map openen…** (in het menu **☰**): zet de 3D-bestanden van een map in het zijpaneel; ga erdoor
+  met `↑` / `↓` of een klik. **Openen…** heet nu **Bestand of ZIP openen…**.
+- **Meten in het model**: met een snede aan springt Meten ook naar de omtrek van de snede, zodat je
+  wanden en gaten in het model kunt meten.
+- **Snede vastzetten** (`L`) vervangt *Snijvlak bevriezen*. Zolang de snede vanaf jouw kant niet vastzit,
+  waarschuwt het onderdeel Meten je, want punten die op de snede gemeten zijn blijven achter als de
+  weergave draait.
+- **De sneden in de 3D-weergave slepen** (**Instellingen → Weergave**, standaard uit): elk snijvlak
+  krijgt een ronde greep; sleep eraan en de snede en haar schuif gaan mee.
+- **Het raster**: kies de afstand van de fijne en de hoofdlijnen (of laat het op Automatisch); de
+  schaalgetallen tellen vanaf de linkervoorhoek van de plaat (0), dus geen negatieve getallen meer, en
+  ze volgen de zoom. Nieuw in **Instellingen → Weergave**: **de X-, Y- en Z-as op de printplaat**, en
+  beide snijvlakken heel tekenen als beide sneden aan staan.
+- **Startpagina**: houd de muis boven een recent bestand en je ziet de voorbeeldafbeelding, de naam en
+  de map.
+- **Instellingen**: een tandwielknop in de werkbalk, een knop **Toepassen** die opslaat zonder te
+  sluiten, en het venster opent weer op de pagina die je het laatst gebruikte.
+- **Verder veranderd**: **Passend** (`F`) past alleen de camera aan; **Weergave herstellen** en het
+  sluiten van het onderdeel Weergave zetten ook de weergave-opties uit. De opties van Weergave en
+  Meten zijn aan/uit-knoppen. Tooltips verschijnen sneller en blijven binnen het venster.
+- **Opgelost**: het raster van de plaat dat door het model heen te zien was (uitgezoomd, na
+  Controleren of van onderen gezien); de lijn waar de twee snijvlakken elkaar raken blijft nu binnen
+  de vlakken; een ander bestand openen of **Alles naast elkaar tonen** wist nu metingen en sneden.
+- **Met dank aan [@covrig](https://github.com/covrig)**, die dit allemaal heeft gebouwd in [#80](https://github.com/sevagjb/PrintView3D/pull/80).
+
 ## 0.28.0
 - **Meten** ([#59](https://github.com/sevagjb/PrintView3D/issues/59), `M`, de nieuwe knop naast **Weergave**): **Afstand** (met
   **ΔX ΔY ΔZ tonen** voor de afstand langs elke as), **Hoek** en **Cirkel** (diameter en straal). Een
