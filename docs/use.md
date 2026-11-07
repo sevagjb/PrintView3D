@@ -24,6 +24,8 @@ menu or applications menu, without a file, always opens a new window.
 | **Right-drag** (or middle-drag, or Shift + left-drag) | Move (pan) |
 | **Mouse wheel** | Zoom towards the mouse pointer |
 
+While you turn, move or zoom, the pointer shows it (circling arrows, four arrows, a magnifier), and is the normal arrow again when you let go.
+
 Looking from underneath? The plate gets out of the way so you can see the bottom of the part.
 
 ## Keyboard
@@ -41,8 +43,8 @@ already has. The mouse controls are fixed.
 | `Ctrl+W` | Close the file (back to the start page) |
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
-| `S` | Settings |
-| `Ctrl+Shift+S` | Save a screenshot of the 3D view |
+| `S` | Settings (it stays open beside the main window, which keeps working) |
+| `Ctrl+Shift+S` | Save a screenshot of the 3D view. It asks where, or saves straight to a folder of your choice: **Settings → Files → Screenshots** |
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` | Fit the model in the view |

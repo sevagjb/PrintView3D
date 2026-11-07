@@ -206,7 +206,8 @@ def test_settings_layout(window, app):
     # the Viewer page's dropdowns line up: all as wide as the widest
     widths = {c.width() for c in (dlg.grid_step_combo, dlg.grid_minor_combo, dlg.grid_major_combo, dlg.plate_combo)}
     assert len(widths) == 1
-    assert lay.indexOf(dlg.plate_axes_cb) == lay.indexOf(dlg.bed_cb) + 1
+    plate_lay = dlg.bed_cb.parentWidget().layout()                 # the Build plate box
+    assert plate_lay.indexOf(dlg.plate_axes_cb) == plate_lay.indexOf(dlg.bed_cb) + 1
     assert dlg.plate_axes_cb.text().startswith("Also show")    # in addition to the corner marker
     dlg.close()
 
@@ -313,6 +314,20 @@ def test_highlights_leave_the_grid_where_it_is(window):
     assert (float(f), float(u)) == (0.0, 0.0)
     vtkMapper.GetResolveCoincidentTopologyPolygonOffsetParameters(f, u)
     assert (float(f), float(u)) == (0.0, 0.0)
+
+
+def test_highlights_do_not_show_through_the_model(window):
+    """A highlight's pull towards the camera is constant: no slope part, which grows without limit
+    on faces seen edge-on and showed hidden overhangs (under fingers, lips) through the model."""
+    from vtkmodules.vtkCommonCore import reference
+    w = window
+    w.load_sync(CUBE)
+    w.act_check.trigger()
+    part = w.check.parts[0]
+    w.check._add_faces("check_overhang_0", part, np.ones(len(part.faces), bool), "#ff0000")
+    f, u = reference(1.0), reference(1.0)
+    w.check._actors["check_overhang_0"].GetMapper().GetRelativeCoincidentTopologyPolygonOffsetParameters(f, u)
+    assert float(f) == 0.0 and float(u) < 0.0
 
 
 def test_grid_numbers_count_from_the_plate_corner(window):

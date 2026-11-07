@@ -730,6 +730,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate</source>
         <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
         <translation type="unfinished">Plateau</translation>
@@ -2116,6 +2117,21 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Screenshots</source>
+        <translation type="unfinished">Captures d&apos;écran</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Save screenshots straight to this folder, without asking</source>
+        <translation type="unfinished">Enregistrer les captures directement dans ce dossier, sans demander</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: Screenshot asks where to save each picture. On: it is saved here at once, named after the file and the time.</source>
+        <translation type="unfinished">Désactivé : Capture d&apos;écran demande où enregistrer chaque image. Activé : elle est enregistrée ici aussitôt, nommée d&apos;après le fichier et l&apos;heure.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default program for 3D files</source>
         <translation type="unfinished">Programme par défaut pour les fichiers 3D</translation>
     </message>
@@ -2159,8 +2175,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Viewer</source>
-        <translation type="unfinished">Affichage</translation>
+        <source>Build plate</source>
+        <translation type="unfinished">Plateau</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Other</source>
+        <translation type="unfinished">Autres</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2217,11 +2238,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Main grid lines every</source>
         <translation type="unfinished">Lignes principales tous les</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Build plate</source>
-        <translation type="unfinished">Plateau</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2287,8 +2303,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Remember the colours of the Check section</source>
-        <translation type="unfinished">Retenir les couleurs de la section Vérifier</translation>
+        <source>Remember the colours of the Check section on restart</source>
+        <translation type="unfinished">Retenir les couleurs de la section Vérifier au redémarrage</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2334,6 +2350,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
         <translation type="unfinished">Il semble s&apos;agir de la puce graphique intégrée (plus lente). Cochez la case et redémarrez pour une rotation plus fluide.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Viewer</source>
+        <translation type="unfinished">Affichage</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2515,6 +2536,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not found automatically — use Browse… to select it</source>
         <translation type="unfinished">Introuvable automatiquement — utilisez Parcourir… pour le sélectionner</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Folder for screenshots</source>
+        <translation type="unfinished">Dossier des captures d&apos;écran</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2866,6 +2892,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Remember the colours of the Check section</source>
+        <translation type="vanished">Retenir les couleurs de la section Vérifier</translation>
     </message>
     <message>
         <source>Theme: {name} ({key}: next theme)</source>

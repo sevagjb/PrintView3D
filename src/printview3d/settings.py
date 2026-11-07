@@ -28,6 +28,8 @@ DEFAULTS = {
     "update_skip": "",          # version the user chose to skip
     "new_window": False,         # Settings -> Files: True = every file in its own window
     "export_mode": "dialog",    # Settings -> Files: what a click on Export STL does (EXPORT_MODES)
+    "screenshot_auto": False,   # Settings -> Files: Screenshot saves straight to screenshot_folder (no question)
+    "screenshot_folder": "",    # ... that folder ("" = the Pictures folder)
     "star_prompt_shown": False, # the one-time "star us on GitHub" message (new installs only)
     "start_count": 0,           # how often the main window started (first start: no questions)
     "last_run_version": "",     # version of the last start; "" = new install ("What's new" after updates)

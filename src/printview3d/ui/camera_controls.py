@@ -50,6 +50,67 @@ ANIM_MS = 250                 # length of a smooth view change (0 = jump)
 ANIM_FRAME_MS = 15
 _EPS_STEPS = 1e-3             # "already on a stop" tolerance, in steps (~0.05°)
 
+ZOOM_CURSOR_MS = 350         # the zoom cursor stays this long after the last wheel notch
+
+# The cursor while the mouse works the view: turning (circling arrows), panning (four arrows),
+# zooming (a magnifier). Normal pointing keeps the usual arrow.
+_CURSORS: dict = {}
+
+
+def drawn_cursor(kind: str):
+    """The cursor for "rotate" or "zoom", drawn once: Qt has no such cursors of its own. White
+    with a dark edge, so it shows on the dark and the light themes and over the model."""
+    if kind in _CURSORS:
+        return _CURSORS[kind]
+    from PySide6.QtCore import QPointF, QRectF, Qt
+    from PySide6.QtGui import QColor, QCursor, QGuiApplication, QPainter, QPainterPath, QPen, QPixmap
+    size = 32
+    screen = QGuiApplication.primaryScreen()
+    ratio = screen.devicePixelRatio() if screen is not None else 1.0
+    pm = QPixmap(int(size * ratio), int(size * ratio))
+    pm.setDevicePixelRatio(ratio)
+    pm.fill(Qt.transparent)
+    path = QPainterPath()                 # drawn as lines
+    heads = QPainterPath()                # filled (the arrowheads)
+    if kind == "rotate":
+        # Two arcs round the middle, each ending in an arrowhead: "turn".
+        r = QRectF(6, 6, 20, 20)
+        for start in (20, 200):
+            arc = QPainterPath()
+            arc.arcMoveTo(r, start)
+            arc.arcTo(r, start, 130)
+            path.addPath(arc)
+            end = arc.currentPosition()
+            a = math.radians(start + 130)
+            tangent = QPointF(-math.sin(a), -math.cos(a))        # the way the arc goes on (screen y down)
+            normal = QPointF(math.cos(a), -math.sin(a))
+            tip = end + tangent * 4
+            head = QPainterPath(tip)
+            head.lineTo(end - tangent * 1 + normal * 4)
+            head.lineTo(end - tangent * 1 - normal * 4)
+            head.closeSubpath()
+            heads.addPath(head)
+        hot = (size // 2, size // 2)
+    else:
+        # A magnifier: the glass at the top left is where the zoom goes.
+        path.addEllipse(QRectF(4, 4, 15, 15))
+        path.moveTo(17, 17)
+        path.lineTo(27, 27)
+        hot = (11, 11)
+    painter = QPainter(pm)
+    painter.setRenderHint(QPainter.Antialiasing)
+    for color, width in ((QColor(20, 20, 20, 220), 5.0), (QColor(255, 255, 255), 2.4)):
+        painter.setPen(QPen(color, width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        painter.setBrush(Qt.NoBrush)
+        painter.drawPath(path)
+        painter.setPen(QPen(color, width - 2.0, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        painter.setBrush(color)
+        painter.drawPath(heads)
+    painter.end()
+    _CURSORS[kind] = QCursor(pm, *hot)
+    return _CURSORS[kind]
+
+
 ARROW_STEPS = {"arrow_left": (-1, 0), "arrow_right": (1, 0), "arrow_up": (0, 1), "arrow_down": (0, -1)}
 
 
@@ -139,6 +200,13 @@ class TurntableControls:
         self._press = (0, 0)
         self._dragged = False
         self._tip_part = None
+        self._working = None                    # the cursor shown while turning, panning, zooming
+
+        # The zoom cursor goes back to the normal one when the wheel stops.
+        self._zoom_cursor_timer = QTimer()
+        self._zoom_cursor_timer.setSingleShot(True)
+        self._zoom_cursor_timer.setInterval(ZOOM_CURSOR_MS)
+        self._zoom_cursor_timer.timeout.connect(lambda: self._work_cursor(None))
 
         # Redraw at most once per pass of the Qt event loop.
         self._render_timer = QTimer()
@@ -164,8 +232,8 @@ class TurntableControls:
         s.AddObserver("MiddleButtonReleaseEvent", self._button_up)
         s.AddObserver("MouseMoveEvent", self._move)
         s.AddObserver("LeaveEvent", lambda *_: self.leave())
-        s.AddObserver("MouseWheelForwardEvent", lambda *_: self._zoom(ZOOM_STEP))
-        s.AddObserver("MouseWheelBackwardEvent", lambda *_: self._zoom(1 / ZOOM_STEP))
+        s.AddObserver("MouseWheelForwardEvent", lambda *_: self._wheel(ZOOM_STEP))
+        s.AddObserver("MouseWheelBackwardEvent", lambda *_: self._wheel(1 / ZOOM_STEP))
         # Swallow VTK's own key shortcuts (w = wireframe, e/q = quit, ...)
         s.AddObserver("CharEvent", lambda *_: None)
         s.AddObserver("KeyPressEvent", lambda *_: None)
@@ -404,6 +472,7 @@ class TurntableControls:
             elif self.on_cube_view:
                 self.on_cube_view(part)          # a face name, or "home"
             return
+        self._work_cursor(None)
         if self.on_end:
             self.on_end()
         self._render_timer.stop()
@@ -439,6 +508,8 @@ class TurntableControls:
         self.last = (x, y)
         if dx == 0 and dy == 0:
             return
+        if self.mode in ("rotate", "pan"):
+            self._work_cursor(self.mode)             # moving now: the cursor says how
         if self.mode == "cube":
             if not self._dragged:
                 if abs(x - self._press[0]) + abs(y - self._press[1]) < CLICK_SLOP_PX:
@@ -483,6 +554,35 @@ class TurntableControls:
                 pass
             self._show_tip(part)
             self.request_render()
+
+    def _work_cursor(self, what):
+        """The cursor while the view is turned ("rotate"), panned ("pan") or zoomed ("zoom"); None:
+        back to the normal one for where the mouse is."""
+        if what == self._working:
+            return
+        self._working = what
+        try:
+            from PySide6.QtCore import Qt
+            widget = self.p.interactor
+            if what == "pan":
+                widget.setCursor(Qt.SizeAllCursor)
+            elif what in ("rotate", "zoom"):
+                widget.setCursor(drawn_cursor(what))
+            elif self.clip_handles is not None and self.clip_handles.hover:
+                self._set_cursor("knob")
+            elif self.cube is not None and self.cube.hover is not None:
+                widget.setCursor(Qt.SizeHorCursor if self.cube.hover == "ring" else Qt.PointingHandCursor)
+            else:
+                self._set_cursor(None)
+        except Exception:   # noqa: BLE001 - no Qt widget (tests)
+            pass
+
+    def _wheel(self, factor):
+        """A wheel notch: zoom, with the zoom cursor until the wheel stops (not during a drag)."""
+        if self.mode is None:
+            self._work_cursor("zoom")
+            self._zoom_cursor_timer.start()
+        self._zoom(factor)
 
     def _set_cursor(self, what):
         """The 3D view's cursor: "knob" over a cut's knob, "drag" while moving one, otherwise
