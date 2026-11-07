@@ -476,6 +476,8 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QLabel#thumbnail {{ background: {t['thumb']}; border-radius: 6px; padding: 6px; }}
         QPushButton {{ padding: 5px 12px; border-radius: 5px; background: {t['button']}; border: 1px solid {t['button_border']}; }}
         QPushButton:hover {{ background: {t['button_hover']}; }}
+        QPushButton:checked {{ background: {t['tool_checked']}; border: 1px solid {t['accent']}; }}
+        QLabel#cutNote {{ color: {t['muted']}; font-size: 12px; }}
         QPushButton#primary {{ background: {primary}; border: none; color: white; font-weight: 600; }}
         QPushButton#primary:hover {{ background: {primary_hover}; }}
         QPushButton#link {{ color: {t['link']}; border: none; background: transparent; }}

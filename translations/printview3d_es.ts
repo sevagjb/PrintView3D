@@ -218,6 +218,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">Bloquear el corte de frente: deja de girar con la vista (modelos)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Reset view: all of the above off, model fitted (models)</source>
         <translation type="unfinished">Restablecer la vista: todo lo anterior desactivado, modelo ajustado (modelos)</translation>
     </message>
@@ -899,14 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation type="unfinished">Congelar el plano de corte</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Bloquear corte de frente</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation type="unfinished">Mantiene fijo el corte «Cortar desde tu lado», para que puedas girar y mover el modelo sin que el corte gire con él.</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">El corte de frente deja de girar con la vista, así puedes girar el modelo y mirar el corte desde cualquier lado. Su control deslizante sigue moviéndolo.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1482,6 +1486,21 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation type="unfinished">Círculo (diámetro, radio)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="unfinished">El corte de frente gira con la vista: los puntos colocados en el corte se quedan donde están y el corte sigue moviéndose.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="unfinished">Bloquea el corte de frente ({key}) para medir sobre él.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="unfinished">Bloquea el corte de frente para medir sobre él.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2811,6 +2830,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">Congelar el plano de corte</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">Mantiene fijo el corte «Cortar desde tu lado», para que puedas girar y mover el modelo sin que el corte gire con él.</translation>
     </message>
     <message>
         <source>Theme: {name} (Ctrl+T: next theme)</source>

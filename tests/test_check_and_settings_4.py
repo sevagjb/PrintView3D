@@ -164,6 +164,15 @@ def test_numbers_follow_the_zoom(window):
     w.set_view("top")
     cam.Zoom(4.0)                                                # close to the 20 mm cube
     near = step()
-    cam.Zoom(0.1)                                                # far away
-    far = step()
+    # Zoom out in small steps until the spacing grows. A single fixed zoom would depend on how
+    # wide "60 mm" is in the system's font (it differs between Windows, macOS and Linux),
+    # and zooming much further leaves only the 0 on the plate.
+    far = near
+    for _ in range(20):
+        cam.Zoom(0.8)
+        s = step()
+        assert s >= far - 1e-6                                   # never finer while zooming out
+        far = s
+        if far > near:
+            break
     assert near >= minor - 1e-6 and far > near

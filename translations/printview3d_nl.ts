@@ -218,6 +218,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">Snede naar je toe vastzetten: hij draait niet meer mee met de weergave (modellen)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Reset view: all of the above off, model fitted (models)</source>
         <translation>Weergave herstellen: alles hierboven uit, model passend (modellen)</translation>
     </message>
@@ -899,14 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation>Snijvlak bevriezen</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Snede vastzetten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation>Houdt de snede „Afsnijden vanaf jouw kant” op zijn plaats, zodat je het model kunt draaien en verschuiven zonder dat de snede meedraait.</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">De snede naar je toe draait niet meer mee met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken. De schuifregelaar verplaatst hem nog steeds.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1482,6 +1486,21 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation>Cirkel (diameter, straal)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="unfinished">De snede naar je toe draait mee met de weergave: punten op de snede blijven staan en de snede beweegt verder.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="unfinished">Zet de snede vast ({key}) om erop te meten.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="unfinished">Zet de snede vast om erop te meten.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2811,6 +2830,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">Snijvlak bevriezen</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">Houdt de snede „Afsnijden vanaf jouw kant” op zijn plaats, zodat je het model kunt draaien en verschuiven zonder dat de snede meedraait.</translation>
     </message>
     <message>
         <source>Theme: {name} (Ctrl+T: next theme)</source>

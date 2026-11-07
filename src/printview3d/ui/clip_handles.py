@@ -1,7 +1,9 @@
 """Handles to move the cuts of View -> Clip by dragging them in the 3D view.
 
 An option (Settings -> Viewer, off by default). While a cut is on, it gets a handle: a round knob
-on the edge of its cutting plane, with a short line through it that shows which way it moves.
+on the edge of its cutting plane, with a short line through it that shows which way it moves. The
+knob is a disc in the cutting plane's colour with a ring in the text colour; under the mouse (and
+while dragged) the two swap and it grows a little, so it always changes, whatever the theme.
 
   * Clip from the top: the knob sits on the edge of the flat cut, at the side of the model that is
     furthest right on the screen (never in the part Clip facing you takes away). Dragging it moves
@@ -16,7 +18,9 @@ scale of the model under the mouse.
 
 The handles only report the new position (on_drag); the main window moves the cut's slider, so
 the slider, the numbers under it and the 3D view stay one and the same thing. The knobs are drawn
-in a renderer of their own above the model (layer 2, the main camera), so they are never hidden.
+in renderers of their own above the model (the main camera), so they are never hidden: the line
+and the rings in layer 2, the discs in layer 3 (each layer starts with a clean depth buffer, so a
+ring's round front never hides the disc inside it).
 """
 
 from __future__ import annotations
@@ -30,11 +34,13 @@ from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkPolyData
 from vtkmodules.vtkRenderingCore import vtkActor, vtkPolyDataMapper, vtkRenderer
 
 CUTS = ("top", "face")
-KNOB_PX = 16                  # the knob's size on the screen
-KNOB_HOVER_PX = 20            # ... with the mouse over it
-GRAB_PX = 14                  # a press this close to a knob takes it
-AXIS_PX = 34                  # the line through the knob reaches this far on the screen, each way
-AXIS_WIDTH = 3
+KNOB_PX = 10                  # the knob's size on the screen (its disc) ...
+KNOB_HOVER_PX = 12            # ... with the mouse over it, or while it is dragged
+RING_PX = 2                   # the ring around the disc
+GRAB_PX = 12                  # a press this close to a knob takes it
+AXIS_PX = 20                  # the line through the knob reaches this far on the screen, each way
+AXIS_WIDTH = 2
+AXIS_OPACITY = 0.75
 MIN_SCREEN_SHARE = 0.3        # the direction a cut moves in, seen on the screen, shorter than this
                               # share of what it would be seen side-on: dragging up moves it instead
 
@@ -60,14 +66,14 @@ class ClipHandles:
         self._drag = None                   # (cut, value at the press, press x/y, px per mm, screen dir)
         self._knobs: dict = {}              # cut -> (knob, axis direction) in world coordinates
         self._ren: Optional[vtkRenderer] = None
-        self._poly = self._axis_poly = None
-        self._knob_actor = self._lit_actor = self._axis_actor = None
-        self._lit_poly = None
+        self._ren_top: Optional[vtkRenderer] = None
+        self._axis_poly = self._axis_actor = None
+        self._discs: dict = {}              # (lit?, "disc"/"ring") -> (poly, actor)
         self._hidden = False                # for a moment (screenshots)
+        self._rgb = (47, 164, 160)          # the cutting plane's colour ...
+        self._ring_rgb = (230, 230, 230)    # ... and the text colour: set_colors() follows the theme
         self._ensure_overlay()              # its hook places the knobs before every frame
-        self._ren.SetDraw(False)
-        self._rgb = (20, 115, 106)
-        self._hover_rgb = (44, 193, 178)
+        self._set_draw(False)
 
     # ------------------------------------------------------------ on / off, colours
     def set_enabled(self, on: bool):
@@ -78,10 +84,21 @@ class ClipHandles:
         self.refresh()
 
     def set_colors(self, t: dict):
-        """The cutting planes' colour (accent ink); the knob under the mouse in the main colour."""
-        self._rgb = _rgb(t.get("accent_ink", "#14736a"))
-        self._hover_rgb = _rgb(t.get("primary", "#2cc1b2"))
+        """The cutting planes' colour (accent ink) for the disc and the line, the text colour (light
+        on dark themes, dark on light ones) for the ring."""
+        self._rgb = _rgb(t.get("accent_ink", "#2fa4a0"))
+        self._ring_rgb = _rgb(t.get("text", "#e6e6e6"))
         self.refresh()
+
+    def colors_of(self, cut: str) -> tuple:
+        """(disc, ring) colour of a knob as it is drawn now: swapped while it is lit."""
+        lit = cut == (self.dragging or self.hover)
+        return (self._ring_rgb, self._rgb) if lit else (self._rgb, self._ring_rgb)
+
+    def _set_draw(self, on: bool):
+        for ren in (self._ren, self._ren_top):
+            if ren is not None:
+                ren.SetDraw(bool(on))
 
     def refresh(self):
         """Draw the knobs where the cuts are now (also runs before every frame)."""
@@ -103,11 +120,10 @@ class ClipHandles:
         cuts = self.get_cuts() if self.enabled else {}
         b = self._bounds()
         if not cuts or not b:
-            if self._ren is not None:
-                self._ren.SetDraw(False)
+            self._set_draw(False)
             return
         self._ensure_overlay()
-        self._ren.SetDraw(not self._hidden)
+        self._set_draw(not self._hidden)
         pad = max(2.0, 0.04 * max(b[1] - b[0], b[3] - b[2], b[5] - b[4]))
         face = self.scene.face_plane() if "face" in cuts else None
         if "top" in cuts:
@@ -224,17 +240,24 @@ class ClipHandles:
             return
         win = self.p.ren_win
         main = self.p.renderer
-        ren = vtkRenderer()
-        ren.SetLayer(2)
-        ren.InteractiveOff()
-        if win.GetNumberOfLayers() < 3:
-            win.SetNumberOfLayers(3)
-        win.AddRenderer(ren)
-        ren.SetActiveCamera(main.GetActiveCamera())
+        if win.GetNumberOfLayers() < 4:
+            win.SetNumberOfLayers(4)
+        ren, top = vtkRenderer(), vtkRenderer()
+        for r, layer in ((ren, 2), (top, 3)):
+            r.SetLayer(layer)
+            r.InteractiveOff()
+            win.AddRenderer(r)
+            r.SetActiveCamera(main.GetActiveCamera())
+        self._ren, self._ren_top = ren, top
+
+        def follow(*_):
+            ren.SetActiveCamera(main.GetActiveCamera())
+            top.SetActiveCamera(main.GetActiveCamera())
+            self.refresh()
+
         # The cuts follow the view (Clip facing you) and the knob of the flat cut changes sides as
         # the view turns: place them before every frame, through the main view's camera.
-        main.AddObserver("StartEvent", lambda *_: (ren.SetActiveCamera(main.GetActiveCamera()), self.refresh()))
-        self._ren = ren
+        main.AddObserver("StartEvent", follow)
 
         self._axis_poly = vtkPolyData()
         am = vtkPolyDataMapper()
@@ -243,28 +266,26 @@ class ClipHandles:
         self._axis_actor = vtkActor()
         self._axis_actor.SetMapper(am)
         ap = self._axis_actor.GetProperty()
-        ap.SetLineWidth(AXIS_WIDTH)
         ap.SetRenderLinesAsTubes(True)
+        ap.SetOpacity(AXIS_OPACITY)
         ap.LightingOff()
         self._axis_actor.PickableOff()
         ren.AddActor(self._axis_actor)
 
-        def knob_actor(poly):
-            km = vtkPolyDataMapper()
-            km.SetInputData(poly)
-            km.SetColorModeToDirectScalars()
-            a = vtkActor()
-            a.SetMapper(km)
-            kp = a.GetProperty()
-            kp.SetRenderPointsAsSpheres(True)
-            kp.LightingOff()
-            a.PickableOff()
-            ren.AddActor(a)
-            return a
-
-        self._poly, self._lit_poly = vtkPolyData(), vtkPolyData()
-        self._knob_actor = knob_actor(self._poly)
-        self._lit_actor = knob_actor(self._lit_poly)          # the one under the mouse: bigger
+        for lit in (False, True):
+            for part, r in (("ring", ren), ("disc", top)):
+                poly = vtkPolyData()
+                m = vtkPolyDataMapper()
+                m.SetInputData(poly)
+                m.SetColorModeToDirectScalars()
+                a = vtkActor()
+                a.SetMapper(m)
+                prop = a.GetProperty()
+                prop.SetRenderPointsAsSpheres(True)
+                prop.LightingOff()
+                a.PickableOff()
+                r.AddActor(a)
+                self._discs[(lit, part)] = (poly, a)
 
     @staticmethod
     def _points(poly, points: list, rgb: tuple):
@@ -281,18 +302,24 @@ class ClipHandles:
         poly.Modified()
 
     def _draw(self):
+        scale = self._scale()
+        lit = self.dragging or self.hover
+        for is_lit in (False, True):
+            knobs = [k for c, (k, _) in self._knobs.items() if (c == lit) == is_lit]
+            disc, ring = (self._ring_rgb, self._rgb) if is_lit else (self._rgb, self._ring_rgb)
+            size = KNOB_HOVER_PX if is_lit else KNOB_PX
+            for part, rgb, px in (("disc", disc, size), ("ring", ring, size + 2 * RING_PX)):
+                poly, actor = self._discs[(is_lit, part)]
+                self._points(poly, knobs, rgb)
+                actor.GetProperty().SetPointSize(px * scale)
         lpts, lcolors, lines = vtkPoints(), vtkUnsignedCharArray(), vtkCellArray()
         lcolors.SetNumberOfComponents(3)
-        lit = self.dragging or self.hover
-        self._points(self._poly, [k for c, (k, _) in self._knobs.items() if c != lit], self._rgb)
-        self._points(self._lit_poly, [k for c, (k, _) in self._knobs.items() if c == lit], self._hover_rgb)
         for cut, (knob, axis) in self._knobs.items():
-            rgb = self._hover_rgb if cut == lit else self._rgb
-            reach = AXIS_PX * self._scale() * self._world_per_px(knob)
+            reach = AXIS_PX * scale * self._world_per_px(knob)
             i = lpts.GetNumberOfPoints()
             for p in (knob - axis * reach, knob + axis * reach):
                 lpts.InsertNextPoint(*p)
-                lcolors.InsertNextTuple3(*rgb)
+                lcolors.InsertNextTuple3(*self._rgb)
             lines.InsertNextCell(2)
             lines.InsertCellPoint(i)
             lines.InsertCellPoint(i + 1)
@@ -300,12 +327,9 @@ class ClipHandles:
         self._axis_poly.SetLines(lines)
         self._axis_poly.GetPointData().SetScalars(lcolors)
         self._axis_poly.Modified()
-        self._knob_actor.GetProperty().SetPointSize(KNOB_PX * self._scale())
-        self._lit_actor.GetProperty().SetPointSize(KNOB_HOVER_PX * self._scale())
-        self._axis_actor.GetProperty().SetLineWidth(AXIS_WIDTH * self._scale())
+        self._axis_actor.GetProperty().SetLineWidth(AXIS_WIDTH * scale)
 
     def set_visible(self, on: bool):
         """Hide the knobs for a moment (screenshots) and show them again."""
         self._hidden = not on
-        if self._ren is not None:
-            self._ren.SetDraw(bool(on) and bool(self._knobs))
+        self._set_draw(bool(on) and bool(self._knobs))

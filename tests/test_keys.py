@@ -214,9 +214,10 @@ def test_recent_file_preview_card_stays_in_one_place(app, window, tmp_path):
         assert card.folder.text().replace("\u200b", "") == os.path.dirname(os.path.abspath(p))
         places.append((card.geometry().getRect(), card.picture.geometry().getRect()))
     assert len(set(places)) == 1                               # same place, same size, every file
-    # Right of the list, not over it.
-    right = max(b.mapTo(w.welcome_page, b.rect().topRight()).x() for b in buttons.values())
-    assert card.x() > right
+    # In the start page's bottom right corner.
+    page = w.welcome_page
+    assert page.width() - card.geometry().right() - 1 == mw.PREVIEW_MARGIN
+    assert page.height() - card.geometry().bottom() - 1 == mw.PREVIEW_MARGIN
     w._recent_hover(None)
     assert card.isHidden()
 

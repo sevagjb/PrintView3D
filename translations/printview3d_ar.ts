@@ -218,6 +218,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">تثبيت القطع المواجه: يتوقف عن الدوران مع العرض (النماذج)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Reset view: all of the above off, model fitted (models)</source>
         <translation>إعادة ضبط العرض: إيقاف كل ما سبق وملاءمة النموذج (النماذج)</translation>
     </message>
@@ -899,14 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation>تجميد مستوى القطع</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">تثبيت القطع المواجه</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation>يُبقي «القطع المواجه لك» في مكانه، حتى تتمكن من تدوير النموذج وتحريكه دون أن يدور القطع معه.</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">يتوقف القطع المواجه عن الدوران مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة. يبقى شريط التمرير يحرّكه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1482,6 +1486,21 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation>الدائرة (القطر، نصف القطر)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="unfinished">القطع المواجه يدور مع العرض: النقاط الموضوعة على القطع تبقى مكانها والقطع يتحرك.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="unfinished">ثبّت القطع المواجه ({key}) للقياس عليه.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="unfinished">ثبّت القطع المواجه للقياس عليه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2811,6 +2830,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">تجميد مستوى القطع</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">يُبقي «القطع المواجه لك» في مكانه، حتى تتمكن من تدوير النموذج وتحريكه دون أن يدور القطع معه.</translation>
     </message>
     <message>
         <source>Theme: {name} (Ctrl+T: next theme)</source>

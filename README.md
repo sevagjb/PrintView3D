@@ -247,7 +247,7 @@ into Applications to replace the old one. Older Macs that can't run macOS 14:
 your recent files. It also gives back the memory the file took, which matters most after a large
 G-code or ZIP.
 
-On the start page, hold the mouse over a recent file and a card next to the list shows its preview
+On the start page, hold the mouse over a recent file and a card in the bottom right corner shows its preview
 picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
 The card stays in the same place for every file, so you can run down the list and compare.
 
@@ -291,6 +291,7 @@ already has. The mouse controls are fixed.
 | `P` | Build plate on / off |
 | `C` · `V` | Check section · View section, on / off (models) |
 | `W` · `X` · `T` · `Y` | Wireframe · X-ray · Clip from the top · Clip facing you, on / off (models) |
+| `L` | Lock the facing cut: it stops turning with the view (models) |
 | `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (on G-code: fit) |
 | `M` | Measure on / off (models) |
 | `D` · `A` · `O` | Measure a distance · an angle · a circle |
@@ -314,8 +315,10 @@ and the other model formats; G-code has its layer slider instead):
   in front of it. Turn the view and the model turns through the cut; move (pan) the view and it
   slides across, as if you held the model up to a scanner. For a cut from the front or the side,
   click that face on the view cube. The slider moves the cut nearer or further, and **Depth**
-  shows how far it is into the model. **Freeze the cutting plane** keeps the cut where it is
-  while you turn and move the model.
+  shows how far it is into the model. **Lock facing cut** (`L`, the button left of Reset view)
+  stops the cut turning with the view, so you can turn the model and look at the cut from the side;
+  the slider still moves it. While the cut is not locked, the Measure section reminds you that
+  points placed on the cut stay behind when the view turns.
 - **Both cuts at once**: `T` and `Y` each turn their own cut on and off, so both can be on together
   for a corner cut away, with a **Height** and a **Depth** slider in the side panel. What the cuts
   hide stays one even ghost, and each cutting plane stops where the other cut is. **Reset view**
@@ -326,8 +329,9 @@ and the other model formats; G-code has its layer slider instead):
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
 - **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Move the cuts by
-  dragging them in the 3D view** and each cut gets a round handle on the edge of its cutting plane,
-  with a short line showing which way it moves. Drag it to move the cut; its slider moves along.
+  dragging them in the 3D view** and each cut gets a small round handle on the edge of its cutting
+  plane, with a short line showing which way it moves. Under the mouse its colours swap. Drag it
+  to move the cut; its slider moves along.
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
   Measurements stay.
 

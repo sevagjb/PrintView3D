@@ -308,3 +308,54 @@ def test_screenshot_has_a_key(window):
     assert w.act_screenshot in w.actions()                   # works wherever the focus is
     key = QKeySequence("Ctrl+Shift+S").toString(QKeySequence.NativeText)
     assert w.act_screenshot.toolTip() == f"Screenshot ({key})"
+
+
+def test_a_lit_knob_looks_different_in_every_theme(window_knobs):
+    from printview3d.ui import theme
+    w = window_knobs
+    _cube(w)
+    w.act_clip.setChecked(True)
+    h = w.clip_handles
+    for style in theme.STYLES:
+        for mode in ("light", "dark"):
+            h.set_colors(theme.colors(theme.theme_for(style, mode)))
+            h.set_hover(None)
+            normal = h.colors_of("top")
+            h.set_hover("top")
+            lit = h.colors_of("top")
+            assert lit != normal and lit[0] != normal[0], (style, mode)
+            assert normal[0] != normal[1]                       # the ring shows against the disc
+
+
+# ------------------------------------------------------------ lock the facing cut
+def test_lock_key_and_button_are_one(window):
+    from PySide6.QtGui import QKeySequence
+    w = window
+    _cube(w)
+    assert w.act_lock_face.shortcut() == QKeySequence("L") and w.act_lock_face in w.actions()
+    w.act_clip_face.setChecked(True)
+    assert w.view_lock_btn.isVisible()
+    w.act_lock_face.trigger()                                # the key
+    assert w.view_lock_btn.isChecked() and w.scene.freeze_face
+    w.view_lock_btn.click()                                  # the button
+    assert not w.act_lock_face.isChecked() and not w.scene.freeze_face
+    w.act_clip_face.setChecked(False)
+    assert w.view_lock_btn.isHidden()
+
+
+def test_measure_warns_while_the_facing_cut_turns(window):
+    w = window
+    _cube(w)
+    note = w.measure_cut_note
+    w.choose_measure_mode("distance")
+    assert note.isHidden()                                   # no cut
+    w.act_clip.setChecked(True)
+    assert note.isHidden()                                   # the flat cut never turns
+    w.act_clip_face.setChecked(True)
+    assert note.isVisible() and "Lock the facing cut (L)" in note.text()
+    w.act_lock_face.setChecked(True)
+    assert note.isHidden()
+    w.act_lock_face.setChecked(False)
+    assert note.isVisible()
+    w.act_measure.setChecked(False)
+    assert note.isHidden()                                   # Measure off

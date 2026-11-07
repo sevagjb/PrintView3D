@@ -145,7 +145,7 @@ def _plate_name(member: str) -> str:
 
 
 PREVIEW_PX = 200                    # the picture of a recent file on the start page: a box this big
-PREVIEW_GAP = 28                    # space between the list of recent files and the preview card
+PREVIEW_MARGIN = 16                 # the preview card's distance from the start page's bottom right corner
 PREVIEW_NAME_LINES = 2              # the card's file name and folder get this many lines at most,
 PREVIEW_FOLDER_LINES = 4            # so the card is always the same size
 _recent_pics: dict[tuple[str, float], Optional[QImage]] = {}
@@ -906,13 +906,17 @@ class MainWindow(QMainWindow):
         # (#70); each has its own key (T and Y by default).
         self.act_clip_face = QAction(self, checkable=True)
         self.act_clip_face.toggled.connect(self.set_clip_face_on)
+        # Lock the facing cut: Clip facing you stops turning with the view (a button in the View
+        # section, next to Reset view, and its key).
+        self.act_lock_face = QAction(self, checkable=True)
+        self.act_lock_face.toggled.connect(self.set_cut_frozen)
         # Reset view (#66): all of the above off and the model fitted, in one go.
         self.act_reset_view = QAction(self, triggered=self.reset_view)
         # Measure: distances, angles and circles on the model; a click places a point.
         self.act_measure = QAction(self, checkable=True)
         self.act_measure.toggled.connect(self.set_measure_on)
-        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_reset_view,
-                  self.act_measure, self.act_bed):
+        for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face, self.act_lock_face,
+                  self.act_reset_view, self.act_measure, self.act_bed):
             self.addAction(a)                   # the shortcuts work wherever the focus is
         # The View and Measure buttons are switches: each opens its own section in the side panel
         # (View: how the model is drawn and cut; Measure: distances, angles and circles).
@@ -1331,19 +1335,23 @@ class MainWindow(QMainWindow):
         self.clip_plane_cb.setChecked(bool(self.settings.get("clip_plane", True)))
         self.clip_plane_cb.toggled.connect(self.set_clip_plane)
         cl.addWidget(self.clip_plane_cb)
-        # Freezes the "Clip facing you" cut where it is, so you can turn and move the model
-        # without the cut turning along (Clip from the top never moves).
-        self.view_freeze_cb = QCheckBox()
-        self.view_freeze_cb.toggled.connect(self.set_cut_frozen)
-        cl.addWidget(self.view_freeze_cb)
         self.clip_box.hide()
         vl.addWidget(self.clip_box)
 
         vrow = QHBoxLayout()
+        # Locks the "Clip facing you" cut where it is, so you can turn and move the model without
+        # the cut turning along (Clip from the top never turns). Shown while that cut is on, at the
+        # left of the row, under the checkboxes; a button like Reset view, lit while on.
+        self.view_lock_btn = QPushButton()
+        self.view_lock_btn.setCheckable(True)
+        self.view_lock_btn.toggled.connect(self.act_lock_face.setChecked)
+        self.act_lock_face.toggled.connect(self.view_lock_btn.setChecked)
+        self.view_lock_btn.hide()
         self.view_reset_btn = QPushButton()
         self.view_reset_btn.clicked.connect(self.reset_view)
         self.view_close_btn = QPushButton()
         self.view_close_btn.clicked.connect(lambda: self.act_view.setChecked(False))
+        vrow.addWidget(self.view_lock_btn)
         vrow.addStretch(1)
         vrow.addWidget(self.view_reset_btn)
         vrow.addWidget(self.view_close_btn)
@@ -1375,6 +1383,14 @@ class MainWindow(QMainWindow):
         # Side by side while they fit, one under the other in a narrow panel.
         self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb])
         ml.addWidget(self.measure_opts)
+        # While Clip facing you turns with the view, a point placed on its cut stays where it was
+        # put when the view turns: the cut moves on and the point hangs in the air. Said here,
+        # only while that is so.
+        self.measure_cut_note = QLabel()
+        self.measure_cut_note.setObjectName("cutNote")
+        self.measure_cut_note.setWordWrap(True)
+        self.measure_cut_note.hide()
+        ml.addWidget(self.measure_cut_note)
         mrow = QHBoxLayout()
         self.measure_clear_btn = QPushButton()
         self.measure_clear_btn.clicked.connect(self._measure_clear)
@@ -1586,7 +1602,7 @@ class MainWindow(QMainWindow):
             "front": short(view_acts["front"].trigger), "right": short(view_acts["right"].trigger),
             "plate": self.act_bed, "check": self.act_check, "view": self.act_view,
             "wireframe": self.act_wireframe, "xray": self.act_xray, "clip_top": self.act_clip,
-            "clip_face": self.act_clip_face, "reset_view": self.act_reset_view,
+            "clip_face": self.act_clip_face, "lock_face": self.act_lock_face, "reset_view": self.act_reset_view,
             "measure": self.act_measure, "distance": self.measure_actions["distance"],
             "angle": self.measure_actions["angle"], "circle": self.measure_actions["circle"],
             # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.
@@ -1718,9 +1734,11 @@ class MainWindow(QMainWindow):
         self.view_reset_btn.setText(self._with_key(tr("Reset view"), "reset_view"))
         self.view_reset_btn.setToolTip(self._with_key(tr("Reset view"), "reset_view"))
         self.view_close_btn.setText(tr("Close"))
-        self.view_freeze_cb.setText(tr("Freeze the cutting plane"))
-        self.view_freeze_cb.setToolTip(tr("Keeps the cut of Clip facing you where it is, so you can turn and "
-                                          "move the model without the cut turning along."))
+        self.view_lock_btn.setText(self._with_key(tr("Lock facing cut"), "lock_face"))
+        self.view_lock_btn.setToolTip(self._with_key(
+            tr("Clip facing you stops turning with the view, so you can turn the model and look at the cut "
+               "from any side. Its slider still moves it."), "lock_face"))
+        self.act_lock_face.setText(self.view_lock_btn.text())
         self._retitle_clip_box()
         self.clip_ghost_cb.setText(tr("Show the cut-away part"))
         self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost."))
@@ -2451,7 +2469,7 @@ class MainWindow(QMainWindow):
         for a in (self.act_clip, self.act_clip_face):
             if a.isChecked():
                 a.setChecked(False)
-        self.view_freeze_cb.setChecked(False)
+        self.act_lock_face.setChecked(False)
 
         if isinstance(data, GcodeData):
             self.model = None
@@ -3111,7 +3129,7 @@ class MainWindow(QMainWindow):
         for a in (self.act_wireframe, self.act_xray, self.act_clip, self.act_clip_face):
             if a.isChecked():
                 a.setChecked(False)
-        self.view_freeze_cb.setChecked(False)
+        self.act_lock_face.setChecked(False)
 
     def _open_view_section(self):
         """A view option was turned on (also by its key): its section opens, so Close can end it."""
@@ -3121,6 +3139,7 @@ class MainWindow(QMainWindow):
     def set_cut_frozen(self, on: bool):
         """View section: freeze the Clip facing you cut where it is (the other cut never moves)."""
         self.scene.set_face_frozen(on)
+        self._update_measure_cut_note()
         if self.stack.currentIndex() == 1:
             self.plotter.render()
 
@@ -3275,6 +3294,22 @@ class MainWindow(QMainWindow):
             return
         self.measure_clear_btn.setEnabled(self.measure.has_items)
         self._update_hints()
+        self._update_measure_cut_note()
+
+    def _update_measure_cut_note(self):
+        """Measure section: while Clip facing you is on and not locked, say that a point placed on
+        its cut stays behind when the view turns, and how to lock the cut."""
+        if not hasattr(self, "measure_cut_note") or not hasattr(self, "measure"):
+            return
+        show = (self.measure.active and "face" in self._clip_cuts() and not self.act_lock_face.isChecked())
+        if show:
+            key = self._k("lock_face")
+            text = tr("Clip facing you turns with the view: points placed on the cut stay where they "
+                      "are and the cut moves on.")
+            text += " " + (tr("Lock the facing cut ({key}) to measure on it.").format(key=key) if key
+                           else tr("Lock the facing cut to measure on it."))
+            self.measure_cut_note.setText(text)
+        self.measure_cut_note.setVisible(show)
 
     def _update_hints(self):
         """The instructions in the bottom centre of the 3D view: how to use Clip facing you while
@@ -3349,8 +3384,9 @@ class MainWindow(QMainWindow):
         cuts = self._clip_cuts()
         self.clip_top_row.setVisible("top" in cuts)
         self.clip_face_row.setVisible("face" in cuts)
-        self.view_freeze_cb.setVisible("face" in cuts)
+        self.view_lock_btn.setVisible("face" in cuts)
         self._update_hints()
+        self._update_measure_cut_note()
 
     def _clip_offset(self, value: int) -> Optional[float]:
         """Clip facing you: the slider's middle is the centre of the view."""
@@ -3971,26 +4007,12 @@ class MainWindow(QMainWindow):
         card.raise_()
 
     def _place_recent_preview(self):
-        """The card goes to the right of the list of recent files, its top level with the list's
-        heading: the same place for every file of the list. Without room on the right it goes
-        to the left, and with room on neither side to the right edge of the page."""
+        """The card sits in the bottom right corner of the start page, the same place for every
+        file and every list, away from the list and the Open button."""
         card, page = self.recent_preview, self.welcome_page
-        page.layout().activate()                     # the list just made: its places are known
-        items = [self.welcome_recent.itemAt(i).widget() for i in range(self.welcome_recent.count())]
-        items = [w for w in items if w is not None]
-        buttons = [w for w in items if isinstance(w, _RecentButton)]
-        if not buttons:
-            return
-        left = min(b.mapTo(page, b.rect().topLeft()).x() for b in buttons)
-        right = max(b.mapTo(page, b.rect().topRight()).x() for b in buttons)
-        top = items[0].mapTo(page, items[0].rect().topLeft()).y()
-        margin = 12
-        x = right + PREVIEW_GAP
-        if x + card.width() > page.width() - margin:
-            x = left - PREVIEW_GAP - card.width()
-            if x < margin:
-                x = page.width() - margin - card.width()
-        y = max(margin, min(top, page.height() - margin - card.height()))
+        card.adjustSize()
+        x = max(PREVIEW_MARGIN, page.width() - PREVIEW_MARGIN - card.width())
+        y = max(PREVIEW_MARGIN, page.height() - PREVIEW_MARGIN - card.height())
         card.move(x, y)
 
     def _clear_recent(self):

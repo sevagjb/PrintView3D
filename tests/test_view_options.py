@@ -100,9 +100,16 @@ def test_the_clip_controls_live_in_the_view_section_and_open_it(window):
     w.act_clip_face.trigger()                                             # V with the section closed
     assert w.view_box.isVisible() and w.act_view.isChecked()              # opens it
     assert w.view_box.isAncestorOf(w.clip_box) and w.clip_box.isVisible()
-    # the freeze checkbox is under the other two (cut-away part, cutting plane)
-    ys = [cb.mapTo(w.view_box, cb.rect().topLeft()).y() for cb in (w.clip_ghost_cb, w.clip_plane_cb, w.view_freeze_cb)]
-    assert ys == sorted(ys) and len(set(ys)) == 3
+    # the two checkboxes (cut-away part, cutting plane), then the lock button: under them, at their
+    # left, in the row of Reset view and as tall as it
+    from PySide6.QtCore import QPoint
+    at = {b: b.mapTo(w.view_box, QPoint(0, 0)) for b in (w.clip_ghost_cb, w.clip_plane_cb, w.view_lock_btn,
+                                                          w.view_reset_btn)}
+    assert at[w.clip_ghost_cb].y() < at[w.clip_plane_cb].y() < at[w.view_lock_btn].y()
+    assert at[w.view_lock_btn].x() == at[w.clip_ghost_cb].x()
+    assert at[w.view_lock_btn].y() + w.view_lock_btn.height() == at[w.view_reset_btn].y() + w.view_reset_btn.height()
+    assert w.view_lock_btn.height() == w.view_reset_btn.height()
+    assert w.view_lock_btn.text() == "Lock facing cut (L)"
     w.act_clip_face.trigger()
     assert w.clip_box.isHidden()                                          # no cut: no cut controls
 
@@ -341,9 +348,9 @@ def test_both_cuts_and_the_freeze_go_when_another_file_opens(window):
     w.load_sync(INSIDE)
     w.act_clip.trigger()
     w.act_clip_face.trigger()
-    w.view_freeze_cb.setChecked(True)
+    w.view_lock_btn.setChecked(True)
     w.load_sync(CUBE)
-    assert not w.act_clip.isChecked() and not w.act_clip_face.isChecked() and not w.view_freeze_cb.isChecked()
+    assert not w.act_clip.isChecked() and not w.act_clip_face.isChecked() and not w.view_lock_btn.isChecked()
     assert w.scene.clip_z is None and w.scene.clip_face is None and _planes(w) == [0]
     assert w.clip_box.isHidden()
 
@@ -415,11 +422,11 @@ def test_freezing_the_cut_keeps_it_while_the_view_turns(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    w.view_freeze_cb.setChecked(True)
+    w.view_lock_btn.setChecked(True)
     before = np.array(_face_normal_after(w, "front")), np.array(w.scene._face_plane.GetOrigin())
     after = np.array(_face_normal_after(w, "right")), np.array(w.scene._face_plane.GetOrigin())
     assert np.allclose(before[0], after[0]) and np.allclose(before[1], after[1])       # did not turn
-    w.view_freeze_cb.setChecked(False)
+    w.view_lock_btn.setChecked(False)
     free = np.array(_face_normal_after(w, "right"))
     assert not np.allclose(free, before[0])                                            # follows again
 
@@ -428,7 +435,7 @@ def test_a_frozen_cut_still_follows_its_slider(window):
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    w.view_freeze_cb.setChecked(True)
+    w.view_lock_btn.setChecked(True)
     n = np.array(w.scene._face_plane.GetNormal())
     o0 = np.array(w.scene._face_plane.GetOrigin()) @ n
     w.face_slider.setValue(w.CLIP_STEPS)
@@ -438,13 +445,13 @@ def test_a_frozen_cut_still_follows_its_slider(window):
 def test_freeze_waits_for_the_cut_and_reset_view_clears_it(window):
     w = window
     w.load_sync(INSIDE)
-    w.view_freeze_cb.setChecked(True)                        # no cut yet: nothing to freeze
+    w.view_lock_btn.setChecked(True)                        # no cut yet: nothing to freeze
     w.scene.set_view("front", render=False)
     w.act_clip_face.trigger()                                # freezes at the view it starts in
     n0 = np.array(w.scene._face_plane.GetNormal())
     assert np.allclose(_face_normal_after(w, "right"), n0)
     w.reset_view()
-    assert not w.view_freeze_cb.isChecked() and w.scene.freeze_face is False
+    assert not w.view_lock_btn.isChecked() and w.scene.freeze_face is False
 
 
 # ---------------------------------------------------------------- toolbar
@@ -481,11 +488,11 @@ def test_close_ends_every_view_option(window):
     w.load_sync(INSIDE)
     for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face):
         a.trigger()
-    w.view_freeze_cb.setChecked(True)
+    w.view_lock_btn.setChecked(True)
     assert w.act_view.isChecked()
     w.view_close_btn.click()
     assert not any(a.isChecked() for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face))
-    assert not w.view_freeze_cb.isChecked() and w.scene.clip_z is None and w.scene.clip_face is None
+    assert not w.view_lock_btn.isChecked() and w.scene.clip_z is None and w.scene.clip_face is None
     assert all(p.GetRepresentation() == 2 and p.GetOpacity() == 1.0 for p in _props(w))
 
 

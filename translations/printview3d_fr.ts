@@ -218,6 +218,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">Verrouiller la coupe de face : elle ne tourne plus avec la vue (modèles)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Reset view: all of the above off, model fitted (models)</source>
         <translation type="unfinished">Réinitialiser la vue : tout ce qui précède désactivé, modèle ajusté (modèles)</translation>
     </message>
@@ -899,14 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation type="unfinished">Figer le plan de coupe</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Verrouiller la coupe de face</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation type="unfinished">Garde la coupe « Coupe face à vous » en place, pour que vous puissiez tourner et déplacer le modèle sans que la coupe tourne avec lui.</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">La coupe de face ne tourne plus avec la vue : vous pouvez tourner le modèle et regarder la coupe de tous les côtés. Son curseur la déplace toujours.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1482,6 +1486,21 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation type="unfinished">Cercle (diamètre, rayon)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="unfinished">La coupe de face tourne avec la vue : les points placés sur la coupe restent où ils sont et la coupe se déplace.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="unfinished">Verrouillez la coupe de face ({key}) pour mesurer dessus.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="unfinished">Verrouillez la coupe de face pour mesurer dessus.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2811,6 +2830,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">Figer le plan de coupe</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">Garde la coupe « Coupe face à vous » en place, pour que vous puissiez tourner et déplacer le modèle sans que la coupe tourne avec lui.</translation>
     </message>
     <message>
         <source>Theme: {name} (Ctrl+T: next theme)</source>

@@ -218,6 +218,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Lock the facing cut: it stops turning with the view (models)</source>
+        <translation type="unfinished">Zugewandten Schnitt sperren: er dreht sich nicht mehr mit der Ansicht (Modelle)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Reset view: all of the above off, model fitted (models)</source>
         <translation type="unfinished">Ansicht zurücksetzen: alles oben Genannte aus, Modell eingepasst (Modelle)</translation>
     </message>
@@ -899,14 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Freeze the cutting plane</source>
-        <extracomment>View section checkbox: the cut of &apos;Clip facing you&apos; stays where it is while the model is turned or moved.</extracomment>
-        <translation type="unfinished">Schnittebene einfrieren</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Zugewandten Schnitt sperren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
-        <translation type="unfinished">Hält den Schnitt „Schnitt von deiner Seite“ an seinem Platz, damit du das Modell drehen und verschieben kannst, ohne dass sich der Schnitt mitdreht.</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">Der zugewandte Schnitt dreht sich nicht mehr mit der Ansicht, so können Sie das Modell drehen und den Schnitt von jeder Seite ansehen. Sein Schieberegler verschiebt ihn weiterhin.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1482,6 +1486,21 @@
         <source>Circle (diameter, radius)</source>
         <extracomment>Measure menu: measure a circle or hole; it gives its diameter and its radius.</extracomment>
         <translation type="unfinished">Kreis (Durchmesser, Radius)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="unfinished">Der zugewandte Schnitt dreht sich mit der Ansicht: Punkte auf dem Schnitt bleiben, wo sie sind, und der Schnitt wandert weiter.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="unfinished">Sperren Sie den zugewandten Schnitt ({key}), um darauf zu messen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="unfinished">Sperren Sie den zugewandten Schnitt, um darauf zu messen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2811,6 +2830,14 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Freeze the cutting plane</source>
+        <translation type="vanished">Schnittebene einfrieren</translation>
+    </message>
+    <message>
+        <source>Keeps the cut of Clip facing you where it is, so you can turn and move the model without the cut turning along.</source>
+        <translation type="vanished">Hält den Schnitt „Schnitt von deiner Seite“ an seinem Platz, damit du das Modell drehen und verschieben kannst, ohne dass sich der Schnitt mitdreht.</translation>
     </message>
     <message>
         <source>Theme: {name} (Ctrl+T: next theme)</source>
