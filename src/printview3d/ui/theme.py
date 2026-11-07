@@ -1161,7 +1161,7 @@ ICON_GAP = 6                  # px between an icon and the text beside it (at 22
 
 
 def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False,
-              hover: bool = False) -> QIcon:
+              hover: bool = False, on_primary: bool = False) -> QIcon:
     """Toolbar icon: the symbol in the accent colour on a soft accent-tinted tile.
     on_accent=True is for the slicer button: a white symbol on a soft white tile.
     warm=True uses the theme's primary colour instead (the orange tiles of the Ember themes; the
@@ -1172,7 +1172,10 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
     hover=True adds a second picture that Qt shows while the mouse is over the button (QIcon's
     Active mode): the tile filled solid in the theme's primary colour with a white or dark symbol,
     whichever reads better - the same rule as the view cube's hovered part (amber in Ember, teal
-    in the other themes). Only for toolbar buttons: a focused push button would show it too."""
+    in the other themes). Only for toolbar buttons: a focused push button would show it too.
+    on_primary=True (with on_accent) is for the slicer button, which is itself filled with the
+    primary colour: there the hovered tile turns solid white with the symbol in a deeper shade of
+    that colour, so it stands out instead of vanishing into the button."""
     t = colors()
     if on_accent:
         fg, tile = QColor("#ffffff"), QColor(255, 255, 255, 46)
@@ -1184,8 +1187,12 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
     icon = QIcon(_tool_pixmap(kind, fg, tile, gap))
     if hover:
         from .view_cube import readable_text     # the cube's white-or-dark text rule
-        fill = t["primary"]
-        icon.addPixmap(_tool_pixmap(kind, QColor(readable_text(fill)), QColor(fill), gap), QIcon.Active)
+        if on_primary:
+            fg_hover, fill = QColor(t["primary"]).darker(125), QColor("#ffffff")
+        else:
+            fill = QColor(t["primary"])
+            fg_hover = QColor(readable_text(t["primary"]))
+        icon.addPixmap(_tool_pixmap(kind, fg_hover, fill, gap), QIcon.Active)
     return icon
 
 

@@ -254,6 +254,8 @@ def test_toolbar_icons_fill_with_the_primary_colour_on_hover(app):
             assert QColor(hover.pixel(3, 32)).name() == t["primary"], (name, kwargs)
             assert QColor(normal.pixel(3, 32)).name() != t["primary"] or normal.pixelColor(3, 32).alpha() < 255
             assert readable_text(t["primary"]) in ("#ffffff", "#1a1d21")
+        slicer = theme.tool_icon("slicer", on_accent=True, gap=True, hover=True, on_primary=True)
+        assert QColor(slicer.pixmap(QSize(80, 64), QIcon.Active).toImage().pixel(3, 32)).name() == "#ffffff", name
         plain = theme.tool_icon("open")
         a = plain.pixmap(QSize(64, 64), QIcon.Normal).toImage()
         b = plain.pixmap(QSize(64, 64), QIcon.Active).toImage()

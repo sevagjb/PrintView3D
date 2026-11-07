@@ -988,19 +988,20 @@ class MainWindow(QMainWindow):
     def _update_toolbar_icons(self):
         """Draw the toolbar icons in the current theme's colours (again after a theme switch).
         The toolbar buttons get a hover picture too (hover=True): under the mouse the tile fills
-        with the theme's primary colour, like the view cube. The slicer button keeps its own
-        hover (its whole button lightens), so it has none."""
+        with the theme's primary colour, like the view cube. The slicer button's icon is set in
+        _update_slicer_button: its tile turns white on hover, as the button itself is that colour."""
         if not hasattr(self, "theme_btn"):
             return
         self.menu_btn.setIcon(theme.tool_icon("menu", hover=True))
         self.act_home.setIcon(theme.tool_icon("home", hover=True))
         self.act_open.setIcon(theme.tool_icon("open", hover=True))
-        # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
+        # Screenshot, theme and Settings are drawn in the primary colour (orange tiles in the Ember
+        # themes), so the three on the right match.
         self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True, hover=True))
         self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons(), gap=True, hover=True))
         self.theme_btn.setIcon(theme.tool_icon("theme", warm=True, hover=True))
         self.recent_menu.setIcon(theme.tool_icon("recent"))
-        self.act_settings.setIcon(theme.tool_icon("settings", hover=True))
+        self.act_settings.setIcon(theme.tool_icon("settings", warm=True, hover=True))
         self.act_updates.setIcon(theme.tool_icon("updates"))
         self.act_about.setIcon(theme.tool_icon("about"))
         self.act_whats_new.setIcon(theme.tool_icon("whats_new"))
@@ -1016,6 +1017,9 @@ class MainWindow(QMainWindow):
         for a, kind in ((self.act_wireframe, "wireframe"), (self.act_xray, "xray"), (self.act_clip, "clip_top"),
                         (self.act_clip_face, "clip_face"), (self.act_reset_view, "reset")):
             a.setIcon(theme.tool_icon(kind, gap=True))
+        # The slicer button's hover picture is in the theme's colour too.
+        if hasattr(self, "slicer_btn") and hasattr(self, "current_kind") and hasattr(self, "showing_embedded"):
+            self._update_slicer_button()
 
     def _build_preview_page(self) -> QWidget:
         page = QWidget()
@@ -3603,7 +3607,8 @@ class MainWindow(QMainWindow):
     def _update_slicer_button(self):
         freecad = self.current_kind == "freecad" and not self.showing_embedded
         # A 3D printer for slicers; the FreeCAD cube when the button opens FreeCAD.
-        self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True))
+        self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True,
+                                                hover=True, on_primary=True))
         if freecad:
             self.slicer_btn.setText(tr("Open in FreeCAD"))
             self.slicer_btn.setToolTip(tr("Open this file in FreeCAD") + ". "
