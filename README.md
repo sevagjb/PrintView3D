@@ -328,7 +328,7 @@ and the other model formats; G-code has its layer slider instead):
 - **Show the cut-away part** and **Show the cutting plane** (under the sliders, both on by
   default): what the cut hides stays as a white, see-through ghost with outlined edges, and the
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
-  and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
+  and where. Each is a button that stays lit while on, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
 - **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Also move the cutting
   planes by dragging them in the 3D view** and each cut gets a small round handle on the edge of its cutting

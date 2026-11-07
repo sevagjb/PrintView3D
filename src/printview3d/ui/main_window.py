@@ -370,16 +370,28 @@ class _FitButton(QToolButton):
             b.apply_level(level)
 
 
+def _toggle_button() -> QPushButton:
+    """An on/off option of the View and Measure sections: a small button (like Lock facing cut, a
+    little lower), lit while on, as wide as its text."""
+    b = QPushButton()
+    b.setObjectName("toggleButton")
+    b.setCheckable(True)
+    b.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+    return b
+
+
 class _FitRow(QWidget):
     """Widgets side by side while they fit; when the panel is too narrow, one under the other.
     even: side by side, each gets an equal column (with `spacing` between): under a row of as many
-    equal buttons with the same spacing, each widget starts exactly under its button."""
+    equal buttons with the same spacing, each widget starts exactly under its button.
+    center: the row (or, stacked, the column) sits in the middle, each widget as wide as it needs."""
 
-    def __init__(self, widgets, spacing: int = 16, parent=None, even: bool = False):
+    def __init__(self, widgets, spacing: int = 16, parent=None, even: bool = False, center: bool = False):
         super().__init__(parent)
         self._widgets = list(widgets)
         self._spacing = spacing
         self._even = even
+        self._center = center
         self._stacked = None
         self._grid = QGridLayout(self)
         self._grid.setContentsMargins(0, 0, 0, 0)
@@ -404,6 +416,20 @@ class _FitRow(QWidget):
         self._stacked = stacked
         for w in self._widgets:
             self._grid.removeWidget(w)
+        if self._center:
+            n = len(self._widgets)
+            for c in range(n + 2):
+                self._grid.setColumnStretch(c, 0)
+            for i, w in enumerate(self._widgets):
+                if stacked:
+                    self._grid.addWidget(w, i, 1, Qt.AlignHCenter)
+                else:
+                    self._grid.addWidget(w, 0, i + 1)
+            last = 2 if stacked else n + 1
+            self._grid.setColumnStretch(0, 1)            # equal room on both sides: centred
+            self._grid.setColumnStretch(last, 1)
+            self.updateGeometry()
+            return
         for i, w in enumerate(self._widgets):
             self._grid.addWidget(w, i if stacked else 0, 0 if stacked else i)
             self._grid.setColumnStretch(i, 1 if self._even and not stacked else 0)
@@ -1298,16 +1324,15 @@ class MainWindow(QMainWindow):
         # What the cut hides, as a see-through ghost, and the cutting plane, each on its own (#66).
         # Here, under the slider, where you look while cutting (3D Builder's Split puts it there
         # too). How strong both are drawn is in Settings -> Viewer.
-        self.clip_ghost_cb = QCheckBox()
+        self.clip_ghost_cb = _toggle_button()
         self.clip_ghost_cb.setChecked(bool(self.settings.get("clip_ghost", True)))
         self.clip_ghost_cb.toggled.connect(self.set_clip_ghost)
-        self.clip_plane_cb = QCheckBox()
+        self.clip_plane_cb = _toggle_button()
         self.clip_plane_cb.setChecked(bool(self.settings.get("clip_plane", True)))
         self.clip_plane_cb.toggled.connect(self.set_clip_plane)
         # Side by side while they fit, one under the other in a narrow panel.
         # In the columns of the buttons and sliders above: each starts under its slider.
-        self.clip_opts = _FitRow([self.clip_ghost_cb, self.clip_plane_cb], spacing=vg.horizontalSpacing(),
-                                 even=True)
+        self.clip_opts = _FitRow([self.clip_ghost_cb, self.clip_plane_cb], spacing=6, center=True)
         cl.addWidget(self.clip_opts)
         cl.addSpacing(8)                                 # some room before Lock / Reset view / Close
         self.clip_box.hide()
@@ -1346,19 +1371,19 @@ class MainWindow(QMainWindow):
         ml.addLayout(mode_row)
         # Snapping is on at every start (a choice made last time is not kept: with it off, clicks
         # land beside the corners you mean).
-        self.measure_snap_cb = QCheckBox()
+        self.measure_snap_cb = _toggle_button()
         self.measure_snap_cb.setChecked(True)
         self.measure_snap_cb.toggled.connect(self.set_measure_snap)
-        self.measure_dotted_cb = QCheckBox()
+        self.measure_dotted_cb = _toggle_button()
         self.measure_dotted_cb.setChecked(bool(self.settings.get("measure_dotted", False)))
         self.measure_dotted_cb.toggled.connect(self.set_measure_dotted)
-        self.measure_deltas_cb = QCheckBox()
+        self.measure_deltas_cb = _toggle_button()
         self.measure_deltas_cb.setChecked(bool(self.settings.get("measure_deltas", False)))
         self.measure_deltas_cb.toggled.connect(self.set_measure_deltas)
         # Side by side while they fit, one under the other in a narrow panel.
         # Each under one of the three buttons above (equal columns, the buttons' spacing).
         self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb],
-                                    spacing=mode_row.spacing(), even=True)
+                                    spacing=6, center=True)
         ml.addSpacing(4)                                 # a little room under the three buttons
         ml.addWidget(self.measure_opts)
         ml.addSpacing(8)                                 # some room before the note, Clear and Close

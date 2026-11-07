@@ -453,8 +453,9 @@ def test_drag_option_says_also_and_mouse_comes_before_keyboard(window):
     dlg.close()
 
 
-def test_checkboxes_start_under_their_buttons_with_room_below(window):
+def test_options_are_centred_toggle_buttons_with_room_around(window):
     from PySide6.QtCore import QPoint
+    from PySide6.QtWidgets import QPushButton
     from printview3d.ui import main_window as mw
     w = window
     _cube(w)
@@ -462,14 +463,23 @@ def test_checkboxes_start_under_their_buttons_with_room_below(window):
     w.act_clip_face.setChecked(True)
     w.choose_measure_mode("distance")
     vb, mb = w.view_box, w.measure_box
-    x = lambda b, box: b.mapTo(box, QPoint(0, 0)).x()
-    gap = lambda above, below, box: below.mapTo(box, QPoint(0, 0)).y() - (above.mapTo(box, QPoint(0, 0)).y()
-                                                                           + above.height())
-    assert [x(w.clip_ghost_cb, vb), x(w.clip_plane_cb, vb)] == [x(w.clip_top_row, vb), x(w.clip_face_row, vb)]
-    modes = sorted(x(b, mb) for b in mb.findChildren(mw._FitButton))
-    assert [x(c, mb) for c in (w.measure_snap_cb, w.measure_dotted_cb, w.measure_deltas_cb)] == modes
+    pos = lambda b, box: b.mapTo(box, QPoint(0, 0))
+    gap = lambda above, below, box: pos(below, box).y() - (pos(above, box).y() + above.height())
+    for box, opts in ((vb, (w.clip_ghost_cb, w.clip_plane_cb)),
+                      (mb, (w.measure_snap_cb, w.measure_dotted_cb, w.measure_deltas_cb))):
+        assert all(isinstance(b, QPushButton) and b.isCheckable() and b.objectName() == "toggleButton"
+                   for b in opts)
+        assert len({pos(b, box).y() for b in opts}) == 1                       # one row
+        left, right = pos(opts[0], box).x(), pos(opts[-1], box).x() + opts[-1].width()
+        assert abs(left - (box.width() - right)) <= 2                          # centred in the section
+        assert opts[0].height() < w.view_lock_btn.height()                     # a little lower
+    # the defaults of the checkboxes they were
+    assert w.clip_ghost_cb.isChecked() and w.clip_plane_cb.isChecked() and w.measure_snap_cb.isChecked()
+    assert not w.measure_dotted_cb.isChecked() and not w.measure_deltas_cb.isChecked()
     assert gap(w.clip_plane_cb, w.view_reset_btn, vb) >= 12
     assert gap(w.measure_snap_cb, w.measure_clear_btn, mb) >= 12
+    btn = mb.findChildren(mw._FitButton)[0]
+    assert gap(btn, w.measure_snap_cb, mb) >= 8
 
 
 def test_even_rows_still_stack_in_a_narrow_panel(app):

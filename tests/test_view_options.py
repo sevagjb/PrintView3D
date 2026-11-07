@@ -108,7 +108,7 @@ def test_the_clip_controls_live_in_the_view_section_and_open_it(window):
     # the two checkboxes side by side, the lock button under them
     assert at[w.clip_ghost_cb].y() == at[w.clip_plane_cb].y() < at[w.view_lock_btn].y()
     assert at[w.clip_ghost_cb].x() < at[w.clip_plane_cb].x()
-    assert at[w.view_lock_btn].x() == at[w.clip_ghost_cb].x()
+    assert at[w.view_lock_btn].x() == w.clip_top_row.mapTo(w.view_box, QPoint(0, 0)).x()   # bottom left
     assert at[w.view_lock_btn].y() + w.view_lock_btn.height() == at[w.view_reset_btn].y() + w.view_reset_btn.height()
     assert w.view_lock_btn.height() == w.view_reset_btn.height()
     assert w.view_lock_btn.text() == "Lock facing cut (L)"

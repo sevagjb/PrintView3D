@@ -100,7 +100,7 @@ The **Measure** button next to **View** (or <kbd>M</kbd>) opens the Measure sect
 measure with the buttons in it:
 
 - **Distance**: click two points. The line follows the mouse and the distance is written next to
-  it. Tick **Show ΔX ΔY ΔZ** to write the distance along each axis under every distance, handy for
+  it. Turn on **Show ΔX ΔY ΔZ** to write the distance along each axis under every distance, handy for
   "how tall from here to there".
 - **Angle**: click a point on one side, the corner, then a point on the other side.
 - **Circle**: click three points on the edge of a circle or hole to read its diameter and radius.
