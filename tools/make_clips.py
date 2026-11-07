@@ -125,9 +125,12 @@ class Capture:
 
     def off(self):
         w = self.w
-        for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face, w.act_measure):
+        for a in (w.act_wireframe, w.act_xray, w.act_clip, w.act_clip_face, w.act_lock_face,
+                  w.act_measure, w.act_check):
             if a.isChecked():
                 a.setChecked(False)
+        if w.measure.items:
+            w.measure.clear()
         for i in range(len(w.scene.model_actors)):           # the file's own colours again
             w.scene.set_part_color(i, None)
         self.show_colors()
@@ -224,7 +227,7 @@ def make_stills(c: Capture, lang: str):
     c.still(f"clip-facing{sfx}.png")                # the cut and its box in the side panel
     c.off()
     w.act_clip.setChecked(True)
-    w.face_slider.setValue(int(w.CLIP_STEPS * 0.45))
+    w.clip_slider.setValue(int(w.CLIP_STEPS * 0.45))
     w.act_xray.setChecked(True)
     c.still(f"xray-clip{sfx}.png")                  # options work together
     c.off()
@@ -235,11 +238,61 @@ def make_stills(c: Capture, lang: str):
     c.off()
     c.iso()
     w.act_xray.setChecked(True)                     # see-through, so the impeller shows too
-    w.act_view.setChecked(False)
     w.scene.set_part_color(0, "#ef791b")            # Ember orange and teal
     w.scene.set_part_color(1, "#2cc1b2")
     c.show_colors()
     c.still(f"colors{sfx}.png")
+    c.off()
+    make_stills_029(c, lang)
+
+
+def make_stills_029(c: Capture, lang: str):
+    """0.29: Check model, and measuring on the outline of a cut."""
+    import numpy as np
+    from printview3d.ui.measure import Item
+    w = c.w
+    sfx = "" if lang == "en" else "." + lang
+    cx, cy, top = 175.0, 175.0, 46.0              # see tools/make_inside_demo.py
+    # Check: overhangs (the roofs of the chamber, the channel and the pocket, seen with X-ray) and,
+    # with a 1.2 mm nozzle, the 1 mm wall in front of the hidden pocket as a thin wall.
+    c.off()
+    c.iso()
+    nozzle = w.check.nozzle
+    w.check_rows["thin"][0].setChecked(True)
+    w.check_nozzle.set_mm(1.2)
+    w.act_check.setChecked(True)
+    w.act_xray.setChecked(True)                   # the overhangs inside show through
+    c.settle()
+    w.check.wait_for_thin()
+    w._update_check_panel()
+    c.settle()
+    c.still(f"check{sfx}.png")
+    w.check_nozzle.set_mm(nozzle)
+    w.check_rows["thin"][0].setChecked(False)
+    c.off()
+    # Measure on the cut: Clip from the top through the chamber, the chamber's diameter on the
+    # cut's outline (Ø 44) and the wall between the chamber and the front (10 mm).
+    c.iso()
+    z = 25.0
+    lo, hi = w.scene.model_z_range()
+    w.act_clip.setChecked(True)
+    w.clip_slider.setValue(round((z - lo) / (hi - lo) * w.CLIP_STEPS))
+    z = w._clip_height(w.clip_slider.value())
+    w.choose_measure_mode("distance")
+    c.settle()
+    m = w.measure
+    chx = cx - 14.0
+    wall = Item("distance")
+    wall.points = [np.array(p) for p in ((chx, cy - 32.0, z), (chx, cy - 22.0, z))]
+    circ = Item("circle")
+    circ.points = [np.array((chx + 22.0 * np.cos(t), cy + 22.0 * np.sin(t), z))
+                   for t in np.radians((150.0, 30.0, 270.0 + 50.0))]
+    m.items = [wall, circ]
+    m.current = circ
+    m.hover_point = None
+    m._update()
+    c.settle()
+    c.still(f"measure-cut{sfx}.png")
     c.off()
 
 
@@ -253,7 +306,7 @@ def make_grid(c: Capture):
     cam = w.plotter.camera
     cam.Azimuth(-20)
     cam.Elevation(14)
-    cam.Zoom(0.36)
+    cam.Zoom(0.29)
     c.render()
     c.frame().save(os.path.join(c.out, "grid-numbers.png"), optimize=True)
     print("   grid-numbers.png")

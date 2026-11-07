@@ -1,7 +1,7 @@
 # Using PrintView3D
 
 **Open a file:** double-click it (if PrintView3D is the default), drag it onto the window, use
-**Open**, or pick it from **Recent** in the **☰** menu or on the start page. Try the files in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) to get started.
+**Open file or ZIP…** (`Ctrl+O`), or pick it from **Recent** in the **☰** menu or on the start page. Try the files in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) to get started.
 
 **Home:** the house button (`Ctrl+W`) closes the open file and goes back to the start page, with
 your recent files. It also gives back the memory the file took, which matters most after a large
@@ -10,6 +10,9 @@ G-code or ZIP.
 On the start page, hold the mouse over a recent file and a card in the bottom right corner shows its preview
 picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
 The card stays in the same place for every file, so you can run down the list and compare.
+
+**A whole folder:** **☰ → Open folder…** lists the 3D files of a folder in the side panel; step
+through them with `↑` / `↓` or a click.
 
 **One window:** a file you double-click while PrintView3D is already open is shown in that window,
 which comes to the front. To give every file its own window (to compare two models side by side),
@@ -112,6 +115,29 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
 
 More, with pictures: [Look inside your models](inspect.md). Built by [@covrig](https://github.com/covrig).
 
+## Check before printing
+
+![Check model: overhangs in red and a thin wall in orange](assets/inside/check.png)
+
+The **Check** button (`C`, between Plate and View) opens the **Check model** section and colours
+what may cause trouble when printing, with a count for each (models only, not G-code):
+
+- **Overhangs**: faces facing down and leaning further from vertical than an angle (45° by default);
+  faces on the plate don't count.
+- **Thin walls**: walls and pins thinner than your nozzle (0.4 mm by default). Runs in the
+  background, so it is off until you tick it.
+- **Mesh problems**: **Holes** (open edges), **Tangled edges** (non-manifold), **Inside-out faces**
+  (flipped normals) and **Loose parts** up to a size you set (5 mm by default).
+
+A red dot marks the problems found. Click a colour box to change its colour; hover over a name for
+what it means. The highlights follow the cuts and the objects you hide.
+More: [Check before printing](inspect.md#check-before-printing). Built by [@covrig](https://github.com/covrig).
+
+## Millimetres or inches
+
+**Settings → Language and units → Lengths in** shows every length (sizes,
+measurements, cuts, the grid and the plate) in millimetres or inches. Files are not changed.
+
 ## Choosing your slicer
 
 ![Settings window](screenshot-settings.png)
@@ -180,7 +206,7 @@ than a day ago are removed automatically.
 
 ## Language
 
-**Settings → Language** switches the whole program immediately, including file dialogs and
+**Settings → Language and units → Language** switches the whole program immediately, including file dialogs and
 standard buttons. English is the default; *Automatic* follows your system language. Arabic uses a
 right-to-left layout; measurements always use Western digits (0.20 mm).
 A wrong or missing word? The link on that page leads to [How to translate](TRANSLATING.md).

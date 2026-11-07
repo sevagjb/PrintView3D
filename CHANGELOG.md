@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.29.0
+- **Check before printing** (`C`, the new **Check** button between Plate and View): the **Check
+  model** section colours what may cause trouble when printing, with a count for each:
+  **Overhangs** steeper than an angle you set (45° by default), **Thin walls** thinner than your
+  nozzle (0.4 mm by default, checked in the background), and **Mesh problems**: holes, tangled
+  (non-manifold) edges, inside-out faces and small loose parts. A red dot marks the problems found,
+  and the colours follow the cuts and the objects you hide.
+- **Millimetres or inches** (**Settings → Language and units → Lengths in**): sizes, measurements,
+  cuts, the grid and the plate all follow it. Files are not changed.
+- **Your own keyboard shortcuts** (**Settings → Keyboard and mouse**): give any action of the main
+  window another key, or none. Keys the system uses are refused with the reason, and **Reset to
+  defaults** puts them all back. Buttons and tooltips show their key, and follow when you change it.
+- **New keys**: `C` Check, `V` the View section, `P` the plate, `S` Settings, `L` Lock facing cut,
+  `D` · `A` · `O` measure a distance, an angle or a circle, `K` removes all measurements,
+  `Ctrl+Shift+S` saves a screenshot. **Clip from the top** is now `T` and **Clip facing you** `Y`
+  (they were `C` and `V`); you can change them back in Settings.
+- **Open folder…** (in the **☰** menu): lists the 3D files of a folder in the side panel; step
+  through them with `↑` / `↓` or a click. **Open…** is now called **Open file or ZIP…**.
+- **Measure inside the model**: with a cut on, Measure also snaps to the outline of the cut, so walls
+  and holes inside the model can be measured.
+- **Lock facing cut** (`L`) replaces *Freeze the cutting plane*. While the facing cut is not locked,
+  the Measure section warns you, because points measured on the cut stay behind when the view turns.
+- **Drag the cuts in the 3D view** (**Settings → Viewer**, off by default): each cutting plane gets a
+  round handle; drag it and the cut and its slider follow.
+- **The grid**: choose the spacing of the fine and main grid lines (or leave it on Automatic); the
+  scale numbers count from the plate's front-left corner (0), so no more negative numbers, and they
+  follow the zoom. New options in **Settings → Viewer**: **X, Y and Z axes on the build plate**, and
+  drawing both cutting planes whole when both cuts are on.
+- **Start page**: hold the mouse over a recent file to see its preview picture, name and folder.
+- **Settings**: a gear button in the toolbar, an **Apply** button that saves without closing, and the
+  window reopens on the page you used last.
+- **Also changed**: **Fit** (`F`) only fits the camera; **Reset view** and closing the View section
+  also turn the view options off. View and Measure options are toggle buttons. Tooltips show sooner
+  and stay inside the window.
+- **Fixed**: the plate grid showing through the model (zoomed out, after Check, or seen from below);
+  the line where the two cutting planes meet now stays inside them; opening another file or **Show all
+  side by side** now clears measurements and cuts.
+- **Thanks to [@covrig](https://github.com/covrig)**, who built all of this in [#80](https://github.com/sevagjb/PrintView3D/pull/80).
+
 ## 0.28.0
 - **Measure** ([#59](https://github.com/sevagjb/PrintView3D/issues/59), `M`, the new button next to **View**): **Distance** (with
   **Show ΔX ΔY ΔZ** for the distance along each axis), **Angle** and **Circle** (diameter and

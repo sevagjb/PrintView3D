@@ -21,7 +21,15 @@ printtijd en het filamentverbruik, en stuurt het bestand met één klik naar Cre
 Bambu Studio, PrusaSlicer, Cura en andere. Ontwerp je in FreeCAD? Open het `.FCStd`-bestand en stuur het
 direct als model naar je slicer, zonder eerst een STL te exporteren.
 
-## Nieuw: meten en in je modellen kijken
+## Nieuw: controleren, meten en in je modellen kijken
+
+**Nieuw in 0.29: Controleren voor het printen.** Eén klik kleurt wat bij het printen problemen kan
+geven: overhangen, wanden dunner dan je nozzle, gaten, verwarde randen, binnenstebuiten gekeerde
+vlakken en losse delen, elk met een aantal. Ook nieuw: millimeter of inch, je eigen sneltoetsen, een
+hele map openen, en Meten springt nu naar de omtrek van een snede, zodat je wanden in het model kunt
+meten.
+
+![Model controleren: de overhangen in een pomphuis in rood, een dunne wand in oranje](assets/inside/check.nl.png)
 
 **Nieuw in 0.28: Meten.** Klik op twee punten voor een afstand (met ΔX ΔY ΔZ), op drie voor een hoek of
 voor de diameter van een gat. Punten springen naar hoeken en randen, en bij elke meting staat de waarde
@@ -46,6 +54,7 @@ doorzichtige schim. Maak het doorzichtig, geef elk object een eigen kleur en zie
 | **3MF** | Elk object op de plaat, ook projecten uit Creality Print, OrcaSlicer en Bambu Studio. Toon of verberg elk object, bekijk de printer- en filamentinstellingen van het project en de miniatuur. Is het project al gesliceerd, dan zie je de printbanen zonder opnieuw te slicen. **STL exporteren**: bewaar de objecten als gewone STL-bestanden, samen of één per object. |
 | **G-code** | Printbanen gekleurd per soort (wanden, vulling, boven/onder, support, bruggen, verplaatsingen…), een laagschuif, "Alleen deze laag tonen", printtijd, filamentverbruik en de voorbeeldafbeelding van de slicer. |
 | **In je model kijken** | **Weergave** → draadmodel, röntgen, van boven afsnijden en een snede die meedraait met de weergave, elk apart of beide tegelijk, met het weggesneden deel als doorzichtige schim; plus de maat van elk object en **Meten** voor afstanden, hoeken en cirkels. [Details](inspect.md). |
+| **Controleren voor het printen** | **Controleren** → overhangen, dunne wanden, gaten, verwarde (non-manifold) randen, binnenstebuiten gekeerde vlakken en losse delen, gekleurd op het model, met een aantal per controle. [Details](inspect.md#check-before-printing). |
 | **FreeCAD** | Open `.FCStd`-documenten om ze te bekijken: in 3D, precies zoals FreeCAD ze toont (alleen zichtbare bodies), met één klik om ze in FreeCAD te openen of als STL naar je slicer te sturen. Gebruikt je geïnstalleerde FreeCAD; zonder FreeCAD zie je nog steeds de voorbeeldafbeelding. [Meer](cad.md#freecad-files). |
 | **STEP** | Open CAD-bestanden `.step` / `.stp`: in 3D met hulp van je geïnstalleerde FreeCAD (op de achtergrond omgezet en daarna onthouden), met het CAD-programma, de auteur en de datum uit het bestand. OrcaSlicer, PrusaSlicer en Bambu Studio krijgen het STEP-bestand zelf; andere slicers een STL. [Meer](cad.md#step-files). |
 | **OBJ, PLY, OFF, glTF / GLB** | Andere gangbare 3D-formaten, met de kleuren uit het bestand (texturen worden niet getoond). Objecten in OBJ en scènes in glTF worden als losse objecten getoond. OBJ gaat zoals het is naar je slicer; PLY, OFF en glTF worden als STL verstuurd, omdat niet elke slicer ze leest. [Meer](cad.md#other-3d-formats). |

@@ -27,7 +27,7 @@ into the model, out of the model's depth in that direction. **Lock facing cut** 
 button left of Reset view in the View section) stops the cut turning with the view, so you can turn
 and move the model and look at the cut from the side; its slider still moves it. Measuring on the
 cut? Lock it first: a point stays where you placed it, so when the view turns, an unlocked cut
-moves on and leaves the point in the air. While the cut is unlocked, the Measure section shows a red dot and *Facing cut not locked*, left of Clear; hover over it for the details. The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
+moves on and leaves the point in the air. While the cut is unlocked, the Measure section shows a red dot and *Facing cut not locked*, left of Clear; hover over it for the details. *Lock facing cut is new in 0.29; it replaces Freeze the cutting plane.* The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
 face.
 
 ![The cut and its slider in the side panel](assets/inside/clip-facing.png)
@@ -67,6 +67,7 @@ cutting plane (a disc in the plane's colour with a light ring), with a short lin
 shows which way the cut moves: Clip from the top's on the side of the plane furthest right, Clip
 facing you's on the top edge of its plane. Under the mouse the disc and ring swap colours; drag it and the cut follows, with its slider. Seen straight from above
 (or the upright cut from eye level), drag up to move the cut up or further away. Off by default.
+*New in PrintView3D 0.29.*
 
 ## X-ray
 
@@ -114,9 +115,15 @@ straight runs and any point on it, so you can measure walls and holes inside the
 part you can see is snapped to. **Dotted line**
 draws the lines as dots. How thick the lines are is a slider in **Settings → Viewer**
 (**Measurement lines**). Values that would overlap, such as concentric circles, are stacked above
-each other. **Reset view** leaves your measurements in place. *New in PrintView3D 0.28.*
+each other. **Reset view** leaves your measurements in place. *New in PrintView3D 0.28; measuring on
+the cut is new in 0.29.*
 
 ![A distance with its ΔX ΔY ΔZ, a right angle and the diameter of the inlet, measured on the pump housing](assets/inside/measure.png)
+
+With a cut on, the outline of the cut can be measured too, here the chamber's diameter and the wall
+in front of it, cut through at 25 mm:
+
+![Clip from the top through the pump housing: the chamber's diameter (44 mm) and the 10 mm wall in front of it, measured on the outline of the cut](assets/inside/measure-cut.png)
 
 ## Colours and the side panel
 
@@ -155,19 +162,25 @@ found (thin walls and the mesh problems; not overhangs, which most models
 have). Hover over a name to see what it means and its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
 the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
 defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
-section**.
+section**. *New in PrintView3D 0.29.*
+
+![Check model with X-ray: the overhangs inside the housing in red, the 1 mm wall in front of the hidden pocket as a thin wall (with a 1.2 mm nozzle) in orange](assets/inside/check.png)
+
+Check works on models (STL, 3MF, OBJ and the other model formats), not on G-code. It tells you
+where to look; your slicer still decides how to print it.
 
 ## Open a folder
 
 **Menu → Open folder…** lists the 3D files of a folder in the side panel and opens the first one.
 <kbd>↑</kbd> / <kbd>↓</kbd> step through them, as in a ZIP, or click a name. ZIP files in the folder
 are not listed: open them with **Open file or ZIP…** (<kbd>Ctrl</kbd>+<kbd>O</kbd>).
+*New in PrintView3D 0.29.*
 
 ## Millimetres or inches
 
 **Settings → Language and units → Lengths in** shows every length in millimetres or in inches: sizes,
 measurements, the cuts, the grid and its numbers, and the plate size. Files are not changed; 3D
-files are always in millimetres.
+files are always in millimetres. *New in PrintView3D 0.29.*
 
 ## Scale numbers on the grid
 
@@ -183,7 +196,8 @@ area around the model and count from the model's front-left corner, where the gr
 of the automatic one. **Grid lines every** and **Main grid lines every** set the spacing of the grid
 itself (automatic: 10 and 50 mm on a normal plate, ¼ and 1 inch in inches). Main lines always fall
 on fine lines, so the grid stays even: with fine lines every 20 mm you can pick main lines every 20,
-100 or 200 mm, and *Automatic* then means every 100 mm. *New in PrintView3D 0.28.*
+100 or 200 mm, and *Automatic* then means every 100 mm. *New in PrintView3D 0.28; the grid spacing,
+the numbers that follow the zoom and counting from 0 are new in 0.29.*
 
 ![Distances in millimetres along the edges of the build plate](assets/inside/grid-numbers.png)
 
@@ -192,7 +206,7 @@ on fine lines, so the grid stays even: with fine lines every 20 mm you can pick 
 **Settings → Viewer → Also show the X, Y and Z axes on the build plate** (off by default, just under
 *Show build plate grid*) draws three small arrows (X red, Y green, Z blue, as in the marker in the
 corner of the view) just beside the back-right corner of the model, about a tenth of its size. They
-stay there as you turn the view and hide with the plate.
+stay there as you turn the view and hide with the plate. *New in PrintView3D 0.29.*
 
 ## Keys
 
@@ -225,8 +239,10 @@ The pump housing on this page is
 [`examples/demo_housing.3mf`](https://github.com/sevagjb/PrintView3D/raw/main/examples/demo_housing.3mf)
 in the source code: download it and open it in PrintView3D.
 
-These features were suggested, and Measure, the View section, the object colours and the grid
-numbers built, by [@covrig](https://github.com/covrig)
+These features were suggested, and Measure, the View section, the object colours, the grid
+numbers and Check model built, by [@covrig](https://github.com/covrig)
 ([#59](https://github.com/sevagjb/PrintView3D/issues/59),
-[#60](https://github.com/sevagjb/PrintView3D/issues/60)). Have an idea too?
+[#60](https://github.com/sevagjb/PrintView3D/issues/60),
+[#77](https://github.com/sevagjb/PrintView3D/pull/77),
+[#80](https://github.com/sevagjb/PrintView3D/pull/80)). Have an idea too?
 [Open an issue](https://github.com/sevagjb/PrintView3D/issues/new/choose).
