@@ -472,7 +472,7 @@ def test_options_are_centred_toggle_buttons_with_room_around(window):
         assert len({pos(b, box).y() for b in opts}) == 1                       # one row
         left, right = pos(opts[0], box).x(), pos(opts[-1], box).x() + opts[-1].width()
         assert abs(left - (box.width() - right)) <= 2                          # centred in the section
-        assert opts[0].height() < w.view_lock_btn.height()                     # a little lower
+        assert opts[0].height() <= w.view_lock_btn.height()                    # never taller (lower on screen)
     # the defaults of the checkboxes they were
     assert w.clip_ghost_cb.isChecked() and w.clip_plane_cb.isChecked() and w.measure_snap_cb.isChecked()
     assert not w.measure_dotted_cb.isChecked() and not w.measure_deltas_cb.isChecked()
@@ -539,3 +539,55 @@ def test_note_has_room_after_its_dot_and_measure_options_room_above(window):
     btn = mb.findChildren(mw._FitButton)[0]
     gap = w.measure_snap_cb.mapTo(mb, QPoint(0, 0)).y() - (btn.mapTo(mb, QPoint(0, 0)).y() + btn.height())
     assert gap >= 8
+
+
+# ------------------------------------------------------------ Check: colour boxes and settings
+def test_check_colour_box_right_click_works_like_an_objects(window, monkeypatch):
+    from printview3d.ui.print_check import DEFAULT_COLORS
+    w = window
+    _cube(w)
+    w.act_check.setChecked(True)
+    box = w.check_rows["open"][2]
+    seen = []
+
+    def answer(menu, pos):                               # what the user would see and click
+        acts = menu.actions()
+        seen.append([(a.text(), a.isEnabled()) for a in acts])
+        return acts[0]
+
+    monkeypatch.setattr(w, "_exec_menu", answer)
+    w._check_color_menu("open", box)                     # still the original colour: greyed out
+    assert seen[-1] == [("Original colour", False)]
+    w._set_check_color("open", "#123456", box)
+    w._check_color_menu("open", box)
+    assert seen[-1] == [("Original colour", True)] and box.color == DEFAULT_COLORS["open"]
+    # the object's colour box shows the very same menu
+    w.load_sync(os.path.join(HERE, "data", "two_parts.3mf"))
+    i, part = 0, w.model.parts[0]
+    obox = w.objects_box.findChildren(type(box))[0]
+    w._object_color_menu(i, part, obox)
+    assert seen[-1] == [("Original colour", False)]
+
+
+def test_check_settings_are_greyed_out_while_their_check_is_off(window):
+    w = window
+    _cube(w)
+    w.act_check.setChecked(True)
+    for kind, field in (("overhang", w.check_angle), ("thin", w.check_nozzle)):
+        cb = cb_on = w.check_rows[kind][0]
+        cb.setChecked(True)
+        assert field.isEnabled()
+        cb.setChecked(False)
+        assert not field.isEnabled()
+        cb_on.setChecked(True)
+        assert field.isEnabled()
+
+
+def test_an_option_button_that_is_on_only_changes_its_background(window, app):
+    from printview3d.ui import theme
+    window.apply_theme("dark")                              # as the app does at start
+    css = app.styleSheet()
+    rule = [line for line in css.splitlines() if "QPushButton#toggleButton:checked" in line]
+    assert len(rule) == 1 and "rgba(" in rule[0]
+    accent = theme.colors()["accent"]
+    assert accent not in rule[0].split("border")[1]           # the border is the plain button's

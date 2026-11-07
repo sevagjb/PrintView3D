@@ -1441,7 +1441,8 @@ class MainWindow(QMainWindow):
             box = _ColorButton(colours.get(kind, DEFAULT_COLORS[kind]))
             box.setToolTip(tr("Click to pick another colour (right-click: the original colour)"))
             box.clicked.connect(lambda _=False, k=kind, b=box: self._pick_check_color(k, b))
-            box.customContextMenuRequested.connect(lambda _pos, k=kind, b=box: self._reset_check_color(k, b))
+            # Right-click: the same small menu as an object's colour box (Original colour).
+            box.customContextMenuRequested.connect(lambda _pos, k=kind, b=box: self._check_color_menu(k, b))
             cb = QCheckBox()
             cb.setChecked(bool(shown.get(kind, kind != "thin")))
             cb.toggled.connect(lambda on, k=kind: self._check_shown(k, on))
@@ -1455,6 +1456,10 @@ class MainWindow(QMainWindow):
             row.addWidget(box)
             row.addWidget(cb, 1)
             if extra is not None:
+                # Its setting (angle, nozzle width, size) only counts while the check is on:
+                # greyed out and not editable while it is off.
+                extra.setEnabled(cb.isChecked())
+                cb.toggled.connect(extra.setEnabled)
                 row.addWidget(extra)
             row.addWidget(count_lbl)
             self.check_rows[kind] = (cb, count_lbl, box)
@@ -2671,7 +2676,7 @@ class MainWindow(QMainWindow):
         menu = QMenu(self)
         back = menu.addAction(tr("Original colour"))
         back.setEnabled(self.scene.part_color_override(i) is not None)
-        if menu.exec(QCursor.pos()) is back:
+        if self._exec_menu(menu, QCursor.pos()) is back:
             self.scene.set_part_color(i, None)
             n = len(self.model.parts) if self.model is not None else 1
             button.set_color(Scene.part_color(part, i, n))
@@ -3098,6 +3103,23 @@ class MainWindow(QMainWindow):
     def _reset_check_color(self, kind: str, button: "_ColorButton"):
         from .print_check import DEFAULT_COLORS
         self._set_check_color(kind, DEFAULT_COLORS[kind], button)
+
+    def _check_color_menu(self, kind: str, button: "_ColorButton"):
+        """Right-click on a Check colour box: a menu with Original colour, as for an object's colour
+        box (greyed out while the colour is the original one)."""
+        from PySide6.QtGui import QCursor
+        from .print_check import DEFAULT_COLORS
+        menu = QMenu(self)
+        back = menu.addAction(tr("Original colour"))
+        back.setEnabled(button.color.lower() != DEFAULT_COLORS[kind].lower())
+        if self._exec_menu(menu, QCursor.pos()) is back:
+            self._reset_check_color(kind, button)
+            if self.stack.currentIndex() == 1:
+                self.plotter.render()
+
+    def _exec_menu(self, menu: "QMenu", pos):
+        """menu.exec(pos): one place, so tests can answer for the user."""
+        return menu.exec(pos)
 
     def _set_check_color(self, kind: str, color: str, button: "_ColorButton"):
         button.set_color(color)

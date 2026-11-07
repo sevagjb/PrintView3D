@@ -430,6 +430,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         pal.setColor(QPalette.Disabled, role, c(t["disabled"]))
     app.setPalette(pal)
     accent, accent_hover = t["accent"], t["accent_hover"]
+    # An option button that is on (View and Measure sections): the accent, lightly, as its background.
+    _r, _g, _b = (int(accent.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
+    toggle_on = f"rgba({_r}, {_g}, {_b}, {0.32 if is_dark() else 0.26})"
     primary, primary_hover = t["primary"], t["primary_hover"]
     # The line between Export STL and its arrow: white-ish on a filled button.
     divider = "rgba(255,255,255,0.35)" if filled_view_buttons() else t["button_border"]
@@ -471,6 +474,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QGroupBox::title {{ subcontrol-origin: margin; left: 10px; padding: 0 4px; color: {t['group_title']}; }}
         QLabel#fileName {{ font-size: 15px; font-weight: 600; }}
         QLabel#muted, QLabel#formKey, QLabel#objectSize {{ color: {t['muted']}; }}
+        QLabel#muted:disabled {{ color: {t['disabled']}; }}
         QLabel#kindLabel {{ color: {t['muted']}; font-weight: 700; }}
         QLabel#objectSize {{ font-weight: 400; }}
         QLabel#thumbnail {{ background: {t['thumb']}; border-radius: 6px; padding: 6px; }}
@@ -478,6 +482,8 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QPushButton:hover {{ background: {t['button_hover']}; }}
         QPushButton:checked {{ background: {t['tool_checked']}; border: 1px solid {t['accent']}; }}
         QPushButton#toggleButton {{ padding: 3px 10px; }}
+        /* An option button that is on: only its background changes (no accent border). */
+        QPushButton#toggleButton:checked {{ background: {toggle_on}; border: 1px solid {t['button_border']}; }}
         QLabel#cutNote {{ color: {t['muted']}; font-size: 12px; }}
         QPushButton#primary {{ background: {primary}; border: none; color: white; font-weight: 600; }}
         QPushButton#primary:hover {{ background: {primary_hover}; }}
