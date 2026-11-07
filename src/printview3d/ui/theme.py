@@ -497,6 +497,9 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QSlider::sub-page:horizontal {{ background: {accent}; border-radius: 3px; }}
         QSlider::handle:horizontal {{ background: {t['handle']}; border: 1px solid {t['handle_border']};
             width: 14px; margin: -5px 0; border-radius: 8px; }}
+        /* A slider that is switched off (the slider of a cut that is off): greyed out. */
+        QSlider::sub-page:horizontal:disabled {{ background: {t['disabled']}; }}
+        QSlider::handle:horizontal:disabled {{ background: {t['groove']}; border: 1px solid {t['disabled']}; }}
         QStatusBar {{ background: {t['bar']}; color: {t['group_title']}; }}
         QListWidget {{ border: 1px solid {t['border']}; border-radius: 6px; }}
         QListWidget#zipList {{ background: {t['base']}; outline: none; }}

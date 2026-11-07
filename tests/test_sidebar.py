@@ -330,19 +330,3 @@ def test_an_open_side_panel_keeps_its_width(window, app):
     assert w.splitter.sizes()[i] == pytest.approx(width, abs=2)              # not reset to the default
 
 
-def test_the_colour_hint_stays_on_one_line_even_in_the_narrowest_panel(window, app):
-    from PySide6.QtGui import QFontMetrics
-    w = window
-    w.load_sync(TWO_PARTS)
-    i = w.splitter.indexOf(w.side_scroll)
-    total = sum(w.splitter.sizes())
-    for width in (420, 350, 290):                       # the widest, the usual and the narrowest
-        w.splitter.setSizes([total - width, width] if i == 1 else [width, total - width])
-        for _ in range(4):
-            app.processEvents()
-        hint = w.objects_hint
-        assert not hint.wordWrap() and hint.isVisible()
-        fm = QFontMetrics(hint.font())
-        assert fm.horizontalAdvance(hint.text()) <= hint.width()          # whole text, one line
-        assert hint.height() <= fm.height() * 2 and len(hint.text()) < 50  # and a short text
-    assert hint.font().pointSizeF() <= w.font().pointSizeF()

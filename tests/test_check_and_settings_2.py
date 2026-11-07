@@ -232,14 +232,14 @@ def test_every_section_button_has_a_key(window):
             w.measure_actions["distance"]: "D", w.measure_actions["angle"]: "A", w.measure_actions["circle"]: "O"}
     for act, key in keys.items():
         assert act.shortcut().toString() == key and act in w.actions()
-        assert f"({key})" in act.toolTip()
+        assert f"({key})" in act.text() and f"({key})" not in act.toolTip()   # on the button, not the tooltip
     for act in (w.act_bed, w.act_check, w.act_view, w.act_measure):
         assert act.text().endswith(")")                   # "Measure (M)" on the toolbar
     # the side panel's buttons too: "Wireframe (W)", "Distance (D)", "Reset view (R)"
     assert w.act_wireframe.text().endswith("(W)") and w.measure_actions["distance"].text().endswith("(D)")
     assert w.view_reset_btn.text().endswith("(R)")
     # Fit has its own key again: F
-    assert w.act_fit.text() == "Fit (F)" and w.act_fit.toolTip().endswith("(F)")
+    assert w.act_fit.text() == "Fit (F)" and "(F)" not in w.act_fit.toolTip()
     from printview3d.ui import keys as k
     listed = set(k.DEFAULT.values())
     assert all(key in listed for key in ("P", "C", "V", "D", "A", "O", "F", "T", "S"))

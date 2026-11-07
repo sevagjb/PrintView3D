@@ -307,7 +307,7 @@ def test_screenshot_has_a_key(window):
     assert w.act_screenshot.shortcut() == QKeySequence("Ctrl+Shift+S")
     assert w.act_screenshot in w.actions()                   # works wherever the focus is
     key = QKeySequence("Ctrl+Shift+S").toString(QKeySequence.NativeText)
-    assert w.act_screenshot.toolTip() == f"Screenshot ({key})"
+    assert w.act_screenshot.toolTip() == "Screenshot" and key not in w.act_screenshot.toolTip()
 
 
 def test_a_lit_knob_looks_different_in_every_theme(window_knobs):
@@ -355,9 +355,11 @@ def test_measure_warns_while_the_facing_cut_turns(window):
     assert note.isVisible() and "●" in w.measure_cut_dot.text()
     assert w.measure_cut_text.toolTip() == note.toolTip()
     tip = note.toolTip()
-    assert "Lock facing cut (L)" in tip and "hanging in the air" in tip and "slider" not in tip
+    assert "Lock facing cut stops" in tip and "hanging in the air" in tip and "slider" not in tip
+    assert "(L)" not in tip                                   # no keys in tooltips
     assert "before measuring" not in tip                       # some want to turn the cut on purpose
-    assert w.measure_cut_text.text() == "Facing cut not locked\nHover for details"   # always two lines
+    # one line where it fits; a line can only break between the two sentences
+    assert w.measure_cut_text.text() == "Facing cut not locked. Hover for details"
     assert w.measure_cut_text.wordWrap()                       # a long translation wraps, not cut short
     w.act_lock_face.setChecked(True)
     assert note.isHidden()
@@ -484,3 +486,46 @@ def test_even_rows_still_stack_in_a_narrow_panel(app):
     app.processEvents()
     assert row.stacked
     row.close()
+
+
+def test_no_tooltip_names_a_key(window):
+    from PySide6.QtGui import QAction
+    from PySide6.QtWidgets import QWidget
+    from printview3d.ui import keys
+    w = window
+    _cube(w)
+    w.act_clip_face.setChecked(True)
+    w.choose_measure_mode("distance")
+    shown = {f"({keys.native(k)})" for k in w.keys.values() if k}
+    tips = [a.toolTip() for a in w.findChildren(QAction)] + [x.toolTip() for x in w.findChildren(QWidget)]
+    bad = [t for t in tips if t and any(s in t for s in shown)]
+    assert bad == []
+
+
+def test_both_sliders_show_and_the_unused_one_is_greyed_out(window):
+    w = window
+    _cube(w)
+    w.act_clip_face.setChecked(True)                             # only the facing cut
+    assert w.clip_top_row.isVisible() and w.clip_face_row.isVisible()
+    assert not w.clip_slider.isEnabled() and w.face_slider.isEnabled()
+    assert w.clip_info.text() == "Height" and w.face_info.text().startswith("Depth ")
+    w.act_clip.setChecked(True)
+    assert w.clip_slider.isEnabled() and w.clip_info.text().startswith("Height ")
+    w.act_clip_face.setChecked(False)
+    assert not w.face_slider.isEnabled() and w.face_info.text() == "Depth"
+    w.act_clip.setChecked(False)
+    assert w.clip_box.isHidden()                                 # no cut: no sliders
+
+
+def test_note_has_room_after_its_dot_and_measure_options_room_above(window):
+    from PySide6.QtCore import QPoint
+    from printview3d.ui import main_window as mw
+    w = window
+    _cube(w)
+    w.choose_measure_mode("distance")
+    w.act_clip_face.setChecked(True)
+    assert w.measure_cut_note.layout().spacing() >= 8
+    mb = w.measure_box
+    btn = mb.findChildren(mw._FitButton)[0]
+    gap = w.measure_snap_cb.mapTo(mb, QPoint(0, 0)).y() - (btn.mapTo(mb, QPoint(0, 0)).y() + btn.height())
+    assert gap >= 8

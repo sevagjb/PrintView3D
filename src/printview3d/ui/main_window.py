@@ -370,54 +370,6 @@ class _FitButton(QToolButton):
             b.apply_level(level)
 
 
-class _FitLabel(QLabel):
-    """A label that always stays on one line: when the panel is too narrow its font gets smaller
-    (down to MIN_SCALE of the normal size) until the whole text fits."""
-
-    MIN_SCALE = 0.7
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWordWrap(False)
-        self._base = None
-        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-
-    def setText(self, text: str):
-        super().setText(text)
-        self._fit()
-
-    def minimumSizeHint(self):
-        return QSize(0, super().sizeHint().height())
-
-    def resizeEvent(self, e):
-        super().resizeEvent(e)
-        self._fit()
-
-    def _fit(self):
-        if self._base is None:
-            self._base = QFont(self.font())
-        room = self.width() - self.contentsMargins().left() - self.contentsMargins().right() - 2
-        if room <= 1 or not self.text():
-            return
-        scale = 1.0
-        while scale > self.MIN_SCALE:
-            f = QFont(self._base)
-            if self._base.pointSizeF() > 0:
-                f.setPointSizeF(self._base.pointSizeF() * scale)
-            else:
-                f.setPixelSize(max(6, int(self._base.pixelSize() * scale)))
-            if QFontMetrics(f).horizontalAdvance(self.text()) <= room:
-                break
-            scale -= 0.05
-        f = QFont(self._base)
-        if self._base.pointSizeF() > 0:
-            f.setPointSizeF(self._base.pointSizeF() * max(scale, self.MIN_SCALE))
-        else:
-            f.setPixelSize(max(6, int(self._base.pixelSize() * max(scale, self.MIN_SCALE))))
-        if f != self.font():
-            self.setFont(f)
-
-
 class _FitRow(QWidget):
     """Widgets side by side while they fit; when the panel is too narrow, one under the other.
     even: side by side, each gets an equal column (with `spacing` between): under a row of as many
@@ -760,8 +712,7 @@ class MainWindow(QMainWindow):
         self.act_next_theme.setText(tr("Next theme style") + "\t" + self._k("next_theme"))
         self.act_toggle_dark.setText(tr("Switch between light and dark") + "\t" + self._k("light_dark"))
         name = theme.display_name(theme.make_choice(style, mode))
-        self.theme_btn.setToolTip(tr("Theme: {name} ({key}: next theme)").format(name=name, key=self._k("next_theme"))
-                                  if self._k("next_theme") else tr("Theme: {name}").format(name=name))
+        self.theme_btn.setToolTip(tr("Theme: {name}").format(name=name))
 
     def _system_theme_changed(self, *_):
         if theme.follows_system():
@@ -1282,10 +1233,6 @@ class MainWindow(QMainWindow):
         self.objects_layout = QVBoxLayout(objects_list)
         self.objects_scroll.setWidget(objects_list)
         box_layout.addWidget(self.objects_scroll)
-        self.objects_hint = _FitLabel()              # how to change an object's colour: one line
-        self.objects_hint.setObjectName("muted")
-        self.objects_hint.setContentsMargins(10, 0, 10, 6)
-        box_layout.addWidget(self.objects_hint)
         L.addWidget(self.objects_box)
 
         self.embedded_box = QGroupBox()
@@ -1412,6 +1359,7 @@ class MainWindow(QMainWindow):
         # Each under one of the three buttons above (equal columns, the buttons' spacing).
         self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb],
                                     spacing=mode_row.spacing(), even=True)
+        ml.addSpacing(4)                                 # a little room under the three buttons
         ml.addWidget(self.measure_opts)
         ml.addSpacing(8)                                 # some room before the note, Clear and Close
         mrow = QHBoxLayout()
@@ -1423,7 +1371,7 @@ class MainWindow(QMainWindow):
         self.measure_cut_note = QWidget()
         nl = QHBoxLayout(self.measure_cut_note)
         nl.setContentsMargins(0, 0, 0, 0)
-        nl.setSpacing(4)
+        nl.setSpacing(8)
         self.measure_cut_dot = QLabel()
         self.measure_cut_dot.setTextFormat(Qt.RichText)
         self.measure_cut_dot.setAlignment(Qt.AlignTop)
@@ -1699,19 +1647,19 @@ class MainWindow(QMainWindow):
         self.act_open_folder.setText(tr("Open folder…"))
         self.act_open_folder.setIcon(theme.tool_icon("open"))
         # The shortcut as the system writes it (Ctrl+O, or ⌘O on a Mac).
-        self.act_open.setToolTip(self._with_key(tr("Open file or ZIP…"), "open"))
+        self.act_open.setToolTip(tr("Open file or ZIP…"))
         self.menu_btn.setToolTip(tr("Menu"))
         self.act_home.setText(tr("Home"))
-        self.act_home.setToolTip(self._with_key(tr("Close the file and go back to the start page"), "home"))
+        self.act_home.setToolTip(tr("Close the file and go back to the start page"))
         self.recent_menu.setTitle(tr("Recent"))
         view_names = {None: tr("Fit"), "iso": tr("Iso"), "top": tr("Top"),
                       "front": tr("Front"), "right": tr("Right")}
         for act, key, view in self.view_actions:
             act.setText(keys.with_key(view_names[view], key))
             if view is None:                         # Fit: the camera only, nothing else changes
-                act.setToolTip(keys.with_key(tr("Fit the model in the view"), key))
+                act.setToolTip(tr("Fit the model in the view"))
             else:
-                act.setToolTip(keys.with_key(tr("{view} view").format(view=view_names[view]), key))
+                act.setToolTip(tr("{view} view").format(view=view_names[view]))
         if hasattr(self, "view_cube"):
             self.view_cube.set_labels(self._cube_labels())
             self.view_cube.set_tooltips(self._cube_tooltips())
@@ -1723,10 +1671,10 @@ class MainWindow(QMainWindow):
         self.act_export_setting.setText(tr("Change what a click does…"))
         # The toolbar buttons say their key, as the View section's buttons do in their tooltips.
         self.act_bed.setText(self._with_key(tr("Plate"), "plate"))
-        self.act_bed.setToolTip(self._with_key(tr("Show / hide the build plate grid (arrow: plate size)"), "plate"))
+        self.act_bed.setToolTip(tr("Show / hide the build plate grid (arrow: plate size)"))
         self.act_check.setText(self._with_key(tr("Check"), "check"))
-        self.act_check.setToolTip(self._with_key(
-            tr("Check the model before printing: overhangs, thin walls and problems in the mesh"), "check"))
+        self.act_check.setToolTip(
+            tr("Check the model before printing: overhangs, thin walls and problems in the mesh"))
         self.check_box.setTitle(tr("Check model"))
         self.check_angle_label.setText(tr("from vertical"))
         self.check_nozzle_label.setText(tr("nozzle"))
@@ -1767,7 +1715,7 @@ class MainWindow(QMainWindow):
             lbl.setFixedWidth(widest + 4)
         self._update_check_panel()
         self.act_view.setText(self._with_key(tr("View"), "view"))
-        self.act_view.setToolTip(self._with_key(tr("How the model is drawn: wireframe, X-ray, clip"), "view"))
+        self.act_view.setToolTip(tr("How the model is drawn: wireframe, X-ray, clip"))
         self.view_box.setTitle(tr("View"))
         # The buttons of the View section are short; the tooltip says it in full.
         self.act_reset_view.setText(tr("Reset view"))
@@ -1777,27 +1725,27 @@ class MainWindow(QMainWindow):
                                     (self.act_clip_face, tr("Clip facing you"), tr("Clip facing you"), "clip_face"),
                                     (self.act_reset_view, tr("Reset view"), tr("Reset view"), "reset_view")):
             act.setText(self._with_key(text, kid))      # the key on the button, as on the toolbar
-            act.setToolTip(self._with_key(tip, kid))
+            act.setToolTip(tip)
         self.view_reset_btn.setText(self._with_key(tr("Reset view"), "reset_view"))
-        self.view_reset_btn.setToolTip(self._with_key(tr("Reset view"), "reset_view"))
+        self.view_reset_btn.setToolTip(tr("Reset view"))
         self.view_close_btn.setText(self._with_key(tr("Close"), "view"))
         self.view_lock_btn.setText(self._with_key(tr("Lock facing cut"), "lock_face"))
-        self.view_lock_btn.setToolTip(self._with_key(
+        self.view_lock_btn.setToolTip(
             tr("Clip facing you stops turning with the view, so you can turn the model and look at the cut "
-               "from any side. Its slider still moves it."), "lock_face"))
+               "from any side. Its slider still moves it."))
         self.act_lock_face.setText(self.view_lock_btn.text())
+        self.act_lock_face.setToolTip(tr("Lock facing cut"))      # Qt would use the text, key and all
         self._retitle_clip_box()
         self.clip_ghost_cb.setText(tr("Show the cut-away part"))
         self.clip_ghost_cb.setToolTip(tr("Shows what the cut hides as a see-through ghost."))
         self.clip_plane_cb.setText(tr("Show the cutting plane"))
         self.clip_plane_cb.setToolTip(tr("Shows where the cut is, as a faint sheet the size of the model."))
         self.act_measure.setText(self._with_key(tr("Measure"), "measure"))
-        self.act_measure.setToolTip(self._with_key(tr("Measure on the model: distance, angle, circle"), "measure"))
+        self.act_measure.setToolTip(tr("Measure on the model: distance, angle, circle"))
         self.measure_box.setTitle(tr("Measure"))
         for kind, a in self.measure_actions.items():
             a.setText(self._with_key(self._measure_mode_label(kind), kind))
-            a.setToolTip(self._with_key(self._measure_mode_tip(kind), kind))
-        self.objects_hint.setText(tr("Click a colour box to change its colour."))
+            a.setToolTip(self._measure_mode_tip(kind))
         self.measure_snap_cb.setText(tr("Snapping"))
         self.measure_snap_cb.setToolTip(tr("Jumps to the nearest corner, the middle of an edge or a point on an "
                                            "edge of the model when the mouse is close to one."))
@@ -1807,17 +1755,16 @@ class MainWindow(QMainWindow):
         self.measure_deltas_cb.setToolTip(tr("Writes the distance along X, Y and Z under the value of every "
                                              "distance."))
         self.measure_clear_btn.setText(self._with_key(tr("Clear"), "measure_clear"))
-        self.measure_clear_btn.setToolTip(self._with_key(tr("Removes every measurement; Measure stays on."),
-                                                         "measure_clear"))
+        self.measure_clear_btn.setToolTip(tr("Removes every measurement; Measure stays on."))
         # Close does what the Measure key does while Measure is on: it ends Measure.
         self.measure_close_btn.setText(self._with_key(tr("Close"), "measure"))
         self._update_measure_panel()
         self._update_clip_label()
         self._mark_plate_mode()
         self.act_screenshot.setText(tr("Screenshot"))
-        self.act_screenshot.setToolTip(self._with_key(tr("Screenshot"), "screenshot"))
+        self.act_screenshot.setToolTip(tr("Screenshot"))
         self.act_settings.setText(tr("Settings"))
-        self.act_settings.setToolTip(self._with_key(tr("Settings"), "settings"))
+        self.act_settings.setToolTip(tr("Settings"))
         self.act_updates.setText(tr("Updates"))
         self.act_about.setText(tr("About"))
         self.act_whats_new.setText(tr("What's new"))
@@ -3354,8 +3301,7 @@ class MainWindow(QMainWindow):
             return
         show = (self.measure.active and "face" in self._clip_cuts() and not self.act_lock_face.isChecked())
         if show:
-            key = self._k("lock_face")
-            lock = tr("Lock facing cut ({key})").format(key=key) if key else tr("Lock facing cut")
+            lock = tr("Lock facing cut")
             tip = "<p>" + "</p><p>".join(html.escape(t) for t in (
                 tr("Facing cut not locked."),
                 tr("{lock} stops Clip facing you turning with the view, so you can turn the model and "
@@ -3365,8 +3311,10 @@ class MainWindow(QMainWindow):
             ) + "</p>"
             self.measure_cut_dot.setText('<span style="color:%s; font-size:13px;">●</span>'
                                          % (self.DOT_DARK if theme.is_dark() else self.DOT_LIGHT))
-            # Two lines: what it is, then where to find out more.
-            self.measure_cut_text.setText(tr("Facing cut not locked") + "\n" + tr("Hover for details"))
+            # One line where it fits, else two: each part keeps its words together (no-break
+            # spaces), so a line only ever breaks between "…not locked." and "Hover for details".
+            nb = lambda t: t.replace(" ", "\u00a0")
+            self.measure_cut_text.setText(nb(tr("Facing cut not locked.")) + " " + nb(tr("Hover for details")))
             for wdg in (self.measure_cut_note, self.measure_cut_dot, self.measure_cut_text):
                 wdg.setToolTip(tip)
         self.measure_cut_note.setVisible(show)
@@ -3420,7 +3368,6 @@ class MainWindow(QMainWindow):
 
     def _start_clip(self, cut: str, on: bool):
         slider = self.clip_slider if cut == "top" else self.face_slider
-        row = self.clip_top_row if cut == "top" else self.clip_face_row
         self._retitle_clip_box()
         if on and self._view_options_apply():
             self._open_view_section()                # its controls are in the View section
@@ -3428,14 +3375,12 @@ class MainWindow(QMainWindow):
             slider.blockSignals(True)
             slider.setValue(self.CLIP_STEPS // 2)
             slider.blockSignals(False)
-            row.show()
             self.clip_box.show()
             if cut == "top":
                 self._on_clip_changed(slider.value())
             else:
                 self._on_face_changed(slider.value())
             return
-        row.setVisible(on)
         if cut == "top":
             self.scene.set_clip(None)
         else:
@@ -3453,10 +3398,13 @@ class MainWindow(QMainWindow):
         return r[0] + (r[1] - r[0]) * value / self.CLIP_STEPS
 
     def _retitle_clip_box(self):
-        """Show the rows of the cuts that are on (the freeze choice belongs to Clip facing you)."""
+        """Both sliders while a cut is on, each under its button; the one whose cut is off greyed
+        out and disabled. The lock belongs to Clip facing you."""
         cuts = self._clip_cuts()
-        self.clip_top_row.setVisible("top" in cuts)
-        self.clip_face_row.setVisible("face" in cuts)
+        for row, cut in ((self.clip_top_row, "top"), (self.clip_face_row, "face")):
+            row.setVisible(bool(cuts))
+            row.setEnabled(cut in cuts)
+        self._update_clip_label()
         self.view_lock_btn.setVisible("face" in cuts)
         self._update_hints()
         self._update_measure_cut_note()
@@ -3535,11 +3483,17 @@ class MainWindow(QMainWindow):
         # whole depth of the model at the back. (The slider itself moves the cut away from the
         # centre of the view; this number does not depend on where that is.)
         depth = self.scene.face_cut_depth()
-        if depth is None:
+        cuts = self._clip_cuts()
+        if "face" not in cuts:
+            self.face_info.setText(tr("Depth"))              # greyed out, its cut is off
+        elif depth is None:
             self.face_info.setText("")
         else:
             self.face_info.setText(ltr(tr("Depth {d} of {total} {unit}").format(
                 d=units.number(depth[0], 1), total=units.number(depth[1], 1), unit=units.name())))
+        if "top" not in cuts:
+            self.clip_info.setText(tr("Height"))             # greyed out, its cut is off
+            return
         z = self._clip_height(self.clip_slider.value())
         self.clip_info.setText(ltr(tr("Height {z} of {top} {unit}").format(
             z=units.number(z - r[0], 1), top=units.number(r[1] - r[0], 1), unit=units.name())))
@@ -3589,9 +3543,9 @@ class MainWindow(QMainWindow):
 
     def _export_tooltip(self):
         cad = getattr(self, "current_kind", "") in ("freecad", "step")
-        self.act_export_stl.setToolTip(self._with_key(
+        self.act_export_stl.setToolTip(
             tr("Save the objects of this CAD file as STL files") if cad else
-            tr("Save the objects of this 3MF project as STL files"), "export"))
+            tr("Save the objects of this 3MF project as STL files"))
 
     def _update_slicer_button(self):
         freecad = self.current_kind == "freecad" and not self.showing_embedded
@@ -3599,18 +3553,18 @@ class MainWindow(QMainWindow):
         self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True))
         if freecad:
             self.slicer_btn.setText(tr("Open in FreeCAD"))
-            self.slicer_btn.setToolTip(self._with_key(tr("Open this file in FreeCAD"), "slicer") + ". "
+            self.slicer_btn.setToolTip(tr("Open this file in FreeCAD") + ". "
                                        + tr("Use the arrow to send the model to a slicer as STL."))
             return
         sid, name, _ = sl.resolve(self.settings)
         if sid:
             name = self._slicer_name(sid, name)
             self.slicer_btn.setText(tr("Open in {slicer}").format(slicer=name))
-            self.slicer_btn.setToolTip(self._with_key(tr("Open this file in {slicer}").format(slicer=name), "slicer")
+            self.slicer_btn.setToolTip(tr("Open this file in {slicer}").format(slicer=name)
                                        + ". " + tr("Use the arrow to pick another slicer."))
         else:
             self.slicer_btn.setText(tr("Open in slicer"))
-            self.slicer_btn.setToolTip(self._with_key(tr("No slicer found yet — choose one in Settings"), "slicer"))
+            self.slicer_btn.setToolTip(tr("No slicer found yet — choose one in Settings"))
 
     def _fill_slicer_menu(self):
         self.slicer_menu.clear()

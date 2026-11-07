@@ -644,12 +644,6 @@ def test_settings_slider_for_the_line_thickness(window):
     assert w.settings.get("measure_line_width") == 7 and w.measure.line_width == 7
 
 
-def test_objects_box_says_in_text_that_the_colour_can_be_changed(window):
-    w = window
-    w.load_sync(os.path.join(HERE, "data", "two_parts.3mf"))
-    assert "colour" in w.objects_hint.text().lower() and w.objects_hint.isVisible()   # plain text, not a tooltip
-
-
 # ------------------------------------------------------------ thin dotted lines, black core dots, hints
 def test_a_dotted_line_is_never_thinner_than_the_minimum(window):
     w = window

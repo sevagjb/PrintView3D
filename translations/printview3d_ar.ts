@@ -642,11 +642,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} ({key}: next theme)</source>
-        <translation type="unfinished">السمة: {name} ({key}: السمة التالية)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme: {name}</source>
         <translation type="unfinished">السمة: {name}</translation>
     </message>
@@ -909,13 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut</source>
-        <translation type="unfinished">تثبيت القطع المواجه</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">يتوقف القطع المواجه عن الدوران مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة. يبقى شريط التمرير يحرّكه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">يتوقف القطع المواجه عن الدوران مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة. يبقى شريط التمرير يحرّكه.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">تثبيت القطع المواجه</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -948,11 +943,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
         <translation>قياس</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation>انقر على مربع اللون لتغيير لونه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1499,16 +1489,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut ({key})</source>
-        <translation type="unfinished">تثبيت القطع المواجه ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked.</source>
-        <translation type="unfinished">القطع المواجه غير مثبّت.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
         <translation type="unfinished">{lock} يوقف دوران القطع المواجه مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة.</translation>
     </message>
@@ -1524,8 +1504,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked</source>
-        <translation type="unfinished">القطع المواجه غير مثبّت</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">القطع المواجه غير مثبّت.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1575,8 +1555,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">العمق</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} {unit}</source>
         <translation type="unfinished">العمق {d} من {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">الارتفاع</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2876,6 +2866,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">السمة: {name} ({key}: السمة التالية)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">انقر على مربع اللون لتغيير لونه.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">تثبيت القطع المواجه ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">القطع المواجه غير مثبّت</translation>
     </message>
     <message>
         <source>Facing cut not locked · hover for details</source>

@@ -320,7 +320,9 @@ def test_both_cuts_at_the_same_time(window):
     assert not w.act_clip.isChecked() and w.act_clip_face.isChecked()
     assert w.scene.clip_z is None and w.scene.clip_face is not None and _planes(w) == [1, 1, 1]
     assert w.clip_box.isVisible()
-    assert not w.clip_top_row.isVisible() and w.clip_face_row.isVisible()
+    # both sliders stay; the one whose cut is off is greyed out and disabled
+    assert w.clip_top_row.isVisible() and not w.clip_top_row.isEnabled() and not w.clip_slider.isEnabled()
+    assert w.clip_face_row.isEnabled() and w.clip_info.text() == "Height"
     w.act_clip.trigger()                                      # and back, from the middle
     assert w.scene.clip_z == pytest.approx(20.0) and _planes(w) == [2, 2, 2]
     w.act_clip_face.trigger()                                 # V: only the upright cut goes off

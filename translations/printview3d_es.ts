@@ -642,11 +642,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} ({key}: next theme)</source>
-        <translation type="unfinished">Tema: {name} ({key}: tema siguiente)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme: {name}</source>
         <translation type="unfinished">Tema: {name}</translation>
     </message>
@@ -909,13 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut</source>
-        <translation type="unfinished">Bloquear corte de frente</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">El corte de frente deja de girar con la vista, así puedes girar el modelo y mirar el corte desde cualquier lado. Su control deslizante sigue moviéndolo.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">El corte de frente deja de girar con la vista, así puedes girar el modelo y mirar el corte desde cualquier lado. Su control deslizante sigue moviéndolo.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Bloquear corte de frente</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -948,11 +943,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
         <translation type="unfinished">Medir</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation type="unfinished">Haz clic en un cuadro de color para cambiarlo.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1499,16 +1489,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut ({key})</source>
-        <translation type="unfinished">Bloquear corte de frente ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked.</source>
-        <translation type="unfinished">Corte de frente no bloqueado.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
         <translation type="unfinished">{lock} hace que el corte de frente deje de girar con la vista, así puedes girar el modelo y mirar el corte desde cualquier lado.</translation>
     </message>
@@ -1524,8 +1504,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked</source>
-        <translation type="unfinished">Corte de frente no bloqueado</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Corte de frente no bloqueado.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1575,8 +1555,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">Profundidad</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} {unit}</source>
         <translation type="unfinished">Profundidad {d} de {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">Altura</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2876,6 +2866,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">Tema: {name} ({key}: tema siguiente)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">Haz clic en un cuadro de color para cambiarlo.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">Bloquear corte de frente ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">Corte de frente no bloqueado</translation>
     </message>
     <message>
         <source>Facing cut not locked · hover for details</source>

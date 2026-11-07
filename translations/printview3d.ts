@@ -642,11 +642,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} ({key}: next theme)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme: {name}</source>
         <translation type="unfinished"></translation>
     </message>
@@ -909,12 +904,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut</source>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <source>Lock facing cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -947,11 +942,6 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1499,16 +1489,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut ({key})</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1524,7 +1504,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked</source>
+        <source>Facing cut not locked.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1575,7 +1555,17 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} {unit}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

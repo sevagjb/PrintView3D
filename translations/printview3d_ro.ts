@@ -642,11 +642,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} ({key}: next theme)</source>
-        <translation type="unfinished">Temă: {name} ({key}: tema următoare)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme: {name}</source>
         <translation type="unfinished">Temă: {name}</translation>
     </message>
@@ -909,13 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut</source>
-        <translation type="unfinished">Blochează tăietura</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">Tăietura spre tine nu se mai rotește cu vizualizarea, așa că poți roti modelul și privi tăietura din orice parte. Glisorul ei o mută în continuare.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">Tăietura spre tine nu se mai rotește cu vizualizarea, așa că poți roti modelul și privi tăietura din orice parte. Glisorul ei o mută în continuare.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Blochează tăietura</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -948,11 +943,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
         <translation type="unfinished">Măsoară</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation type="unfinished">Fă clic pe un pătrat de culoare ca să schimbi culoarea.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1499,16 +1489,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut ({key})</source>
-        <translation type="unfinished">Blochează tăietura ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked.</source>
-        <translation type="unfinished">Tăietura spre tine nu este blocată.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
         <translation type="unfinished">{lock} oprește rotirea tăieturii spre tine odată cu vizualizarea, așa că poți roti modelul și privi tăietura din orice parte.</translation>
     </message>
@@ -1524,8 +1504,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked</source>
-        <translation type="unfinished">Tăietura spre tine nu este blocată</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Tăietura spre tine nu este blocată.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1575,8 +1555,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">Adâncime</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} {unit}</source>
         <translation type="unfinished">Adâncime {d} din {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">Înălțime</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2876,6 +2866,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">Temă: {name} ({key}: tema următoare)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">Fă clic pe un pătrat de culoare ca să schimbi culoarea.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">Blochează tăietura ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">Tăietura spre tine nu este blocată</translation>
     </message>
     <message>
         <source>Facing cut not locked · hover for details</source>

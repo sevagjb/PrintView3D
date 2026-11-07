@@ -68,7 +68,7 @@ def test_window_uses_the_defaults(window):
     assert w.act_view.text() == "View (V)" and w.act_check.text() == "Check (C)"
     assert w.act_clip.shortcut().toString() == "T" and w.act_clip.text() == "Clip from the top (T)"
     assert w.act_settings.shortcut().toString() == "S" and w.act_settings in w.actions()
-    assert w.act_settings.toolTip() == "Settings (S)"
+    assert w.act_settings.toolTip() == "Settings"              # keys are on the buttons, not in tooltips
 
 
 # ------------------------------------------------------------------ Settings page
@@ -97,7 +97,7 @@ def test_own_key_is_saved_and_shown_everywhere(window):
     # as the system writes it: "Shift+M" on Windows and Linux, "⇧M" on a Mac
     shift_m, ctrl_shift_f = QKeySequence("Shift+M").toString(QKeySequence.NativeText), \
         QKeySequence("Ctrl+Shift+F").toString(QKeySequence.NativeText)
-    assert w.act_measure.text() == f"Measure ({shift_m})" and w.act_measure.toolTip().endswith(f"({shift_m})")
+    assert w.act_measure.text() == f"Measure ({shift_m})" and shift_m not in w.act_measure.toolTip()
     assert w.act_fit.text() == f"Fit ({ctrl_shift_f})"
     fit = [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("Ctrl+Shift+F")]
     assert len(fit) == 1 and not [s for s in w.findChildren(QShortcut) if s.key() == QKeySequence("F")]

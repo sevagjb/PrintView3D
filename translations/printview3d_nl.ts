@@ -642,11 +642,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} ({key}: next theme)</source>
-        <translation type="unfinished">Thema: {name} ({key}: volgend thema)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme: {name}</source>
         <translation type="unfinished">Thema: {name}</translation>
     </message>
@@ -909,13 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut</source>
-        <translation type="unfinished">Snede vastzetten</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">De snede naar je toe draait niet meer mee met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken. De schuifregelaar verplaatst hem nog steeds.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">De snede naar je toe draait niet meer mee met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken. De schuifregelaar verplaatst hem nog steeds.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Snede vastzetten</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -948,11 +943,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
         <translation>Meten</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation>Klik op een kleurvak om de kleur te wijzigen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1499,16 +1489,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut ({key})</source>
-        <translation type="unfinished">Snede vastzetten ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked.</source>
-        <translation type="unfinished">Snede naar je toe niet vastgezet.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
         <translation type="unfinished">{lock} zorgt dat de snede naar je toe niet meer meedraait met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken.</translation>
     </message>
@@ -1524,8 +1504,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked</source>
-        <translation type="unfinished">Snede naar je toe niet vastgezet</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Snede naar je toe niet vastgezet.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1575,8 +1555,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">Diepte</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} {unit}</source>
         <translation type="unfinished">Diepte {d} van {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">Hoogte</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2876,6 +2866,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">Thema: {name} ({key}: volgend thema)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">Klik op een kleurvak om de kleur te wijzigen.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">Snede vastzetten ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">Snede naar je toe niet vastgezet</translation>
     </message>
     <message>
         <source>Facing cut not locked · hover for details</source>

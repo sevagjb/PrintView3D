@@ -642,11 +642,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Theme: {name} ({key}: next theme)</source>
-        <translation type="unfinished">Design: {name} ({key}: nächstes Design)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme: {name}</source>
         <translation type="unfinished">Design: {name}</translation>
     </message>
@@ -909,13 +904,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut</source>
-        <translation type="unfinished">Zugewandten Schnitt sperren</translation>
+        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
+        <translation type="unfinished">Der zugewandte Schnitt dreht sich nicht mehr mit der Ansicht, so können Sie das Modell drehen und den Schnitt von jeder Seite ansehen. Sein Schieberegler verschiebt ihn weiterhin.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">Der zugewandte Schnitt dreht sich nicht mehr mit der Ansicht, so können Sie das Modell drehen und den Schnitt von jeder Seite ansehen. Sein Schieberegler verschiebt ihn weiterhin.</translation>
+        <source>Lock facing cut</source>
+        <translation type="unfinished">Zugewandten Schnitt sperren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -948,11 +943,6 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure</source>
         <translation type="unfinished">Messen</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Click a colour box to change its colour.</source>
-        <translation type="unfinished">Klicke auf ein Farbfeld, um die Farbe zu ändern.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1499,16 +1489,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock facing cut ({key})</source>
-        <translation type="unfinished">Zugewandten Schnitt sperren ({key})</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked.</source>
-        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt.</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
         <translation type="unfinished">{lock} verhindert, dass sich der zugewandte Schnitt mit der Ansicht dreht, so können Sie das Modell drehen und den Schnitt von jeder Seite ansehen.</translation>
     </message>
@@ -1524,8 +1504,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked</source>
-        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1575,8 +1555,18 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Depth</source>
+        <translation type="unfinished">Tiefe</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Depth {d} of {total} {unit}</source>
         <translation type="unfinished">Tiefe {d} von {total} {unit}</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Height</source>
+        <translation type="unfinished">Höhe</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2876,6 +2866,22 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Theme: {name} ({key}: next theme)</source>
+        <translation type="vanished">Design: {name} ({key}: nächstes Design)</translation>
+    </message>
+    <message>
+        <source>Click a colour box to change its colour.</source>
+        <translation type="vanished">Klicke auf ein Farbfeld, um die Farbe zu ändern.</translation>
+    </message>
+    <message>
+        <source>Lock facing cut ({key})</source>
+        <translation type="vanished">Zugewandten Schnitt sperren ({key})</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked</source>
+        <translation type="vanished">Zugewandter Schnitt nicht gesperrt</translation>
     </message>
     <message>
         <source>Facing cut not locked · hover for details</source>

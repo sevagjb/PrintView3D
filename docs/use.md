@@ -30,7 +30,7 @@ Looking from underneath? The plate gets out of the way so you can see the bottom
 
 These are the keys PrintView3D comes with. **Settings → Keyboard and mouse** lists them all, and
 you can give any of them a key of your own there: click its field and press the new key (the
-clear button removes it). The buttons and tooltips then show your key. **Reset to defaults** puts
+clear button removes it). The buttons then show your key (tooltips name no keys). **Reset to defaults** puts
 them all back. Keys the system uses (the Windows or Super key, Alt+F4, Alt+Tab, ⌘Q, Ctrl+Alt+Del
 and the like), Tab, Enter, Esc and Space can't be chosen, and neither can a key another action
 already has. The mouse controls are fixed.
