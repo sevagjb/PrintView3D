@@ -453,10 +453,10 @@ class SettingsDialog(QDialog):
         l3.addWidget(self.cut_planes_cb)
         # View -> Clip: a knob on each cutting plane, to move the cut by dragging it in the 3D view
         # (the sliders still work as well).
-        self.clip_handles_cb = QCheckBox(tr("Move the cuts by dragging them in the 3D view"))
+        self.clip_handles_cb = QCheckBox(tr("Also move the cuts by dragging them in the 3D view"))
         self.clip_handles_cb.setChecked(bool(settings.get("clip_handles", False)))
-        self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the cut, "
-                                           "like its slider does."))
+        self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the cut; "
+                                           "the sliders still work too."))
         l3.addWidget(self.clip_handles_cb)
         # Check: keep the colours picked for the highlights (otherwise they are the defaults again
         # at every start).
@@ -494,7 +494,7 @@ class SettingsDialog(QDialog):
         l4.addWidget(self.gpu_hint)
         self._add_page("viewer", tr("Viewer"), [g3, g4], keep_titles=True)
 
-        self._add_page("keys", tr("Keyboard and mouse"), [self._build_keys(), self._build_mouse()],
+        self._add_page("keys", tr("Keyboard and mouse"), [self._build_mouse(), self._build_keys()],
                        keep_titles=True)
         self._add_page("updates", tr("Updates"), [self._build_updates()])
         self._add_page("about", tr("About"), [self._build_about(gpu_info)])

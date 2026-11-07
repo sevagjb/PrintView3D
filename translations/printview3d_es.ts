@@ -987,6 +987,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Quita todas las medidas; Medir sigue activo.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation type="unfinished">Captura de pantalla</translation>
     </message>
@@ -1489,18 +1494,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
-        <translation type="unfinished">El corte de frente gira con la vista: los puntos colocados en el corte se quedan donde están y el corte sigue moviéndose.</translation>
+        <source>Lock facing cut ({key})</source>
+        <translation type="unfinished">Bloquear corte de frente ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut ({key}) to measure on it.</source>
-        <translation type="unfinished">Bloquea el corte de frente ({key}) para medir sobre él.</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Corte de frente no bloqueado.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut to measure on it.</source>
-        <translation type="unfinished">Bloquea el corte de frente para medir sobre él.</translation>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} hace que el corte de frente deje de girar con la vista, así puedes girar el modelo y mirar el corte desde cualquier lado.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Sin bloquear, el corte gira con cada giro de la vista, pero una medida se queda donde la pusiste: queda flotando en el aire, lejos del corte en el que se midió.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="unfinished">Bloquea el corte antes de medir sobre él.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Corte de frente no bloqueado · pasa el ratón para más detalles</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2241,13 +2261,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Mover los cortes arrastrándolos en la vista 3D</translation>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">Mover también los cortes arrastrándolos en la vista 3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
-        <translation type="unfinished">Cada plano de corte recibe un tirador redondo. Arrástralo para mover el corte, como hace su control deslizante.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="unfinished">Cada plano de corte recibe un tirador redondo. Arrástralo para mover el corte; los controles deslizantes siguen funcionando.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2830,6 +2850,26 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">El corte de frente gira con la vista: los puntos colocados en el corte se quedan donde están y el corte sigue moviéndose.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Bloquea el corte de frente ({key}) para medir sobre él.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Bloquea el corte de frente para medir sobre él.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Mover los cortes arrastrándolos en la vista 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Cada plano de corte recibe un tirador redondo. Arrástralo para mover el corte, como hace su control deslizante.</translation>
     </message>
     <message>
         <source>Freeze the cutting plane</source>

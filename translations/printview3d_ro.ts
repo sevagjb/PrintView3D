@@ -987,6 +987,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Șterge toate măsurătorile; Măsurare rămâne pornită.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation>Captură de ecran</translation>
     </message>
@@ -1489,18 +1494,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
-        <translation type="unfinished">Tăietura spre tine se rotește cu vizualizarea: punctele puse pe tăietură rămân pe loc, iar tăietura se mută.</translation>
+        <source>Lock facing cut ({key})</source>
+        <translation type="unfinished">Blochează tăietura ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut ({key}) to measure on it.</source>
-        <translation type="unfinished">Blochează tăietura ({key}) ca să măsori pe ea.</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Tăietura spre tine nu este blocată.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut to measure on it.</source>
-        <translation type="unfinished">Blochează tăietura ca să măsori pe ea.</translation>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} oprește rotirea tăieturii spre tine odată cu vizualizarea, așa că poți roti modelul și privi tăietura din orice parte.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Neblocată, tăietura se rotește la fiecare rotire a vizualizării, dar o măsurătoare rămâne unde ai pus-o: rămâne suspendată în aer, departe de tăietura pe care a fost făcută.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="unfinished">Blochează tăietura înainte să măsori pe ea.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Tăietura nu este blocată · treci cu mouse-ul pentru detalii</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2241,13 +2261,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Mută tăieturile trăgându-le în vizualizarea 3D</translation>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">Mută și tăieturile trăgându-le în vizualizarea 3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
-        <translation type="unfinished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura, ca glisorul său.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="unfinished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura; glisoarele funcționează în continuare.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2830,6 +2850,26 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">Tăietura spre tine se rotește cu vizualizarea: punctele puse pe tăietură rămân pe loc, iar tăietura se mută.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Blochează tăietura ({key}) ca să măsori pe ea.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Blochează tăietura ca să măsori pe ea.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Mută tăieturile trăgându-le în vizualizarea 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura, ca glisorul său.</translation>
     </message>
     <message>
         <source>Freeze the cutting plane</source>

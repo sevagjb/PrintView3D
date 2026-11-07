@@ -317,8 +317,9 @@ and the other model formats; G-code has its layer slider instead):
   click that face on the view cube. The slider moves the cut nearer or further, and **Depth**
   shows how far it is into the model. **Lock facing cut** (`L`, the button left of Reset view)
   stops the cut turning with the view, so you can turn the model and look at the cut from the side;
-  the slider still moves it. While the cut is not locked, the Measure section reminds you that
-  points placed on the cut stay behind when the view turns.
+  the slider still moves it. While the cut is not locked, the Measure section shows a red dot and
+  *Facing cut not locked*; hover over it for why: points placed on the cut stay behind when the
+  view turns.
 - **Both cuts at once**: `T` and `Y` each turn their own cut on and off, so both can be on together
   for a corner cut away, with a **Height** and a **Depth** slider in the side panel. What the cuts
   hide stays one even ghost, and each cutting plane stops where the other cut is. **Reset view**
@@ -328,7 +329,7 @@ and the other model formats; G-code has its layer slider instead):
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
-- **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Move the cuts by
+- **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Also move the cuts by
   dragging them in the 3D view** and each cut gets a small round handle on the edge of its cutting
   plane, with a short line showing which way it moves. Under the mouse its colours swap. Drag it
   to move the cut; its slider moves along.

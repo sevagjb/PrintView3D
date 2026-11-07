@@ -490,6 +490,12 @@ class _ElidedLabel(QLabel):
         self.setMinimumWidth(20)
         self.setText(text)
 
+    def set_full(self, text: str, tip: Optional[str] = None):
+        """Another text (and tooltip: the full text unless one is given)."""
+        self._full = text
+        self.setToolTip(text if tip is None else tip)
+        self.setText(self.fontMetrics().elidedText(text, Qt.ElideRight, max(10, self.width())))
+
     def resizeEvent(self, e):
         super().resizeEvent(e)
         self.setText(self.fontMetrics().elidedText(self._full, Qt.ElideRight, max(10, self.width())))
@@ -695,6 +701,8 @@ class MainWindow(QMainWindow):
         self._update_theme_button()
         self.refresh_update_badge()
         self._update_check_panel()                  # the dots' red: brighter on dark, deeper on light
+        if hasattr(self, "measure_cut_note"):
+            self._update_measure_cut_note()
         # The ZIP list's type labels take their text colour from the theme when they are made.
         if self.zip is not None and self.stack.currentIndex() == 1:
             self._fill_zip_box()
@@ -1383,20 +1391,32 @@ class MainWindow(QMainWindow):
         # Side by side while they fit, one under the other in a narrow panel.
         self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb])
         ml.addWidget(self.measure_opts)
-        # While Clip facing you turns with the view, a point placed on its cut stays where it was
-        # put when the view turns: the cut moves on and the point hangs in the air. Said here,
-        # only while that is so.
-        self.measure_cut_note = QLabel()
-        self.measure_cut_note.setObjectName("cutNote")
-        self.measure_cut_note.setWordWrap(True)
-        self.measure_cut_note.hide()
-        ml.addWidget(self.measure_cut_note)
         mrow = QHBoxLayout()
+        # While Clip facing you turns with the view, a point placed on its cut stays where it was
+        # put when the view turns: the cut moves on and the measurement hangs in the air. A short
+        # note with a red dot (like Check's problems) says so, left of Clear, only while that is
+        # so; its tooltip explains. It keeps its place when hidden and ends in "…" when the
+        # panel is narrow, so Clear and Close never move.
+        self.measure_cut_note = QWidget()
+        nl = QHBoxLayout(self.measure_cut_note)
+        nl.setContentsMargins(0, 0, 0, 0)
+        nl.setSpacing(4)
+        self.measure_cut_dot = QLabel()
+        self.measure_cut_dot.setTextFormat(Qt.RichText)
+        nl.addWidget(self.measure_cut_dot)
+        self.measure_cut_text = _ElidedLabel("")
+        self.measure_cut_text.setObjectName("cutNote")
+        nl.addWidget(self.measure_cut_text, 1)
+        pol = self.measure_cut_note.sizePolicy()
+        pol.setHorizontalPolicy(QSizePolicy.Ignored)
+        pol.setRetainSizeWhenHidden(True)
+        self.measure_cut_note.setSizePolicy(pol)
+        self.measure_cut_note.hide()
         self.measure_clear_btn = QPushButton()
         self.measure_clear_btn.clicked.connect(self._measure_clear)
         self.measure_close_btn = QPushButton()
         self.measure_close_btn.clicked.connect(lambda: self.act_measure.setChecked(False))
-        mrow.addStretch(1)
+        mrow.addWidget(self.measure_cut_note, 1)
         mrow.addWidget(self.measure_clear_btn)
         mrow.addWidget(self.measure_close_btn)
         ml.addLayout(mrow)
@@ -1760,7 +1780,9 @@ class MainWindow(QMainWindow):
         self.measure_deltas_cb.setToolTip(tr("Writes the distance along X, Y and Z under the value of every "
                                              "distance."))
         self.measure_clear_btn.setText(tr("Clear"))
-        self.measure_close_btn.setText(tr("Close"))
+        self.measure_clear_btn.setToolTip(tr("Removes every measurement; Measure stays on."))
+        # Close does what the Measure key does while Measure is on: it ends Measure.
+        self.measure_close_btn.setText(self._with_key(tr("Close"), "measure"))
         self._update_measure_panel()
         self._update_clip_label()
         self._mark_plate_mode()
@@ -3304,11 +3326,19 @@ class MainWindow(QMainWindow):
         show = (self.measure.active and "face" in self._clip_cuts() and not self.act_lock_face.isChecked())
         if show:
             key = self._k("lock_face")
-            text = tr("Clip facing you turns with the view: points placed on the cut stay where they "
-                      "are and the cut moves on.")
-            text += " " + (tr("Lock the facing cut ({key}) to measure on it.").format(key=key) if key
-                           else tr("Lock the facing cut to measure on it."))
-            self.measure_cut_note.setText(text)
+            lock = tr("Lock facing cut ({key})").format(key=key) if key else tr("Lock facing cut")
+            tip = "<p>" + "</p><p>".join(html.escape(t) for t in (
+                tr("Facing cut not locked."),
+                tr("{lock} stops Clip facing you turning with the view, so you can turn the model and "
+                   "look at the cut from any side.").format(lock=lock),
+                tr("Unlocked, the cut turns with every turn of the view, but a measurement stays where "
+                   "you placed it: it is left hanging in the air, away from the cut it was measured on."),
+                tr("Lock the cut before measuring on it."))) + "</p>"
+            self.measure_cut_dot.setText('<span style="color:%s; font-size:13px;">●</span>'
+                                         % (self.DOT_DARK if theme.is_dark() else self.DOT_LIGHT))
+            self.measure_cut_text.set_full(tr("Facing cut not locked · hover for details"), tip)
+            for wdg in (self.measure_cut_note, self.measure_cut_dot):
+                wdg.setToolTip(tip)
         self.measure_cut_note.setVisible(show)
 
     def _update_hints(self):

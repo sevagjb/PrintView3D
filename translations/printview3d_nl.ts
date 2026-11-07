@@ -987,6 +987,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Verwijdert alle metingen; Meten blijft aan.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation>Schermafbeelding</translation>
     </message>
@@ -1489,18 +1494,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
-        <translation type="unfinished">De snede naar je toe draait mee met de weergave: punten op de snede blijven staan en de snede beweegt verder.</translation>
+        <source>Lock facing cut ({key})</source>
+        <translation type="unfinished">Snede vastzetten ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut ({key}) to measure on it.</source>
-        <translation type="unfinished">Zet de snede vast ({key}) om erop te meten.</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Snede naar je toe niet vastgezet.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut to measure on it.</source>
-        <translation type="unfinished">Zet de snede vast om erop te meten.</translation>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} zorgt dat de snede naar je toe niet meer meedraait met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Niet vastgezet draait de snede mee bij elke draai van de weergave, maar een meting blijft waar je hem plaatste: hij blijft in de lucht hangen, los van de snede waarop gemeten is.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="unfinished">Zet de snede vast voordat je erop meet.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Snede niet vastgezet · beweeg erover voor details</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2241,13 +2261,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">De snedes verplaatsen door ze in de 3D-weergave te slepen</translation>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">De snedes ook verplaatsen door ze in de 3D-weergave te slepen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
-        <translation type="unfinished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen, zoals met de schuifregelaar.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="unfinished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen; de schuifregelaars werken ook nog.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2830,6 +2850,26 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">De snede naar je toe draait mee met de weergave: punten op de snede blijven staan en de snede beweegt verder.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Zet de snede vast ({key}) om erop te meten.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Zet de snede vast om erop te meten.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">De snedes verplaatsen door ze in de 3D-weergave te slepen</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen, zoals met de schuifregelaar.</translation>
     </message>
     <message>
         <source>Freeze the cutting plane</source>

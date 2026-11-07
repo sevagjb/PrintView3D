@@ -987,6 +987,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Entfernt alle Messungen; Messen bleibt an.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation type="unfinished">Bildschirmfoto</translation>
     </message>
@@ -1489,18 +1494,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
-        <translation type="unfinished">Der zugewandte Schnitt dreht sich mit der Ansicht: Punkte auf dem Schnitt bleiben, wo sie sind, und der Schnitt wandert weiter.</translation>
+        <source>Lock facing cut ({key})</source>
+        <translation type="unfinished">Zugewandten Schnitt sperren ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut ({key}) to measure on it.</source>
-        <translation type="unfinished">Sperren Sie den zugewandten Schnitt ({key}), um darauf zu messen.</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut to measure on it.</source>
-        <translation type="unfinished">Sperren Sie den zugewandten Schnitt, um darauf zu messen.</translation>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} verhindert, dass sich der zugewandte Schnitt mit der Ansicht dreht, so können Sie das Modell drehen und den Schnitt von jeder Seite ansehen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Ungesperrt dreht sich der Schnitt bei jeder Drehung der Ansicht mit, eine Messung bleibt aber, wo Sie sie gesetzt haben: Sie hängt dann in der Luft, weg vom Schnitt, an dem gemessen wurde.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="unfinished">Sperren Sie den Schnitt, bevor Sie darauf messen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt · Details beim Darüberfahren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2241,13 +2261,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Schnitte durch Ziehen in der 3D-Ansicht verschieben</translation>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">Die Schnitte auch durch Ziehen in der 3D-Ansicht verschieben</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
-        <translation type="unfinished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um den Schnitt zu verschieben, wie mit seinem Schieberegler.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="unfinished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um den Schnitt zu verschieben; die Schieberegler funktionieren weiterhin.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2830,6 +2850,26 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">Der zugewandte Schnitt dreht sich mit der Ansicht: Punkte auf dem Schnitt bleiben, wo sie sind, und der Schnitt wandert weiter.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Sperren Sie den zugewandten Schnitt ({key}), um darauf zu messen.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Sperren Sie den zugewandten Schnitt, um darauf zu messen.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Schnitte durch Ziehen in der 3D-Ansicht verschieben</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um den Schnitt zu verschieben, wie mit seinem Schieberegler.</translation>
     </message>
     <message>
         <source>Freeze the cutting plane</source>

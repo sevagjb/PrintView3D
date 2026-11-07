@@ -987,6 +987,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">Supprime toutes les mesures ; Mesurer reste actif.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation type="unfinished">Capture d&apos;écran</translation>
     </message>
@@ -1489,18 +1494,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
-        <translation type="unfinished">La coupe de face tourne avec la vue : les points placés sur la coupe restent où ils sont et la coupe se déplace.</translation>
+        <source>Lock facing cut ({key})</source>
+        <translation type="unfinished">Verrouiller la coupe de face ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut ({key}) to measure on it.</source>
-        <translation type="unfinished">Verrouillez la coupe de face ({key}) pour mesurer dessus.</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">Coupe de face non verrouillée.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut to measure on it.</source>
-        <translation type="unfinished">Verrouillez la coupe de face pour mesurer dessus.</translation>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} empêche la coupe de face de tourner avec la vue : vous pouvez tourner le modèle et regarder la coupe de tous les côtés.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">Non verrouillée, la coupe tourne à chaque rotation de la vue, mais une mesure reste là où vous l&apos;avez placée : elle reste suspendue dans le vide, loin de la coupe sur laquelle elle a été prise.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="unfinished">Verrouillez la coupe avant de mesurer dessus.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Coupe de face non verrouillée · survolez pour les détails</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2241,13 +2261,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Déplacer les coupes en les faisant glisser dans la vue 3D</translation>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">Déplacer aussi les coupes en les faisant glisser dans la vue 3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
-        <translation type="unfinished">Chaque plan de coupe reçoit une poignée ronde. Faites-la glisser pour déplacer la coupe, comme avec son curseur.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="unfinished">Chaque plan de coupe reçoit une poignée ronde. Faites-la glisser pour déplacer la coupe ; les curseurs fonctionnent toujours.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2830,6 +2850,26 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">La coupe de face tourne avec la vue : les points placés sur la coupe restent où ils sont et la coupe se déplace.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">Verrouillez la coupe de face ({key}) pour mesurer dessus.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">Verrouillez la coupe de face pour mesurer dessus.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Déplacer les coupes en les faisant glisser dans la vue 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">Chaque plan de coupe reçoit une poignée ronde. Faites-la glisser pour déplacer la coupe, comme avec son curseur.</translation>
     </message>
     <message>
         <source>Freeze the cutting plane</source>

@@ -352,10 +352,51 @@ def test_measure_warns_while_the_facing_cut_turns(window):
     w.act_clip.setChecked(True)
     assert note.isHidden()                                   # the flat cut never turns
     w.act_clip_face.setChecked(True)
-    assert note.isVisible() and "Lock the facing cut (L)" in note.text()
+    assert note.isVisible() and "●" in w.measure_cut_dot.text()
+    assert w.measure_cut_text.toolTip() == note.toolTip()
+    tip = note.toolTip()
+    assert "Lock facing cut (L)" in tip and "hanging in the air" in tip and "slider" not in tip
+    assert w.measure_cut_text._full == "Facing cut not locked · hover for details"
     w.act_lock_face.setChecked(True)
     assert note.isHidden()
     w.act_lock_face.setChecked(False)
     assert note.isVisible()
     w.act_measure.setChecked(False)
     assert note.isHidden()                                   # Measure off
+
+
+def test_the_note_never_moves_clear_and_close(window):
+    from PySide6.QtCore import QPoint
+    w = window
+    _cube(w)
+    w.choose_measure_mode("distance")
+    w.act_clip_face.setChecked(True)
+    w.act_lock_face.setChecked(True)
+    where = lambda: [b.mapTo(w.measure_box, QPoint(0, 0)).x() for b in (w.measure_clear_btn, w.measure_close_btn)]
+    hidden = where()
+    w.act_lock_face.setChecked(False)
+    assert w.measure_cut_note.isVisible() and where() == hidden
+    note = w.measure_cut_note.mapTo(w.measure_box, QPoint(0, 0))
+    assert note.x() < hidden[0]                                   # left of Clear, on its row
+    assert abs(note.y() + w.measure_cut_note.height() / 2
+               - (w.measure_clear_btn.mapTo(w.measure_box, QPoint(0, 0)).y() + w.measure_clear_btn.height() / 2)) <= 1
+
+
+def test_close_carries_the_measure_key(window):
+    from PySide6.QtGui import QKeySequence
+    w = window
+    key = QKeySequence("M").toString(QKeySequence.NativeText)
+    assert w.measure_close_btn.text() == f"Close ({key})"
+    assert w.measure_clear_btn.text() == "Clear"                   # Clear keeps Measure on: not M
+
+
+def test_drag_option_says_also_and_mouse_comes_before_keyboard(window):
+    from PySide6.QtWidgets import QGroupBox
+    from printview3d.ui.settings_dialog import SettingsDialog
+    w = window
+    dlg = SettingsDialog(w.settings, w, {}, page="viewer")
+    assert dlg.clip_handles_cb.text() == "Also move the cuts by dragging them in the 3D view"
+    page = dlg.pages.widget(dlg._page_keys.index("keys")).widget()
+    titles = [g.title() for g in page.findChildren(QGroupBox)]
+    assert titles.index("Mouse") < titles.index("Keyboard")
+    dlg.close()

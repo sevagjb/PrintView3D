@@ -27,7 +27,7 @@ into the model, out of the model's depth in that direction. **Lock facing cut** 
 button left of Reset view in the View section) stops the cut turning with the view, so you can turn
 and move the model and look at the cut from the side; its slider still moves it. Measuring on the
 cut? Lock it first: a point stays where you placed it, so when the view turns, an unlocked cut
-moves on and leaves the point in the air. The Measure section says so while the cut is unlocked. The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
+moves on and leaves the point in the air. While the cut is unlocked, the Measure section shows a red dot and *Facing cut not locked*, left of Clear; hover over it for the details. The inside of the walls the cut lays open is drawn in red, so on a solid part you see the cut
 face.
 
 ![The cut and its slider in the side panel](assets/inside/clip-facing.png)
@@ -61,8 +61,8 @@ cut each other** draws both whole, with a faint line where they meet). The cut b
 
 ## Drag the cuts in the 3D view
 
-Rather move a cut where you are looking than on its slider? Tick **Settings → Viewer → Move the
-cuts by dragging them in the 3D view**. Each cut then gets a small round handle on the edge of its
+Rather move a cut where you are looking than on its slider? Tick **Settings → Viewer → Also move
+the cuts by dragging them in the 3D view**. Each cut then gets a small round handle on the edge of its
 cutting plane (a disc in the plane's colour with a light ring), with a short line through it that
 shows which way the cut moves: Clip from the top's on the side of the plane furthest right, Clip
 facing you's on the top edge of its plane. Under the mouse the disc and ring swap colours; drag it and the cut follows, with its slider. Seen straight from above

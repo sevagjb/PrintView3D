@@ -987,6 +987,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Removes every measurement; Measure stays on.</source>
+        <translation type="unfinished">يزيل كل القياسات؛ يبقى القياس مفعّلاً.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot</source>
         <translation>لقطة شاشة</translation>
     </message>
@@ -1489,18 +1494,33 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
-        <translation type="unfinished">القطع المواجه يدور مع العرض: النقاط الموضوعة على القطع تبقى مكانها والقطع يتحرك.</translation>
+        <source>Lock facing cut ({key})</source>
+        <translation type="unfinished">تثبيت القطع المواجه ({key})</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut ({key}) to measure on it.</source>
-        <translation type="unfinished">ثبّت القطع المواجه ({key}) للقياس عليه.</translation>
+        <source>Facing cut not locked.</source>
+        <translation type="unfinished">القطع المواجه غير مثبّت.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the facing cut to measure on it.</source>
-        <translation type="unfinished">ثبّت القطع المواجه للقياس عليه.</translation>
+        <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
+        <translation type="unfinished">{lock} يوقف دوران القطع المواجه مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
+        <translation type="unfinished">إن لم يُثبَّت، يدور القطع مع كل دوران للعرض، لكن القياس يبقى حيث وضعته: فيبقى معلّقاً في الهواء بعيداً عن القطع الذي قيس عليه.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="unfinished">ثبّت القطع قبل القياس عليه.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">القطع المواجه غير مثبّت · مرّر المؤشر للتفاصيل</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2241,13 +2261,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">تحريك القطع بسحبها في العرض ثلاثي الأبعاد</translation>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="unfinished">تحريك القطع أيضاً بسحبها في العرض ثلاثي الأبعاد</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
-        <translation type="unfinished">يحصل كل مستوى قطع على مقبض دائري. اسحبه لتحريك القطع، كما يفعل شريط التمرير الخاص به.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="unfinished">يحصل كل مستوى قطع على مقبض دائري. اسحبه لتحريك القطع؛ أشرطة التمرير تعمل أيضاً.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2830,6 +2850,26 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
+        <translation type="vanished">القطع المواجه يدور مع العرض: النقاط الموضوعة على القطع تبقى مكانها والقطع يتحرك.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut ({key}) to measure on it.</source>
+        <translation type="vanished">ثبّت القطع المواجه ({key}) للقياس عليه.</translation>
+    </message>
+    <message>
+        <source>Lock the facing cut to measure on it.</source>
+        <translation type="vanished">ثبّت القطع المواجه للقياس عليه.</translation>
+    </message>
+    <message>
+        <source>Move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">تحريك القطع بسحبها في العرض ثلاثي الأبعاد</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut, like its slider does.</source>
+        <translation type="vanished">يحصل كل مستوى قطع على مقبض دائري. اسحبه لتحريك القطع، كما يفعل شريط التمرير الخاص به.</translation>
     </message>
     <message>
         <source>Freeze the cutting plane</source>
