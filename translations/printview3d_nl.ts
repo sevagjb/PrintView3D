@@ -184,7 +184,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Build plate on / off</source>
-        <translation type="unfinished">Printbed aan / uit</translation>
+        <translation type="unfinished">Printplaat aan / uit</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
@@ -219,7 +219,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Lock the facing cut: it stops turning with the view (models)</source>
-        <translation type="unfinished">Snede naar je toe vastzetten: hij draait niet meer mee met de weergave (modellen)</translation>
+        <translation type="unfinished">De snede vanaf jouw kant vastzetten: ze draait niet meer mee met de weergave (modellen)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
@@ -289,7 +289,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <source>{key} is kept for the system or for moving around in the window.</source>
-        <translation type="unfinished">{key} is voor het systeem of voor het bewegen in het venster.</translation>
+        <translation type="unfinished">{key} is gereserveerd voor het systeem of om in het venster te bewegen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
@@ -710,7 +710,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Fit the model in the view</source>
-        <translation type="unfinished">Model passend in beeld</translation>
+        <translation type="unfinished">Het model passend in beeld brengen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -748,7 +748,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Check the model before printing: overhangs, thin walls and problems in the mesh</source>
-        <translation type="unfinished">Het model controleren voor het printen: overhangen, dunne wanden en fouten in het net</translation>
+        <translation type="unfinished">Het model controleren voor het printen: overhangen, dunne wanden en fouten in het mesh</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -775,7 +775,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Mesh problems</source>
-        <translation type="unfinished">Problemen in het net</translation>
+        <translation type="unfinished">Meshproblemen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -790,7 +790,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Faces that face down and lean further from vertical than the angle: they usually need supports. Faces on the plate are not counted.</source>
-        <translation type="unfinished">Vlakken die naar beneden wijzen en verder dan de hoek van verticaal hellen: die hebben meestal support nodig. Vlakken op het bed tellen niet mee.</translation>
+        <translation type="unfinished">Vlakken die naar beneden wijzen en verder dan de hoek van verticaal hellen: die hebben meestal support nodig. Vlakken op de plaat tellen niet mee.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -830,12 +830,12 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>non-manifold edges</source>
-        <translation type="unfinished">niet-manifold randen</translation>
+        <translation type="unfinished">non-manifold randen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Inside-out faces</source>
-        <translation type="unfinished">Binnenstebuiten vlakken</translation>
+        <translation type="unfinished">Binnenstebuiten gekeerde vlakken</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -905,7 +905,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">De snede naar je toe draait niet meer mee met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken. De schuifregelaar verplaatst hem nog steeds.</translation>
+        <translation type="unfinished">De snede vanaf jouw kant draait niet meer mee met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken. De schuifregelaar verplaatst haar nog steeds.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1458,7 +1458,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Checking the mesh…</source>
-        <translation type="unfinished">Net wordt gecontroleerd…</translation>
+        <translation type="unfinished">Mesh wordt gecontroleerd…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1490,12 +1490,12 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
-        <translation type="unfinished">{lock} zorgt dat de snede naar je toe niet meer meedraait met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken.</translation>
+        <translation type="unfinished">{lock} zorgt dat de snede vanaf jouw kant niet meer meedraait met de weergave, zodat je het model kunt draaien en de snede van elke kant kunt bekijken.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
-        <translation type="unfinished">Niet vastgezet draait de snede mee bij elke draai van de weergave, maar een meting blijft waar je hem plaatste: hij blijft in de lucht hangen, los van de snede waarop gemeten is.</translation>
+        <translation type="unfinished">Niet vastgezet draait de snede mee bij elke draai van de weergave, maar een meting blijft waar je ze plaatste: ze blijft dan in de lucht hangen, los van de snede waarop gemeten is.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1505,7 +1505,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Facing cut not locked.</source>
-        <translation type="unfinished">Snede naar je toe niet vastgezet.</translation>
+        <translation type="unfinished">Snede vanaf jouw kant niet vastgezet.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1535,7 +1535,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
-        <translation type="unfinished">Het snijvlak naar je toe staat vast: draai de weergave om de snede van elke kant te bekijken.</translation>
+        <translation type="unfinished">Het snijvlak vanaf jouw kant staat vast: draai de weergave om de snede van elke kant te bekijken.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1545,13 +1545,13 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drag a round handle to move its cutting plane.</source>
-        <translation type="unfinished">Sleep aan een ronde greep om zijn snijvlak te verplaatsen.</translation>
+        <translation type="unfinished">Sleep aan een ronde greep om het bijbehorende snijvlak te verplaatsen.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip</source>
         <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
-        <translation type="unfinished">Snijden</translation>
+        <translation type="unfinished">Snede</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1941,17 +1941,17 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Nozzle width in inches too</source>
-        <translation type="unfinished">Spuitmondbreedte ook in inch</translation>
+        <translation type="unfinished">Nozzlebreedte ook in inch</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
-        <translation type="unfinished">Spuitmonden worden verkocht op hun diameter in millimeters (0,4 mm), dus het deel Controleren toont de spuitmondbreedte in millimeters, tenzij dit is aangevinkt.</translation>
+        <translation type="unfinished">Nozzles worden verkocht op hun diameter in millimeters (0,4 mm), dus het onderdeel Controleren toont de nozzlebreedte in millimeters, tenzij dit is aangevinkt.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Used for sizes, measurements, the grid and the plate size. Files are not changed: 3D files are always in millimetres.</source>
-        <translation type="unfinished">Voor afmetingen, metingen, het raster en de bedgrootte. Bestanden veranderen niet: 3D-bestanden zijn altijd in millimeters.</translation>
+        <translation type="unfinished">Voor afmetingen, metingen, het raster en de plaatgrootte. Bestanden veranderen niet: 3D-bestanden zijn altijd in millimeters.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2180,12 +2180,12 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Also show the X, Y and Z axes on the build plate</source>
-        <translation type="unfinished">Ook de X-, Y- en Z-as op het printbed tonen</translation>
+        <translation type="unfinished">Ook de X-, Y- en Z-as op de printplaat tonen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Small arrows pointing along X, Y and Z, beside the back-right corner of the model, in addition to the marker in the corner of the view.</source>
-        <translation type="unfinished">Kleine pijlen langs X, Y en Z naast de achterste rechterhoek van het model, naast de markering in de hoek van de weergave.</translation>
+        <translation type="unfinished">Kleine pijlen langs X, Y en Z bij de achterste rechterhoek van het model, als aanvulling op de markering in de hoek van de weergave.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2206,7 +2206,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Automatic: as many numbers as fit at the zoom you look at, on the grid lines and never closer than the fine lines. Or choose a spacing of your own.</source>
-        <translation type="unfinished">Automatisch: zoveel getallen als passen bij de huidige zoom, op de rasterlijnen en nooit dichter dan de fijne lijnen. Of kies zelf een afstand.</translation>
+        <translation type="unfinished">Automatisch: zoveel getallen als passen bij de zoom waarmee je kijkt, op de rasterlijnen en nooit dichter dan de fijne lijnen. Of kies zelf een afstand.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2834,12 +2834,12 @@
     <message>
         <location filename="../src/printview3d/units.py"></location>
         <source>Millimetres (mm)</source>
-        <translation type="unfinished">Millimeters (mm)</translation>
+        <translation type="unfinished">Millimeter (mm)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/units.py"></location>
         <source>Inches (in)</source>
-        <translation type="unfinished">Inches (in)</translation>
+        <translation type="unfinished">Inch (in)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/units.py"></location>

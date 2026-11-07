@@ -219,7 +219,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Lock the facing cut: it stops turning with the view (models)</source>
-        <translation type="unfinished">تثبيت القطع المواجه: يتوقف عن الدوران مع العرض (النماذج)</translation>
+        <translation type="unfinished">تثبيت القطع المواجه لك: يتوقف عن الدوران مع العرض (النماذج)</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
@@ -284,7 +284,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <source>A key like Ctrl, Shift or Alt needs another key with it.</source>
-        <translation type="unfinished">مفتاح مثل Ctrl أو Shift أو Alt يحتاج إلى مفتاح آخر معه.</translation>
+        <translation type="unfinished">يحتاج مفتاح مثل Ctrl أو Shift أو Alt إلى مفتاح آخر معه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Keys with the Windows or Super key belong to the system.</source>
-        <translation type="unfinished">المفاتيح مع مفتاح Windows أو Super تخص النظام.</translation>
+        <translation type="unfinished">تركيبات المفاتيح مع مفتاح Windows أو Super خاصة بالنظام.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
@@ -673,7 +673,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Tip: the {up} / {down} keys move through it</source>
-        <translation type="unfinished">تلميح: المفتاحان {up} / {down} يتنقلان في القائمة</translation>
+        <translation type="unfinished">تلميح: استخدم المفتاحين {up} / {down} للتنقل في القائمة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -710,7 +710,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Fit the model in the view</source>
-        <translation type="unfinished">ملاءمة النموذج مع العرض</translation>
+        <translation type="unfinished">ملاءمة النموذج داخل العرض</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -748,7 +748,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Check the model before printing: overhangs, thin walls and problems in the mesh</source>
-        <translation type="unfinished">افحص النموذج قبل الطباعة: البروزات والجدران الرقيقة ومشكلات الشبكة</translation>
+        <translation type="unfinished">افحص النموذج قبل الطباعة: الأجزاء المتدلية والجدران الرقيقة ومشكلات شبكة المثلثات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -759,7 +759,7 @@
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>from vertical</source>
         <extracomment>Check section, after the overhang angle (45°): the angle is measured from vertical.</extracomment>
-        <translation type="unfinished">عن العمودي</translation>
+        <translation type="unfinished">عن الخط العمودي</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -775,7 +775,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Mesh problems</source>
-        <translation type="unfinished">مشكلات الشبكة</translation>
+        <translation type="unfinished">مشكلات شبكة المثلثات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -785,12 +785,12 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Overhangs</source>
-        <translation type="unfinished">البروزات</translation>
+        <translation type="unfinished">الأجزاء المتدلية</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Faces that face down and lean further from vertical than the angle: they usually need supports. Faces on the plate are not counted.</source>
-        <translation type="unfinished">أوجه تتجه إلى الأسفل وتميل عن العمودي أكثر من الزاوية: تحتاج عادةً إلى دعامات. الأوجه الموضوعة على اللوحة لا تُحسب.</translation>
+        <translation type="unfinished">أوجه تتجه إلى الأسفل وتميل عن الخط العمودي أكثر من الزاوية المحددة: تحتاج عادةً إلى دعامات. الأوجه الملامسة للوحة لا تُحسب.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -800,7 +800,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Walls and pins thinner than the nozzle: one line of plastic or less.</source>
-        <translation type="unfinished">جدران ودبابيس أرق من الفوهة: خط واحد من البلاستيك أو أقل.</translation>
+        <translation type="unfinished">جدران وأوتاد أرق من الفوهة: خط بلاستيك واحد أو أقل.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -810,7 +810,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Holes in the surface: edges with a face on one side only. The model is not closed, so a slicer has to guess what is inside.</source>
-        <translation type="unfinished">ثقوب في السطح: حواف لها وجه من جهة واحدة فقط. النموذج غير مغلق، لذا على برنامج التقطيع أن يخمّن ما بداخله.</translation>
+        <translation type="unfinished">ثقوب في السطح: حواف لها وجه من جهة واحدة فقط. النموذج غير مغلق، فيضطر برنامج التقطيع إلى تخمين ما بداخله.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -825,27 +825,27 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Edges shared by three or more faces, for example where two parts touch along a line. Slicers can read them wrongly.</source>
-        <translation type="unfinished">حواف يشترك فيها ثلاثة أوجه أو أكثر، مثلاً حيث يلتقي جزآن على طول خط. قد تقرأها برامج التقطيع خطأً.</translation>
+        <translation type="unfinished">حواف يشترك فيها ثلاثة أوجه أو أكثر، مثلاً حيث يتلامس جزآن على طول خط. قد تقرأها برامج التقطيع بشكل خاطئ.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>non-manifold edges</source>
-        <translation type="unfinished">حواف غير متشعبة</translation>
+        <translation type="unfinished">حواف non-manifold</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Inside-out faces</source>
-        <translation type="unfinished">أوجه مقلوبة</translation>
+        <translation type="unfinished">أوجه معكوسة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Faces turned inside out: their front points into the model. Slicers may leave them out or fill them wrongly.</source>
-        <translation type="unfinished">أوجه مقلوبة: واجهتها تشير إلى داخل النموذج. قد تتجاهلها برامج التقطيع أو تملؤها خطأً.</translation>
+        <translation type="unfinished">أوجه معكوسة: وجهها الأمامي يتجه إلى داخل النموذج. قد تتجاهلها برامج التقطيع أو تملؤها بشكل خاطئ.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>flipped normals</source>
-        <translation type="unfinished">متجهات عمودية مقلوبة</translation>
+        <translation type="unfinished">نواظم معكوسة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -855,7 +855,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Small pieces not connected to the main body, up to the size given. They print as separate bits, or not at all. Hollows inside a part don&apos;t count.</source>
-        <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي، حتى الحجم المحدد. تُطبع كقطع منفصلة أو لا تُطبع أبداً. التجاويف داخل الجزء لا تُحسب.</translation>
+        <translation type="unfinished">قطع صغيرة غير متصلة بالجسم الرئيسي، حتى الحجم المحدد. تُطبع كقطع منفصلة أو لا تُطبع إطلاقاً. التجاويف داخل الجزء لا تُحسب.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -905,7 +905,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Clip facing you stops turning with the view, so you can turn the model and look at the cut from any side. Its slider still moves it.</source>
-        <translation type="unfinished">يتوقف القطع المواجه عن الدوران مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة. يبقى شريط التمرير يحرّكه.</translation>
+        <translation type="unfinished">يتوقف القطع المواجه لك عن الدوران مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة. ويبقى شريط التمرير يحرّكه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -983,7 +983,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Removes every measurement; Measure stays on.</source>
-        <translation type="unfinished">يزيل كل القياسات؛ يبقى القياس مفعّلاً.</translation>
+        <translation type="unfinished">يزيل كل القياسات، ويبقى القياس مفعّلاً.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1490,22 +1490,22 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>{lock} stops Clip facing you turning with the view, so you can turn the model and look at the cut from any side.</source>
-        <translation type="unfinished">{lock} يوقف دوران القطع المواجه مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة.</translation>
+        <translation type="unfinished">{lock} يوقف دوران القطع المواجه لك مع العرض، فتستطيع تدوير النموذج والنظر إلى القطع من أي جهة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Unlocked, the cut turns with every turn of the view, but a measurement stays where you placed it: it is left hanging in the air, away from the cut it was measured on.</source>
-        <translation type="unfinished">إن لم يُثبَّت، يدور القطع مع كل دوران للعرض، لكن القياس يبقى حيث وضعته: فيبقى معلّقاً في الهواء بعيداً عن القطع الذي قيس عليه.</translation>
+        <translation type="unfinished">إن لم يكن مثبّتاً، يدور القطع مع كل دوران للعرض، أما القياس فيبقى حيث وضعته: فيظل معلّقاً في الهواء بعيداً عن القطع الذي قيس عليه.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Hover for details</source>
-        <translation type="unfinished">مرّر المؤشر للتفاصيل</translation>
+        <translation type="unfinished">مرّر المؤشر فوقه لعرض التفاصيل</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Facing cut not locked.</source>
-        <translation type="unfinished">القطع المواجه غير مثبّت.</translation>
+        <translation type="unfinished">القطع المواجه لك غير مثبّت.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1535,7 +1535,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
-        <translation type="unfinished">مستوى القطع المواجه مثبّت: دوّر العرض للنظر إلى القطع من أي جهة.</translation>
+        <translation type="unfinished">مستوى القطع المواجه لك مثبّت: دوّر العرض للنظر إلى القطع من أي جهة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1545,7 +1545,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Drag a round handle to move its cutting plane.</source>
-        <translation type="unfinished">اسحب مقبضاً دائرياً لتحريك مستوى القطع الخاص به.</translation>
+        <translation type="unfinished">اسحب أحد المقابض الدائرية لتحريك مستوى القطع التابع له.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1936,7 +1936,7 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Lengths in</source>
         <extracomment>Settings -&gt; Language and units: the label before the choice Millimetres (mm) / Inches (in).</extracomment>
-        <translation type="unfinished">الأطوال بـ</translation>
+        <translation type="unfinished">الأطوال بوحدة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -1946,7 +1946,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Nozzles are sold by their diameter in millimetres (0.4 mm), so the Check section shows the nozzle width in millimetres unless this is ticked.</source>
-        <translation type="unfinished">تُباع الفوهات حسب قطرها بالمليمتر (0.4 مم)، لذلك يعرض قسم الفحص عرض الفوهة بالمليمتر ما لم يتم تحديد هذا الخيار.</translation>
+        <translation type="unfinished">تُباع الفوهات حسب قطرها بالمليمتر (0.4 مم)، لذلك يعرض قسم الفحص عرض الفوهة بالمليمتر ما لم تحدّد هذا الخيار.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2107,7 +2107,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>{key} does the same.</source>
-        <translation type="unfinished">{key} يفعل الشيء نفسه.</translation>
+        <translation type="unfinished">{key} يؤدي الوظيفة نفسها.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2293,7 +2293,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
-        <translation type="unfinished">عند الإيقاف: تبقى ألوان الفحص التي تختارها حتى يُغلق PrintView3D.</translation>
+        <translation type="unfinished">عند إيقافه: تبقى ألوان الفحص التي تختارها حتى إغلاق PrintView3D.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2474,7 +2474,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Click a field and press the new key. The clear button removes the key.</source>
-        <translation type="unfinished">انقر في حقل واضغط المفتاح الجديد. زر المسح يزيل المفتاح.</translation>
+        <translation type="unfinished">انقر في حقل ثم اضغط المفتاح الجديد. زر المسح يزيل المفتاح.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2484,12 +2484,12 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Reset to defaults</source>
-        <translation type="unfinished">إعادة إلى الافتراضي</translation>
+        <translation type="unfinished">استعادة الافتراضيات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Puts every key back to the one PrintView3D comes with.</source>
-        <translation type="unfinished">يعيد كل مفتاح كما يأتي مع PrintView3D.</translation>
+        <translation type="unfinished">يعيد كل مفتاح إلى ما يأتي به PrintView3D افتراضياً.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2504,7 +2504,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>The mouse controls are fixed.</source>
-        <translation type="unfinished">عناصر التحكم بالفأرة ثابتة.</translation>
+        <translation type="unfinished">عناصر التحكم بالماوس ثابتة.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
