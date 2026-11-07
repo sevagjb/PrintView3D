@@ -284,6 +284,32 @@ class SettingsDialog(QDialog):
         ex_note.setWordWrap(True)
         le.addRow(ex_note)
 
+        # ---------------- Screenshots ----------------
+        # Normally Screenshot asks where to save each picture; ticked, it saves straight into
+        # this folder, named after the file and the time.
+        gs = QGroupBox(tr("Screenshots"))
+        ls = QVBoxLayout(gs)
+        self.shot_auto_cb = QCheckBox(tr("Save screenshots straight to this folder, without asking"))
+        self.shot_auto_cb.setChecked(bool(settings.get("screenshot_auto", False)))
+        ls.addWidget(self.shot_auto_cb)
+        self.shot_row = QWidget()
+        row_s = QHBoxLayout(self.shot_row)
+        row_s.setContentsMargins(0, 0, 0, 0)
+        self.shot_edit = QLineEdit(settings.get("screenshot_folder", "") or "")
+        self.shot_edit.setPlaceholderText(default_screenshot_folder())
+        row_s.addWidget(self.shot_edit, 1)
+        sb = QPushButton(tr("Browse…"))
+        sb.clicked.connect(self._browse_screenshots)
+        row_s.addWidget(sb)
+        ls.addWidget(self.shot_row)
+        self.shot_row.setEnabled(self.shot_auto_cb.isChecked())
+        self.shot_auto_cb.toggled.connect(self.shot_row.setEnabled)
+        shot_note = QLabel(tr("Off: Screenshot asks where to save each picture. On: it is saved here at once, "
+                              "named after the file and the time."))
+        shot_note.setObjectName("muted")
+        shot_note.setWordWrap(True)
+        ls.addWidget(shot_note)
+
         # ---------------- File associations ----------------
         g2 = QGroupBox(tr("Default program for 3D files"))
         l2 = QVBoxLayout(g2)
@@ -324,20 +350,24 @@ class SettingsDialog(QDialog):
         self.assoc_note.setObjectName("muted")
         l2.addWidget(self.assoc_note)
         # macOS gives files to the open PrintView3D by itself, so the choice does not apply there.
-        self._add_page("files", tr("Files"), [ge, g2] if sys.platform == "darwin" else [go, ge, g2],
+        self._add_page("files", tr("Files"), [ge, gs, g2] if sys.platform == "darwin" else [go, ge, gs, g2],
                        keep_titles=True)
 
         # ---------------- Viewer ----------------
-        g3 = QGroupBox(tr("Viewer"))
+        # Three boxes: Build plate (the grid, its numbers and the plate), Other (the rest of the
+        # 3D view: travel moves, view cube, Measure, Clip, Check) and Graphics.
+        g3 = QGroupBox(tr("Build plate"))
         l3 = QVBoxLayout(g3)
+        g_other = QGroupBox(tr("Other"))
+        l_other = QVBoxLayout(g_other)
         self.travel_cb = QCheckBox(tr("Show travel moves when opening G-code"))
         self.travel_cb.setChecked(bool(settings.get("show_travel")))
         self.bed_cb = QCheckBox(tr("Show build plate grid"))
         self.bed_cb.setChecked(bool(settings.get("show_bed", True)))
         self.cube_cb = QCheckBox(tr("Show the view cube (top-right corner of the 3D view)"))
         self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
-        l3.addWidget(self.travel_cb)
-        l3.addWidget(self.cube_cb)
+        l_other.addWidget(self.travel_cb)
+        l_other.addWidget(self.cube_cb)
         l3.addWidget(self.bed_cb)
         # X/Y/Z arrows on the plate, beside the model (off by default).
         self.plate_axes_cb = QCheckBox(tr("Also show the X, Y and Z axes on the build plate"))
@@ -398,7 +428,7 @@ class SettingsDialog(QDialog):
         for mode in PLATE_MODES:
             self.plate_combo.addItem(plate_mode_label(mode).rstrip("…"), mode)
         self.plate_combo.setCurrentIndex(max(0, self.plate_combo.findData(settings.get("plate_mode", "printer"))))
-        kp = QLabel(tr("Build plate"))
+        kp = QLabel(tr("Plate"))                    # in the Build plate box: "Plate" is enough
         kp.setObjectName("formKey")
         plate_form.addRow(kp, self.plate_combo)
         size = settings.get("plate_size", [300, 300])
@@ -424,6 +454,7 @@ class SettingsDialog(QDialog):
             lambda _=0: self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom"))
         self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom")
         l3.addLayout(plate_form)
+        other_form = QFormLayout()
         # View -> Clip: how strongly the cut-away part (ghost and outline) and the cutting plane
         # are drawn, each with its own slider (#66). They change the 3D view while you drag;
         # Cancel puts them back. Same columns as Build plate and Plate size.
@@ -433,16 +464,16 @@ class SettingsDialog(QDialog):
         except (TypeError, ValueError):
             self._line_at_open = 4
         self.line_slider = self._strength_row(
-            plate_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
+            other_form, tr("Measurement lines"), self._line_at_open, self._preview_line_width,
             tr("How thick the lines of Measure are."), lo=1, hi=10, left=tr("Thinner"), right=tr("Thicker"))
         from .scene import Scene
         self._ghost_at_open = Scene._strength(settings.get("ghost_strength"))
         self._plane_at_open = Scene._strength(settings.get("plane_strength"))
         self.ghost_slider = self._strength_row(
-            plate_form, tr("Cut-away part"), self._ghost_at_open, self._preview_ghost_strength,
+            other_form, tr("Cut-away part"), self._ghost_at_open, self._preview_ghost_strength,
             tr("How strongly the cut-away part is drawn when you use Clip in the View menu."))
         self.plane_slider = self._strength_row(
-            plate_form, tr("Cutting plane"), self._plane_at_open, self._preview_plane_strength,
+            other_form, tr("Cutting plane"), self._plane_at_open, self._preview_plane_strength,
             tr("How strongly the cutting plane is drawn when you use Clip in the View menu."))
         # Both cuts on (View section): normally each cutting plane stops where the other cut is, so
         # the two meet in a clean corner. This keeps both planes whole instead.
@@ -450,20 +481,32 @@ class SettingsDialog(QDialog):
         self.cut_planes_cb.setChecked(bool(settings.get("cut_planes_whole", False)))
         self.cut_planes_cb.setToolTip(tr("With both cuts on, each cutting plane is drawn whole instead of "
                                          "stopping where the other cut is."))
-        l3.addWidget(self.cut_planes_cb)
+        l_other.addLayout(other_form)
+        l_other.addWidget(self.cut_planes_cb)
         # View -> Clip: a knob on each cutting plane, to move the cut by dragging it in the 3D view
         # (the sliders still work as well).
         self.clip_handles_cb = QCheckBox(tr("Also move the cutting planes by dragging them in the 3D view"))
         self.clip_handles_cb.setChecked(bool(settings.get("clip_handles", False)))
         self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the plane; "
                                            "the sliders still work too."))
-        l3.addWidget(self.clip_handles_cb)
+        l_other.addWidget(self.clip_handles_cb)
         # Check: keep the colours picked for the highlights (otherwise they are the defaults again
         # at every start).
-        self.check_colors_cb = QCheckBox(tr("Remember the colours of the Check section"))
+        self.check_colors_cb = QCheckBox(tr("Remember the colours of the Check section on restart"))
         self.check_colors_cb.setChecked(bool(settings.get("check_keep_colors", False)))
         self.check_colors_cb.setToolTip(tr("Off: the Check colours you pick last until PrintView3D closes."))
-        l3.addWidget(self.check_colors_cb)
+        l_other.addWidget(self.check_colors_cb)
+        # The labels of both boxes' rows are as wide as the widest, so their dropdowns and sliders
+        # start in one column, as when they were one list.
+        keys_col = [plate_form.labelForField(plate_form.itemAt(i, QFormLayout.FieldRole).widget())
+                    for i in range(plate_form.rowCount()) if plate_form.itemAt(i, QFormLayout.FieldRole)]
+        keys_col += [other_form.labelForField(other_form.itemAt(i, QFormLayout.FieldRole).widget())
+                     for i in range(other_form.rowCount()) if other_form.itemAt(i, QFormLayout.FieldRole)]
+        keys_col = [k for k in keys_col if k is not None]
+        if keys_col:
+            width = max(k.sizeHint().width() for k in keys_col)
+            for k in keys_col:
+                k.setMinimumWidth(width)
 
         # ---------------- Graphics ----------------
         g4 = QGroupBox(tr("Graphics"))
@@ -492,7 +535,7 @@ class SettingsDialog(QDialog):
         self.gpu_hint.setWordWrap(True)
         self.gpu_hint.setObjectName("muted")
         l4.addWidget(self.gpu_hint)
-        self._add_page("viewer", tr("Viewer"), [g3, g4], keep_titles=True)
+        self._add_page("viewer", tr("Viewer"), [g3, g_other, g4], keep_titles=True)
 
         self._add_page("keys", tr("Keyboard and mouse"), [self._build_mouse(), self._build_keys()],
                        keep_titles=True)
@@ -1029,6 +1072,12 @@ class SettingsDialog(QDialog):
         if path:
             self.slicer_edit.setText(os.path.normpath(path))
 
+    def _browse_screenshots(self):
+        start = self.shot_edit.text().strip() or default_screenshot_folder()
+        folder = QFileDialog.getExistingDirectory(self, tr("Folder for screenshots"), start)
+        if folder:
+            self.shot_edit.setText(os.path.normpath(folder))
+
     def _browse_freecad(self):
         start = (os.path.dirname(self.freecad_edit.text()) or os.environ.get("ProgramFiles", "")
                  or os.path.expanduser("~"))
@@ -1151,6 +1200,8 @@ class SettingsDialog(QDialog):
         if sys.platform != "darwin":        # not on the Mac's Files page (its box is never shown)
             self.settings.set("new_window", self.new_window_cb.isChecked())
         self.settings.set("export_mode", self.export_combo.currentData())
+        self.settings.set("screenshot_auto", self.shot_auto_cb.isChecked())
+        self.settings.set("screenshot_folder", self.shot_edit.text().strip())
         self._save_update_choice()
         parent = self.parent()
         restart_for = []                    # settings changed now that only apply after a restart
@@ -1210,6 +1261,13 @@ class SettingsDialog(QDialog):
         box.setEscapeButton(later)
         box.exec()
         return box.clickedButton() is now
+
+
+def default_screenshot_folder() -> str:
+    """Where screenshots go when no folder was chosen: the user's Pictures folder."""
+    from PySide6.QtCore import QStandardPaths
+    return os.path.normpath(QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
+                            or os.path.expanduser("~"))
 
 
 def mouse_rows() -> list[tuple[list[str], str]]:

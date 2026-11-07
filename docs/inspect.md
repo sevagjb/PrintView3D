@@ -131,7 +131,8 @@ Next to the file type and size, *Preview picture* folds the picture the slicer s
 ## Check before printing
 
 The **Check** button (<kbd>C</kbd>, between Plate and View) opens the **Check model** section, below
-Measure, and colours what may cause trouble when printing:
+Measure, and colours what may cause trouble when printing. Its **Close** button (<kbd>C</kbd> again)
+turns it off:
 
 - **Overhangs**: faces that face down and lean further from vertical than an angle (45° by default)
   usually need supports. Faces resting on the plate don't count.
@@ -155,7 +156,7 @@ found (thin walls and the mesh problems; not overhangs, which most models
 have). Hover over a name to see what it means and its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
 the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
 defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
-section**.
+section on restart** (in its **Other** box).
 
 ## Open a folder
 
