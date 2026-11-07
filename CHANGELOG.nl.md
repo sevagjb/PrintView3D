@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.29.1
+- **Opgelost**: bij **Model controleren** konden overhangen die in of onder het model verborgen zitten
+  erdoorheen zichtbaar zijn, op sommige grafische kaarten meer dan op andere. Van onderen worden ze
+  precies zo gekleurd als eerst.
+- **Instellingen blokkeert het hoofdvenster niet meer**: je kunt het model blijven draaien en bekijken
+  terwijl het open is. Nog eens openen haalt het open venster naar voren.
+- **Muisaanwijzers** laten zien wat de muis doet: draaiende pijlen bij draaien, vier pijlen bij
+  verschuiven (pannen) en een vergrootglas bij zoomen.
+- **Schermafbeeldingen direct in een map** (**Instellingen → Bestanden → Schermafbeeldingen**, standaard
+  uit): elke afbeelding wordt meteen opgeslagen, genoemd naar het bestand en de tijd, zonder te vragen
+  waar.
+- **Instellingen → Weergave** staat nu in drie vakken: **Printplaat**, **Overig** en **Grafische kaart**.
+- **Met dank aan [@covrig](https://github.com/covrig)** voor het vinden van de fout en het bouwen van dit
+  alles in [#82](https://github.com/sevagjb/PrintView3D/pull/82).
+
 ## 0.29.0
 - **Controleren voor het printen** (`C`, de nieuwe knop **Controleren** tussen Plaat en Weergave):
   het onderdeel **Model controleren** kleurt wat bij het printen problemen kan geven, met een aantal

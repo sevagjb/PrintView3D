@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.29.1
+- **Fixed**: in **Check model**, overhangs hidden inside or under the model could show through it,
+  more on some graphics cards. From below they are coloured exactly as before.
+- **Settings no longer blocks the main window**: you can keep turning and inspecting the model while
+  it is open. Opening it again brings the open window to the front.
+- **Mouse cursors** show what the mouse does: circling arrows while turning, four arrows while moving
+  (panning) and a magnifier while zooming.
+- **Screenshots straight to a folder** (**Settings → Files → Screenshots**, off by default): each
+  picture is saved at once, named after the file and the time, without asking where.
+- **Settings → Viewer** is now in three boxes: **Build plate**, **Other** and **Graphics**.
+- **Thanks to [@covrig](https://github.com/covrig)** for finding the bug and building all of this in
+  [#82](https://github.com/sevagjb/PrintView3D/pull/82).
+
 ## 0.29.0
 - **Check before printing** (`C`, the new **Check** button between Plate and View): the **Check
   model** section colours what may cause trouble when printing, with a count for each:
