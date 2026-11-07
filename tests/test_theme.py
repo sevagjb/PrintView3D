@@ -121,11 +121,6 @@ def test_toggle_light_dark(monkeypatch):
     assert theme.toggle_light_dark("auto_ember") == "ember"        # from System: the opposite of now
 
 
-def test_theme_icon_draws(app):
-    for name in theme.THEMES:
-        assert not theme.theme_icon(name).isNull()
-
-
 def test_segment_icons_draw(app):
     for kind in ("light", "dark", "system", "off", "mica", "acrylic"):
         assert not theme.segment_icon(kind).isNull()

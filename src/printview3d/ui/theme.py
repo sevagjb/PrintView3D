@@ -429,7 +429,7 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
     for role in (QPalette.WindowText, QPalette.Text, QPalette.ButtonText):
         pal.setColor(QPalette.Disabled, role, c(t["disabled"]))
     app.setPalette(pal)
-    accent, accent_hover = t["accent"], t["accent_hover"]
+    accent = t["accent"]
     # An option button that is on (View and Measure sections): the accent, lightly, as its background.
     _r, _g, _b = (int(accent.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
     toggle_on = f"rgba({_r}, {_g}, {_b}, {0.32 if is_dark() else 0.26})"
@@ -666,25 +666,6 @@ def toggle_light_dark(choice: str) -> str:
     """Ctrl+Shift+T: the same style in the other mode (from System: the opposite of what is shown)."""
     style, _ = split_choice(choice)
     return make_choice(style, "light" if is_dark(resolve(choice)) else "dark")
-
-
-def theme_icon(name: str | None = None) -> QIcon:
-    """Half-filled circle (the usual 'theme' symbol) in the theme's text colour."""
-    size = 64                       # drawn large, Qt scales it down sharply
-    pm = QPixmap(size, size)
-    pm.fill(Qt.transparent)
-    p = QPainter(pm)
-    p.setRenderHint(QPainter.Antialiasing)
-    fg = QColor(colors(name)["text"])
-    p.setPen(QPen(fg, 5))
-    c, r = QPointF(size / 2, size / 2), 24
-    p.drawEllipse(c, r, r)
-    half = QPainterPath()
-    half.moveTo(c)
-    half.arcTo(QRectF(c.x() - r, c.y() - r, 2 * r, 2 * r), 90, 180)
-    p.fillPath(half, fg)
-    p.end()
-    return QIcon(pm)
 
 
 def theme_preview(name: str, width: int = 168, height: int = 104, ratio: float = 2.0) -> QPixmap:
@@ -1195,8 +1176,3 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
     _tool_glyph(p, kind, fg)
     p.end()
     return QIcon(pm)
-
-
-def apply_dark_theme(app):
-    """Kept for older scripts."""
-    return apply_theme(app, "dark")

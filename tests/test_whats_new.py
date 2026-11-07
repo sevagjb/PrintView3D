@@ -28,14 +28,14 @@ LOG = """# Changelog
 
 
 def test_only_versions_since_the_old_one_up_to_this_one():
-    got = [v for v, _ in up.notes_since("0.18.0", "0.19.1", LOG)]
+    got = [n.version for n in up.whats_new("en", "0.18.0", "0.19.1", en_text=LOG)]
     assert got == ["0.19.1", "0.19.0"]
 
 
 def test_repository_links_become_full_urls():
-    (_, notes), = up.notes_since("0.19.1", "0.20.0", LOG)
-    assert "](https://github.com/sevagjb/PrintView3D/blob/main/docs/TRANSLATING.md)" in notes
-    assert "](https://github.com/x)" in notes
+    notes, = up.whats_new("en", "0.19.1", "0.20.0", en_text=LOG)
+    assert "](https://github.com/sevagjb/PrintView3D/blob/main/docs/TRANSLATING.md)" in notes.text
+    assert "](https://github.com/x)" in notes.text
 
 
 def test_bundled_changelog_has_this_version():

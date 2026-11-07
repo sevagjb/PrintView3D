@@ -252,7 +252,7 @@ def make_stills_029(c: Capture, lang: str):
     from printview3d.ui.measure import Item
     w = c.w
     sfx = "" if lang == "en" else "." + lang
-    cx, cy, top = 175.0, 175.0, 46.0              # see tools/make_inside_demo.py
+    cx, cy = 175.0, 175.0                         # see tools/make_inside_demo.py
     # Check: overhangs (the roofs of the chamber, the channel and the pocket, seen with X-ray) and,
     # with a 1.2 mm nozzle, the 1 mm wall in front of the hidden pocket as a thin wall.
     c.off()

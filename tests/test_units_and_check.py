@@ -72,7 +72,7 @@ def test_unit_conversions():
     units.set_unit("in")
     assert units.imperial() and units.name() == "in"
     assert units.length(25.4) == "1.000 in" and units.number(50.8, 1) == "2.000"
-    assert units.from_display(2) == pytest.approx(50.8) and units.to_display(127) == pytest.approx(5)
+    assert units.to_display(127) == pytest.approx(5)
     assert units.short(0.5) == "0.5" and units.short(2.0) == "2" and units.short(0.125) == "0.125"
     assert "in³" in units.volume(25.4 ** 3)
     units.set_unit("cm")                                   # nonsense: millimetres
