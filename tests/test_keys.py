@@ -213,7 +213,12 @@ def test_recent_file_preview_card_stays_in_one_place(app, window, tmp_path):
         assert (not card.picture.pixmap().isNull()) is has_picture, p
         if not has_picture:
             assert card.picture.text() == "No preview picture"
-        assert card.name.text().replace("\u200b", "") == os.path.basename(p)
+        # The whole name where it fits on its lines; shortened in the middle only where it doesn't
+        # (that depends on the system's font: the CI machines' differ from Windows').
+        name = os.path.basename(p)
+        assert card.name.text() == mw.fit_lines(name, card.name.fontMetrics(), mw.PREVIEW_PX, mw.PREVIEW_NAME_LINES)
+        shown = card.name.text()
+        assert shown == name or (shown.startswith(name[:6]) and shown.endswith(name[-6:]) and "\u2026" in shown)
         assert card.folder.text().replace("\u200b", "") == os.path.dirname(os.path.abspath(p))
         places.append((card.geometry().getRect(), card.picture.geometry().getRect()))
     assert len(set(places)) == 1                               # same place, same size, every file
@@ -234,6 +239,26 @@ def test_long_folders_wrap_and_are_shortened_to_fit(app):
     assert "…" in short and short.startswith("C:\\folder") and short.endswith("folder number 39")
     assert mw.fit_lines("C:\\Users", fm, 200, 4) == "C:\\Users"
     assert mw.breakable_path("C:\\a/b") == "C:\\\u200ba/\u200bb"
+
+
+def test_a_name_that_fits_its_lines_is_never_shortened(app):
+    """The limit is measured like the text: lines x line spacing came out a few pixels short in some
+    fonts (Calibri: 34 against 36 px for two lines), and the CI's Linux font shortened a name that
+    fits on two lines down to one line."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtGui import QFont, QFontMetrics
+    from printview3d.ui import main_window as mw
+    name = "a much longer name of a printed file, so it wraps.gcode"
+    flags = int(Qt.TextWordWrap | Qt.TextWrapAnywhere)
+    for px in (11, 13, 14, 16, 20):
+        f = QFont()
+        f.setPixelSize(px)
+        fm = QFontMetrics(f)
+        two = fm.boundingRect(0, 0, 200, 10 ** 6, flags, "X\nX").height()
+        fits = fm.boundingRect(0, 0, 200, 10 ** 6, flags, name).height() <= two
+        out = mw.fit_lines(name, fm, 200, 2)
+        assert (out == name) == fits, px
+        assert fm.boundingRect(0, 0, 200, 10 ** 6, flags, out).height() <= two, px
 
 
 def test_read_thumbnail(tmp_path):

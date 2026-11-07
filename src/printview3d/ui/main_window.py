@@ -175,7 +175,10 @@ def fit_lines(text: str, fm: QFontMetrics, width: int, lines: int) -> str:
     """`text` wrapped to `width`, shortened in the middle (…) until it takes at most `lines` lines."""
     def height(t: str) -> int:
         return fm.boundingRect(0, 0, width, 10 ** 6, int(Qt.TextWordWrap | Qt.TextWrapAnywhere), t).height()
-    most = lines * fm.lineSpacing()
+    # The height of exactly `lines` lines, measured the same way as the text: lines × line spacing
+    # can be a few pixels less than what the text's own measurement gives for as many lines
+    # (36 against 34 px in Calibri), and a name that fits was shortened all the same.
+    most = height("\n".join(["X"] * lines))
     if height(text) <= most:
         return text
     keep = len(text)
