@@ -238,6 +238,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">Șterge toate măsurătorile (Măsurare rămâne pornită)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Measure an angle</source>
         <translation type="unfinished">Măsoară un unghi</translation>
     </message>
@@ -1514,13 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the cut before measuring on it.</source>
-        <translation type="unfinished">Blochează tăietura înainte să măsori pe ea.</translation>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Tăietura nu este blocată · treci cu mouse-ul pentru detalii</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">Tăietura nu este blocată · treci cu mouse-ul pentru detalii</translation>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section}: {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1544,8 +1549,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation>Rotește sau mută vederea pentru a trece modelul prin tăietură.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">Planul de tăiere spre tine este blocat: rotește vizualizarea ca să privești tăietura din orice parte.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">Rotește sau mută vizualizarea ca să treci modelul prin planul de tăiere.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">Trage de un mâner rotund ca să muți planul lui de tăiere.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Tăiere</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2261,13 +2282,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Also move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Mută și tăieturile trăgându-le în vizualizarea 3D</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">Mută și planurile de tăiere trăgându-le în vizualizarea 3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
-        <translation type="unfinished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura; glisoarele funcționează în continuare.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta planul; glisoarele funcționează în continuare.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2852,6 +2873,22 @@
         <translation>{v} cm³</translation>
     </message>
     <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">Blochează tăietura înainte să măsori pe ea.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">Rotește sau mută vederea pentru a trece modelul prin tăietură.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Mută și tăieturile trăgându-le în vizualizarea 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">Fiecare plan de tăiere primește un mâner rotund. Trage de el pentru a muta tăietura; glisoarele funcționează în continuare.</translation>
+    </message>
+    <message>
         <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
         <translation type="vanished">Tăietura spre tine se rotește cu vizualizarea: punctele puse pe tăietură rămân pe loc, iar tăietura se mută.</translation>
     </message>
@@ -3034,10 +3071,6 @@
     <message>
         <source>{kind} · {size} MB</source>
         <translation type="vanished">{kind} · {size} MB</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">Tăiere</translation>
     </message>
     <message>
         <source>Depth {d} mm</source>

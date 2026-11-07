@@ -58,6 +58,9 @@ def test_defaults(app):
     assert not keys.conflicts(d)                                 # no key twice
     assert all(not keys.problem(k) for k in d.values())          # none the system keeps
     assert set(keys.descriptions()) == set(keys.IDS)
+    # Written as Qt writes them ("Del", not "Delete"): otherwise a default counts as changed and
+    # is saved, and Reset to defaults would not empty the setting.
+    assert all(keys.normalize(k) == k for k in d.values())
 
 
 def test_window_uses_the_defaults(window):

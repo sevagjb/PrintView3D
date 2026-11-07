@@ -238,6 +238,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">Alle metingen verwijderen (Meten blijft aan)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Measure an angle</source>
         <translation type="unfinished">Een hoek meten</translation>
     </message>
@@ -1514,13 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the cut before measuring on it.</source>
-        <translation type="unfinished">Zet de snede vast voordat je erop meet.</translation>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Snede niet vastgezet · beweeg erover voor details</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">Snede niet vastgezet · beweeg erover voor details</translation>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section}: {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1544,8 +1549,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation>Draai of verschuif de weergave om het model door de snede te halen.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">Het snijvlak naar je toe staat vast: draai de weergave om de snede van elke kant te bekijken.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">Draai of verschuif de weergave om het model door het snijvlak te halen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">Sleep aan een ronde greep om zijn snijvlak te verplaatsen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Snijden</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2261,13 +2282,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Also move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">De snedes ook verplaatsen door ze in de 3D-weergave te slepen</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">De snijvlakken ook verplaatsen door ze in de 3D-weergave te slepen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
-        <translation type="unfinished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen; de schuifregelaars werken ook nog.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">Elk snijvlak krijgt een ronde greep. Sleep eraan om het vlak te verplaatsen; de schuifregelaars werken ook nog.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2852,6 +2873,22 @@
         <translation>{v} cm³</translation>
     </message>
     <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">Zet de snede vast voordat je erop meet.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">Draai of verschuif de weergave om het model door de snede te halen.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">De snedes ook verplaatsen door ze in de 3D-weergave te slepen</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">Elk snijvlak krijgt een ronde greep. Sleep eraan om de snede te verplaatsen; de schuifregelaars werken ook nog.</translation>
+    </message>
+    <message>
         <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
         <translation type="vanished">De snede naar je toe draait mee met de weergave: punten op de snede blijven staan en de snede beweegt verder.</translation>
     </message>
@@ -3034,10 +3071,6 @@
     <message>
         <source>Turn off</source>
         <translation type="vanished">Uitzetten</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">Afsnijden</translation>
     </message>
     <message>
         <source>Snap to corners and edges</source>

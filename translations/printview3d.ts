@@ -238,6 +238,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Measure an angle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1514,12 +1519,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the cut before measuring on it.</source>
+        <source>Facing cut not locked · hover for details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
+        <source>{section}: {text}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1544,7 +1549,23 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2261,12 +2282,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Also move the cuts by dragging them in the 3D view</source>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

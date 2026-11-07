@@ -453,9 +453,9 @@ class SettingsDialog(QDialog):
         l3.addWidget(self.cut_planes_cb)
         # View -> Clip: a knob on each cutting plane, to move the cut by dragging it in the 3D view
         # (the sliders still work as well).
-        self.clip_handles_cb = QCheckBox(tr("Also move the cuts by dragging them in the 3D view"))
+        self.clip_handles_cb = QCheckBox(tr("Also move the cutting planes by dragging them in the 3D view"))
         self.clip_handles_cb.setChecked(bool(settings.get("clip_handles", False)))
-        self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the cut; "
+        self.clip_handles_cb.setToolTip(tr("Each cutting plane gets a round handle. Drag it to move the plane; "
                                            "the sliders still work too."))
         l3.addWidget(self.clip_handles_cb)
         # Check: keep the colours picked for the highlights (otherwise they are the defaults again

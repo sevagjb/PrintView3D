@@ -356,7 +356,9 @@ def test_measure_warns_while_the_facing_cut_turns(window):
     assert w.measure_cut_text.toolTip() == note.toolTip()
     tip = note.toolTip()
     assert "Lock facing cut (L)" in tip and "hanging in the air" in tip and "slider" not in tip
-    assert w.measure_cut_text._full == "Facing cut not locked · hover for details"
+    assert "before measuring" not in tip                       # some want to turn the cut on purpose
+    assert w.measure_cut_text.text() == "Facing cut not locked · hover for details"
+    assert w.measure_cut_text.wordWrap()                       # a long translation wraps, not cut short
     w.act_lock_face.setChecked(True)
     assert note.isHidden()
     w.act_lock_face.setChecked(False)
@@ -382,12 +384,59 @@ def test_the_note_never_moves_clear_and_close(window):
                - (w.measure_clear_btn.mapTo(w.measure_box, QPoint(0, 0)).y() + w.measure_clear_btn.height() / 2)) <= 1
 
 
-def test_close_carries_the_measure_key(window):
+def test_section_buttons_carry_their_keys(window):
     from PySide6.QtGui import QKeySequence
     w = window
-    key = QKeySequence("M").toString(QKeySequence.NativeText)
-    assert w.measure_close_btn.text() == f"Close ({key})"
-    assert w.measure_clear_btn.text() == "Clear"                   # Clear keeps Measure on: not M
+    native = lambda k: QKeySequence(k).toString(QKeySequence.NativeText)
+    assert w.measure_close_btn.text() == f"Close ({native('M')})"   # what M does while Measure is on
+    assert w.view_close_btn.text() == f"Close ({native('V')})"      # what V does while View is open
+    assert w.measure_clear_btn.text() == f"Clear ({native('Delete')})"
+
+
+def test_delete_clears_the_measurements_and_measure_stays_on(window):
+    w = window
+    _cube(w)
+    w.choose_measure_mode("distance")
+    w.measure.click(*_screen(w, (0, 0, 0)))
+    w.measure.click(*_screen(w, (20, 0, 0)))
+    assert w.measure.has_items
+    w.key_targets["measure_clear"].activated.emit()
+    assert not w.measure.has_items and w.measure.active and w.act_measure.isChecked()
+
+
+def test_sliders_sit_under_their_buttons(window):
+    from PySide6.QtCore import QPoint
+    w = window
+    _cube(w)
+    w.act_clip.setChecked(True)
+    w.act_clip_face.setChecked(True)
+    x = lambda wdg: wdg.mapTo(w.view_box, QPoint(0, 0)).x()
+    buttons = {b.defaultAction(): b for b in w.view_box.findChildren(type(w.view_btn)) if b.defaultAction()}
+    top_btn, face_btn = buttons[w.act_clip], buttons[w.act_clip_face]
+    assert x(w.clip_top_row) == x(top_btn) and x(w.clip_face_row) == x(face_btn)
+    y = w.clip_face_row.mapTo(w.view_box, QPoint(0, 0)).y()
+    w.act_clip.setChecked(False)                                   # its column stays, empty
+    assert x(w.clip_face_row) == x(face_btn) and w.clip_face_row.mapTo(w.view_box, QPoint(0, 0)).y() == y
+
+
+def test_hints_name_their_section(window_knobs):
+    w = window_knobs
+    _cube(w)
+    w.choose_measure_mode("angle")
+    w.act_clip_face.setChecked(True)
+    texts = w.hints.texts
+    assert any(t.startswith("Measure: Click three points") for t in texts)
+    clip = [t for t in texts if t.startswith("Clip: ")]
+    assert len(clip) == 1 and "pass the model through the cutting plane" in clip[0]
+    assert "Drag a round handle" in clip[0]                        # the handles are on
+    w.act_lock_face.setChecked(True)
+    clip = [t for t in w.hints.texts if t.startswith("Clip: ")][0]
+    assert "is locked" in clip and "pass the model" not in clip
+    w.act_lock_face.setChecked(False)
+    w.clip_handles.set_enabled(False)
+    w._update_hints()
+    clip = [t for t in w.hints.texts if t.startswith("Clip: ")][0]
+    assert "handle" not in clip
 
 
 def test_drag_option_says_also_and_mouse_comes_before_keyboard(window):
@@ -395,7 +444,7 @@ def test_drag_option_says_also_and_mouse_comes_before_keyboard(window):
     from printview3d.ui.settings_dialog import SettingsDialog
     w = window
     dlg = SettingsDialog(w.settings, w, {}, page="viewer")
-    assert dlg.clip_handles_cb.text() == "Also move the cuts by dragging them in the 3D view"
+    assert dlg.clip_handles_cb.text() == "Also move the cutting planes by dragging them in the 3D view"
     page = dlg.pages.widget(dlg._page_keys.index("keys")).widget()
     titles = [g.title() for g in page.findChildren(QGroupBox)]
     assert titles.index("Mouse") < titles.index("Keyboard")

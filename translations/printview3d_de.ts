@@ -238,6 +238,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">Alle Messungen entfernen (Messen bleibt an)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Measure an angle</source>
         <translation type="unfinished">Winkel messen</translation>
     </message>
@@ -1514,13 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the cut before measuring on it.</source>
-        <translation type="unfinished">Sperren Sie den Schnitt, bevor Sie darauf messen.</translation>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt · Details beim Darüberfahren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt · Details beim Darüberfahren</translation>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section}: {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1544,8 +1549,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation type="unfinished">Drehe oder verschiebe die Ansicht, um das Modell durch den Schnitt zu führen.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">Die zugewandte Schnittebene ist gesperrt: drehen Sie die Ansicht, um den Schnitt von jeder Seite anzusehen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">Drehen oder verschieben Sie die Ansicht, um das Modell durch die Schnittebene zu führen.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">Ziehen Sie einen runden Griff, um seine Schnittebene zu verschieben.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Schnitt</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2261,13 +2282,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Also move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Die Schnitte auch durch Ziehen in der 3D-Ansicht verschieben</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">Die Schnittebenen auch durch Ziehen in der 3D-Ansicht verschieben</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
-        <translation type="unfinished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um den Schnitt zu verschieben; die Schieberegler funktionieren weiterhin.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um die Ebene zu verschieben; die Schieberegler funktionieren weiterhin.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2852,6 +2873,22 @@
         <translation type="unfinished">{v} cm³</translation>
     </message>
     <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">Sperren Sie den Schnitt, bevor Sie darauf messen.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">Drehe oder verschiebe die Ansicht, um das Modell durch den Schnitt zu führen.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Die Schnitte auch durch Ziehen in der 3D-Ansicht verschieben</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">Jede Schnittebene bekommt einen runden Griff. Ziehen Sie ihn, um den Schnitt zu verschieben; die Schieberegler funktionieren weiterhin.</translation>
+    </message>
+    <message>
         <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
         <translation type="vanished">Der zugewandte Schnitt dreht sich mit der Ansicht: Punkte auf dem Schnitt bleiben, wo sie sind, und der Schnitt wandert weiter.</translation>
     </message>
@@ -3034,10 +3071,6 @@
     <message>
         <source>Turn off</source>
         <translation type="vanished">Ausschalten</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">Schnitt</translation>
     </message>
     <message>
         <source>Snap to corners and edges</source>

@@ -295,6 +295,7 @@ already has. The mouse controls are fixed.
 | `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (on G-code: fit) |
 | `M` | Measure on / off (models) |
 | `D` · `A` · `O` | Measure a distance · an angle · a circle |
+| `Del` | Remove all measurements (Measure stays on) |
 | `↑` / `↓` | Next / previous layer (G-code), or the file above / below in a ZIP or folder |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
@@ -329,8 +330,8 @@ and the other model formats; G-code has its layer slider instead):
   cutting plane shows as a faint sheet the size of the model, so you see what the cut takes away
   and where. Each has its own checkbox, and your choice is remembered. In **Settings → Viewer**, **Cut-away part** and
   **Cutting plane** each have a Fainter … Stronger slider; the 3D view changes while you drag.
-- **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Also move the cuts by
-  dragging them in the 3D view** and each cut gets a small round handle on the edge of its cutting
+- **Drag the cuts in the 3D view** (an option): tick **Settings → Viewer → Also move the cutting
+  planes by dragging them in the 3D view** and each cut gets a small round handle on the edge of its cutting
   plane, with a short line showing which way it moves. Under the mouse its colours swap. Drag it
   to move the cut; its slider moves along.
 - **Reset view** (`R`): turns all of the above off and fits the model, like **Fit**, in one go.
@@ -346,7 +347,7 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
   **Angle** and **Circle** (diameter and radius). A click places a point, a drag still turns the
   view, and a placed point can be dragged. Points snap to corners and edges, and with a cut on also
   to the outline of the cut, so you can measure inside the model; the value is written next to
-  every measurement, and **Clear** removes them all.
+  every measurement, and **Clear** (`Del`) removes them all.
 - **Object colours**: click the colour box of an object in the **Objects** list to give it another
   colour; right-click goes back to the file's colour. Not saved.
 - **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres

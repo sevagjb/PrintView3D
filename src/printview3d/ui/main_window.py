@@ -490,12 +490,6 @@ class _ElidedLabel(QLabel):
         self.setMinimumWidth(20)
         self.setText(text)
 
-    def set_full(self, text: str, tip: Optional[str] = None):
-        """Another text (and tooltip: the full text unless one is given)."""
-        self._full = text
-        self.setToolTip(text if tip is None else tip)
-        self.setText(self.fontMetrics().elidedText(text, Qt.ElideRight, max(10, self.width())))
-
     def resizeEvent(self, e):
         super().resizeEvent(e)
         self.setText(self.fontMetrics().elidedText(self._full, Qt.ElideRight, max(10, self.width())))
@@ -1308,6 +1302,13 @@ class MainWindow(QMainWindow):
         self.clip_box = QWidget()
         cl = QVBoxLayout(self.clip_box)
         cl.setContentsMargins(0, 0, 0, 0)
+        # The two sliders side by side, each under its own button (the same columns as the buttons
+        # above); a cut that is off leaves its column empty, so the other slider stays put.
+        sliders = QGridLayout()
+        sliders.setContentsMargins(0, 0, 0, 0)
+        sliders.setHorizontalSpacing(vg.horizontalSpacing())
+        sliders.setColumnStretch(0, 1)
+        sliders.setColumnStretch(1, 1)
         self.clip_top_row = QWidget()
         tl = QVBoxLayout(self.clip_top_row)
         tl.setContentsMargins(0, 0, 0, 0)
@@ -1319,7 +1320,7 @@ class MainWindow(QMainWindow):
         self.clip_slider.setValue(self.CLIP_STEPS // 2)
         self.clip_slider.valueChanged.connect(self._on_clip_changed)
         tl.addWidget(self.clip_slider)
-        cl.addWidget(self.clip_top_row)
+        sliders.addWidget(self.clip_top_row, 0, 0, Qt.AlignTop)
         self.clip_face_row = QWidget()
         fl = QVBoxLayout(self.clip_face_row)
         fl.setContentsMargins(0, 0, 0, 0)
@@ -1331,18 +1332,27 @@ class MainWindow(QMainWindow):
         self.face_slider.setValue(self.CLIP_STEPS // 2)
         self.face_slider.valueChanged.connect(self._on_face_changed)
         fl.addWidget(self.face_slider)
-        cl.addWidget(self.clip_face_row)
+        sliders.addWidget(self.clip_face_row, 0, 1, Qt.AlignTop)
+        for row in (self.clip_top_row, self.clip_face_row):
+            for lbl in row.findChildren(QLabel):
+                lbl.setWordWrap(True)                    # half the panel: "Height … of … mm" may wrap
+            pol = row.sizePolicy()
+            pol.setRetainSizeWhenHidden(True)            # its column stays, empty, while its cut is off
+            pol.setHorizontalPolicy(QSizePolicy.Ignored)
+            row.setSizePolicy(pol)
+        cl.addLayout(sliders)
         # What the cut hides, as a see-through ghost, and the cutting plane, each on its own (#66).
         # Here, under the slider, where you look while cutting (3D Builder's Split puts it there
         # too). How strong both are drawn is in Settings -> Viewer.
         self.clip_ghost_cb = QCheckBox()
         self.clip_ghost_cb.setChecked(bool(self.settings.get("clip_ghost", True)))
         self.clip_ghost_cb.toggled.connect(self.set_clip_ghost)
-        cl.addWidget(self.clip_ghost_cb)
         self.clip_plane_cb = QCheckBox()
         self.clip_plane_cb.setChecked(bool(self.settings.get("clip_plane", True)))
         self.clip_plane_cb.toggled.connect(self.set_clip_plane)
-        cl.addWidget(self.clip_plane_cb)
+        # Side by side while they fit, one under the other in a narrow panel.
+        self.clip_opts = _FitRow([self.clip_ghost_cb, self.clip_plane_cb])
+        cl.addWidget(self.clip_opts)
         self.clip_box.hide()
         vl.addWidget(self.clip_box)
 
@@ -1395,17 +1405,20 @@ class MainWindow(QMainWindow):
         # While Clip facing you turns with the view, a point placed on its cut stays where it was
         # put when the view turns: the cut moves on and the measurement hangs in the air. A short
         # note with a red dot (like Check's problems) says so, left of Clear, only while that is
-        # so; its tooltip explains. It keeps its place when hidden and ends in "…" when the
-        # panel is narrow, so Clear and Close never move.
+        # so; its tooltip explains. It keeps its place when hidden and wraps onto a second line
+        # when the panel is narrow (or the translation long), so Clear and Close never move.
         self.measure_cut_note = QWidget()
         nl = QHBoxLayout(self.measure_cut_note)
         nl.setContentsMargins(0, 0, 0, 0)
         nl.setSpacing(4)
         self.measure_cut_dot = QLabel()
         self.measure_cut_dot.setTextFormat(Qt.RichText)
-        nl.addWidget(self.measure_cut_dot)
-        self.measure_cut_text = _ElidedLabel("")
+        self.measure_cut_dot.setAlignment(Qt.AlignTop)
+        nl.addWidget(self.measure_cut_dot, 0, Qt.AlignVCenter)
+        self.measure_cut_text = QLabel()
         self.measure_cut_text.setObjectName("cutNote")
+        self.measure_cut_text.setWordWrap(True)
+        self.measure_cut_text.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
         nl.addWidget(self.measure_cut_text, 1)
         pol = self.measure_cut_note.sizePolicy()
         pol.setHorizontalPolicy(QSizePolicy.Ignored)
@@ -1625,6 +1638,7 @@ class MainWindow(QMainWindow):
             "clip_face": self.act_clip_face, "lock_face": self.act_lock_face, "reset_view": self.act_reset_view,
             "measure": self.act_measure, "distance": self.measure_actions["distance"],
             "angle": self.measure_actions["angle"], "circle": self.measure_actions["circle"],
+            "measure_clear": short(self._measure_clear),
             # Up/Down: layers of a G-code; in a ZIP list showing a model, the previous/next file.
             "next": short(lambda: self._arrow_key(1)),
             "previous": short(lambda: self._arrow_key(-1)),
@@ -1753,7 +1767,7 @@ class MainWindow(QMainWindow):
             act.setToolTip(self._with_key(tip, kid))
         self.view_reset_btn.setText(self._with_key(tr("Reset view"), "reset_view"))
         self.view_reset_btn.setToolTip(self._with_key(tr("Reset view"), "reset_view"))
-        self.view_close_btn.setText(tr("Close"))
+        self.view_close_btn.setText(self._with_key(tr("Close"), "view"))
         self.view_lock_btn.setText(self._with_key(tr("Lock facing cut"), "lock_face"))
         self.view_lock_btn.setToolTip(self._with_key(
             tr("Clip facing you stops turning with the view, so you can turn the model and look at the cut "
@@ -1779,8 +1793,9 @@ class MainWindow(QMainWindow):
         self.measure_deltas_cb.setText(tr("Show ΔX ΔY ΔZ"))
         self.measure_deltas_cb.setToolTip(tr("Writes the distance along X, Y and Z under the value of every "
                                              "distance."))
-        self.measure_clear_btn.setText(tr("Clear"))
-        self.measure_clear_btn.setToolTip(tr("Removes every measurement; Measure stays on."))
+        self.measure_clear_btn.setText(self._with_key(tr("Clear"), "measure_clear"))
+        self.measure_clear_btn.setToolTip(self._with_key(tr("Removes every measurement; Measure stays on."),
+                                                         "measure_clear"))
         # Close does what the Measure key does while Measure is on: it ends Measure.
         self.measure_close_btn.setText(self._with_key(tr("Close"), "measure"))
         self._update_measure_panel()
@@ -3162,6 +3177,7 @@ class MainWindow(QMainWindow):
         """View section: freeze the Clip facing you cut where it is (the other cut never moves)."""
         self.scene.set_face_frozen(on)
         self._update_measure_cut_note()
+        self._update_hints()
         if self.stack.currentIndex() == 1:
             self.plotter.render()
 
@@ -3332,12 +3348,12 @@ class MainWindow(QMainWindow):
                 tr("{lock} stops Clip facing you turning with the view, so you can turn the model and "
                    "look at the cut from any side.").format(lock=lock),
                 tr("Unlocked, the cut turns with every turn of the view, but a measurement stays where "
-                   "you placed it: it is left hanging in the air, away from the cut it was measured on."),
-                tr("Lock the cut before measuring on it."))) + "</p>"
+                   "you placed it: it is left hanging in the air, away from the cut it was measured on."))
+            ) + "</p>"
             self.measure_cut_dot.setText('<span style="color:%s; font-size:13px;">●</span>'
                                          % (self.DOT_DARK if theme.is_dark() else self.DOT_LIGHT))
-            self.measure_cut_text.set_full(tr("Facing cut not locked · hover for details"), tip)
-            for wdg in (self.measure_cut_note, self.measure_cut_dot):
+            self.measure_cut_text.setText(tr("Facing cut not locked · hover for details"))
+            for wdg in (self.measure_cut_note, self.measure_cut_dot, self.measure_cut_text):
                 wdg.setToolTip(tip)
         self.measure_cut_note.setVisible(show)
 
@@ -3348,15 +3364,28 @@ class MainWindow(QMainWindow):
         if not hasattr(self, "hints") or not hasattr(self, "measure"):
             return
         texts = []
+
+        def labelled(section: str, text: str) -> str:
+            # Each hint starts with the section it belongs to: there can be two at once.
+            return tr("{section}: {text}").format(section=section, text=text)
+
         if self._view_options_apply():
             if self.measure.active:
-                texts.append({
+                texts.append(labelled(tr("Measure"), {
                     "distance": tr("Click two points on the model."),
                     "angle": tr("Click three points: one side, the corner, the other side."),
                     "circle": tr("Click three points on the edge of a circle or hole."),
-                }[self.measure.mode] + " " + tr("Drag a point to move it, drag elsewhere to turn the view."))
-            if "face" in self._clip_cuts():
-                texts.append(tr("Turn or move the view to pass the model through the cut."))
+                }[self.measure.mode] + " " + tr("Drag a point to move it, drag elsewhere to turn the view.")))
+            cuts = self._clip_cuts()
+            parts = []
+            if "face" in cuts:
+                parts.append(tr("The facing cutting plane is locked: turn the view to look at the cut from any side.")
+                             if self.act_lock_face.isChecked() else
+                             tr("Turn or move the view to pass the model through the cutting plane."))
+            if cuts and getattr(self, "clip_handles", None) is not None and self.clip_handles.enabled:
+                parts.append(tr("Drag a round handle to move its cutting plane."))
+            if parts:
+                texts.append(labelled(tr("Clip"), " ".join(parts)))
         self.hints.set_texts(texts)
 
     def _clip_cuts(self) -> list:
@@ -3872,6 +3901,7 @@ class MainWindow(QMainWindow):
         self.scene.set_planes_cut_each_other(not bool(self.settings.get("cut_planes_whole", False)))
         if hasattr(self, "clip_handles"):
             self.clip_handles.set_enabled(bool(self.settings.get("clip_handles", False)))
+            self._update_hints()
         self.scene.show_plate_axes = bool(self.settings.get("show_plate_axes", False))
         self.grid_labels.set_step(self._spacing_mm("grid_labels_step"))
         if render:

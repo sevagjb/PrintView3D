@@ -238,6 +238,11 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
+        <source>Remove all measurements (Measure stays on)</source>
+        <translation type="unfinished">Supprimer toutes les mesures (Mesurer reste actif)</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/keys.py"></location>
         <source>Measure an angle</source>
         <translation type="unfinished">Mesurer un angle</translation>
     </message>
@@ -1514,13 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Lock the cut before measuring on it.</source>
-        <translation type="unfinished">Verrouillez la coupe avant de mesurer dessus.</translation>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="unfinished">Coupe de face non verrouillée · survolez pour les détails</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">Coupe de face non verrouillée · survolez pour les détails</translation>
+        <source>{section}: {text}</source>
+        <translation type="unfinished">{section} : {text}</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -1544,8 +1549,24 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Turn or move the view to pass the model through the cut.</source>
-        <translation type="unfinished">Faites pivoter ou déplacez la vue pour passer le modèle à travers la coupe.</translation>
+        <source>The facing cutting plane is locked: turn the view to look at the cut from any side.</source>
+        <translation type="unfinished">Le plan de coupe de face est verrouillé : tournez la vue pour regarder la coupe de tous les côtés.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Turn or move the view to pass the model through the cutting plane.</source>
+        <translation type="unfinished">Tournez ou déplacez la vue pour faire passer le modèle à travers le plan de coupe.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Drag a round handle to move its cutting plane.</source>
+        <translation type="unfinished">Faites glisser une poignée ronde pour déplacer son plan de coupe.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Clip</source>
+        <extracomment>Title of the clip box when both cuts (from the top and facing you) are on at once: a noun, &apos;the cut&apos;.</extracomment>
+        <translation type="unfinished">Coupe</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2261,13 +2282,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Also move the cuts by dragging them in the 3D view</source>
-        <translation type="unfinished">Déplacer aussi les coupes en les faisant glisser dans la vue 3D</translation>
+        <source>Also move the cutting planes by dragging them in the 3D view</source>
+        <translation type="unfinished">Déplacer aussi les plans de coupe en les faisant glisser dans la vue 3D</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
-        <translation type="unfinished">Chaque plan de coupe reçoit une poignée ronde. Faites-la glisser pour déplacer la coupe ; les curseurs fonctionnent toujours.</translation>
+        <source>Each cutting plane gets a round handle. Drag it to move the plane; the sliders still work too.</source>
+        <translation type="unfinished">Chaque plan de coupe reçoit une poignée ronde. Faites-la glisser pour déplacer le plan ; les curseurs fonctionnent toujours.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2852,6 +2873,22 @@
         <translation type="unfinished">{v} cm³</translation>
     </message>
     <message>
+        <source>Lock the cut before measuring on it.</source>
+        <translation type="vanished">Verrouillez la coupe avant de mesurer dessus.</translation>
+    </message>
+    <message>
+        <source>Turn or move the view to pass the model through the cut.</source>
+        <translation type="vanished">Faites pivoter ou déplacez la vue pour passer le modèle à travers la coupe.</translation>
+    </message>
+    <message>
+        <source>Also move the cuts by dragging them in the 3D view</source>
+        <translation type="vanished">Déplacer aussi les coupes en les faisant glisser dans la vue 3D</translation>
+    </message>
+    <message>
+        <source>Each cutting plane gets a round handle. Drag it to move the cut; the sliders still work too.</source>
+        <translation type="vanished">Chaque plan de coupe reçoit une poignée ronde. Faites-la glisser pour déplacer la coupe ; les curseurs fonctionnent toujours.</translation>
+    </message>
+    <message>
         <source>Clip facing you turns with the view: points placed on the cut stay where they are and the cut moves on.</source>
         <translation type="vanished">La coupe de face tourne avec la vue : les points placés sur la coupe restent où ils sont et la coupe se déplace.</translation>
     </message>
@@ -3034,10 +3071,6 @@
     <message>
         <source>Turn off</source>
         <translation type="vanished">Désactiver</translation>
-    </message>
-    <message>
-        <source>Clip</source>
-        <translation type="vanished">Coupe</translation>
     </message>
     <message>
         <source>Snap to corners and edges</source>

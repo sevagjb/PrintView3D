@@ -105,7 +105,9 @@ def test_the_clip_controls_live_in_the_view_section_and_open_it(window):
     from PySide6.QtCore import QPoint
     at = {b: b.mapTo(w.view_box, QPoint(0, 0)) for b in (w.clip_ghost_cb, w.clip_plane_cb, w.view_lock_btn,
                                                           w.view_reset_btn)}
-    assert at[w.clip_ghost_cb].y() < at[w.clip_plane_cb].y() < at[w.view_lock_btn].y()
+    # the two checkboxes side by side, the lock button under them
+    assert at[w.clip_ghost_cb].y() == at[w.clip_plane_cb].y() < at[w.view_lock_btn].y()
+    assert at[w.clip_ghost_cb].x() < at[w.clip_plane_cb].x()
     assert at[w.view_lock_btn].x() == at[w.clip_ghost_cb].x()
     assert at[w.view_lock_btn].y() + w.view_lock_btn.height() == at[w.view_reset_btn].y() + w.view_reset_btn.height()
     assert w.view_lock_btn.height() == w.view_reset_btn.height()
@@ -246,7 +248,7 @@ def test_clip_facing_you_starts_through_the_centre_and_follows_the_slider(window
     w = window
     w.load_sync(INSIDE)
     w.act_clip_face.trigger()
-    assert w.clip_box.isVisible() and any('pass the model through the cut' in t for t in w.hints.texts)
+    assert w.clip_box.isVisible() and any('pass the model through the cutting plane' in t for t in w.hints.texts)
     assert w.scene.clip_face == pytest.approx(0.0) and w.scene.clip_z is None
     assert _planes(w) == [1, 1, 1]
     assert all(a.GetBackfaceProperty() is not None for a in w.scene.model_actors)
@@ -308,7 +310,7 @@ def test_both_cuts_at_the_same_time(window):
     assert w.scene.clip_face == pytest.approx(0.0)            # the new one starts in the middle
     assert _planes(w) == [2, 2, 2]                            # keeps what both keep
     assert w.clip_top_row.isVisible() and w.clip_face_row.isVisible()
-    assert any('pass the model through the cut' in t for t in w.hints.texts)
+    assert any('pass the model through the cutting plane' in t for t in w.hints.texts)
     assert "10" in w.clip_info.text() and "Depth" in w.face_info.text()
     w.face_slider.setValue(750)                               # each slider moves its own cut
     assert w.scene.clip_z == pytest.approx(10.0) and w.scene.clip_face > 0
@@ -324,7 +326,7 @@ def test_both_cuts_at_the_same_time(window):
     w.act_clip_face.trigger()                                 # V: only the upright cut goes off
     assert w.scene.clip_face is None and w.scene.clip_z is not None and _planes(w) == [1, 1, 1]
     assert w.scene.model_actors[0].GetMapper().GetClippingPlanes().GetItem(0) is w.scene._top_plane
-    assert not any('pass the model through the cut' in t for t in w.hints.texts)
+    assert not any('pass the model through the cutting plane' in t for t in w.hints.texts)
 
 
 def test_turn_off_and_reset_view_end_both_cuts(window):
