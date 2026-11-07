@@ -526,7 +526,12 @@ class PrintCheck:
         a = self.p.add_mesh(mesh, color=color, name=name, reset_camera=False, pickable=False,
                             lighting=True, show_scalar_bar=False)
         _polygon_offset_only_where_asked()
-        a.GetMapper().SetRelativeCoincidentTopologyPolygonOffsetParameters(-1.5, -4.0)
+        # A small constant pull only. The slope part of an offset grows without limit on faces
+        # seen edge-on: down-facing faces hidden under a finger or a lip were pulled out in front
+        # of the faces covering them, and showed through the model (much more on some graphics
+        # drivers). The highlight is the same triangles as the model, so a constant pull is
+        # enough to win the tie: from below it covers exactly the same pixels as before.
+        a.GetMapper().SetRelativeCoincidentTopologyPolygonOffsetParameters(0.0, -2.0)
         a.SetUseBounds(False)
         self._actors[name] = a
 

@@ -730,6 +730,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate</source>
         <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
         <translation type="unfinished"></translation>
@@ -2116,6 +2117,21 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Screenshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Save screenshots straight to this folder, without asking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: Screenshot asks where to save each picture. On: it is saved here at once, named after the file and the time.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default program for 3D files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2159,7 +2175,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Viewer</source>
+        <source>Build plate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Other</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2216,11 +2237,6 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Main grid lines every</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Build plate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2287,7 +2303,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Remember the colours of the Check section</source>
+        <source>Remember the colours of the Check section on restart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2333,6 +2349,11 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2514,6 +2535,11 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not found automatically — use Browse… to select it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Folder for screenshots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

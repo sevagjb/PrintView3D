@@ -41,7 +41,7 @@ from . import keys, theme, update_ui
 from .. import updates as up
 from .export_stl import ExportStlDialog
 from .scene import PLATE_MODES, Scene
-from .settings_dialog import SettingsDialog
+from .settings_dialog import SettingsDialog, default_screenshot_folder
 from . import send_dialog as sd
 
 RESOURCES = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "resources")
@@ -1716,7 +1716,7 @@ class MainWindow(QMainWindow):
         self.check_nozzle.set_unit(self._nozzle_unit())
         self._align_check_inputs()
         self.check_mesh_title.setText(tr("Mesh problems"))
-        self.check_close_btn.setText(tr("Close"))
+        self.check_close_btn.setText(self._with_key(tr("Close"), "check"))     # C ends Check, as Close does
         for kind, text, tip, technical in (
                 ("overhang", tr("Overhangs"), tr("Faces that face down and lean further from vertical than the angle: "
                                                   "they usually need supports. Faces on the plate are not counted."), ""),
@@ -3846,9 +3846,11 @@ class MainWindow(QMainWindow):
         if self.stack.currentIndex() != 1:
             return
         base = os.path.splitext(os.path.basename(self.current_path or "view"))[0]
-        start = os.path.join(self._user_folder(), base + ".png")
-        path, _ = QFileDialog.getSaveFileName(self, tr("Save screenshot"), start,
-                                              tr("PNG image") + " (*.png)")
+        path = self._auto_screenshot_path(base) if self.settings.get("screenshot_auto", False) else ""
+        if not path:
+            start = os.path.join(self._user_folder(), base + ".png")
+            path, _ = QFileDialog.getSaveFileName(self, tr("Save screenshot"), start,
+                                                  tr("PNG image") + " (*.png)")
         if path:
             # The picture shows the model, not the view cube.
             cube_on = self.view_cube.visible
@@ -3862,12 +3864,47 @@ class MainWindow(QMainWindow):
                 self.plotter.render()
             self.statusBar().showMessage(tr("Saved {path}").format(path=path), 6000)
 
+    def _auto_screenshot_path(self, base: str) -> str:
+        """Settings -> Files -> Screenshots, saved without asking: a new name in the chosen folder
+        (the file's name and the time). "" when the folder can't be made: then Screenshot asks."""
+        import time
+        folder = self.settings.get("screenshot_folder", "") or default_screenshot_folder()
+        try:
+            os.makedirs(folder, exist_ok=True)
+        except OSError:
+            return ""
+        stem = f"{base} {time.strftime('%Y-%m-%d %H-%M-%S')}"
+        path, n = os.path.join(folder, stem + ".png"), 2
+        while os.path.exists(path):                     # two in the same second
+            path = os.path.join(folder, f"{stem} ({n}).png")
+            n += 1
+        return path
+
     def open_settings(self, page: str = ""):
+        """Settings, not modal: the main window keeps working while it is open. Opened again
+        (key, menu) while it is open, the same window comes to the front, on the page asked for."""
+        dlg = getattr(self, "settings_dialog", None)
+        if dlg is not None:
+            if page:
+                dlg.show_page(page)
+            dlg.showNormal()
+            dlg.raise_()
+            dlg.activateWindow()
+            return
         self._freecad_before = self.settings.get("freecad_path", "")
         dlg = SettingsDialog(self.settings, self, renderer_info(self.plotter), page=page)
+        dlg.setModal(False)
+        dlg.setAttribute(Qt.WA_DeleteOnClose)
         dlg.applied.connect(self._settings_applied)          # Apply: shown now, the dialog stays
-        accepted = dlg.exec()
+        dlg.finished.connect(lambda result, d=dlg: self._settings_closed(d, result))
+        self.settings_dialog = dlg
+        dlg.show()
+
+    def _settings_closed(self, dlg, result: int):
+        """Settings closed by OK, Cancel or its cross."""
+        self.settings_dialog = None
         self.refresh_update_badge()
+        accepted = result == QDialog.Accepted
         if accepted and dlg.restart_now:
             # After the dialog has closed, so nothing of it is left when the window goes.
             QTimer.singleShot(0, self.restart)

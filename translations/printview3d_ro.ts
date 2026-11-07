@@ -730,6 +730,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate</source>
         <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
         <translation>Placă</translation>
@@ -2116,6 +2117,21 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Screenshots</source>
+        <translation type="unfinished">Capturi de ecran</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Save screenshots straight to this folder, without asking</source>
+        <translation type="unfinished">Salvează capturile direct în acest dosar, fără să întrebe</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: Screenshot asks where to save each picture. On: it is saved here at once, named after the file and the time.</source>
+        <translation type="unfinished">Dezactivat: Captură de ecran întreabă unde să salveze fiecare imagine. Activat: este salvată aici imediat, cu numele fișierului și ora.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default program for 3D files</source>
         <translation>Program implicit pentru fișiere 3D</translation>
     </message>
@@ -2159,8 +2175,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Viewer</source>
-        <translation>Vizualizare</translation>
+        <source>Build plate</source>
+        <translation>Placa de imprimare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Other</source>
+        <translation type="unfinished">Altele</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2217,11 +2238,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Main grid lines every</source>
         <translation type="unfinished">Linii principale la fiecare</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Build plate</source>
-        <translation>Placa de imprimare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2287,8 +2303,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Remember the colours of the Check section</source>
-        <translation type="unfinished">Ține minte culorile secțiunii Verifică</translation>
+        <source>Remember the colours of the Check section on restart</source>
+        <translation type="unfinished">Ține minte culorile secțiunii Verifică după repornire</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2334,6 +2350,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
         <translation>Pare să fie placa video integrată (mai lentă). Bifează căsuța și repornește pentru o rotire mai fluidă.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Viewer</source>
+        <translation>Vizualizare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2515,6 +2536,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not found automatically — use Browse… to select it</source>
         <translation>Negăsit automat — folosește Răsfoiește… ca să-l alegi</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Folder for screenshots</source>
+        <translation type="unfinished">Dosar pentru capturi de ecran</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2866,6 +2892,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Remember the colours of the Check section</source>
+        <translation type="vanished">Ține minte culorile secțiunii Verifică</translation>
     </message>
     <message>
         <source>Theme: {name} ({key}: next theme)</source>

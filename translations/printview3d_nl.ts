@@ -730,6 +730,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate</source>
         <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
         <translation>Plaat</translation>
@@ -2116,6 +2117,21 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Screenshots</source>
+        <translation type="unfinished">Schermafbeeldingen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Save screenshots straight to this folder, without asking</source>
+        <translation type="unfinished">Schermafbeeldingen direct in deze map opslaan, zonder te vragen</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: Screenshot asks where to save each picture. On: it is saved here at once, named after the file and the time.</source>
+        <translation type="unfinished">Uit: Schermafbeelding vraagt bij elke afbeelding waar die moet komen. Aan: hij wordt meteen hier opgeslagen, genoemd naar het bestand en de tijd.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default program for 3D files</source>
         <translation>Standaardprogramma voor 3D-bestanden</translation>
     </message>
@@ -2159,8 +2175,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Viewer</source>
-        <translation>Weergave</translation>
+        <source>Build plate</source>
+        <translation>Printplaat</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Other</source>
+        <translation type="unfinished">Overig</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2217,11 +2238,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Main grid lines every</source>
         <translation type="unfinished">Hoofdlijnen om de</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Build plate</source>
-        <translation>Printplaat</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2287,8 +2303,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Remember the colours of the Check section</source>
-        <translation type="unfinished">De kleuren van het onderdeel Controleren onthouden</translation>
+        <source>Remember the colours of the Check section on restart</source>
+        <translation type="unfinished">De kleuren van het onderdeel Controleren onthouden na een herstart</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2334,6 +2350,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>This looks like the built-in (slower) graphics. Tick the box and restart for smoother rotation.</source>
         <translation>Dit lijkt de ingebouwde (tragere) grafische chip te zijn. Vink het vakje aan en herstart voor soepeler draaien.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Viewer</source>
+        <translation>Weergave</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2515,6 +2536,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Not found automatically — use Browse… to select it</source>
         <translation>Niet automatisch gevonden — kies het met Bladeren…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Folder for screenshots</source>
+        <translation type="unfinished">Map voor schermafbeeldingen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2866,6 +2892,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Remember the colours of the Check section</source>
+        <translation type="vanished">De kleuren van het onderdeel Controleren onthouden</translation>
     </message>
     <message>
         <source>Theme: {name} ({key}: next theme)</source>

@@ -267,6 +267,8 @@ menu or applications menu, without a file, always opens a new window.
 | **Left-drag** | Rotate. Press *on the model* to rotate around that exact point; press on empty space to rotate around the model's centre. The plate always stays level. |
 | **Right-drag** (or middle-drag, or Shift + left-drag) | Move (pan) |
 | **Mouse wheel** | Zoom towards the mouse pointer |
+
+While you turn, move or zoom, the pointer shows it (circling arrows, four arrows, a magnifier), and is the normal arrow again when you let go.
 | **View cube** (top-right corner) | A see-through cube with a dashed ring. Click a face to jump to that view (Top, Front, Right, Back, Left or Bottom). Drag the cube to rotate, or drag the ring under it to turn without tilting. With the mouse over the cube, **arrows** and a **Home** icon appear: ◀ ▶ turn the model to the next 45° stop, ▲ ▼ tilt it 45° towards Top or Bottom, and Home goes back to the fitted Iso view. The arrows always land on one of the cube's 26 views (faces, edges, corners), so after a free drag the first click lines the view up again. View changes turn smoothly; click or drag to stop one. The part under the mouse lights up in the theme's main colour (amber in Ember). Because Top, Front and Right are on the cube and its Home icon is the Iso view, the toolbar keeps only Fit (handy when you have zoomed far away from the model) and Plate; hide the cube in Settings → Viewer and the Iso, Top, Front and Right buttons come back. The keys `1` `2` `3` `4` work either way. |
 
 Looking from underneath? The plate gets out of the way so you can see the bottom of the part.
@@ -286,8 +288,8 @@ already has. The mouse controls are fixed.
 | `Ctrl+W` | Close the file (back to the start page) |
 | `Ctrl+P` | Open the file in your default slicer |
 | `Ctrl+E` | Export STL (3MF projects, FreeCAD and STEP files) |
-| `S` | Settings |
-| `Ctrl+Shift+S` | Save a screenshot of the 3D view |
+| `S` | Settings (it stays open beside the main window, which keeps working) |
+| `Ctrl+Shift+S` | Save a screenshot of the 3D view. It asks where, or saves straight to a folder of your choice: **Settings → Files → Screenshots** |
 | `Ctrl+T` | Next theme style (Default → Gray → Graphite → Ember), same light/dark mode |
 | `Ctrl+Shift+T` | Switch the theme between light and dark |
 | `F` | Fit the model in the view |
