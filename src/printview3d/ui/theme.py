@@ -1160,19 +1160,19 @@ TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer",
 ICON_GAP = 6                  # px between an icon and the text beside it (at 22 px icons)
 
 
-def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False) -> QIcon:
+def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False,
+              hover: bool = False) -> QIcon:
     """Toolbar icon: the symbol in the accent colour on a soft accent-tinted tile.
     on_accent=True is for the slicer button: a white symbol on a soft white tile.
     warm=True uses the theme's primary colour instead (the orange tiles of the Ember themes; the
     classic themes have the same teal for both, so there it looks the same).
     gap=True is for buttons with text beside the icon: the picture is wider by ICON_GAP (empty
     on the right), so the text keeps some room from the icon. Its buttons use an icon size of
-    (22 + ICON_GAP) x 22."""
-    size = 64
-    pm = QPixmap(size + (round(size * ICON_GAP / 22) if gap else 0), size)
-    pm.fill(Qt.transparent)
-    p = QPainter(pm)
-    p.setRenderHint(QPainter.Antialiasing)
+    (22 + ICON_GAP) x 22.
+    hover=True adds a second picture that Qt shows while the mouse is over the button (QIcon's
+    Active mode): the tile filled solid in the theme's primary colour with a white or dark symbol,
+    whichever reads better - the same rule as the view cube's hovered part (amber in Ember, teal
+    in the other themes). Only for toolbar buttons: a focused push button would show it too."""
     t = colors()
     if on_accent:
         fg, tile = QColor("#ffffff"), QColor(255, 255, 255, 46)
@@ -1181,6 +1181,21 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
         fg = QColor(t["primary_ink" if warm else "accent_ink"])
         tile = QColor(t["primary" if warm else "accent"])
         tile.setAlphaF(0.22 if not is_dark() else 0.20)
+    icon = QIcon(_tool_pixmap(kind, fg, tile, gap))
+    if hover:
+        from .view_cube import readable_text     # the cube's white-or-dark text rule
+        fill = t["primary"]
+        icon.addPixmap(_tool_pixmap(kind, QColor(readable_text(fill)), QColor(fill), gap), QIcon.Active)
+    return icon
+
+
+def _tool_pixmap(kind: str, fg: QColor, tile: QColor, gap: bool) -> QPixmap:
+    """One picture of a toolbar icon: the symbol in fg on a rounded tile."""
+    size = 64
+    pm = QPixmap(size + (round(size * ICON_GAP / 22) if gap else 0), size)
+    pm.fill(Qt.transparent)
+    p = QPainter(pm)
+    p.setRenderHint(QPainter.Antialiasing)
     p.setPen(Qt.NoPen)
     p.setBrush(tile)
     p.drawRoundedRect(QRectF(0, 0, size, size), 14, 14)
@@ -1194,7 +1209,7 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
     p.setBrush(Qt.NoBrush)
     _tool_glyph(p, kind, fg)
     p.end()
-    return QIcon(pm)
+    return pm
 
 
 def apply_dark_theme(app):

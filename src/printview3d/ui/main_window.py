@@ -986,28 +986,31 @@ class MainWindow(QMainWindow):
         tb.addWidget(self.settings_btn)
 
     def _update_toolbar_icons(self):
-        """Draw the toolbar icons in the current theme's colours (again after a theme switch)."""
+        """Draw the toolbar icons in the current theme's colours (again after a theme switch).
+        The toolbar buttons get a hover picture too (hover=True): under the mouse the tile fills
+        with the theme's primary colour, like the view cube. The slicer button keeps its own
+        hover (its whole button lightens), so it has none."""
         if not hasattr(self, "theme_btn"):
             return
-        self.menu_btn.setIcon(theme.tool_icon("menu"))
-        self.act_home.setIcon(theme.tool_icon("home"))
-        self.act_open.setIcon(theme.tool_icon("open"))
+        self.menu_btn.setIcon(theme.tool_icon("menu", hover=True))
+        self.act_home.setIcon(theme.tool_icon("home", hover=True))
+        self.act_open.setIcon(theme.tool_icon("open", hover=True))
         # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
-        self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
-        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons(), gap=True))
-        self.theme_btn.setIcon(theme.tool_icon("theme", warm=True))
+        self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True, hover=True))
+        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons(), gap=True, hover=True))
+        self.theme_btn.setIcon(theme.tool_icon("theme", warm=True, hover=True))
         self.recent_menu.setIcon(theme.tool_icon("recent"))
-        self.act_settings.setIcon(theme.tool_icon("settings"))
+        self.act_settings.setIcon(theme.tool_icon("settings", hover=True))
         self.act_updates.setIcon(theme.tool_icon("updates"))
         self.act_about.setIcon(theme.tool_icon("about"))
         self.act_whats_new.setIcon(theme.tool_icon("whats_new"))
         # Plate, View and Measure; the buttons of the View and Measure sections.
         filled = theme.filled_view_buttons()
-        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled, gap=True))
-        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled, gap=True))
-        self.act_check.setIcon(theme.tool_icon("check", on_accent=filled, gap=True))
-        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled, gap=True))
-        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled, gap=True))
+        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled, gap=True, hover=True))
+        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled, gap=True, hover=True))
+        self.act_check.setIcon(theme.tool_icon("check", on_accent=filled, gap=True, hover=True))
+        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled, gap=True, hover=True))
+        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled, gap=True, hover=True))
         for kind, a in self.measure_actions.items():
             a.setIcon(theme.tool_icon(kind, gap=True))
         for a, kind in ((self.act_wireframe, "wireframe"), (self.act_xray, "xray"), (self.act_clip, "clip_top"),
