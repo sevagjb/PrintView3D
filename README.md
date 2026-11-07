@@ -56,7 +56,8 @@ without exporting an STL first.
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
 | **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, on their own or both at once, with the cut-away part as a see-through ghost, to check meshes, hidden parts and hollow walls. **Measure** distances, angles and circles. [Details](#view-wireframe-x-ray-and-clip). |
-| **Comfortable to use** | Slicer-style camera, drag & drop, recent files, screenshots. |
+| **Check before printing** | **Check** → overhangs, thin walls, holes, tangled (non-manifold) edges, inside-out faces and loose parts, coloured on the model with a count for each. [Details](#check-before-printing). |
+| **Comfortable to use** | Slicer-style camera, drag & drop, recent files, open a whole folder, screenshots, millimetres or inches, and keyboard shortcuts you can change. |
 
 <table>
 <tr>
@@ -241,7 +242,7 @@ into Applications to replace the old one. Older Macs that can't run macOS 14:
 ## Using PrintView3D
 
 **Open a file:** double-click it (if PrintView3D is the default), drag it onto the window, use
-**Open**, or pick it from **Recent** in the **☰** menu or on the start page. Try the files in [`examples/`](examples) to get started.
+**Open file or ZIP…** (`Ctrl+O`), or pick it from **Recent** in the **☰** menu or on the start page. Try the files in [`examples/`](examples) to get started.
 
 **Home:** the house button (`Ctrl+W`) closes the open file and goes back to the start page, with
 your recent files. It also gives back the memory the file took, which matters most after a large
@@ -250,6 +251,9 @@ G-code or ZIP.
 On the start page, hold the mouse over a recent file and a card in the bottom right corner shows its preview
 picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
 The card stays in the same place for every file, so you can run down the list and compare.
+
+**A whole folder:** **☰ → Open folder…** lists the 3D files of a folder in the side panel; step
+through them with `↑` / `↓` or a click.
 
 **One window:** a file you double-click while PrintView3D is already open is shown in that window,
 which comes to the front. To give every file its own window (to compare two models side by side),
@@ -350,10 +354,29 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
   every measurement, and **Clear** (`K`) removes them all.
 - **Object colours**: click the colour box of an object in the **Objects** list to give it another
   colour; right-click goes back to the file's colour. Not saved.
-- **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres
-  along the build plate.
+- **Grid numbers**: **Settings → Viewer → Show scale numbers on the grid** writes millimetres
+  along the build plate, as many as fit at the zoom you look at, counting from the plate's
+  front-left corner (0). **Grid lines every** and **Main grid lines every** set the grid itself.
 
 More, with pictures: [Look inside your models](https://sevagjb.github.io/PrintView3D/inspect.html). Built by [@covrig](https://github.com/covrig).
+
+### Check before printing
+
+![Check model: overhangs in red and a thin wall in orange](docs/assets/inside/check.png)
+
+The **Check** button (`C`, between Plate and View) opens the **Check model** section and colours
+what may cause trouble when printing, with a count for each (models only, not G-code):
+
+- **Overhangs**: faces facing down and leaning further from vertical than an angle (45° by default);
+  faces on the plate don't count.
+- **Thin walls**: walls and pins thinner than your nozzle (0.4 mm by default). Runs in the
+  background, so it is off until you tick it.
+- **Mesh problems**: **Holes** (open edges), **Tangled edges** (non-manifold), **Inside-out faces**
+  (flipped normals) and **Loose parts** up to a size you set (5 mm by default).
+
+A red dot marks the problems found. Click a colour box to change its colour; hover over a name for
+what it means. The highlights follow the cuts and the objects you hide.
+More: [Check before printing](https://sevagjb.github.io/PrintView3D/inspect.html#check-before-printing). Built by [@covrig](https://github.com/covrig).
 
 ### Choosing your slicer
 
@@ -485,10 +508,13 @@ the first time, then remembered until the file changes.
 
 ### Language
 
-**Settings → Language** switches the whole program immediately, including file dialogs and
+**Settings → Language and units → Language** switches the whole program immediately, including file dialogs and
 standard buttons. English is the default; *Automatic* follows your system language. Arabic uses a
 right-to-left layout; measurements always use Western digits (0.20 mm).
 A wrong or missing word? The link on that page leads to [How to translate](docs/TRANSLATING.md).
+
+**Millimetres or inches:** **Settings → Language and units → Lengths in** shows every length (sizes,
+measurements, cuts, the grid and the plate) in millimetres or inches. Files are not changed.
 
 ### Themes
 

@@ -21,7 +21,14 @@ file to Creality Print, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura and others w
 Designing in FreeCAD? Open the `.FCStd` file and send it to your slicer as a model directly,
 without exporting an STL first.
 
-## New: measure and look inside your models
+## New: check, measure and look inside your models
+
+**New in 0.29: Check before printing.** One click colours what may give trouble when you print:
+overhangs, walls thinner than your nozzle, holes, tangled edges, inside-out faces and loose parts,
+each with a count. Also new: millimetres or inches, keyboard shortcuts of your own, open a whole
+folder, and Measure now snaps to the outline of a cut, so you can measure walls inside the model.
+
+![Check model: the overhangs inside a pump housing in red, a thin wall in orange](assets/inside/check.png)
 
 **New in 0.28: Measure.** Click two points for a distance (with ΔX ΔY ΔZ), three for an angle or for
 the diameter of a hole. Points snap to corners and edges, and every value is written right next to
@@ -46,6 +53,7 @@ each object a colour of your own, and see the size of every object.
 | **3MF** | Every object on the plate, including projects from Creality Print, OrcaSlicer and Bambu Studio. Show or hide each object, see the project's printer and filament settings and its thumbnail. If the project is already sliced, view its toolpaths without re-slicing. **Export STL**: save the objects as plain STL files, combined or one per object. |
 | **G-code** | Toolpaths coloured by type (walls, infill, top/bottom, supports, bridges, travel…), a layer slider, "show only this layer", print time, filament use and the slicer's preview picture. |
 | **Look inside** | **View** → wireframe, X-ray, clip from the top and a cut that turns with the view, on their own or both at once, with the cut-away part as a see-through ghost; plus the size of every object and **Measure** for distances, angles and circles. [Details](inspect.md). |
+| **Check before printing** | **Check** → overhangs, thin walls, holes, tangled (non-manifold) edges, inside-out faces and loose parts, coloured on the model with a count for each. [Details](inspect.md#check-before-printing). |
 | **FreeCAD** | Open `.FCStd` documents to look at them: shown in 3D exactly as FreeCAD displays them (visible bodies only), with one click to open in FreeCAD or send to your slicer as STL. Uses your installed FreeCAD; without it you still see the preview picture. [Details](cad.md#freecad-files). |
 | **STEP** | Open `.step` / `.stp` CAD files: shown in 3D with the help of your installed FreeCAD (converted in the background, remembered afterwards), with the CAD program, author and date from the file. OrcaSlicer, PrusaSlicer and Bambu Studio get the STEP file itself; other slicers get an STL. [Details](cad.md#step-files). |
 | **OBJ, PLY, OFF, glTF / GLB** | Other common 3D formats, with the colours saved in the file (textures are not shown). OBJ objects and glTF scenes are listed as separate objects. OBJ goes to your slicer as it is; PLY, OFF and glTF are sent as STL, because not every slicer reads them. [Details](cad.md#other-3d-formats). |

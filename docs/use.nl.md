@@ -1,11 +1,19 @@
 # PrintView3D gebruiken
 
 **Een bestand openen:** dubbelklik erop (als PrintView3D het standaardprogramma is), sleep het naar het venster,
-gebruik **Openen**, of kies het uit **Recent** in het menu **☰** of op de startpagina. Probeer de bestanden in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) om te beginnen.
+gebruik **Bestand of ZIP openen…** (`Ctrl+O`), of kies het uit **Recent** in het menu **☰** of op de startpagina. Probeer de bestanden in [`examples/`](https://github.com/sevagjb/PrintView3D/blob/main/examples) om te beginnen.
 
 **Start:** de knop met het huisje (`Ctrl+W`) sluit het open bestand en gaat terug naar de startpagina,
 met je recente bestanden. Het geeft ook het geheugen terug dat het bestand gebruikte; dat maakt vooral
 verschil na een grote G-code of ZIP.
+
+Houd op de startpagina de muis boven een recent bestand en een kaartje rechtsonder toont de
+voorbeeldafbeelding (bij 3MF-projecten, G-code en FreeCAD-bestanden die er een hebben), de naam en de
+map waarin het staat. Het kaartje staat voor elk bestand op dezelfde plek, zodat je de lijst kunt
+aflopen en vergelijken.
+
+**Een hele map:** **☰ → Map openen…** zet de 3D-bestanden van een map in het zijpaneel; ga erdoor met
+`↑` / `↓` of een klik.
 
 **Eén venster:** een bestand waarop je dubbelklikt terwijl PrintView3D al open is, verschijnt in dat venster,
 dat naar voren komt. Wil je elk bestand in een eigen venster (om twee modellen naast elkaar te vergelijken),
@@ -24,20 +32,34 @@ Kijk je van onderen? De plaat gaat opzij, zodat je de onderkant van het onderdee
 
 ## Toetsenbord {#keyboard}
 
-Dezelfde lijst staat in het programma onder **Instellingen → Over → Toetsenbord en muis**.
+Dit zijn de toetsen waarmee PrintView3D komt. **Instellingen → Toetsenbord en muis** toont ze allemaal,
+en daar kun je elk ervan een eigen toets geven: klik in het veld en druk op de nieuwe toets (de wisknop
+haalt de toets weg). De knoppen tonen dan jouw toets. **Standaardwaarden herstellen** zet ze allemaal
+terug. Toetsen die het systeem gebruikt (de Windows- of Super-toets, Alt+F4, Alt+Tab, ⌘Q,
+Ctrl+Alt+Del en dergelijke), Tab, Enter, Esc en de spatiebalk kun je niet kiezen, en ook geen toets die
+een andere actie al heeft. De muisbediening ligt vast.
 
 | Toets | Actie |
 |---|---|
-| `Ctrl+O` | Een bestand openen |
+| `Ctrl+O` | Een bestand of ZIP openen |
 | `Ctrl+W` | Het bestand sluiten (terug naar de startpagina) |
 | `Ctrl+P` | Het bestand in je standaardslicer openen |
 | `Ctrl+E` | STL exporteren (3MF-projecten, FreeCAD- en STEP-bestanden) |
-| `Ctrl+T` | Volgend thema (Donker → Grijs → Grafiet → Licht) |
-| `F` · `1` · `2` · `3` · `4` | Passend · Iso · Boven · Voor · Rechts |
+| `S` | Instellingen |
+| `Ctrl+Shift+S` | Een schermafbeelding van de 3D-weergave opslaan |
+| `Ctrl+T` | Volgende themastijl (Standaard → Grijs → Grafiet → Ember), zelfde lichte of donkere modus |
+| `Ctrl+Shift+T` | Het thema tussen licht en donker wisselen |
+| `F` | Het model passend in beeld brengen |
+| `1` · `2` · `3` · `4` | Iso · Boven · Voor · Rechts |
+| `P` | Printplaat aan / uit |
+| `C` · `V` | Onderdeel Controleren · onderdeel Weergave, aan / uit (modellen) |
 | `W` · `X` · `T` · `Y` | Draadmodel · Röntgen · Van boven afsnijden · Afsnijden vanaf jouw kant, aan / uit (modellen) |
-| `R` | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend (modellen) |
+| `L` | De snede vanaf jouw kant vastzetten: ze draait niet meer mee met de weergave (modellen) |
+| `R` | Weergave herstellen: draadmodel, röntgen en de sneden uit, model passend (bij G-code: passend) |
 | `M` | Meten aan / uit (modellen) |
-| `↑` / `↓` | Volgende / vorige laag (G-code), of het vorige / volgende bestand in een ZIP |
+| `D` · `A` · `O` | Een afstand · een hoek · een cirkel meten |
+| `K` | Alle metingen verwijderen (Meten blijft aan) |
+| `↑` / `↓` | Volgende / vorige laag (G-code), of het bestand erboven / eronder in een ZIP of map |
 | `Page Up` / `Page Down` | 10 lagen omhoog / omlaag |
 | `Home` / `End` | Eerste / laatste laag |
 
@@ -58,7 +80,11 @@ OBJ en de andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
   verschuif (pan) de weergave en het schuift erlangs, alsof je het model voor een scanner houdt.
   Voor een snede van voren of van opzij klik je dat vlak op de weergavekubus aan. De schuifregelaar
   zet de snede dichterbij of verder weg, en **Diepte** toont hoe ver ze in het model zit.
-  **Snijvlak bevriezen** houdt de snede op haar plaats terwijl je het model draait en verschuift.
+  **Snede vastzetten** (`L`, de knop links van Weergave herstellen) zorgt dat de snede niet meer
+  meedraait met de weergave, zodat je het model kunt draaien en de snede van opzij kunt bekijken; de
+  schuif verplaatst haar nog steeds. Zolang de snede niet vastzit, toont het onderdeel Meten een rode
+  stip en *Snede vanaf jouw kant niet vastgezet*; beweeg erover voor de reden: punten die op de snede
+  geplaatst zijn blijven achter als de weergave draait.
 - **Beide sneden tegelijk**: `T` en `Y` zetten elk hun eigen snede aan en uit, dus beide kunnen
   samen aan voor een hoek eruit gesneden, met een schuif **Hoogte** en **Diepte** in het zijpaneel.
   **Weergave herstellen** zet beide uit.
@@ -67,23 +93,55 @@ OBJ en de andere modelformaten; G-code heeft daarvoor de laagschuifregelaar):
   snijvlak verschijnt als een vaag vlak zo groot als het model. Je keuze wordt onthouden. In
   **Instellingen → Weergave** hebben **Weggesneden deel** en **Snijvlak** elk een schuif
   Vager … Sterker; de 3D-weergave verandert terwijl je sleept.
+- **De sneden in de 3D-weergave slepen** (een optie): vink **Instellingen → Weergave → De snijvlakken
+  ook verplaatsen door ze in de 3D-weergave te slepen** aan en elke snede krijgt een kleine ronde greep
+  aan de rand van haar snijvlak, met een kort lijntje dat de richting toont. Onder de muis wisselen de
+  kleuren. Sleep eraan om de snede te verplaatsen; haar schuif gaat mee.
 - **Weergave herstellen** (`R`): zet alles hierboven uit en past het model in beeld, zoals **Passend**,
   in één keer. Metingen blijven staan.
 
-De opties blijven aan als je het volgende model opent, en werken samen (bijvoorbeeld röntgen en afsnijden).
+Draadmodel en röntgen blijven aan als je het volgende model opent; de sneden en de metingen verdwijnen. De opties werken samen (bijvoorbeeld röntgen en afsnijden).
 
 ## Meten, objectkleuren en getallen op het raster {#measure-object-colours-and-grid-numbers}
 
 - **Meten** (`M`, de knop naast **Weergave**): **Afstand** (desgewenst met ΔX ΔY ΔZ), **Hoek** en
   **Cirkel** (diameter en straal). Een klik zet een punt, slepen draait nog steeds de weergave, en een
-  geplaatst punt kun je verslepen. Punten springen naar hoeken en randen; bij elke meting staat de
-  waarde, en **Wissen** haalt ze allemaal weg.
+  geplaatst punt kun je verslepen. Punten springen naar hoeken en randen, en met een snede aan ook
+  naar de omtrek van de snede, zodat je in het model kunt meten; bij elke meting staat de waarde, en
+  **Wissen** (`K`) haalt ze allemaal weg.
 - **Objectkleuren**: klik op het kleurvak van een object in de lijst **Objecten** om het een andere
   kleur te geven; rechtsklik zet de kleur uit het bestand terug. Niet opgeslagen.
-- **Getallen op het raster**: **Instellingen → Weergave → Afstanden (mm) langs het raster tonen**
-  schrijft millimeters langs de printplaat.
+- **Getallen op het raster**: **Instellingen → Weergave → Schaalgetallen op het raster tonen**
+  schrijft millimeters langs de printplaat, zoveel als passen bij de zoom waarmee je kijkt.
+- **Instellingen** is ook het tandwielpictogram rechts in de werkbalk, naast het themapictogram.
 
 Meer, met afbeeldingen: [In je modellen kijken](inspect.md). Gemaakt door [@covrig](https://github.com/covrig).
+
+## Controleren voor het printen {#check-before-printing}
+
+![Model controleren: overhangen in rood en een dunne wand in oranje](assets/inside/check.nl.png)
+
+De knop **Controleren** (`C`, tussen Plaat en Weergave) opent het onderdeel **Model controleren** en
+kleurt wat bij het printen problemen kan geven, met een aantal per controle (alleen modellen, geen
+G-code):
+
+- **Overhangen**: vlakken die naar beneden wijzen en verder dan een hoek (standaard 45°) van verticaal
+  hellen; vlakken op de plaat tellen niet mee.
+- **Dunne wanden**: wanden en pinnen dunner dan je nozzle (standaard 0,4 mm). Loopt op de achtergrond,
+  dus het staat uit tot je het aanvinkt.
+- **Meshproblemen**: **Gaten** (open randen), **Verwarde randen** (non-manifold), **Binnenstebuiten
+  gekeerde vlakken** (omgedraaide normalen) en **Losse delen** tot een grootte die je kiest (standaard
+  5 mm).
+
+Een rode stip markeert de gevonden problemen. Klik op een kleurvak om de kleur te veranderen; beweeg
+over een naam om te zien wat hij betekent. De markeringen volgen de sneden en de objecten die je
+verbergt. Meer: [Controleren voor het printen](inspect.md#check-before-printing). Gebouwd door
+[@covrig](https://github.com/covrig).
+
+## Millimeter of inch {#millimetres-or-inches}
+
+**Instellingen → Taal en eenheden → Lengtes in** toont elke lengte (afmetingen, metingen, sneden, het
+raster en de plaat) in millimeters of in inch. Bestanden veranderen niet.
 
 ## Je slicer kiezen {#choosing-your-slicer}
 
@@ -118,7 +176,7 @@ STL-bestanden, bijvoorbeeld om een model te delen of te openen in een programma 
 
 ## ZIP-bestanden {#zip-files}
 
-Gedownloade modellen komen vaak als ZIP. Open die net als elk ander bestand (**Openen…** of sleep het naar het
+Gedownloade modellen komen vaak als ZIP. Open die net als elk ander bestand (**Bestand of ZIP openen…** of sleep het naar het
 venster); uitpakken hoeft niet.
 
 <table>
@@ -153,7 +211,7 @@ Bestanden uit ZIP's die langer dan een dag geleden geopend zijn, worden automati
 
 ## Taal {#language}
 
-**Instellingen → Taal** zet het hele programma meteen om, ook de bestandsvensters en standaardknoppen. Engels
+**Instellingen → Taal en eenheden → Taal** zet het hele programma meteen om, ook de bestandsvensters en standaardknoppen. Engels
 is de standaard; *Automatisch* volgt de taal van je systeem. Arabisch gebruikt een opmaak van rechts naar links;
 maten gebruiken altijd westerse cijfers (0.20 mm).
 Een fout of ontbrekend woord? De link op die pagina leidt naar [Zo vertaal je](TRANSLATING.md).
