@@ -419,12 +419,15 @@ class _FitLabel(QLabel):
 
 
 class _FitRow(QWidget):
-    """Widgets side by side while they fit; when the panel is too narrow, one under the other."""
+    """Widgets side by side while they fit; when the panel is too narrow, one under the other.
+    even: side by side, each gets an equal column (with `spacing` between): under a row of as many
+    equal buttons with the same spacing, each widget starts exactly under its button."""
 
-    def __init__(self, widgets, spacing: int = 16, parent=None):
+    def __init__(self, widgets, spacing: int = 16, parent=None, even: bool = False):
         super().__init__(parent)
         self._widgets = list(widgets)
         self._spacing = spacing
+        self._even = even
         self._stacked = None
         self._grid = QGridLayout(self)
         self._grid.setContentsMargins(0, 0, 0, 0)
@@ -438,7 +441,10 @@ class _FitRow(QWidget):
         return bool(self._stacked)
 
     def _needed(self) -> int:
-        return sum(w.sizeHint().width() for w in self._widgets) + self._spacing * (len(self._widgets) - 1)
+        widths = [w.sizeHint().width() for w in self._widgets]
+        if self._even:
+            widths = [max(widths)] * len(widths)         # every column as wide as the widest needs
+        return sum(widths) + self._spacing * (len(self._widgets) - 1)
 
     def _arrange(self, stacked: bool):
         if stacked == self._stacked:
@@ -448,7 +454,8 @@ class _FitRow(QWidget):
             self._grid.removeWidget(w)
         for i, w in enumerate(self._widgets):
             self._grid.addWidget(w, i if stacked else 0, 0 if stacked else i)
-        self._grid.setColumnStretch(len(self._widgets), 0 if stacked else 1)
+            self._grid.setColumnStretch(i, 1 if self._even and not stacked else 0)
+        self._grid.setColumnStretch(len(self._widgets), 0 if stacked or self._even else 1)
         self.updateGeometry()
 
     def minimumSizeHint(self):
@@ -1351,8 +1358,11 @@ class MainWindow(QMainWindow):
         self.clip_plane_cb.setChecked(bool(self.settings.get("clip_plane", True)))
         self.clip_plane_cb.toggled.connect(self.set_clip_plane)
         # Side by side while they fit, one under the other in a narrow panel.
-        self.clip_opts = _FitRow([self.clip_ghost_cb, self.clip_plane_cb])
+        # In the columns of the buttons and sliders above: each starts under its slider.
+        self.clip_opts = _FitRow([self.clip_ghost_cb, self.clip_plane_cb], spacing=vg.horizontalSpacing(),
+                                 even=True)
         cl.addWidget(self.clip_opts)
+        cl.addSpacing(8)                                 # some room before Lock / Reset view / Close
         self.clip_box.hide()
         vl.addWidget(self.clip_box)
 
@@ -1385,7 +1395,7 @@ class MainWindow(QMainWindow):
         mode_row.setSpacing(6)
         mode_group: list = []
         for kind in ("distance", "angle", "circle"):
-            mode_row.addWidget(self._section_button(self.measure_actions[kind], mode_group))
+            mode_row.addWidget(self._section_button(self.measure_actions[kind], mode_group), 1)
         ml.addLayout(mode_row)
         # Snapping is on at every start (a choice made last time is not kept: with it off, clicks
         # land beside the corners you mean).
@@ -1399,8 +1409,11 @@ class MainWindow(QMainWindow):
         self.measure_deltas_cb.setChecked(bool(self.settings.get("measure_deltas", False)))
         self.measure_deltas_cb.toggled.connect(self.set_measure_deltas)
         # Side by side while they fit, one under the other in a narrow panel.
-        self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb])
+        # Each under one of the three buttons above (equal columns, the buttons' spacing).
+        self.measure_opts = _FitRow([self.measure_snap_cb, self.measure_dotted_cb, self.measure_deltas_cb],
+                                    spacing=mode_row.spacing(), even=True)
         ml.addWidget(self.measure_opts)
+        ml.addSpacing(8)                                 # some room before the note, Clear and Close
         mrow = QHBoxLayout()
         # While Clip facing you turns with the view, a point placed on its cut stays where it was
         # put when the view turns: the cut moves on and the measurement hangs in the air. A short
@@ -3352,7 +3365,8 @@ class MainWindow(QMainWindow):
             ) + "</p>"
             self.measure_cut_dot.setText('<span style="color:%s; font-size:13px;">●</span>'
                                          % (self.DOT_DARK if theme.is_dark() else self.DOT_LIGHT))
-            self.measure_cut_text.setText(tr("Facing cut not locked · hover for details"))
+            # Two lines: what it is, then where to find out more.
+            self.measure_cut_text.setText(tr("Facing cut not locked") + "\n" + tr("Hover for details"))
             for wdg in (self.measure_cut_note, self.measure_cut_dot, self.measure_cut_text):
                 wdg.setToolTip(tip)
         self.measure_cut_note.setVisible(show)

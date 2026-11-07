@@ -1519,8 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">Tăietura nu este blocată · treci cu mouse-ul pentru detalii</translation>
+        <source>Hover for details</source>
+        <translation type="unfinished">Treci cu mouse-ul pentru detalii</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked</source>
+        <translation type="unfinished">Tăietura spre tine nu este blocată</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2871,6 +2876,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="vanished">Tăietura nu este blocată · treci cu mouse-ul pentru detalii</translation>
     </message>
     <message>
         <source>Lock the cut before measuring on it.</source>

@@ -43,7 +43,7 @@ DEFAULTS: list[tuple[str, str]] = [
     ("distance", "D"),
     ("angle", "A"),
     ("circle", "O"),
-    ("measure_clear", "Del"),
+    ("measure_clear", "K"),
     ("next", "Up"),
     ("previous", "Down"),
     ("up10", "PgUp"),

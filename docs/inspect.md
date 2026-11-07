@@ -107,7 +107,7 @@ measure with the buttons in it:
 
 How to use the chosen tool is written at the bottom of the 3D view while Measure is on, after *Measure:* (the hints of Clip start with *Clip:*, so two at once stay apart). A click places a point, a drag still turns the view, so you can turn the model between points.
 Finished measurements stay on screen with their value written next to them, and the next click
-starts another; **Clear** (<kbd>Del</kbd>) removes them all. Drag a placed point to move it. **Snapping** (on at
+starts another; **Clear** (<kbd>K</kbd>) removes them all. Drag a placed point to move it. **Snapping** (on at
 every start) jumps to the nearest corner, the middle of an edge or a point on an edge. With a cut
 on (View → Clip), the outline of the cut counts as an edge too: its corners, the middles of its
 straight runs and any point on it, so you can measure walls and holes inside the model. Only the

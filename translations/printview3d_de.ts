@@ -1519,8 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt · Details beim Darüberfahren</translation>
+        <source>Hover for details</source>
+        <translation type="unfinished">Für Details darüberfahren</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked</source>
+        <translation type="unfinished">Zugewandter Schnitt nicht gesperrt</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2871,6 +2876,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="vanished">Zugewandter Schnitt nicht gesperrt · Details beim Darüberfahren</translation>
     </message>
     <message>
         <source>Lock the cut before measuring on it.</source>

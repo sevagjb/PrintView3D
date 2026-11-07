@@ -295,7 +295,7 @@ already has. The mouse controls are fixed.
 | `R` | Reset view: wireframe, X-ray and the cuts off, model fitted (on G-code: fit) |
 | `M` | Measure on / off (models) |
 | `D` · `A` · `O` | Measure a distance · an angle · a circle |
-| `Del` | Remove all measurements (Measure stays on) |
+| `K` | Remove all measurements (Measure stays on) |
 | `↑` / `↓` | Next / previous layer (G-code), or the file above / below in a ZIP or folder |
 | `Page Up` / `Page Down` | 10 layers up / down |
 | `Home` / `End` | First / last layer |
@@ -347,7 +347,7 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
   **Angle** and **Circle** (diameter and radius). A click places a point, a drag still turns the
   view, and a placed point can be dragged. Points snap to corners and edges, and with a cut on also
   to the outline of the cut, so you can measure inside the model; the value is written next to
-  every measurement, and **Clear** (`Del`) removes them all.
+  every measurement, and **Clear** (`K`) removes them all.
 - **Object colours**: click the colour box of an object in the **Objects** list to give it another
   colour; right-click goes back to the file's colour. Not saved.
 - **Grid numbers**: **Settings → Viewer → Show distances (mm) along the grid** writes millimetres

@@ -357,7 +357,7 @@ def test_measure_warns_while_the_facing_cut_turns(window):
     tip = note.toolTip()
     assert "Lock facing cut (L)" in tip and "hanging in the air" in tip and "slider" not in tip
     assert "before measuring" not in tip                       # some want to turn the cut on purpose
-    assert w.measure_cut_text.text() == "Facing cut not locked · hover for details"
+    assert w.measure_cut_text.text() == "Facing cut not locked\nHover for details"   # always two lines
     assert w.measure_cut_text.wordWrap()                       # a long translation wraps, not cut short
     w.act_lock_face.setChecked(True)
     assert note.isHidden()
@@ -390,10 +390,10 @@ def test_section_buttons_carry_their_keys(window):
     native = lambda k: QKeySequence(k).toString(QKeySequence.NativeText)
     assert w.measure_close_btn.text() == f"Close ({native('M')})"   # what M does while Measure is on
     assert w.view_close_btn.text() == f"Close ({native('V')})"      # what V does while View is open
-    assert w.measure_clear_btn.text() == f"Clear ({native('Delete')})"
+    assert w.measure_clear_btn.text() == f"Clear ({native('K')})"
 
 
-def test_delete_clears_the_measurements_and_measure_stays_on(window):
+def test_k_clears_the_measurements_and_measure_stays_on(window):
     w = window
     _cube(w)
     w.choose_measure_mode("distance")
@@ -449,3 +449,38 @@ def test_drag_option_says_also_and_mouse_comes_before_keyboard(window):
     titles = [g.title() for g in page.findChildren(QGroupBox)]
     assert titles.index("Mouse") < titles.index("Keyboard")
     dlg.close()
+
+
+def test_checkboxes_start_under_their_buttons_with_room_below(window):
+    from PySide6.QtCore import QPoint
+    from printview3d.ui import main_window as mw
+    w = window
+    _cube(w)
+    w.act_clip.setChecked(True)
+    w.act_clip_face.setChecked(True)
+    w.choose_measure_mode("distance")
+    vb, mb = w.view_box, w.measure_box
+    x = lambda b, box: b.mapTo(box, QPoint(0, 0)).x()
+    gap = lambda above, below, box: below.mapTo(box, QPoint(0, 0)).y() - (above.mapTo(box, QPoint(0, 0)).y()
+                                                                           + above.height())
+    assert [x(w.clip_ghost_cb, vb), x(w.clip_plane_cb, vb)] == [x(w.clip_top_row, vb), x(w.clip_face_row, vb)]
+    modes = sorted(x(b, mb) for b in mb.findChildren(mw._FitButton))
+    assert [x(c, mb) for c in (w.measure_snap_cb, w.measure_dotted_cb, w.measure_deltas_cb)] == modes
+    assert gap(w.clip_plane_cb, w.view_reset_btn, vb) >= 12
+    assert gap(w.measure_snap_cb, w.measure_clear_btn, mb) >= 12
+
+
+def test_even_rows_still_stack_in_a_narrow_panel(app):
+    from PySide6.QtWidgets import QCheckBox
+    from printview3d.ui.main_window import _FitRow
+    cbs = [QCheckBox("Snapping"), QCheckBox("Dotted line"), QCheckBox("Show ΔX ΔY ΔZ")]
+    row = _FitRow(cbs, spacing=6, even=True)
+    row.show()
+    row.resize(600, 30)
+    app.processEvents()
+    xs = [b.x() for b in cbs]
+    assert not row.stacked and xs[1] - xs[0] == xs[2] - xs[1]           # equal columns
+    row.resize(120, 30)
+    app.processEvents()
+    assert row.stacked
+    row.close()

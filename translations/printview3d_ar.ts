@@ -1519,8 +1519,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
-        <translation type="unfinished">القطع المواجه غير مثبّت · مرّر المؤشر للتفاصيل</translation>
+        <source>Hover for details</source>
+        <translation type="unfinished">مرّر المؤشر للتفاصيل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked</source>
+        <translation type="unfinished">القطع المواجه غير مثبّت</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2871,6 +2876,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Facing cut not locked · hover for details</source>
+        <translation type="vanished">القطع المواجه غير مثبّت · مرّر المؤشر للتفاصيل</translation>
     </message>
     <message>
         <source>Lock the cut before measuring on it.</source>

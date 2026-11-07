@@ -1519,7 +1519,12 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Facing cut not locked · hover for details</source>
+        <source>Hover for details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Facing cut not locked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
