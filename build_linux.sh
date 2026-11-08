@@ -72,10 +72,29 @@ fi
 echo "[5/5] Packing the AppImage ..."
 ARCH="$(uname -m)"
 TOOL="build/appimagetool-$ARCH.AppImage"
+# appimagetool: a fixed version (the same tool on every build), retried a few times; if GitHub can't
+# deliver that file, the "continuous" build instead. (November 2026: GitHub answered 504 for the
+# continuous and 1.9.1 files for hours, while 1.9.0 downloaded fine.)
+APPIMAGETOOL_VERSION="${APPIMAGETOOL_VERSION:-1.9.0}"
 if [[ ! -x "$TOOL" ]]; then
     mkdir -p build
-    curl -fL -o "$TOOL" \
-        "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
+    BASE="https://github.com/AppImage/appimagetool/releases/download"
+    ok=0
+    for tag in "$APPIMAGETOOL_VERSION" continuous; do
+        if curl -fL --retry 4 --retry-delay 10 --retry-all-errors -o "$TOOL.part" \
+                "$BASE/$tag/appimagetool-$ARCH.AppImage"; then
+            mv "$TOOL.part" "$TOOL"
+            ok=1
+            echo "appimagetool: $tag"
+            break
+        fi
+        echo "appimagetool $tag could not be downloaded, trying the next one ..."
+    done
+    rm -f "$TOOL.part"
+    if [[ $ok != 1 ]]; then
+        echo "Could not download appimagetool (GitHub). Try again later." >&2
+        exit 1
+    fi
     chmod +x "$TOOL"
 fi
 APPDIR=build/AppDir
