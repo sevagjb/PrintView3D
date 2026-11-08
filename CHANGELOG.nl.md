@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.30.0
+- **Kies je werkbalk** (**Instellingen → Werkbalk**, ook **☰ → Werkbalk aanpassen…** of klik met rechts
+  op de werkbalk): verberg de knoppen die je niet gebruikt: Start, Openen, Controleren, Weergave,
+  Meten, Schermafbeelding, Thema en Instellingen. Het **☰**-menu, Openen in slicer, STL exporteren,
+  Plaat en Passend blijven altijd staan. De volgorde verandert nooit, verborgen knoppen houden hun
+  toets, en het **☰**-menu heeft nu ook Controleren, Weergave, Meten en het themamenu.
+  [Bekijk hoe het werkt](https://sevagjb.github.io/PrintView3D/nl/use.html#toolbar-buttons).
+- **Kortere weergaveknoppen** (zelfde pagina): toon Plaat, Controleren, Weergave, Meten en Passend als
+  *Plaat (P)*, *Plaat*, *P* of alleen pictogrammen, en voeg ze desgewenst samen tot één aaneengesloten
+  groep. Elke wijziging is meteen te zien; **OK** houdt hem, **Annuleren** gaat terug.
+- **Werkbalkknoppen lichten op onder de muis**: het vlak vult zich met de hoofdkleur van het thema
+  (amber in Ember, cyaan in de andere thema's), net als de weergavekubus. Het tandwiel van Instellingen
+  is nu oranje in Ember, net als Schermafbeelding en Thema ernaast.
+- **Website**: de schermafbeeldingen volgen het thema van de website (Licht, Donker of Ember).
+- **Onder de motorkap**: ongebruikte code verwijderd.
+
 ## 0.29.1
 - **Opgelost**: bij **Model controleren** konden overhangen die in of onder het model verborgen zitten
   erdoorheen zichtbaar zijn, op sommige grafische kaarten meer dan op andere. Van onderen worden ze

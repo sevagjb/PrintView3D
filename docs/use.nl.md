@@ -267,6 +267,8 @@ eruitzien: **pictogram, naam en toets** (*Plaat (P)*, de standaard), **pictogram
 **pictogram en toets** (*P*) of **alleen pictogram** (de tooltip noemt de naam). **Weergaveknoppen
 samenvoegen tot één groep** tekent ze als één aaneengesloten balk.
 
+![Instellingen → Werkbalk: knoppen uit, kortere namen en een samengevoegde groep, meteen te zien op de werkbalk](assets/toolbar-settings.gif)
+
 Elke wijziging is meteen te zien in het venster en in de afbeelding boven aan de pagina: **OK** houdt
 hem, **Annuleren** gaat terug. **Standaardwaarden herstellen** toont alle knoppen weer.
 

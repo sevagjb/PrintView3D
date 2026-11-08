@@ -97,3 +97,12 @@
 [data-md-color-scheme="ember"] .md-nav__link--active code { color: var(--pv-ember-teal-deep); }
 /* Tables: header row in the window colour. */
 [data-md-color-scheme="ember"] .md-typeset table:not([class]) th { background-color: var(--pv-ember-window); }
+
+/* ---------------------------------------------------------------- pictures that match the theme
+   tools/mkdocs_theme_images.py puts a Light and an Ember version beside each screenshot that has
+   them: only the one for the chosen theme shows (Dark: the original picture). */
+img.pv-theme-light, img.pv-theme-ember { display: none; }
+[data-md-color-scheme="default"] img.pv-theme-dark,
+[data-md-color-scheme="ember"] img.pv-theme-dark { display: none; }
+[data-md-color-scheme="default"] img.pv-theme-light,
+[data-md-color-scheme="ember"] img.pv-theme-ember { display: inline; }

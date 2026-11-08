@@ -263,6 +263,8 @@ Under **Look** you choose how the view buttons (Plate, Check, View, Measure and 
 (*P*) or **icon only** (the tooltip names it). **Join the view buttons into one group** draws them
 as one connected bar.
 
+![Settings → Toolbar: buttons switched off, shorter labels and a joined group, shown live on the toolbar](assets/toolbar-settings.gif)
+
 Every change shows in the window, and in the picture at the top of the page, right away: **OK**
 keeps it, **Cancel** goes back. **Reset to defaults** shows every button again.
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.30.0
+- **Choose your toolbar** (**Settings → Toolbar**, also **☰ → Customize toolbar…** or a right-click on
+  the toolbar): hide the buttons you don't use: Home, Open, Check, View, Measure, Screenshot, Theme
+  and Settings. The **☰** menu, Open in slicer, Export STL, Plate and Fit always stay. The order never
+  changes, hidden buttons keep their keys, and the **☰** menu now also has Check, View, Measure and
+  the Theme menu. [See it in action](https://sevagjb.github.io/PrintView3D/use.html#toolbar-buttons).
+- **Shorter view buttons** (same page): show Plate, Check, View, Measure and Fit as *Plate (P)*,
+  *Plate*, *P* or icons only, and join them into one connected group if you like. Every change shows
+  right away; OK keeps it, Cancel goes back.
+- **Toolbar buttons light up under the mouse**: the tile fills with the theme's main colour (amber in
+  Ember, teal in the other themes), like the view cube. The Settings gear is now orange in Ember, like
+  Screenshot and Theme beside it.
+- **Website**: the screenshots follow the website's theme (Light, Dark or Ember).
+- **Under the hood**: unused code removed.
+
 ## 0.29.1
 - **Fixed**: in **Check model**, overhangs hidden inside or under the model could show through it,
   more on some graphics cards. From below they are coloured exactly as before.

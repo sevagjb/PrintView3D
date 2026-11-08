@@ -683,7 +683,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Customize toolbar…</source>
-        <translation type="unfinished">تخصيص شريط الأدوات…</translation>
+        <translation>تخصيص شريط الأدوات…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2032,7 +2032,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Toolbar</source>
-        <translation type="unfinished">شريط الأدوات</translation>
+        <translation>شريط الأدوات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2383,57 +2383,57 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Choose which buttons the toolbar shows. A hidden button keeps its key, and everything stays in the ☰ menu. The order never changes.</source>
-        <translation type="unfinished">اختر الأزرار التي يعرضها شريط الأدوات. يحتفظ الزر المخفي باختصاره، ويبقى كل شيء في القائمة ☰. لا يتغيّر الترتيب أبدًا.</translation>
+        <translation>اختر الأزرار التي يعرضها شريط الأدوات. يحتفظ الزر المخفي باختصاره، ويبقى كل شيء في القائمة ☰. لا يتغيّر الترتيب أبدًا.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Buttons, in toolbar order</source>
-        <translation type="unfinished">الأزرار، بترتيب شريط الأدوات</translation>
+        <translation>الأزرار، بترتيب شريط الأدوات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open</source>
-        <translation type="unfinished">فتح</translation>
+        <translation>فتح</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>{name} · always shown</source>
-        <translation type="unfinished">{name} · ظاهر دائمًا</translation>
+        <translation>{name} · ظاهر دائمًا</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Look</source>
-        <translation type="unfinished">الشكل</translation>
+        <translation>الشكل</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon, name and key</source>
-        <translation type="unfinished">الأيقونة والاسم والاختصار</translation>
+        <translation>الأيقونة والاسم والاختصار</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon and name</source>
-        <translation type="unfinished">الأيقونة والاسم</translation>
+        <translation>الأيقونة والاسم</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon and key</source>
-        <translation type="unfinished">الأيقونة والاختصار</translation>
+        <translation>الأيقونة والاختصار</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon only</source>
-        <translation type="unfinished">الأيقونة فقط</translation>
+        <translation>الأيقونة فقط</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>View buttons show:</source>
-        <translation type="unfinished">تعرض أزرار العرض:</translation>
+        <translation>تعرض أزرار العرض:</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Join the view buttons into one group</source>
-        <translation type="unfinished">ضمّ أزرار العرض في مجموعة واحدة</translation>
+        <translation>ضمّ أزرار العرض في مجموعة واحدة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

@@ -683,7 +683,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Customize toolbar…</source>
-        <translation type="unfinished">Werkbalk aanpassen…</translation>
+        <translation>Werkbalk aanpassen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -2032,7 +2032,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Toolbar</source>
-        <translation type="unfinished">Werkbalk</translation>
+        <translation>Werkbalk</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2383,57 +2383,57 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Choose which buttons the toolbar shows. A hidden button keeps its key, and everything stays in the ☰ menu. The order never changes.</source>
-        <translation type="unfinished">Kies welke knoppen de werkbalk toont. Een verborgen knop houdt zijn toets, en alles blijft in het ☰-menu. De volgorde verandert nooit.</translation>
+        <translation>Kies welke knoppen de werkbalk toont. Een verborgen knop houdt zijn toets, en alles blijft in het ☰-menu. De volgorde verandert nooit.</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Buttons, in toolbar order</source>
-        <translation type="unfinished">Knoppen, in de volgorde van de werkbalk</translation>
+        <translation>Knoppen, in de volgorde van de werkbalk</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open</source>
-        <translation type="unfinished">Openen</translation>
+        <translation>Openen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>{name} · always shown</source>
-        <translation type="unfinished">{name} · altijd zichtbaar</translation>
+        <translation>{name} · altijd zichtbaar</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Look</source>
-        <translation type="unfinished">Uiterlijk</translation>
+        <translation>Uiterlijk</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon, name and key</source>
-        <translation type="unfinished">Pictogram, naam en toets</translation>
+        <translation>Pictogram, naam en toets</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon and name</source>
-        <translation type="unfinished">Pictogram en naam</translation>
+        <translation>Pictogram en naam</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon and key</source>
-        <translation type="unfinished">Pictogram en toets</translation>
+        <translation>Pictogram en toets</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Icon only</source>
-        <translation type="unfinished">Alleen pictogram</translation>
+        <translation>Alleen pictogram</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>View buttons show:</source>
-        <translation type="unfinished">Weergaveknoppen tonen:</translation>
+        <translation>Weergaveknoppen tonen:</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Join the view buttons into one group</source>
-        <translation type="unfinished">Weergaveknoppen samenvoegen tot één groep</translation>
+        <translation>Weergaveknoppen samenvoegen tot één groep</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

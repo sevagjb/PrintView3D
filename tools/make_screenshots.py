@@ -2,11 +2,17 @@
 
 Run (needs a display; on Linux CI use xvfb-run):
     python tools/make_demo.py
-    python tools/make_screenshots.py
+    python tools/make_screenshots.py                    # Dark: docs/screenshot-*.png (README, website)
+    python tools/make_screenshots.py --theme light      # the website's Light and Ember versions:
+    python tools/make_screenshots.py --theme ember      #   docs/screenshot-*--light.webp, --ember.webp
+
+The website shows the version matching its theme (tools/mkdocs_theme_images.py); the README on
+GitHub shows the Dark pictures. --no-demo leaves the example files' thumbnails alone.
 """
 
 from __future__ import annotations
 
+import argparse
 import os
 import sys
 import tempfile
@@ -23,7 +29,43 @@ DOCS = os.path.join(ROOT, "docs")
 EX = os.path.join(ROOT, "examples")
 
 
+def themed_name(name: str, theme_name: str) -> str:
+    """screenshot-model.png -> screenshot-model--light.webp (Dark keeps the plain name). The dots of
+    the name become dashes, so the website's language plugin never reads ".ar." as a language."""
+    if theme_name == "dark":
+        return name
+    stem, _ = os.path.splitext(name)
+    return f"{stem.replace('.', '-')}--{theme_name}.webp"
+
+
+def save_image(img, path: str):
+    """Save a QImage/QPixmap; .webp through Pillow (smaller than PNG, sharp enough for screenshots)."""
+    if not path.endswith(".webp"):
+        img.save(path)
+        return
+    tmp = path[:-5] + ".tmp.png"
+    img.save(tmp)
+    from PIL import Image
+    Image.open(tmp).save(path, "WEBP", quality=88, method=6)
+    os.remove(tmp)
+
+
+def plain_buttons(dialog):
+    """Linux's desktop theme puts icons on OK / Cancel / Apply; Windows and macOS show plain
+    buttons, so the screenshots do too."""
+    from PySide6.QtGui import QIcon
+    from PySide6.QtWidgets import QDialogButtonBox
+    for box in dialog.findChildren(QDialogButtonBox):
+        for b in box.buttons():
+            b.setIcon(QIcon())
+
+
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--theme", default="dark", choices=["dark", "light", "ember"])
+    ap.add_argument("--no-demo", action="store_true", help="don't rewrite the examples' thumbnails")
+    args = ap.parse_args()
+    dark = args.theme == "dark"
     app = QApplication([])
     from printview3d.settings import Settings
     from printview3d.ui.main_window import MainWindow
@@ -31,7 +73,7 @@ def main():
     from printview3d.ui import theme
     import make_demo
 
-    theme.apply_theme(app, "dark")
+    theme.apply_theme(app, args.theme)
     from printview3d import i18n as _i18n
     _i18n.apply_language(app, "en")          # number format as the real program has it (17,751.69)
     import subprocess
@@ -59,7 +101,8 @@ def main():
         app.processEvents()
         w.plotter.render()
         app.processEvents()
-        (widget or w).grab().save(os.path.join(DOCS, name))
+        name = themed_name(name, args.theme)
+        save_image((widget or w).grab(), os.path.join(DOCS, name))
         print("saved", name)
 
     def camera(azim, elev, zoom=1.0):
@@ -78,16 +121,17 @@ def main():
     w.load_sync(os.path.join(EX, "demo_vase.stl"))
     camera(-25, -5, 1.15)
     shot("screenshot-model.png")
-    img = w.plotter.screenshot(None, return_img=True)
-    from PIL import Image
-    im = Image.fromarray(img)
-    h = im.height
-    cx = im.width // 2
-    im = im.crop((cx - h // 2, 0, cx + h // 2, h)).resize((300, 300))
-    import io
-    bio = io.BytesIO()
-    im.save(bio, "PNG")
-    make_demo.main(bio.getvalue())
+    if dark and not args.no_demo:          # a thumbnail for the demo G-code / 3MF
+        img = w.plotter.screenshot(None, return_img=True)
+        from PIL import Image
+        im = Image.fromarray(img)
+        h = im.height
+        cx = im.width // 2
+        im = im.crop((cx - h // 2, 0, cx + h // 2, h)).resize((300, 300))
+        import io
+        bio = io.BytesIO()
+        im.save(bio, "PNG")
+        make_demo.main(bio.getvalue())
 
     # 2) G-code, cut at 60 % height
     w.load_sync(os.path.join(EX, "demo_vase.gcode"))
@@ -120,9 +164,10 @@ def main():
     r = w.slicer_menu.geometry()
     b = w.slicer_btn.mapToGlobal(QPoint(0, 0))
     left, top = max(0, b.x() - 160), max(0, b.y() - 8)
-    screen.copy(left, top, max(r.right(), b.x() + w.slicer_btn.width()) - left + 180,
-                r.bottom() - top + 16).save(os.path.join(DOCS, "screenshot-slicer-menu.png"))
-    print("saved screenshot-slicer-menu.png")
+    save_image(screen.copy(left, top, max(r.right(), b.x() + w.slicer_btn.width()) - left + 180,
+                           r.bottom() - top + 16),
+               os.path.join(DOCS, themed_name("screenshot-slicer-menu.png", args.theme)))
+    print("saved slicer menu")
     w.slicer_menu.close()
 
     # 6) Settings
@@ -130,8 +175,10 @@ def main():
     d.show()
     for _ in range(5):
         app.processEvents()
-    d.grab().save(os.path.join(DOCS, "screenshot-settings.png"))
-    print("saved screenshot-settings.png")
+    plain_buttons(d)
+    app.processEvents()
+    save_image(d.grab(), os.path.join(DOCS, themed_name("screenshot-settings.png", args.theme)))
+    print("saved settings")
     d.close()
 
     # 6b) Settings -> Updates with a (pretend) newer version on GitHub
@@ -146,8 +193,10 @@ def main():
     d.show()
     for _ in range(5):
         app.processEvents()
-    d.grab().save(os.path.join(DOCS, "screenshot-updates.png"))
-    print("saved screenshot-updates.png")
+    plain_buttons(d)
+    app.processEvents()
+    save_image(d.grab(), os.path.join(DOCS, themed_name("screenshot-updates.png", args.theme)))
+    print("saved updates")
     d.close()
     w.refresh_update_badge()
     settings.set("update_latest", {})
@@ -166,6 +215,10 @@ def main():
     i18n.apply_language(app, "en")
     for _ in range(5):
         app.processEvents()
+
+    if not dark:                     # the theme pictures and FreeCAD: Dark only
+        w.close()
+        return
 
     # 8) The same G-code in the Gray, Graphite and Light themes, plus a 2 x 2 overview
     w.load_sync(os.path.join(EX, "demo_vase.gcode"))

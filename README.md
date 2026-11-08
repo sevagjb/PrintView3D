@@ -57,6 +57,7 @@ without exporting an STL first.
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
 | **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, on their own or both at once, with the cut-away part as a see-through ghost, to check meshes, hidden parts and hollow walls. **Measure** distances, angles and circles. [Details](#view-wireframe-x-ray-and-clip). |
 | **Check before printing** | **Check** → overhangs, thin walls, holes, tangled (non-manifold) edges, inside-out faces and loose parts, coloured on the model with a count for each. [Details](#check-before-printing). |
+| **Your toolbar** | Hide the buttons you don't use, shorten the view buttons to a name, a key or an icon, and join them into one group (**Settings → Toolbar**). Hidden buttons keep their keys and stay in the **☰** menu. [Details](#toolbar-buttons). |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, open a whole folder, screenshots, millimetres or inches, and keyboard shortcuts you can change. |
 
 <table>
@@ -602,6 +603,8 @@ Under **Look** you choose how the view buttons (Plate, Check, View, Measure and 
 **icon, name and key** (*Plate (P)*, the default), **icon and name** (*Plate*), **icon and key**
 (*P*) or **icon only** (the tooltip names it). **Join the view buttons into one group** draws them
 as one connected bar.
+
+![Settings → Toolbar: buttons switched off, shorter labels and a joined group, shown live on the toolbar](docs/assets/toolbar-settings.gif)
 
 Every change shows in the window, and in the picture at the top of the page, right away: **OK**
 keeps it, **Cancel** goes back. **Reset to defaults** shows every button again.
