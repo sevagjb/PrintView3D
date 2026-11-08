@@ -2199,8 +2199,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Other</source>
-        <translation type="unfinished">Sonstiges</translation>
+        <source>Measure, View and Check</source>
+        <translation type="unfinished">Messen, Ansicht und Prüfen</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2329,6 +2329,21 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
         <translation type="unfinished">Aus: Die gewählten Prüffarben gelten, bis PrintView3D geschlossen wird.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Start page</source>
+        <translation type="unfinished">Startseite</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show a preview of recent files when the mouse is over them</source>
+        <translation type="unfinished">Eine Vorschau zuletzt geöffneter Dateien zeigen, wenn die Maus darüber ist</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
+        <translation type="unfinished">Aus: keine Vorschaukarte, und die Dateien werden erst beim Öffnen gelesen (praktisch bei einem langsamen Netzlaufwerk).</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2966,6 +2981,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="vanished">Sonstiges</translation>
     </message>
     <message>
         <source>Buttons (left to right)</source>

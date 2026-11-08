@@ -33,6 +33,23 @@ def _png(w: int, h: int) -> bytes:
     return bytes(ba)
 
 
+def _photo(w: int, h: int) -> bytes:
+    """A picture with detail (a photo-sized PNG; a plain colour packs to under 2 KB, like an icon)."""
+    import random
+    from PySide6.QtCore import QBuffer, QByteArray, QIODevice
+    from PySide6.QtGui import QImage
+    rnd = random.Random(1)
+    img = QImage(w, h, QImage.Format_RGB32)
+    for y in range(h):
+        for x in range(w):
+            img.setPixel(x, y, rnd.getrandbits(24))
+    ba = QByteArray()
+    buf = QBuffer(ba)
+    buf.open(QIODevice.WriteOnly)
+    img.save(buf, "PNG")
+    return bytes(ba)
+
+
 def _block(word: str, size: str, data: bytes) -> str:
     return f"; {word} begin {size} {len(data)}\n; " + base64.b64encode(data).decode() + f"\n; {word} end\n"
 
@@ -98,5 +115,80 @@ def test_names_with_ampersand_and_angle_brackets_show_as_they_are(app, tmp_path)
             w._recent_hover(str(tag))
             assert card.name.textFormat() == Qt.PlainText
             assert card.name.text().replace("\n", "") == "<b>bold vase.gcode"
+    finally:
+        w.close()
+
+
+# ------------------------------------------------------------------ ZIP files
+def _zip(path, files: dict):
+    import zipfile
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        for name, data in files.items():
+            z.writestr(name, data)
+    return str(path)
+
+
+def _3mf_bytes(picture: bytes) -> bytes:
+    import io
+    import zipfile
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("3D/3dmodel.model", "<model/>")
+        z.writestr("Metadata/thumbnail.png", picture)
+    return buf.getvalue()
+
+
+def test_zip_preview_prefers_the_makers_picture_then_3mf_then_gcode(app, tmp_path):
+    from PySide6.QtGui import QImage
+    from printview3d.loaders import read_thumbnail
+    photo, plate, sliced = _photo(64, 48), _png(30, 30), _png(20, 10)
+    icon = _png(4, 4)                                                  # under 2 KB: an icon, skipped
+
+    def size(data):
+        img = QImage.fromData(data)
+        return img.width(), img.height()
+
+    both = _zip(tmp_path / "printables.zip", {"files/part.3mf": _3mf_bytes(plate), "images/photo.png": photo})
+    assert size(read_thumbnail(both)) == (64, 48)
+    only_3mf = _zip(tmp_path / "k2.zip", {"logo.png": icon, "Tray.3mf": _3mf_bytes(plate)})
+    assert size(read_thumbnail(only_3mf)) == (30, 30)
+    gcode = _block("png", "20*10 1 2 3", sliced) + "G1 X1 Y1 E1\n"
+    only_gcode = _zip(tmp_path / "print.zip", {"model.stl": b"solid x\nendsolid x\n", "print.gcode": gcode})
+    assert size(read_thumbnail(only_gcode)) == (20, 10)
+    nothing = _zip(tmp_path / "plain.zip", {"model.stl": b"solid x\nendsolid x\n", "readme.txt": b"hi",
+                                            "__MACOSX/._photo.png": photo})
+    assert read_thumbnail(nothing) is None
+    broken = tmp_path / "broken.zip"
+    broken.write_bytes(b"PK\x03\x04 not really a zip")
+    assert read_thumbnail(str(broken)) is None
+
+
+def test_the_preview_card_can_be_switched_off(app, tmp_path):
+    from printview3d.ui import main_window as mw
+    from printview3d.ui.settings_dialog import SettingsDialog
+    g = tmp_path / "x.gcode"
+    g.write_text(_block("thumbnail", "6x6", _png(6, 6)) + "G1 X1 Y1\n", encoding="utf-8")
+    s = Settings(str(tmp_path / "settings.json"))
+    s.add_recent(str(g))
+    w = mw.MainWindow(s)
+    try:
+        w.resize(1280, 800)
+        w.show()
+        app.processEvents()
+        w._recent_hover(str(g))
+        assert w.recent_preview.isVisible()
+        w.open_settings("viewer")                                       # as from the menu
+        d = w.findChild(SettingsDialog)
+        titles = [b.title() for b in d.pages.currentWidget().widget().findChildren(type(d.findChild(
+            type(d.toolbar_joined_cb.parentWidget()))))]
+        assert titles.index("Build plate") < titles.index("Measure, View and Check") \
+            < titles.index("Start page") < titles.index("Graphics")
+        assert d.recent_preview_cb.isChecked()
+        d.recent_preview_cb.setChecked(False)
+        d._save()                                                      # OK
+        app.processEvents()
+        assert s.get("recent_preview") is False and not w.recent_preview.isVisible()
+        w._recent_hover(str(g))
+        assert not w.recent_preview.isVisible()                       # stays hidden, nothing read
     finally:
         w.close()

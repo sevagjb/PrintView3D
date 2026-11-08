@@ -293,6 +293,11 @@ class _RecentPreview(QFrame):
 
     def show_file(self, path: str):
         self.path = path
+        # The theme's fonts (the name is bold and larger) before anything is measured: a card that
+        # was never shown still has the default font, and the name ran over its edge.
+        self.ensurePolished()
+        for label in (self.name, self.folder, self.folder_title):
+            label.ensurePolished()
         self.folder_title.setText(tr("Folder"))
         self._fix_heights()
         img = recent_picture(path)
@@ -308,7 +313,9 @@ class _RecentPreview(QFrame):
             pm.setDevicePixelRatio(dpr)
             self.picture.setText("")
             self.picture.setPixmap(pm)
-        width = PREVIEW_PX
+        # The text's width: the card's border leaves the labels 2 px narrower than the picture,
+        # and a few pixels of room keep the longest line off the edge.
+        width = PREVIEW_PX - 6
         name = fit_lines(os.path.basename(path), self.name.fontMetrics(), width, PREVIEW_NAME_LINES)
         self.name.setText(wrap_lines(name, self.name.font(), width))
         folder = fit_lines(os.path.dirname(path), self.folder.fontMetrics(), width, PREVIEW_FOLDER_LINES)
@@ -4082,6 +4089,8 @@ class MainWindow(QMainWindow):
     def _settings_applied(self):
         """Settings saved (OK or Apply): show what changed."""
         self._update_slicer_button()
+        if not self.settings.get("recent_preview", True):
+            self.recent_preview.hide()            # Settings -> Viewer -> Start page: switched off
         self.apply_toolbar_layout()
         # FreeCAD just chosen: show the open FreeCAD file in 3D now.
         freecad_before = getattr(self, "_freecad_before", self.settings.get("freecad_path", ""))
@@ -4279,9 +4288,10 @@ class MainWindow(QMainWindow):
 
     def _recent_hover(self, path: Optional[str]):
         """The mouse is over a recent file on the start page (None: over none): show its preview
-        card, or hide it."""
+        card, or hide it. Settings -> Viewer -> Start page can switch the card off; then nothing
+        is read."""
         card = self.recent_preview
-        if not path:
+        if not path or not self.settings.get("recent_preview", True):
             card.hide()
             return
         card.show_file(path)

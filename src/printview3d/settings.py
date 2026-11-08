@@ -49,6 +49,7 @@ DEFAULTS = {
     "check_nozzle": 0.4,        # Check: thin walls are thinner than this (mm)
     "check_show": {},           # Check: which highlights are on (kind -> bool; missing: the default)
     "check_keep_colors": False, # Settings -> Viewer: remember the Check colours (else: defaults at every start)
+    "recent_preview": True,     # Settings -> Viewer -> Start page: the preview card of a recent file on hover
     "check_colors": {},         # Check: the colours picked, kept only with check_keep_colors
     "check_loose_max": 5.0,     # Check: loose parts are at most this big (mm, their longest side)
     "units": "mm",              # Settings -> Language and units: "mm" or "in" (inches)

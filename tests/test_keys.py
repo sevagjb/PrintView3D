@@ -217,7 +217,7 @@ def test_recent_file_preview_card_stays_in_one_place(app, window, tmp_path):
         # (that depends on the system's font: the CI machines' differ from Windows').
         name = os.path.basename(p)
         shown = card.name.text().replace("\n", "")            # wrap_lines' line breaks taken out
-        assert shown == mw.fit_lines(name, card.name.fontMetrics(), mw.PREVIEW_PX, mw.PREVIEW_NAME_LINES)
+        assert shown == mw.fit_lines(name, card.name.fontMetrics(), mw.PREVIEW_PX - 6, mw.PREVIEW_NAME_LINES)
         assert shown == name or (shown.startswith(name[:6]) and shown.endswith(name[-6:]) and "\u2026" in shown)
         assert card.folder.text().replace("\u200b", "").replace("\n", "") == os.path.dirname(os.path.abspath(p))
         places.append((card.geometry().getRect(), card.picture.geometry().getRect()))

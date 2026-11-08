@@ -2199,8 +2199,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Other</source>
-        <translation type="unfinished">Altele</translation>
+        <source>Measure, View and Check</source>
+        <translation type="unfinished">Măsurare, vizualizare și verificare</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2329,6 +2329,21 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
         <translation type="unfinished">Oprit: culorile alese în Verifică rămân până se închide PrintView3D.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Start page</source>
+        <translation type="unfinished">Pagina de start</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show a preview of recent files when the mouse is over them</source>
+        <translation type="unfinished">Arată o previzualizare a fișierelor recente când mouse-ul este deasupra lor</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
+        <translation type="unfinished">Oprit: fără card de previzualizare, iar fișierele nu sunt citite până nu le deschizi (util pe o unitate de rețea lentă).</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2966,6 +2981,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="vanished">Altele</translation>
     </message>
     <message>
         <source>Buttons (left to right)</source>
