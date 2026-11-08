@@ -42,6 +42,9 @@ DEFAULTS = {
     "plate_size": [300, 300],   # Plate menu -> Custom size: width and depth in mm
     "thumbnail_open": True,     # side panel: the file's preview picture shown (False: folded away)
     "show_view_cube": True,     # Settings -> Viewer: the view cube in the 3D view's corner
+    "toolbar_hidden": [],       # Settings -> Toolbar: buttons switched off (ui/toolbar_prefs.HIDEABLE)
+    "toolbar_labels": "full",   # Settings -> Toolbar: view buttons as "Plate (P)", "Plate", "P" or icon only
+    "toolbar_joined": False,    # Settings -> Toolbar: Plate ... Fit as one connected group
     "check_angle": 45,          # Check: overhangs lean further than this from vertical (degrees)
     "check_nozzle": 0.4,        # Check: thin walls are thinner than this (mm)
     "check_show": {},           # Check: which highlights are on (kind -> bool; missing: the default)

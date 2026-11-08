@@ -149,6 +149,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation type="unfinished">Ajustar</translation>
@@ -647,6 +648,45 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate</source>
+        <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
+        <translation type="unfinished">Cama</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check</source>
+        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
+        <translation type="unfinished">Comprobar</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation type="unfinished">Vista</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure</source>
+        <translation type="unfinished">Medir</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Theme</source>
+        <extracomment>Settings: the colour theme of the program (dark, gray, light).</extracomment>
+        <translation type="unfinished">Tema</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Customize toolbar…</source>
+        <translation type="unfinished">Personalizar la barra de herramientas…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Preview picture</source>
         <translation type="unfinished">Imagen de vista previa</translation>
     </message>
@@ -687,11 +727,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Menu</source>
         <translation type="unfinished">Menú</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Home</source>
         <extracomment>Toolbar button with a house icon: closes the open file and goes back to the start page.</extracomment>
         <translation type="unfinished">Inicio</translation>
@@ -730,21 +772,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Plate</source>
-        <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
-        <translation type="unfinished">Cama</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show / hide the build plate grid (arrow: plate size)</source>
         <translation type="unfinished">Mostrar / ocultar la cuadrícula de la cama (flecha: tamaño de la cama)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Check</source>
-        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
-        <translation type="unfinished">Comprobar</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -865,12 +894,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation type="unfinished">Vista</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Reset view</source>
         <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
         <translation type="unfinished">Restablecer la vista</translation>
@@ -942,11 +965,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation type="unfinished">Medir</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Snapping</source>
         <extracomment>Measure checkbox: the points jump to the corners and edges of the model when the mouse is close to one.</extracomment>
         <translation type="unfinished">Ajuste</translation>
@@ -988,6 +1006,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Screenshot</source>
         <translation type="unfinished">Captura de pantalla</translation>
     </message>
@@ -1617,6 +1636,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open in slicer</source>
         <translation type="unfinished">Abrir en el laminador</translation>
     </message>
@@ -1961,12 +1981,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Theme</source>
-        <extracomment>Settings: the colour theme of the program (dark, gray, light).</extracomment>
-        <translation type="unfinished">Tema</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>System follows the light or dark setting of your computer.</source>
         <translation type="unfinished">Sistema sigue el ajuste claro u oscuro de tu equipo.</translation>
     </message>
@@ -2014,6 +2028,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Appearance</source>
         <translation type="unfinished">Apariencia</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Toolbar</source>
+        <translation type="unfinished">Barra de herramientas</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2363,6 +2382,66 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Choose which buttons the toolbar shows. A hidden button keeps its key, and everything stays in the ☰ menu. The order never changes.</source>
+        <translation type="unfinished">Elige qué botones muestra la barra de herramientas. Un botón oculto conserva su tecla y todo sigue en el menú ☰. El orden nunca cambia.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Buttons, in toolbar order</source>
+        <translation type="unfinished">Botones, en el orden de la barra</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Open</source>
+        <translation type="unfinished">Abrir</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{name} · always shown</source>
+        <translation type="unfinished">{name} · siempre visible</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Look</source>
+        <translation type="unfinished">Aspecto</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon, name and key</source>
+        <translation type="unfinished">Icono, nombre y tecla</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon and name</source>
+        <translation type="unfinished">Icono y nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon and key</source>
+        <translation type="unfinished">Icono y tecla</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon only</source>
+        <translation type="unfinished">Solo icono</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View buttons show:</source>
+        <translation type="unfinished">Los botones de vista muestran:</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Join the view buttons into one group</source>
+        <translation type="unfinished">Unir los botones de vista en un grupo</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset to defaults</source>
+        <translation type="unfinished">Restablecer valores predeterminados</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation type="unfinished">Omitir esta versión</translation>
@@ -2501,11 +2580,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default: {key}</source>
         <translation type="unfinished">Predeterminada: {key}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Reset to defaults</source>
-        <translation type="unfinished">Restablecer valores predeterminados</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2892,6 +2966,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Buttons (left to right)</source>
+        <translation type="vanished">Botones (de izquierda a derecha)</translation>
     </message>
     <message>
         <source>Remember the colours of the Check section</source>

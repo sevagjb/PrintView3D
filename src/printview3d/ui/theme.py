@@ -465,6 +465,22 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
         QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
             border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
+        /* Settings -> Toolbar. Icon only: the view buttons sit evenly around their icon. */
+        QToolBar QToolButton#viewButton[iconOnly="true"] {{ padding: 2px 3px; }}
+        QToolBar QToolButton#viewButton[iconOnly="true"][popupMode="1"] {{ padding-right: 21px; }}
+        /* Joined: the view buttons touch, with a thin line between them; only the group's ends are
+           round. The other buttons keep the usual gap (no toolbar spacing, a wider margin instead). */
+        QToolBar[joinedGroup="true"] {{ spacing: 0px; }}
+        QToolBar[joinedGroup="true"] QToolButton {{ margin: 1px 4px; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="first"] {{ margin: 1px 0px 1px 4px;
+            border-top-right-radius: 0px; border-bottom-right-radius: 0px; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="middle"] {{ margin: 1px 0px;
+            border-radius: 0px; border-left-color: {divider}; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="last"] {{ margin: 1px 4px 1px 0px;
+            border-top-left-radius: 0px; border-bottom-left-radius: 0px; border-left-color: {divider}; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="first"]::menu-button,
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="middle"]::menu-button {{
+            border-top-right-radius: 0px; border-bottom-right-radius: 0px; }}
         QToolButton#slicerButton {{ background: {primary}; color: white; font-weight: 600; padding: 2px 14px 2px 3px; }}
         QToolButton#slicerButton:hover {{ background: {primary_hover}; }}
         QToolButton#slicerButton[popupMode="1"] {{ padding-right: 28px; }}
@@ -876,6 +892,12 @@ def _nav_pixmap(kind: str, dot: bool, color: str, ring: str) -> QPixmap:
         for a, b in ((top, l_up), (top, r_up), (l_up, mid), (r_up, mid), (mid, bot),
                      (l_up, l_dn), (r_up, r_dn), (l_dn, bot), (r_dn, bot)):
             p.drawLine(a, b)
+    elif kind == "toolbar":                      # a bar with three buttons on it
+        p.drawRoundedRect(QRectF(6, 18, 52, 28), 6, 6)
+        p.setBrush(fg)
+        for x in (14, 28, 42):
+            p.drawRoundedRect(QRectF(x - 1, 27, 10, 10), 2, 2)
+        p.setBrush(Qt.NoBrush)
     elif kind == "files":                        # folder
         path = QPainterPath()
         path.moveTo(8, 18)
@@ -930,6 +952,12 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
     if kind == "menu":                           # hamburger
         for y in (18, 32, 46):
             p.drawLine(QPointF(12, y), QPointF(52, y))
+    elif kind == "toolbar":                      # a bar with three buttons on it
+        p.drawRoundedRect(QRectF(6, 18, 52, 28), 6, 6)
+        p.setBrush(fg)
+        for x in (14, 28, 42):
+            p.drawRoundedRect(QRectF(x - 1, 27, 10, 10), 2, 2)
+        p.setBrush(Qt.NoBrush)
     elif kind == "home":                         # house: roof, walls and a door
         house = QPainterPath()
         house.moveTo(8, 30)
@@ -1151,7 +1179,7 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
         p.drawLine(QPointF(58, 40), QPointF(50, 48))
 
 
-TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
+TOOL_ICONS = ("menu", "toolbar", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
               "settings", "updates", "about", "whats_new",
               "view", "plate", "measure", "fit", "check", "distance", "angle", "circle",
               "wireframe", "xray", "clip_top", "clip_face", "reset")

@@ -149,6 +149,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation>Încadrează</translation>
@@ -647,6 +648,45 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate</source>
+        <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
+        <translation>Placă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check</source>
+        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
+        <translation type="unfinished">Verifică</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>Vizualizare</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure</source>
+        <translation type="unfinished">Măsoară</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Theme</source>
+        <extracomment>Settings: the colour theme of the program (dark, gray, light).</extracomment>
+        <translation>Temă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Customize toolbar…</source>
+        <translation type="unfinished">Personalizează bara de instrumente…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Preview picture</source>
         <translation>Imagine de previzualizare</translation>
     </message>
@@ -687,11 +727,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Menu</source>
         <translation>Meniu</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Home</source>
         <extracomment>Toolbar button with a house icon: closes the open file and goes back to the start page.</extracomment>
         <translation>Acasă</translation>
@@ -730,21 +772,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Plate</source>
-        <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
-        <translation>Placă</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show / hide the build plate grid (arrow: plate size)</source>
         <translation>Arată / ascunde grila plăcii (săgeată: dimensiunea plăcii)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Check</source>
-        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
-        <translation type="unfinished">Verifică</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -865,12 +894,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>Vizualizare</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Reset view</source>
         <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
         <translation>Resetează vizualizarea</translation>
@@ -942,11 +965,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation type="unfinished">Măsoară</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Snapping</source>
         <extracomment>Measure checkbox: the points jump to the corners and edges of the model when the mouse is close to one.</extracomment>
         <translation type="unfinished">Fixare</translation>
@@ -988,6 +1006,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Screenshot</source>
         <translation>Captură de ecran</translation>
     </message>
@@ -1617,6 +1636,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open in slicer</source>
         <translation>Deschide în slicer</translation>
     </message>
@@ -1961,12 +1981,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Theme</source>
-        <extracomment>Settings: the colour theme of the program (dark, gray, light).</extracomment>
-        <translation>Temă</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>System follows the light or dark setting of your computer.</source>
         <translation>„Sistem” urmează setarea de temă luminoasă sau întunecată a computerului.</translation>
     </message>
@@ -2014,6 +2028,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Appearance</source>
         <translation>Aspect</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Toolbar</source>
+        <translation type="unfinished">Bara de instrumente</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2363,6 +2382,66 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Choose which buttons the toolbar shows. A hidden button keeps its key, and everything stays in the ☰ menu. The order never changes.</source>
+        <translation type="unfinished">Alege ce butoane arată bara de instrumente. Un buton ascuns își păstrează tasta, iar totul rămâne în meniul ☰. Ordinea nu se schimbă niciodată.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Buttons, in toolbar order</source>
+        <translation type="unfinished">Butoane, în ordinea din bara de instrumente</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Open</source>
+        <translation type="unfinished">Deschide</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{name} · always shown</source>
+        <translation type="unfinished">{name} · afișat mereu</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Look</source>
+        <translation type="unfinished">Aspect</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon, name and key</source>
+        <translation type="unfinished">Pictogramă, nume și tastă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon and name</source>
+        <translation type="unfinished">Pictogramă și nume</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon and key</source>
+        <translation type="unfinished">Pictogramă și tastă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon only</source>
+        <translation type="unfinished">Doar pictogramă</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View buttons show:</source>
+        <translation type="unfinished">Butoanele de vizualizare arată:</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Join the view buttons into one group</source>
+        <translation type="unfinished">Unește butoanele de vizualizare într-un grup</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset to defaults</source>
+        <translation type="unfinished">Revino la valorile implicite</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation>Sari peste această versiune</translation>
@@ -2501,11 +2580,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default: {key}</source>
         <translation type="unfinished">Implicit: {key}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Reset to defaults</source>
-        <translation type="unfinished">Revino la valorile implicite</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2892,6 +2966,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Buttons (left to right)</source>
+        <translation type="vanished">Butoane (de la stânga la dreapta)</translation>
     </message>
     <message>
         <source>Remember the colours of the Check section</source>
