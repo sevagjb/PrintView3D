@@ -72,35 +72,50 @@ fi
 echo "[5/5] Packing the AppImage ..."
 ARCH="$(uname -m)"
 TOOL="build/appimagetool-$ARCH.AppImage"
-# appimagetool: a fixed version (the same tool on every build). GitHub's release downloads sometimes
-# answer "504 Gateway Timeout" for minutes at a time (November 2026, the 0.30.0 release), so this
-# tries for a few minutes, switching between the fixed version and the "continuous" build. In CI
-# the tool is also kept in GitHub's cache (build.yml), so most builds don't download it at all.
+# appimagetool (packs the AppImage) and the AppImage runtime (the small program at the start of every
+# AppImage) come from GitHub's release downloads, which sometimes answer "504 Gateway Timeout" for
+# a long time (November 2026: the 0.30.0 release). So: a fixed appimagetool version, tried for a few
+# minutes; the runtime is fetched here too (appimagetool would fetch it itself, with no retries), and
+# if GitHub can't deliver it, the runtime inside appimagetool (itself an AppImage) is used. In CI both
+# are kept in GitHub's cache (build.yml), so most builds download neither.
 APPIMAGETOOL_VERSION="${APPIMAGETOOL_VERSION:-1.9.0}"
-if [[ ! -x "$TOOL" ]]; then
-    mkdir -p build
-    BASE="https://github.com/AppImage/appimagetool/releases/download"
-    ok=0
-    for round in 1 2 3 4; do
-        for tag in "$APPIMAGETOOL_VERSION" continuous; do
-            if curl -fsSL --retry 3 --retry-delay 15 --retry-all-errors -o "$TOOL.part" \
-                    "$BASE/$tag/appimagetool-$ARCH.AppImage"; then
-                mv "$TOOL.part" "$TOOL"
-                ok=1
-                echo "appimagetool: $tag"
-                break 2
+RUNTIME="build/runtime-$ARCH"
+BASE="https://github.com/AppImage"
+mkdir -p build
+
+fetch() {   # fetch FILE ROUNDS URL... : the first URL that answers, trying ROUNDS times
+    local out="$1" rounds="$2" round url
+    shift 2
+    for ((round = 1; round <= rounds; round++)); do
+        for url in "$@"; do
+            if curl -fsSL --retry 2 --retry-delay 10 --retry-all-errors -o "$out.part" "$url"; then
+                mv "$out.part" "$out"
+                echo "  downloaded ${url##*/download/}"
+                return 0
             fi
-            echo "appimagetool $tag: not available right now (round $round of 4)"
+            echo "  not available right now: ${url##*/download/} (round $round of $rounds)"
         done
-        sleep 20
+        ((round < rounds)) && sleep 20
     done
-    rm -f "$TOOL.part"
-    if [[ $ok != 1 ]]; then
+    rm -f "$out.part"
+    return 1
+}
+
+if [[ ! -x "$TOOL" ]]; then
+    fetch "$TOOL" 4 "$BASE/appimagetool/releases/download/$APPIMAGETOOL_VERSION/appimagetool-$ARCH.AppImage" \
+                    "$BASE/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage" || {
         echo "Could not download appimagetool from GitHub. Try again later." >&2
         exit 1
-    fi
+    }
     chmod +x "$TOOL"
 fi
+if [[ ! -s "$RUNTIME" ]]; then
+    if ! fetch "$RUNTIME" 2 "$BASE/type2-runtime/releases/download/continuous/runtime-$ARCH"; then
+        echo "  using the runtime inside appimagetool instead"
+        head -c "$("$TOOL" --appimage-offset)" "$TOOL" > "$RUNTIME"
+    fi
+fi
+
 APPDIR=build/AppDir
 rm -rf "$APPDIR"
 mkdir -p "$APPDIR/usr/lib"
@@ -118,7 +133,8 @@ UPDATE_INFO="${UPDATE_INFO:-gh-releases-zsync|sevagjb|PrintView3D|latest|PrintVi
 ZSYNC="PrintView3D-$ARCH.AppImage.zsync"
 rm -f "$ZSYNC" "dist/$ZSYNC"
 # APPIMAGE_EXTRACT_AND_RUN: works on machines without FUSE (containers, CI)
-APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$ARCH" "$TOOL" --no-appstream -u "$UPDATE_INFO" "$APPDIR" "$OUT"
+APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$ARCH" "$TOOL" --no-appstream --runtime-file "$RUNTIME" \
+    -u "$UPDATE_INFO" "$APPDIR" "$OUT"
 chmod +x "$OUT"
 if [[ -f "$ZSYNC" ]]; then
     mv "$ZSYNC" "dist/$ZSYNC"
