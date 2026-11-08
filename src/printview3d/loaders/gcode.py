@@ -101,7 +101,9 @@ _META_PATTERNS: list[tuple[str, re.Pattern]] = [
     ("_bed",            re.compile(r"^\s*(?:printable_area|bed_shape)\s*=\s*(.+)$", re.I)),
 ]
 
-_THUMB_BEGIN = re.compile(r"^\s*(thumbnail|thumbnail_png|thumbnail_jpg|png|jpg|jpeg)\s+begin\s+(\d+)\s*x\s*(\d+)", re.I)
+# "thumbnail begin 300x300 1234" (PrusaSlicer, OrcaSlicer, ...); Creality Print writes the size as
+# "300*300" (png / jpg blocks for its printers' screens) or "300 300" (thumbnail block).
+_THUMB_BEGIN = re.compile(r"^\s*(thumbnail|thumbnail_png|thumbnail_jpg|png|jpg|jpeg)\s+begin\s+(\d+)\s*(?:[x*]\s*|\s+)(\d+)", re.I)
 
 
 def parse_bed_shape(value) -> Optional[tuple[float, float, float, float]]:

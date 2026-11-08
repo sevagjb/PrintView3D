@@ -13,7 +13,7 @@ from typing import Optional
 import numpy as np
 from PySide6.QtCore import QEvent, QObject, QSize, Qt, QTimer, QUrl, Signal
 from PySide6.QtGui import (QAction, QActionGroup, QColor, QDesktopServices, QFont, QFontMetrics, QGuiApplication, QIcon,
-                           QImage, QKeySequence, QPixmap, QShortcut)
+                           QImage, QKeySequence, QPixmap, QShortcut, QTextLayout, QTextOption)
 from PySide6.QtWidgets import (
     QAbstractItemView, QApplication, QCheckBox, QColorDialog, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QScrollArea,
@@ -166,6 +166,33 @@ def recent_picture(path: str) -> Optional[QImage]:
     return _recent_pics[key]
 
 
+def wrap_lines(text: str, font: QFont, width: int) -> str:
+    """`text` with a line break wherever it wraps in `width`: at a space (or a zero-width space)
+    where possible, inside a long word where not, the same rule fit_lines measures with. A label
+    wraps only at spaces, so a long name without any ("3DBenchy_PLA_K1C_220_60.gcode") was cut off
+    at the card's edge."""
+    layout = QTextLayout(text, font)
+    opt = QTextOption()
+    opt.setWrapMode(QTextOption.WrapAtWordBoundaryOrAnywhere)
+    layout.setTextOption(opt)
+    layout.beginLayout()
+    parts = []
+    while True:
+        line = layout.createLine()
+        if not line.isValid():
+            break
+        line.setLineWidth(width)
+        parts.append(text[line.textStart():line.textStart() + line.textLength()])
+    layout.endLayout()
+    return "\n".join(parts)
+
+
+def plain_menu_text(text: str) -> str:
+    """A file name for a button or menu: "&" stays "&" (Qt reads a single "&" as a key marker,
+    so "Tom & Jerry.stl" showed as "Tom _Jerry.stl")."""
+    return text.replace("&", "&&")
+
+
 def breakable_path(text: str) -> str:
     """A path that a label may wrap after each folder separator (a zero-width space after it)."""
     return text.replace("\\", "\\\u200b").replace("/", "/\u200b")
@@ -195,7 +222,7 @@ class _RecentButton(QPushButton):
     start page shows its preview card; the picture is only read then."""
 
     def __init__(self, path: str, on_hover=None, parent=None):
-        super().__init__(os.path.basename(path), parent)
+        super().__init__(plain_menu_text(os.path.basename(path)), parent)
         self.path = path
         self.on_hover = on_hover
 
@@ -239,9 +266,11 @@ class _RecentPreview(QFrame):
         self.picture.setAlignment(Qt.AlignCenter)
         self.picture.setWordWrap(True)
         lay.addWidget(self.picture)
+        # File names are plain text (a name like "<b>x.gcode" is no formatting) with the line breaks
+        # put in by wrap_lines.
         self.name = QLabel()
         self.name.setObjectName("recentPreviewName")
-        self.name.setWordWrap(True)
+        self.name.setTextFormat(Qt.PlainText)
         self.name.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         lay.addWidget(self.name)
         self.folder_title = QLabel()
@@ -249,7 +278,7 @@ class _RecentPreview(QFrame):
         lay.addWidget(self.folder_title)
         self.folder = QLabel()
         self.folder.setObjectName("recentPreviewFolder")
-        self.folder.setWordWrap(True)
+        self.folder.setTextFormat(Qt.PlainText)
         self.folder.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         lay.addWidget(self.folder)
         self.setFixedWidth(PREVIEW_PX + 24)
@@ -280,9 +309,10 @@ class _RecentPreview(QFrame):
             self.picture.setText("")
             self.picture.setPixmap(pm)
         width = PREVIEW_PX
-        self.name.setText(fit_lines(os.path.basename(path), self.name.fontMetrics(), width, PREVIEW_NAME_LINES))
-        self.folder.setText(breakable_path(fit_lines(os.path.dirname(path), self.folder.fontMetrics(), width,
-                                                     PREVIEW_FOLDER_LINES)))
+        name = fit_lines(os.path.basename(path), self.name.fontMetrics(), width, PREVIEW_NAME_LINES)
+        self.name.setText(wrap_lines(name, self.name.font(), width))
+        folder = fit_lines(os.path.dirname(path), self.folder.fontMetrics(), width, PREVIEW_FOLDER_LINES)
+        self.folder.setText(wrap_lines(breakable_path(folder), self.folder.font(), width))
         self.adjustSize()
 
 
@@ -4235,7 +4265,7 @@ class MainWindow(QMainWindow):
             hdr.setAlignment(Qt.AlignCenter)
             self.welcome_recent.addWidget(hdr)
         for i, p in enumerate(recent):
-            self.recent_menu.addAction(f"{os.path.basename(p)}   —   {os.path.dirname(p)}",
+            self.recent_menu.addAction(plain_menu_text(f"{os.path.basename(p)}   —   {os.path.dirname(p)}"),
                                        lambda path=p: self.load(path))
             if i < 6:
                 b = _RecentButton(p, self._recent_hover)     # hover: the preview card
