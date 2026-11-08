@@ -9,12 +9,12 @@ from __future__ import annotations
 import os
 import sys
 
-from PySide6.QtCore import QDateTime, QLocale, QSize, Qt, Signal
-from PySide6.QtGui import QIcon, QKeySequence
+from PySide6.QtCore import QDateTime, QLocale, QSize, Qt, QTimer, Signal
+from PySide6.QtGui import QIcon, QKeySequence, QPainter, QPixmap
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
     QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMessageBox,
-    QKeySequenceEdit, QPushButton, QScrollArea, QSizePolicy, QSlider, QSpinBox, QStackedWidget, QToolButton, QVBoxLayout,
+    QKeySequenceEdit, QPushButton, QScrollArea, QSizePolicy, QSlider, QStackedWidget, QToolButton, QVBoxLayout,
     QWidget,
 )
 
@@ -23,7 +23,7 @@ from .. import updates as up
 from .. import freecad as fc
 from .. import slicer as sl
 from ..i18n import tr
-from . import keys, theme
+from . import keys, theme, toolbar_prefs as tp
 from . import update_ui
 from .labels import assoc_status, plate_mode_label
 
@@ -181,6 +181,9 @@ class SettingsDialog(QDialog):
         mica_note.setWordWrap(True)
         la.addWidget(mica_note)
         self._add_page("appearance", tr("Appearance"), [gt, ga], keep_titles=True)
+
+        # ---------------- Toolbar ----------------
+        self._add_page("toolbar", tr("Toolbar"), self._build_toolbar_page(settings), keep_titles=True)
 
         # ---------------- Slicer ----------------
         self._paths = dict(settings.get("slicer_paths") or {})
@@ -626,6 +629,124 @@ class SettingsDialog(QDialog):
         if key in self._page_keys:
             self.nav.setCurrentRow(self._page_keys.index(key))
 
+    # -------------------------------------------------------------- toolbar
+    def _build_toolbar_page(self, settings) -> list:
+        """Which toolbar buttons are shown, and how the view buttons look. Every change shows in the
+        window right away (and in the picture on top); OK keeps it, Cancel goes back."""
+        self._tb_at_open = (tp.hidden(settings), tp.label_style(settings), tp.joined(settings))
+        intro = QLabel(tr("Choose which buttons the toolbar shows. A hidden button keeps its key, and "
+                          "everything stays in the ☰ menu. The order never changes."))
+        intro.setObjectName("muted")
+        intro.setWordWrap(True)
+        self.toolbar_preview = QLabel()
+        self.toolbar_preview.setObjectName("toolbarPreview")
+        self.toolbar_preview.setFrameShape(QFrame.StyledPanel)
+        self.toolbar_preview.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        top = QWidget()
+        tl = QVBoxLayout(top)
+        tl.setContentsMargins(0, 0, 0, 0)
+        tl.addWidget(intro)
+        tl.addWidget(self.toolbar_preview)
+
+        gb = QGroupBox(tr("Buttons, in toolbar order"))
+        grid = QGridLayout(gb)
+        names = {"menu": tr("Menu"), "home": tr("Home"), "open": tr("Open"), "slicer": tr("Open in slicer"),
+                 "export": tr("Export STL"), "plate": tr("Plate"), "check": tr("Check"), "view": tr("View"),
+                 "measure": tr("Measure"), "fit": tr("Fit"), "screenshot": tr("Screenshot"),
+                 "theme": tr("Theme"), "settings": tr("Settings")}
+        self.toolbar_checks: dict[str, QCheckBox] = {}
+        hidden = self._tb_at_open[0]
+        rows = (len(tp.BUTTONS) + 1) // 2
+        for i, (kid, can_hide) in enumerate(tp.BUTTONS):
+            if can_hide:
+                cb = QCheckBox(names[kid])
+                cb.setChecked(kid not in hidden)
+                cb.toggled.connect(self._preview_toolbar)
+                self.toolbar_checks[kid] = cb
+            else:
+                cb = QCheckBox(tr("{name} · always shown").format(name=names[kid]))
+                cb.setChecked(True)
+                cb.setEnabled(False)
+            grid.addWidget(cb, i % rows, i // rows)
+
+        gl = QGroupBox(tr("Look"))
+        fl = QFormLayout(gl)
+        self.toolbar_labels_combo = QComboBox()
+        for text, key in ((tr("Icon, name and key"), "full"), (tr("Icon and name"), "name"),
+                          (tr("Icon and key"), "key"), (tr("Icon only"), "icon")):
+            self.toolbar_labels_combo.addItem(text, key)
+        self.toolbar_labels_combo.setCurrentIndex(tp.LABEL_STYLES.index(self._tb_at_open[1]))
+        self.toolbar_labels_combo.currentIndexChanged.connect(self._preview_toolbar)
+        fl.addRow(tr("View buttons show:"), self.toolbar_labels_combo)
+        self.toolbar_joined_cb = QCheckBox(tr("Join the view buttons into one group"))
+        self.toolbar_joined_cb.setChecked(self._tb_at_open[2])
+        self.toolbar_joined_cb.toggled.connect(self._preview_toolbar)
+        fl.addRow(self.toolbar_joined_cb)
+        reset = QPushButton(tr("Reset to defaults"))
+        reset.clicked.connect(self._reset_toolbar)
+        reset_row = QHBoxLayout()
+        reset_row.addWidget(reset)
+        reset_row.addStretch(1)
+        fl.addRow(reset_row)
+        QTimer.singleShot(0, self._draw_toolbar_preview)
+        return [top, gb, gl]
+
+    def _toolbar_choice(self) -> tuple[set, str, bool]:
+        hide = {kid for kid, cb in self.toolbar_checks.items() if not cb.isChecked()}
+        return hide, self.toolbar_labels_combo.currentData(), self.toolbar_joined_cb.isChecked()
+
+    def _preview_toolbar(self, *_):
+        """Show the choice in the window now (OK keeps it, Cancel goes back)."""
+        parent = self.parent()
+        if hasattr(parent, "apply_toolbar_layout"):
+            parent.apply_toolbar_layout(*self._toolbar_choice())
+        QTimer.singleShot(0, self._draw_toolbar_preview)
+
+    def _draw_toolbar_preview(self):
+        """A picture of the window's toolbar as it is now, as wide as the page allows."""
+        bar = getattr(self.parent(), "toolbar", None)
+        if bar is None:
+            self.toolbar_preview.hide()
+            return
+        pm = bar.grab()
+        gap = getattr(self.parent(), "toolbar_spacer", None)
+        if gap is not None and gap.width() > 40:
+            # The empty stretch in the middle left out (a short gap instead), so the buttons show
+            # larger in the picture.
+            g = gap.geometry()
+            ratio = pm.devicePixelRatio()
+            keep = 24
+            left = pm.copy(0, 0, round(g.x() * ratio), pm.height())
+            right = pm.copy(round((g.right() + 1) * ratio), 0, pm.width() - round((g.right() + 1) * ratio),
+                            pm.height())
+            joined = QPixmap(left.width() + round(keep * ratio) + right.width(), pm.height())
+            joined.fill(Qt.transparent)
+            p = QPainter(joined)
+            p.drawPixmap(0, 0, left)
+            p.drawPixmap(left.width(), 0, pm.copy(round(g.x() * ratio), 0, round(keep * ratio), pm.height()))
+            p.drawPixmap(left.width() + round(keep * ratio), 0, right)
+            p.end()
+            joined.setDevicePixelRatio(ratio)
+            pm = joined
+        width = max(320, self.pages.width() - 40)
+        if pm.deviceIndependentSize().width() > width:
+            pm = pm.scaledToWidth(round(width * pm.devicePixelRatio()), Qt.SmoothTransformation)
+        self.toolbar_preview.setPixmap(pm)
+
+    def _reset_toolbar(self):
+        """Every button shown, labels with name and key, not joined."""
+        for cb in self.toolbar_checks.values():
+            cb.blockSignals(True)
+            cb.setChecked(True)
+            cb.blockSignals(False)
+        self.toolbar_labels_combo.blockSignals(True)
+        self.toolbar_labels_combo.setCurrentIndex(0)
+        self.toolbar_labels_combo.blockSignals(False)
+        self.toolbar_joined_cb.blockSignals(True)
+        self.toolbar_joined_cb.setChecked(False)
+        self.toolbar_joined_cb.blockSignals(False)
+        self._preview_toolbar()
+
     # -------------------------------------------------------------- updates
     def _build_updates(self) -> QGroupBox:
         g = QGroupBox()
@@ -855,6 +976,8 @@ class SettingsDialog(QDialog):
             self._preview_plane_strength(self._plane_at_open)
         if self.line_slider.value() != self._line_at_open:
             self._preview_line_width(self._line_at_open)
+        if self._toolbar_choice() != self._tb_at_open and hasattr(self.parent(), "apply_toolbar_layout"):
+            self.parent().apply_toolbar_layout(*self._tb_at_open)
         super().reject()
 
     @staticmethod
@@ -1194,6 +1317,7 @@ class SettingsDialog(QDialog):
         self.settings.set("plate_mode", self.plate_combo.currentData())
         self.settings.set("plate_size", [round(self.plate_w_spin.mm(), 3), round(self.plate_d_spin.mm(), 3)])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())
+        tp.save(self.settings, *self._toolbar_choice())
         self.settings.set("ghost_strength", self.ghost_slider.value())
         self.settings.set("plane_strength", self.plane_slider.value())
         self.settings.set("measure_line_width", self.line_slider.value())
@@ -1238,6 +1362,7 @@ class SettingsDialog(QDialog):
         self._ghost_at_open = self.ghost_slider.value()
         self._plane_at_open = self.plane_slider.value()
         self._line_at_open = self.line_slider.value()
+        self._tb_at_open = self._toolbar_choice()
         self.applied.emit()
 
     def _ask_restart(self, what: list[str]) -> bool:

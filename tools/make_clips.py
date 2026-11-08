@@ -8,6 +8,9 @@ Needs a display (on Linux: xvfb-run) and ffmpeg:
     xvfb-run -a -s "-screen 0 1600x1000x24" python tools/make_clips.py
     python tools/make_clips.py --lang en ar --out docs/assets/inside
 Result: docs/assets/inside/*.mp4 (with a .jpg poster each) and *.png.
+
+--theme light / ember makes the website's Light and Ember versions of the pictures
+(name--light.webp, name--ember.webp; no videos): the website shows the one matching its theme.
 """
 
 from __future__ import annotations
@@ -32,10 +35,31 @@ WIDTH = 960                      # video width in pixels (the page shows it at m
 
 
 class Capture:
-    def __init__(self, app, out: str):
+    def __init__(self, app, out: str, theme_name: str = "dark"):
         self.app = app
         self.out = out
+        self.theme = theme_name
         self.w = None
+
+    def save(self, img, name: str):
+        """A picture under its name in Dark; name--light.webp / name--ember.webp in the others
+        (dots become dashes, so the website's language plugin never reads ".ar." as a language)."""
+        if self.theme == "dark":
+            path = os.path.join(self.out, name)
+            if hasattr(img, "toImage"):
+                img.save(path)
+            else:
+                img.save(path, optimize=True)
+            return name
+        stem = os.path.splitext(name)[0].replace(".", "-")
+        name = f"{stem}--{self.theme}.webp"
+        from PIL import Image
+        if hasattr(img, "toImage"):
+            tmp = os.path.join(tempfile.mkdtemp(), "shot.png")
+            img.save(tmp)
+            img = Image.open(tmp)
+        img.save(os.path.join(self.out, name), "WEBP", quality=88, method=6)
+        return name
 
     # ---------------------------------------------------------------- window
     def open(self, lang: str):
@@ -47,7 +71,7 @@ class Capture:
             self.w.close()
             self.w.deleteLater()
             self.settle()
-        theme.apply_theme(self.app, "dark")
+        theme.apply_theme(self.app, self.theme)
         i18n.apply_language(self.app, lang)
         settings = Settings(os.path.join(tempfile.mkdtemp(), "settings.json"))
         settings.set("language", lang)
@@ -94,8 +118,7 @@ class Capture:
     def still(self, name: str):
         self.w.statusBar().clearMessage()        # "Opened /path/on/this/computer/..."
         self.render()
-        self.w.grab().save(os.path.join(self.out, name))
-        print("  ", name)
+        print("  ", self.save(self.w.grab(), name))
 
     # ---------------------------------------------------------------- video
     def video(self, name: str, steps, poster_at: float = 0.0):
@@ -210,7 +233,7 @@ def make_videos(c: Capture):
     c.iso()
     w.act_wireframe.setChecked(True)
     c.render()
-    c.frame().save(os.path.join(c.out, "wireframe.png"), optimize=True)
+    c.save(c.frame(), "wireframe.png")
     print("   wireframe.png")
     c.off()
 
@@ -252,7 +275,7 @@ def make_stills_029(c: Capture, lang: str):
     from printview3d.ui.measure import Item
     w = c.w
     sfx = "" if lang == "en" else "." + lang
-    cx, cy, top = 175.0, 175.0, 46.0              # see tools/make_inside_demo.py
+    cx, cy = 175.0, 175.0                         # see tools/make_inside_demo.py
     # Check: overhangs (the roofs of the chamber, the channel and the pocket, seen with X-ray) and,
     # with a 1.2 mm nozzle, the 1 mm wall in front of the hidden pocket as a thin wall.
     c.off()
@@ -308,7 +331,7 @@ def make_grid(c: Capture):
     cam.Elevation(14)
     cam.Zoom(0.29)
     c.render()
-    c.frame().save(os.path.join(c.out, "grid-numbers.png"), optimize=True)
+    c.save(c.frame(), "grid-numbers.png")
     print("   grid-numbers.png")
     c.off()
 
@@ -318,7 +341,10 @@ def main():
     ap.add_argument("--lang", nargs="+", default=["en", "ar", "nl"])
     ap.add_argument("--out", default=os.path.join(ROOT, "docs", "assets", "inside"))
     ap.add_argument("--no-videos", action="store_true")
+    ap.add_argument("--theme", default="dark", choices=["dark", "light", "ember"])
     a = ap.parse_args()
+    if a.theme != "dark":
+        a.no_videos = True                  # one set of videos (Dark) serves every theme
     if not os.path.isfile(DEMO):
         raise SystemExit("examples/demo_housing.3mf is missing: python tools/make_inside_demo.py")
     if shutil.which("ffmpeg") is None and not a.no_videos:
@@ -327,7 +353,7 @@ def main():
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "i18n.py"), "compile"], check=True,
                    stdout=subprocess.DEVNULL)
     app = QApplication([])
-    c = Capture(app, a.out)
+    c = Capture(app, a.out, a.theme)
     for i, lang in enumerate(a.lang):
         c.open(lang)
         if i == 0 and not a.no_videos:

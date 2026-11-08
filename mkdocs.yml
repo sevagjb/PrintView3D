@@ -50,6 +50,10 @@ theme:
 extra_css:
   - assets/extra.css
 
+# Light / Dark / Ember versions of the screenshots, shown to match the chosen theme.
+hooks:
+  - tools/mkdocs_theme_images.py
+
 plugins:
   - search
   - i18n:

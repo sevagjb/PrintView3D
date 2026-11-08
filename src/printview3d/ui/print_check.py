@@ -316,11 +316,6 @@ class _Signals(QObject):
 BACKGROUND_FACES = 200_000      # a mesh check on more faces than this runs in the background
 
 
-def _hex_rgb(h: str) -> tuple:
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
-
-
 def _polygon_offset_only_where_asked():
     """Lets a highlight be drawn just in front of the faces it lies on (a per-actor offset).
 

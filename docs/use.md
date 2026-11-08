@@ -113,7 +113,8 @@ Wireframe and X-ray stay on when you open the next model; the cuts and the measu
   colour; right-click goes back to the file's colour. Not saved.
 - **Grid numbers**: **Settings → Viewer → Show scale numbers on the grid** writes millimetres
   along the build plate, as many as fit at the zoom you look at.
-- **Settings** is also the gear icon at the right end of the toolbar, next to the theme icon.
+- **Settings** is also the gear icon at the right end of the toolbar, next to the theme icon
+  (unless you hide it: see [Toolbar buttons](#toolbar-buttons)).
 
 More, with pictures: [Look inside your models](inspect.md). Built by [@covrig](https://github.com/covrig).
 
@@ -244,6 +245,28 @@ asks **Restart now** (it closes and opens again, with the same file) or **Later*
 effect itself and shows a plain colour while the window is not active, and switches it off with
 *Transparency effects* off in Windows Settings or in battery saver. Windows 10 and other systems
 keep the normal look.
+
+## Toolbar buttons
+
+**Settings → Toolbar** (also **☰ → Customize toolbar…**, or right-click the toolbar) chooses which
+buttons the toolbar shows, for a calmer toolbar if you don't use every feature:
+
+- **Can be hidden:** Home, Open, Check, View, Measure, Screenshot, Theme and Settings.
+- **Always shown:** the **☰** menu, Open in slicer, Export STL (3MF and CAD files), Plate and Fit.
+- **The order never changes.** A hidden button only leaves the toolbar; Plate stays the first of the
+  view buttons and Fit the last.
+- **Nothing gets lost.** A hidden button keeps its key (`C`, `V`, `M`, `Ctrl+W`, …), and the **☰**
+  menu has everything, including Check, View, Measure and the Theme menu.
+
+Under **Look** you choose how the view buttons (Plate, Check, View, Measure and Fit) are labelled:
+**icon, name and key** (*Plate (P)*, the default), **icon and name** (*Plate*), **icon and key**
+(*P*) or **icon only** (the tooltip names it). **Join the view buttons into one group** draws them
+as one connected bar.
+
+![Settings → Toolbar: buttons switched off, shorter labels and a joined group, shown live on the toolbar](assets/toolbar-settings.gif)
+
+Every change shows in the window, and in the picture at the top of the page, right away: **OK**
+keeps it, **Cancel** goes back. **Reset to defaults** shows every button again.
 
 ## Updates
 

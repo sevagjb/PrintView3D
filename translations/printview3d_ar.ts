@@ -149,6 +149,7 @@
     <message>
         <location filename="../src/printview3d/ui/keys.py"></location>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Fit</source>
         <extracomment>Toolbar button: zoom the 3D view so the whole model fits.</extracomment>
         <translation>ملاءمة</translation>
@@ -647,6 +648,45 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Plate</source>
+        <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
+        <translation>اللوحة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Check</source>
+        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
+        <translation type="unfinished">فحص</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View</source>
+        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
+        <translation>العرض</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Measure</source>
+        <translation>قياس</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Theme</source>
+        <extracomment>Settings: the colour theme of the program (dark, gray, light).</extracomment>
+        <translation>السمة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Customize toolbar…</source>
+        <translation>تخصيص شريط الأدوات…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Preview picture</source>
         <translation>صورة المعاينة</translation>
     </message>
@@ -687,11 +727,13 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Menu</source>
         <translation>القائمة</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Home</source>
         <extracomment>Toolbar button with a house icon: closes the open file and goes back to the start page.</extracomment>
         <translation>الرئيسية</translation>
@@ -730,21 +772,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Plate</source>
-        <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
-        <translation>اللوحة</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Show / hide the build plate grid (arrow: plate size)</source>
         <translation>إظهار / إخفاء شبكة لوحة الطباعة (السهم: حجم اللوحة)</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Check</source>
-        <extracomment>Toolbar button: check the model before printing (overhangs, thin walls, mesh problems). A verb or a short noun.</extracomment>
-        <translation type="unfinished">فحص</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -865,12 +894,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>View</source>
-        <extracomment>Toolbar menu: how the model is drawn (wireframe, X-ray, clip from the top).</extracomment>
-        <translation>العرض</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Reset view</source>
         <extracomment>View menu: turn off wireframe, X-ray and the cuts, and fit the model (back to the plain view).</extracomment>
         <translation>إعادة ضبط العرض</translation>
@@ -942,11 +965,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
-        <source>Measure</source>
-        <translation>قياس</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Snapping</source>
         <extracomment>Measure checkbox: the points jump to the corners and edges of the model when the mouse is close to one.</extracomment>
         <translation>الالتقاط التلقائي</translation>
@@ -988,6 +1006,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Screenshot</source>
         <translation>لقطة شاشة</translation>
     </message>
@@ -1617,6 +1636,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Open in slicer</source>
         <translation>فتح في برنامج التقطيع</translation>
     </message>
@@ -1961,12 +1981,6 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Theme</source>
-        <extracomment>Settings: the colour theme of the program (dark, gray, light).</extracomment>
-        <translation>السمة</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>System follows the light or dark setting of your computer.</source>
         <translation>يتبع خيار «النظام» إعداد الوضع الفاتح أو الداكن في حاسوبك.</translation>
     </message>
@@ -2014,6 +2028,11 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Appearance</source>
         <translation>المظهر</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Toolbar</source>
+        <translation>شريط الأدوات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2363,6 +2382,66 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Choose which buttons the toolbar shows. A hidden button keeps its key, and everything stays in the ☰ menu. The order never changes.</source>
+        <translation>اختر الأزرار التي يعرضها شريط الأدوات. يحتفظ الزر المخفي باختصاره، ويبقى كل شيء في القائمة ☰. لا يتغيّر الترتيب أبدًا.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Buttons, in toolbar order</source>
+        <translation>الأزرار، بترتيب شريط الأدوات</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Open</source>
+        <translation>فتح</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>{name} · always shown</source>
+        <translation>{name} · ظاهر دائمًا</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Look</source>
+        <translation>الشكل</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon, name and key</source>
+        <translation>الأيقونة والاسم والاختصار</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon and name</source>
+        <translation>الأيقونة والاسم</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon and key</source>
+        <translation>الأيقونة والاختصار</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Icon only</source>
+        <translation>الأيقونة فقط</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>View buttons show:</source>
+        <translation>تعرض أزرار العرض:</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Join the view buttons into one group</source>
+        <translation>ضمّ أزرار العرض في مجموعة واحدة</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Reset to defaults</source>
+        <translation type="unfinished">استعادة الافتراضيات</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Skip this version</source>
         <extracomment>Update button: do not show this new version again (the next one is shown).</extracomment>
         <translation>تخطي هذا الإصدار</translation>
@@ -2501,11 +2580,6 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Default: {key}</source>
         <translation type="unfinished">الافتراضي: {key}</translation>
-    </message>
-    <message>
-        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Reset to defaults</source>
-        <translation type="unfinished">استعادة الافتراضيات</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2892,6 +2966,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} سم³</translation>
+    </message>
+    <message>
+        <source>Buttons (left to right)</source>
+        <translation type="vanished">الأزرار (من اليسار إلى اليمين)</translation>
     </message>
     <message>
         <source>Remember the colours of the Check section</source>

@@ -21,7 +21,13 @@ printtijd en het filamentverbruik, en stuurt het bestand met één klik naar Cre
 Bambu Studio, PrusaSlicer, Cura en andere. Ontwerp je in FreeCAD? Open het `.FCStd`-bestand en stuur het
 direct als model naar je slicer, zonder eerst een STL te exporteren.
 
-## Nieuw: controleren, meten en in je modellen kijken
+## Nieuw: je eigen werkbalk, controleren, meten en in je modellen kijken
+
+**Nieuw in 0.30: je eigen werkbalk.** Verberg de knoppen die je niet gebruikt, maak de weergaveknoppen
+korter tot een naam, een toets of een pictogram, en voeg ze samen tot één groep. Verborgen knoppen
+houden hun toets, en alles blijft in het **☰**-menu. [Hoe het werkt](use.md#toolbar-buttons)
+
+![Instellingen → Werkbalk: knoppen uit, kortere namen en een samengevoegde groep, meteen te zien op de werkbalk](assets/toolbar-settings.gif)
 
 **Nieuw in 0.29: Controleren voor het printen.** Eén klik kleurt wat bij het printen problemen kan
 geven: overhangen, wanden dunner dan je nozzle, gaten, verwarde randen, binnenstebuiten gekeerde
@@ -66,6 +72,7 @@ doorzichtige schim. Maak het doorzichtig, geef elk object een eigen kleur en zie
 | **Miniaturen** | Windows Verkenner toont voorbeelden van 3MF-, STL-, G-code- en FreeCAD-bestanden (geïnstalleerd met PrintView3D, optioneel). Op macOS (bèta) toont de Finder miniaturen van 3MF-, STL-, G-code-, FreeCAD-, OBJ- en PLY-bestanden, en **Quick Look** (spatiebalk) toont STL-, 3MF-, OBJ- en PLY-modellen in 3D. [Details](install.md#quick-look). |
 | **Updates** | **Controleren op updates** in Instellingen, of één keer per dag als je dat toestaat. Op Windows downloadt, controleert en installeert één klik de nieuwe versie. De versie in de hoek krijgt een rode stip als er een update klaarstaat. [Wat er verstuurd wordt](use.md#updates-and-privacy). |
 | **Eén venster** | Een bestand waarop je dubbelklikt terwijl PrintView3D open is, verschijnt in dat venster in plaats van in een nieuw venster. Liever een venster per bestand? **Instellingen → Bestanden → Elk bestand in een nieuw venster openen**. |
+| **Je eigen werkbalk** | Verberg de knoppen die je niet gebruikt, maak de weergaveknoppen korter tot een naam, een toets of een pictogram, en voeg ze samen tot één groep (**Instellingen → Werkbalk**). Verborgen knoppen houden hun toets en blijven in het **☰**-menu. [Details](use.md#toolbar-buttons). |
 | **Prettig in gebruik** | Camera zoals in een slicer, slepen en neerzetten, recente bestanden, schermafbeeldingen. |
 
 <table>

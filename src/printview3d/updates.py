@@ -135,13 +135,6 @@ def _absolute_links(md: str) -> str:
                   lambda m: f"](https://github.com/{REPO}/blob/main/{m.group(1)})", md)
 
 
-def notes_since(older: str, current: str = __version__, text: str | None = None) -> list[tuple[str, str]]:
-    """Changelog sections newer than `older` and not newer than `current`, newest first."""
-    text = changelog_text() if text is None else text
-    return [(v, _absolute_links(n)) for v, n in changelog_sections(text)
-            if is_newer(v, older) and not is_newer(v, current)]
-
-
 @dataclass
 class Notes:
     """One version's notes as shown: in the user's language, or in English when that version

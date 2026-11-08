@@ -21,7 +21,13 @@ file to Creality Print, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura and others w
 Designing in FreeCAD? Open the `.FCStd` file and send it to your slicer as a model directly,
 without exporting an STL first.
 
-## New: check, measure and look inside your models
+## New: your own toolbar, check, measure and look inside
+
+**New in 0.30: your own toolbar.** Hide the buttons you don't use, shorten the view buttons to a
+name, a key or an icon, and join them into one group. Hidden buttons keep their keys, and everything
+stays in the **☰** menu. [How it works](use.md#toolbar-buttons)
+
+![Settings → Toolbar: buttons switched off, shorter labels and a joined group, shown live on the toolbar](assets/toolbar-settings.gif)
 
 **New in 0.29: Check before printing.** One click colours what may give trouble when you print:
 overhangs, walls thinner than your nozzle, holes, tangled edges, inside-out faces and loose parts,
@@ -65,6 +71,7 @@ each object a colour of your own, and see the size of every object.
 | **Thumbnails** | Windows File Explorer shows previews of 3MF, STL, G-code and FreeCAD files (installed with PrintView3D, optional). On macOS (beta), Finder shows thumbnails of 3MF, STL, G-code, FreeCAD, OBJ and PLY files, and **Quick Look** (space bar) shows STL, 3MF, OBJ and PLY models in 3D. [Details](install.md#quick-look). |
 | **Updates** | **Check for updates** in Settings, or once a day if you allow it. On Windows one click downloads, checks and installs the new version. The version in the corner gets a red dot when an update is ready. [What is sent](use.md#updates-and-privacy). |
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
+| **Your toolbar** | Hide the buttons you don't use, shorten the view buttons to a name, a key or an icon, and join them into one group (**Settings → Toolbar**). Hidden buttons keep their keys and stay in the **☰** menu. [Details](use.md#toolbar-buttons). |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, screenshots. |
 
 <table>

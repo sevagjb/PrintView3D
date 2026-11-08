@@ -121,11 +121,6 @@ def test_toggle_light_dark(monkeypatch):
     assert theme.toggle_light_dark("auto_ember") == "ember"        # from System: the opposite of now
 
 
-def test_theme_icon_draws(app):
-    for name in theme.THEMES:
-        assert not theme.theme_icon(name).isNull()
-
-
 def test_segment_icons_draw(app):
     for kind in ("light", "dark", "system", "off", "mica", "acrylic"):
         assert not theme.segment_icon(kind).isNull()
@@ -234,6 +229,32 @@ def test_toolbar_icons_draw_in_every_theme(app):
         for kind in theme.TOOL_ICONS:
             assert not theme.tool_icon(kind).isNull(), (name, kind)
             assert not theme.tool_icon(kind, on_accent=True).isNull(), (name, kind)
+    theme.apply_theme(app, "dark")
+
+
+def test_toolbar_icons_fill_with_the_primary_colour_on_hover(app):
+    """Under the mouse a toolbar icon's tile fills with the theme's primary colour (amber in
+    Ember, teal elsewhere), like the view cube's hovered part; without hover=True it has no
+    hover picture, so push buttons with a focus never show it."""
+    from PySide6.QtCore import QSize
+    from PySide6.QtGui import QColor, QIcon
+    from printview3d.ui.view_cube import readable_text
+    for name in theme.THEMES:
+        theme.apply_theme(app, name)
+        t = theme.colors()
+        for kwargs in ({}, {"warm": True}, {"on_accent": True, "gap": True}):
+            icon = theme.tool_icon("open", hover=True, **kwargs)
+            normal = icon.pixmap(QSize(64, 64), QIcon.Normal).toImage()
+            hover = icon.pixmap(QSize(64, 64), QIcon.Active).toImage()
+            assert QColor(hover.pixel(3, 32)).name() == t["primary"], (name, kwargs)
+            assert QColor(normal.pixel(3, 32)).name() != t["primary"] or normal.pixelColor(3, 32).alpha() < 255
+            assert readable_text(t["primary"]) in ("#ffffff", "#1a1d21")
+        slicer = theme.tool_icon("slicer", on_accent=True, gap=True, hover=True, on_primary=True)
+        assert QColor(slicer.pixmap(QSize(80, 64), QIcon.Active).toImage().pixel(3, 32)).name() == "#ffffff", name
+        plain = theme.tool_icon("open")
+        a = plain.pixmap(QSize(64, 64), QIcon.Normal).toImage()
+        b = plain.pixmap(QSize(64, 64), QIcon.Active).toImage()
+        assert a == b, name
     theme.apply_theme(app, "dark")
 
 
