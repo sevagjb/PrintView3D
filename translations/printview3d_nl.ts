@@ -2199,8 +2199,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Other</source>
-        <translation type="unfinished">Overig</translation>
+        <source>Measure, View and Check</source>
+        <translation>Meten, weergave en controleren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2329,6 +2329,21 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
         <translation type="unfinished">Uit: de gekozen kleuren van Controleren gelden tot PrintView3D sluit.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Start page</source>
+        <translation>Startpagina</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show a preview of recent files when the mouse is over them</source>
+        <translation>Een voorbeeld van recente bestanden tonen als de muis erboven is</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
+        <translation>Uit: geen voorbeeldkaart, en de bestanden worden pas gelezen als je ze opent (handig bij een trage netwerkschijf).</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2966,6 +2981,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation>{v} cm³</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="vanished">Overig</translation>
     </message>
     <message>
         <source>Buttons (left to right)</source>

@@ -9,7 +9,12 @@ G-code or ZIP.
 
 On the start page, hold the mouse over a recent file and a card in the bottom right corner shows its preview
 picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
-The card stays in the same place for every file, so you can run down the list and compare.
+A ZIP shows the maker's photo or render inside it, or else the picture of its first 3MF or G-code.
+The card stays in the same place for every file, so you can run down the list and compare. Don't
+want it? Untick **Settings → Viewer → Start page → Show a preview of recent files when the mouse is
+over them**; then the files are not read until you open them.
+
+![The start page: recent files, with the preview card of the one under the mouse](screenshot-start-page.png)
 
 **A whole folder:** **☰ → Open folder…** lists the 3D files of a folder in the side panel; step
 through them with `↑` / `↓` or a click.
@@ -226,6 +231,8 @@ next style; **`Ctrl+Shift+T`** switches between light and dark.
 
 The switch is immediate; the 3D background, plate and grid change with it, while G-code and
 model colours stay the same so they always match your slicer.
+
+![Settings → Appearance with a picture card for every theme style](screenshot-theme-picker.png)
 
 ![The theme menu on the toolbar](screenshot-theme-menu.png)
 

@@ -2199,7 +2199,7 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Other</source>
+        <source>Measure, View and Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2328,6 +2328,21 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Start page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show a preview of recent files when the mouse is over them</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -9,8 +9,13 @@ verschil na een grote G-code of ZIP.
 
 Houd op de startpagina de muis boven een recent bestand en een kaartje rechtsonder toont de
 voorbeeldafbeelding (bij 3MF-projecten, G-code en FreeCAD-bestanden die er een hebben), de naam en de
-map waarin het staat. Het kaartje staat voor elk bestand op dezelfde plek, zodat je de lijst kunt
-aflopen en vergelijken.
+map waarin het staat. Een ZIP toont de foto of render van de maker die erin zit, en anders de
+afbeelding van de eerste 3MF of G-code erin. Het kaartje staat voor elk bestand op dezelfde plek,
+zodat je de lijst kunt aflopen en vergelijken. Liever niet? Vink **Instellingen → Weergave →
+Startpagina → Een voorbeeld van recente bestanden tonen als de muis erboven is** uit; dan worden de
+bestanden pas gelezen als je ze opent.
+
+![De startpagina: recente bestanden, met het voorbeeldkaartje van het bestand onder de muis](screenshot-start-page.png)
 
 **Een hele map:** **☰ → Map openen…** zet de 3D-bestanden van een map in het zijpaneel; ga erdoor met
 `↑` / `↓` of een klik.
@@ -228,6 +233,8 @@ volgende. Dezelfde keuze staat in **Instellingen → Uiterlijk → Thema**.
 
 Het wisselen gaat meteen; de 3D-achtergrond, de plaat en het raster veranderen mee, terwijl de kleuren van de
 G-code en het model gelijk blijven, zodat ze altijd overeenkomen met je slicer.
+
+![Instellingen → Uiterlijk, met een kaart met afbeelding voor elke themastijl](screenshot-theme-picker.png)
 
 ![Het themamenu in de werkbalk](screenshot-theme-menu.png)
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.30.1
+- **Opgelost: G-code van Creality Print had geen voorbeeldafbeelding**, op de startpagina en in het
+  zijpaneel. Creality Print schrijft de grootte van de afbeelding als `300*300` of `300 300`, en dat
+  werd niet herkend.
+- **ZIP-bestanden krijgen een voorbeeld** op de startpagina: de foto of render van de maker die erin
+  zit, en anders de afbeelding van de eerste 3MF of G-code erin. Alleen die ene afbeelding wordt
+  gelezen.
+- **Opgelost: bestandsnamen op de startpagina**: een lange naam zonder spaties werd afgekapt aan de
+  rand van het voorbeeldkaartje in plaats van door te lopen op een tweede regel, en een `&` in een
+  naam verscheen als onderstreepte letter in de lijst met recente bestanden en het menu Recent.
+- **Instellingen → Weergave** staat nu in vier vakken: **Printplaat**, **Meten, weergave en
+  controleren** (was *Overig*), het nieuwe **Startpagina**, en **Grafische kaart**. Met
+  **Startpagina** zet je het voorbeeldkaartje uit; dan wordt geen enkel bestand gelezen tot je het
+  opent (handig bij een trage netwerkschijf).
+
 ## 0.30.0
 - **Kies je werkbalk** (**Instellingen → Werkbalk**, ook **☰ → Werkbalk aanpassen…** of klik met rechts
   op de werkbalk): verberg de knoppen die je niet gebruikt: Start, Openen, Controleren, Weergave,

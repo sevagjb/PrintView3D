@@ -361,7 +361,8 @@ class SettingsDialog(QDialog):
         # 3D view: travel moves, view cube, Measure, Clip, Check) and Graphics.
         g3 = QGroupBox(tr("Build plate"))
         l3 = QVBoxLayout(g3)
-        g_other = QGroupBox(tr("Other"))
+        # The settings of the toolbar's Measure, View and Check (named after those buttons).
+        g_other = QGroupBox(tr("Measure, View and Check"))
         l_other = QVBoxLayout(g_other)
         self.travel_cb = QCheckBox(tr("Show travel moves when opening G-code"))
         self.travel_cb.setChecked(bool(settings.get("show_travel")))
@@ -511,6 +512,16 @@ class SettingsDialog(QDialog):
             for k in keys_col:
                 k.setMinimumWidth(width)
 
+        # ---------------- Start page ----------------
+        g_start = QGroupBox(tr("Start page"))
+        l_start = QVBoxLayout(g_start)
+        self.recent_preview_cb = QCheckBox(tr("Show a preview of recent files when the mouse is over them"))
+        self.recent_preview_cb.setChecked(bool(settings.get("recent_preview", True)))
+        self.recent_preview_cb.setToolTip(
+            tr("Off: no preview card, and the files are not read until you open them (handy on a slow "
+               "network drive)."))
+        l_start.addWidget(self.recent_preview_cb)
+
         # ---------------- Graphics ----------------
         g4 = QGroupBox(tr("Graphics"))
         l4 = QVBoxLayout(g4)
@@ -538,7 +549,7 @@ class SettingsDialog(QDialog):
         self.gpu_hint.setWordWrap(True)
         self.gpu_hint.setObjectName("muted")
         l4.addWidget(self.gpu_hint)
-        self._add_page("viewer", tr("Viewer"), [g3, g_other, g4], keep_titles=True)
+        self._add_page("viewer", tr("Viewer"), [g3, g_other, g_start, g4], keep_titles=True)
 
         self._add_page("keys", tr("Keyboard and mouse"), [self._build_mouse(), self._build_keys()],
                        keep_titles=True)
@@ -1314,6 +1325,7 @@ class SettingsDialog(QDialog):
         self.settings.set("clip_handles", self.clip_handles_cb.isChecked())
         keys.save(self.settings, self._key_values)
         self.settings.set("check_keep_colors", self.check_colors_cb.isChecked())
+        self.settings.set("recent_preview", self.recent_preview_cb.isChecked())
         self.settings.set("plate_mode", self.plate_combo.currentData())
         self.settings.set("plate_size", [round(self.plate_w_spin.mm(), 3), round(self.plate_d_spin.mm(), 3)])
         self.settings.set("show_view_cube", self.cube_cb.isChecked())

@@ -216,10 +216,10 @@ def test_recent_file_preview_card_stays_in_one_place(app, window, tmp_path):
         # The whole name where it fits on its lines; shortened in the middle only where it doesn't
         # (that depends on the system's font: the CI machines' differ from Windows').
         name = os.path.basename(p)
-        assert card.name.text() == mw.fit_lines(name, card.name.fontMetrics(), mw.PREVIEW_PX, mw.PREVIEW_NAME_LINES)
-        shown = card.name.text()
+        shown = card.name.text().replace("\n", "")            # wrap_lines' line breaks taken out
+        assert shown == mw.fit_lines(name, card.name.fontMetrics(), mw.PREVIEW_PX - 6, mw.PREVIEW_NAME_LINES)
         assert shown == name or (shown.startswith(name[:6]) and shown.endswith(name[-6:]) and "\u2026" in shown)
-        assert card.folder.text().replace("\u200b", "") == os.path.dirname(os.path.abspath(p))
+        assert card.folder.text().replace("\u200b", "").replace("\n", "") == os.path.dirname(os.path.abspath(p))
         places.append((card.geometry().getRect(), card.picture.geometry().getRect()))
     assert len(set(places)) == 1                               # same place, same size, every file
     # In the start page's bottom right corner.

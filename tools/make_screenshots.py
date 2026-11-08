@@ -38,8 +38,18 @@ def themed_name(name: str, theme_name: str) -> str:
     return f"{stem.replace('.', '-')}--{theme_name}.webp"
 
 
+ONLY: set[str] = set()          # --only: the pictures to make (names without extension); empty: all
+
+
+def wanted(path: str) -> bool:
+    stem = os.path.splitext(os.path.basename(path))[0].split("--")[0]
+    return not ONLY or stem in ONLY
+
+
 def save_image(img, path: str):
     """Save a QImage/QPixmap; .webp through Pillow (smaller than PNG, sharp enough for screenshots)."""
+    if not wanted(path):
+        return
     if not path.endswith(".webp"):
         img.save(path)
         return
@@ -64,7 +74,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--theme", default="dark", choices=["dark", "light", "ember"])
     ap.add_argument("--no-demo", action="store_true", help="don't rewrite the examples' thumbnails")
+    ap.add_argument("--only", default="", help="only these pictures, e.g. screenshot-start-page,screenshot-theme-picker")
     args = ap.parse_args()
+    ONLY.update(n.strip() for n in args.only.split(",") if n.strip())
     dark = args.theme == "dark"
     app = QApplication([])
     from printview3d.settings import Settings
@@ -216,7 +228,36 @@ def main():
     for _ in range(5):
         app.processEvents()
 
-    if not dark:                     # the theme pictures and FreeCAD: Dark only
+    # 7b) Settings -> Appearance: a picture card for every theme style (the one shown chosen)
+    settings.set("theme", args.theme)
+    d = SettingsDialog(settings, w, {}, page="appearance")
+    d.show()
+    for _ in range(5):
+        app.processEvents()
+    plain_buttons(d)
+    app.processEvents()
+    save_image(d.grab(), os.path.join(DOCS, themed_name("screenshot-theme-picker.png", args.theme)))
+    print("saved theme picker")
+    d.reject()
+    app.processEvents()
+
+    # 7c) The start page: recent files, with the preview card of the one under the mouse
+    # Copies in a plainly named folder, so the card shows "3D prints" rather than this machine's path.
+    import shutil
+    prints = os.path.join(tempfile.gettempdir(), "3D prints")
+    os.makedirs(prints, exist_ok=True)
+    for f in ("demo_vase.stl", "demo_vase.gcode", "demo_housing.3mf", "demo_plate.3mf"):
+        shutil.copy2(os.path.join(EX, f), prints)
+        settings.add_recent(os.path.join(prints, f))
+    w.go_home()
+    w._refresh_recent_menu()
+    for _ in range(5):
+        app.processEvents()
+    w._recent_hover(os.path.join(prints, "demo_plate.3mf"))
+    shot("screenshot-start-page.png")
+    w._recent_hover(None)
+
+    if not dark or ONLY:             # the theme pictures and FreeCAD: Dark only, and not with --only
         w.close()
         return
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.30.1
+- **Fixed: Creality Print G-code had no preview picture**, on the start page and in the side panel.
+  Creality Print writes the picture size as `300*300` or `300 300`, which wasn't recognised.
+- **ZIP files get a preview** on the start page: the maker's photo or render inside the ZIP, or else
+  the picture of its first 3MF or G-code. Only that one picture is read.
+- **Fixed: file names on the start page**: a long name without spaces was cut off at the edge of the
+  preview card instead of wrapping, and an `&` in a name showed as an underlined letter in the
+  recent list and the Recent menu.
+- **Settings → Viewer** is now in four boxes: **Build plate**, **Measure, View and Check** (was
+  *Other*), the new **Start page**, and **Graphics**. **Start page** can switch the preview card
+  off; then no file is read until you open it (handy on a slow network drive).
+
 ## 0.30.0
 - **Choose your toolbar** (**Settings → Toolbar**, also **☰ → Customize toolbar…** or a right-click on
   the toolbar): hide the buttons you don't use: Home, Open, Check, View, Measure, Screenshot, Theme

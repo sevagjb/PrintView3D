@@ -163,7 +163,7 @@ found (thin walls and the mesh problems; not overhangs, which most models
 have). Hover over a name to see what it means and its technical term. The highlights follow the cuts and the objects you hide. Which checks are on,
 the angle, the nozzle width and the loose-part size are remembered. The colours go back to their
 defaults when you restart, unless you tick **Settings → Viewer → Remember the colours of the Check
-section on restart** (in its **Other** box). *New in PrintView3D 0.29.*
+section on restart** (in its **Measure, View and Check** box). *New in PrintView3D 0.29.*
 
 ![Check model with X-ray: the overhangs inside the housing in red, the 1 mm wall in front of the hidden pocket as a thin wall (with a 1.2 mm nozzle) in orange](assets/inside/check.png)
 
