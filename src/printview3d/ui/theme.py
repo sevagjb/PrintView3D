@@ -465,6 +465,22 @@ def apply_theme(app, choice: str = "auto", mica: bool = False) -> str:
         QToolBar QToolButton#viewButton[popupMode="1"] {{ padding-right: 24px; }}
         QToolBar QToolButton#viewButton::menu-button {{ width: 18px; border-left: 1px solid {divider};
             border-top-right-radius: 5px; border-bottom-right-radius: 5px; }}
+        /* Settings -> Toolbar. Icon only: the view buttons sit evenly around their icon. */
+        QToolBar QToolButton#viewButton[iconOnly="true"] {{ padding: 2px 3px; }}
+        QToolBar QToolButton#viewButton[iconOnly="true"][popupMode="1"] {{ padding-right: 21px; }}
+        /* Joined: the view buttons touch, with a thin line between them; only the group's ends are
+           round. The other buttons keep the usual gap (no toolbar spacing, a wider margin instead). */
+        QToolBar[joinedGroup="true"] {{ spacing: 0px; }}
+        QToolBar[joinedGroup="true"] QToolButton {{ margin: 1px 4px; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="first"] {{ margin: 1px 0px 1px 4px;
+            border-top-right-radius: 0px; border-bottom-right-radius: 0px; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="middle"] {{ margin: 1px 0px;
+            border-radius: 0px; border-left-color: {divider}; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="last"] {{ margin: 1px 4px 1px 0px;
+            border-top-left-radius: 0px; border-bottom-left-radius: 0px; border-left-color: {divider}; }}
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="first"]::menu-button,
+        QToolBar[joinedGroup="true"] QToolButton#viewButton[joinPos="middle"]::menu-button {{
+            border-top-right-radius: 0px; border-bottom-right-radius: 0px; }}
         QToolButton#slicerButton {{ background: {primary}; color: white; font-weight: 600; padding: 2px 14px 2px 3px; }}
         QToolButton#slicerButton:hover {{ background: {primary_hover}; }}
         QToolButton#slicerButton[popupMode="1"] {{ padding-right: 28px; }}
@@ -857,6 +873,12 @@ def _nav_pixmap(kind: str, dot: bool, color: str, ring: str) -> QPixmap:
         for a, b in ((top, l_up), (top, r_up), (l_up, mid), (r_up, mid), (mid, bot),
                      (l_up, l_dn), (r_up, r_dn), (l_dn, bot), (r_dn, bot)):
             p.drawLine(a, b)
+    elif kind == "toolbar":                      # a bar with three buttons on it
+        p.drawRoundedRect(QRectF(6, 18, 52, 28), 6, 6)
+        p.setBrush(fg)
+        for x in (14, 28, 42):
+            p.drawRoundedRect(QRectF(x - 1, 27, 10, 10), 2, 2)
+        p.setBrush(Qt.NoBrush)
     elif kind == "files":                        # folder
         path = QPainterPath()
         path.moveTo(8, 18)
@@ -911,6 +933,12 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
     if kind == "menu":                           # hamburger
         for y in (18, 32, 46):
             p.drawLine(QPointF(12, y), QPointF(52, y))
+    elif kind == "toolbar":                      # a bar with three buttons on it
+        p.drawRoundedRect(QRectF(6, 18, 52, 28), 6, 6)
+        p.setBrush(fg)
+        for x in (14, 28, 42):
+            p.drawRoundedRect(QRectF(x - 1, 27, 10, 10), 2, 2)
+        p.setBrush(Qt.NoBrush)
     elif kind == "home":                         # house: roof, walls and a door
         house = QPainterPath()
         house.moveTo(8, 30)
@@ -1132,7 +1160,7 @@ def _tool_glyph(p: QPainter, kind: str, fg: QColor) -> None:
         p.drawLine(QPointF(58, 40), QPointF(50, 48))
 
 
-TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
+TOOL_ICONS = ("menu", "toolbar", "home", "open", "recent", "screenshot", "theme", "slicer", "freecad", "export",
               "settings", "updates", "about", "whats_new",
               "view", "plate", "measure", "fit", "check", "distance", "angle", "circle",
               "wireframe", "xray", "clip_top", "clip_face", "reset")
@@ -1141,19 +1169,22 @@ TOOL_ICONS = ("menu", "home", "open", "recent", "screenshot", "theme", "slicer",
 ICON_GAP = 6                  # px between an icon and the text beside it (at 22 px icons)
 
 
-def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False) -> QIcon:
+def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool = False,
+              hover: bool = False, on_primary: bool = False) -> QIcon:
     """Toolbar icon: the symbol in the accent colour on a soft accent-tinted tile.
     on_accent=True is for the slicer button: a white symbol on a soft white tile.
     warm=True uses the theme's primary colour instead (the orange tiles of the Ember themes; the
     classic themes have the same teal for both, so there it looks the same).
     gap=True is for buttons with text beside the icon: the picture is wider by ICON_GAP (empty
     on the right), so the text keeps some room from the icon. Its buttons use an icon size of
-    (22 + ICON_GAP) x 22."""
-    size = 64
-    pm = QPixmap(size + (round(size * ICON_GAP / 22) if gap else 0), size)
-    pm.fill(Qt.transparent)
-    p = QPainter(pm)
-    p.setRenderHint(QPainter.Antialiasing)
+    (22 + ICON_GAP) x 22.
+    hover=True adds a second picture that Qt shows while the mouse is over the button (QIcon's
+    Active mode): the tile filled solid in the theme's primary colour with a white or dark symbol,
+    whichever reads better - the same rule as the view cube's hovered part (amber in Ember, teal
+    in the other themes). Only for toolbar buttons: a focused push button would show it too.
+    on_primary=True (with on_accent) is for the slicer button, which is itself filled with the
+    primary colour: there the hovered tile turns solid white with the symbol in a deeper shade of
+    that colour, so it stands out instead of vanishing into the button."""
     t = colors()
     if on_accent:
         fg, tile = QColor("#ffffff"), QColor(255, 255, 255, 46)
@@ -1162,6 +1193,25 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
         fg = QColor(t["primary_ink" if warm else "accent_ink"])
         tile = QColor(t["primary" if warm else "accent"])
         tile.setAlphaF(0.22 if not is_dark() else 0.20)
+    icon = QIcon(_tool_pixmap(kind, fg, tile, gap))
+    if hover:
+        from .view_cube import readable_text     # the cube's white-or-dark text rule
+        if on_primary:
+            fg_hover, fill = QColor(t["primary"]).darker(125), QColor("#ffffff")
+        else:
+            fill = QColor(t["primary"])
+            fg_hover = QColor(readable_text(t["primary"]))
+        icon.addPixmap(_tool_pixmap(kind, fg_hover, fill, gap), QIcon.Active)
+    return icon
+
+
+def _tool_pixmap(kind: str, fg: QColor, tile: QColor, gap: bool) -> QPixmap:
+    """One picture of a toolbar icon: the symbol in fg on a rounded tile."""
+    size = 64
+    pm = QPixmap(size + (round(size * ICON_GAP / 22) if gap else 0), size)
+    pm.fill(Qt.transparent)
+    p = QPainter(pm)
+    p.setRenderHint(QPainter.Antialiasing)
     p.setPen(Qt.NoPen)
     p.setBrush(tile)
     p.drawRoundedRect(QRectF(0, 0, size, size), 14, 14)
@@ -1175,4 +1225,4 @@ def tool_icon(kind: str, on_accent: bool = False, warm: bool = False, gap: bool 
     p.setBrush(Qt.NoBrush)
     _tool_glyph(p, kind, fg)
     p.end()
-    return QIcon(pm)
+    return pm

@@ -37,7 +37,7 @@ from ..loaders import (
 from ..loaders.gcode import FEATURE_INDEX
 from ..settings import EXPORT_MODES, Settings
 from .labels import feature_label, meta_label, meta_value, plate_mode_label
-from . import keys, theme, update_ui
+from . import keys, theme, toolbar_prefs as tp, update_ui
 from .. import updates as up
 from .export_stl import ExportStlDialog
 from .scene import PLATE_MODES, Scene
@@ -656,6 +656,7 @@ class MainWindow(QMainWindow):
         self._retranslate_timer.timeout.connect(self._on_language_changed)
 
         self.retranslate_ui()
+        self.apply_toolbar_layout()         # Settings -> Toolbar
         self._update_view_menu()            # nothing open yet: View is greyed out
 
         # "Automatic" theme: follow the system when it switches dark/light.
@@ -756,6 +757,13 @@ class MainWindow(QMainWindow):
         # Buttons with an icon show it beside their text; the view buttons have no icon (text only).
         tb.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.addToolBar(tb)
+        self.toolbar = tb
+        # Settings -> Toolbar: the toolbar's place of every button that can be hidden (its
+        # QAction in the toolbar, so hiding it leaves the menus and keys alone).
+        self.toolbar_slots: dict[str, QAction] = {}
+        # Right-click on the toolbar: Customize toolbar... (instead of Qt's hide-the-toolbar menu).
+        tb.setContextMenuPolicy(Qt.CustomContextMenu)
+        tb.customContextMenuRequested.connect(self._toolbar_context_menu)
 
         def icon_button(menu: QMenu | None = None, action: QAction | None = None) -> QToolButton:
             """A square icon tile (no text; the tooltip names it)."""
@@ -798,8 +806,13 @@ class MainWindow(QMainWindow):
         self.main_menu.addMenu(self.recent_menu)
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.act_screenshot)
-        self.main_menu.addSeparator()
+        # Check, View, Measure and the Theme menu are added here at the end of _build_toolbar, so
+        # every button stays reachable from the menu when it is hidden on the toolbar.
+        self._menu_settings_sep = self.main_menu.addSeparator()
         self.main_menu.addAction(self.act_settings)
+        # Settings -> Toolbar: which buttons the toolbar shows (also a right-click on the toolbar).
+        self.act_customize_toolbar = QAction(self, triggered=lambda: self.open_settings("toolbar"))
+        self.main_menu.addAction(self.act_customize_toolbar)
         self.main_menu.addAction(self.act_updates)
         self.main_menu.addAction(self.act_whats_new)
         self.main_menu.addAction(self.act_about)
@@ -809,9 +822,9 @@ class MainWindow(QMainWindow):
         # Home and Open next to the menu. Recent is in the menu only, and the start page lists the
         # recent files too (#66).
         self.home_btn = icon_button(action=self.act_home)
-        tb.addWidget(self.home_btn)
+        self.toolbar_slots["home"] = tb.addWidget(self.home_btn)
         self.open_btn = icon_button(action=self.act_open)
-        tb.addWidget(self.open_btn)
+        self.toolbar_slots["open"] = tb.addWidget(self.open_btn)
 
         tb.addSeparator()
         self.slicer_btn = QToolButton()
@@ -916,7 +929,7 @@ class MainWindow(QMainWindow):
         self.check_btn.setObjectName("viewButton")
         self.check_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.check_btn.setDefaultAction(self.act_check)
-        tb.addWidget(self.check_btn)
+        self.toolbar_slots["check"] = tb.addWidget(self.check_btn)
         self.act_view = QAction(self, checkable=True)
         self.act_view.toggled.connect(self.set_view_section)
         self.view_btn = QToolButton()
@@ -924,7 +937,7 @@ class MainWindow(QMainWindow):
         self.view_btn.setIconSize(QSize(22, 22))
         self.view_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.view_btn.setDefaultAction(self.act_view)
-        tb.addWidget(self.view_btn)
+        self.toolbar_slots["view"] = tb.addWidget(self.view_btn)
         self.measure_group = QActionGroup(self)
         self.measure_actions = {}
         for kind in ("distance", "angle", "circle"):
@@ -940,7 +953,7 @@ class MainWindow(QMainWindow):
         self.measure_btn.setIconSize(QSize(22, 22))
         self.measure_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.measure_btn.setDefaultAction(self.act_measure)
-        tb.addWidget(self.measure_btn)
+        self.toolbar_slots["measure"] = tb.addWidget(self.measure_btn)
         tb.addAction(self.act_fit)
         tb.widgetForAction(self.act_fit).setObjectName("viewButton")
         # The view buttons with an icon: styled to be as tall as the others (theme: hasIcon).
@@ -951,9 +964,10 @@ class MainWindow(QMainWindow):
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         tb.addWidget(spacer)
+        self.toolbar_spacer = spacer          # Settings -> Toolbar's picture leaves this gap out
 
         self.screenshot_btn = icon_button(action=self.act_screenshot)
-        tb.addWidget(self.screenshot_btn)
+        self.toolbar_slots["screenshot"] = tb.addWidget(self.screenshot_btn)
 
         # Theme: palette at the end of the toolbar; its menu has the styles, then Light/Dark/System.
         self.theme_menu = QMenu(self)
@@ -980,39 +994,159 @@ class MainWindow(QMainWindow):
         self.act_toggle_dark = QAction(self, triggered=self.toggle_light_dark)
         self.theme_menu.addAction(self.act_toggle_dark)
         self.theme_btn = icon_button(menu=self.theme_menu)
-        tb.addWidget(self.theme_btn)
+        self.toolbar_slots["theme"] = tb.addWidget(self.theme_btn)
         # Settings, one click away (also in the menu).
         self.settings_btn = icon_button(action=self.act_settings)
-        tb.addWidget(self.settings_btn)
+        self.toolbar_slots["settings"] = tb.addWidget(self.settings_btn)
+
+        # The view buttons by name (Plate first, Fit last), for their labels and the joined group.
+        self.toolbar_view_buttons = {"plate": self.plate_btn, "check": self.check_btn, "view": self.view_btn,
+                                     "measure": self.measure_btn, "fit": tb.widgetForAction(self.act_fit)}
+        # The menu gets Check, View and Measure (as switches, with their keys) and the Theme menu.
+        self.menu_mirrors = {}
+        for kid, act in (("check", self.act_check), ("view", self.act_view), ("measure", self.act_measure)):
+            m = self._menu_mirror(act)
+            self.main_menu.insertAction(self._menu_settings_sep, m)
+            self.menu_mirrors[kid] = m
+        self.main_menu.insertMenu(self._menu_settings_sep, self.theme_menu)
+
+    def _menu_mirror(self, act: QAction) -> QAction:
+        """A menu item that works as the toolbar switch `act` does and follows its state. (The
+        switch itself can't go in the menu: its text has the key in brackets, and the menu would
+        show the key twice.)"""
+        m = QAction(self, checkable=True)
+        m.triggered.connect(lambda _=False: act.trigger())
+        act.toggled.connect(m.setChecked)
+        act.changed.connect(lambda: m.setEnabled(act.isEnabled()))
+        m.setChecked(act.isChecked())
+        m.setEnabled(act.isEnabled())
+        return m
+
+    def _toolbar_context_menu(self, pos):
+        menu = QMenu(self)
+        menu.addAction(self.act_customize_toolbar)
+        menu.exec(self.toolbar.mapToGlobal(pos))
+
+    def apply_toolbar_layout(self, hide: Optional[set] = None, labels: Optional[str] = None,
+                             join: Optional[bool] = None):
+        """Settings -> Toolbar: show the chosen buttons, label the view buttons and join them or
+        not. Without arguments, from the settings; Settings passes its choices to try them live
+        (OK keeps them, Cancel calls this again without arguments). The order never changes."""
+        self._toolbar_hidden = tp.hidden(self.settings) if hide is None else set(hide) & set(tp.HIDEABLE)
+        self._toolbar_labels = tp.label_style(self.settings) if labels not in tp.LABEL_STYLES else labels
+        self._toolbar_joined = tp.joined(self.settings) if join is None else bool(join)
+        for kid, slot in self.toolbar_slots.items():
+            slot.setVisible(kid not in self._toolbar_hidden)
+        self._apply_toolbar_labels()
+        self._update_toolbar_icons()        # icon-only view buttons use the icons without the gap
+        self._update_join_positions()
+
+    def _icon_only(self) -> bool:
+        return getattr(self, "_toolbar_labels", "full") == "icon"
+
+    def _apply_toolbar_labels(self):
+        """The text on Plate ... Fit: 'Plate (P)', 'Plate', 'P', or the icon alone. The actions keep
+        their full names (menus, tooltips); the toolbar shows the icon text."""
+        if not hasattr(self, "toolbar_view_buttons"):
+            return
+        style = getattr(self, "_toolbar_labels", "full")
+        names = {"plate": tr("Plate"), "check": tr("Check"), "view": tr("View"), "measure": tr("Measure"),
+                 "fit": tr("Fit")}
+        acts = {"plate": self.act_bed, "check": self.act_check, "view": self.act_view,
+                "measure": self.act_measure, "fit": self.act_fit}
+        for kid, b in self.toolbar_view_buttons.items():
+            a = acts[kid]
+            a.setIconText(tp.button_label(style, names[kid], a.text(), self._k(kid)))
+            icon_only = style == "icon"
+            b.setToolButtonStyle(Qt.ToolButtonIconOnly if icon_only else Qt.ToolButtonTextBesideIcon)
+            b.setIconSize(QSize(22, 22) if icon_only else TEXT_ICON)
+            if b.property("iconOnly") != icon_only:
+                b.setProperty("iconOnly", icon_only)
+                b.style().unpolish(b)
+                b.style().polish(b)
+        for kid, m in getattr(self, "menu_mirrors", {}).items():
+            key = self._k(kid)
+            m.setText(names[kid] + (f"\t{key}" if key else ""))
+        self.theme_menu.setTitle(tr("Theme"))
+        self.act_customize_toolbar.setText(tr("Customize toolbar…"))
+
+    def _update_join_positions(self):
+        """The joined group: every visible view button (Iso, Top, Front and Right too while the cube
+        is off) gets its place in the group, so only the ends are rounded."""
+        if not hasattr(self, "toolbar_view_buttons"):
+            return
+        tb = self.toolbar
+        join = getattr(self, "_toolbar_joined", False)
+        group = [a for a, _, v in self.view_actions if v is not None] + [self.act_bed]
+        buttons = [tb.widgetForAction(a) for a in group]
+        buttons += [self.check_btn, self.view_btn, self.measure_btn, tb.widgetForAction(self.act_fit)]
+        slots = {self.check_btn: self.toolbar_slots.get("check"), self.view_btn: self.toolbar_slots.get("view"),
+                 self.measure_btn: self.toolbar_slots.get("measure")}
+        def shown(b):
+            slot = slots.get(b)
+            if slot is not None:
+                return slot.isVisible()
+            act = next((a for a in group + [self.act_fit] if tb.widgetForAction(a) is b), None)
+            return act is None or act.isVisible()
+        visible = [b for b in buttons if shown(b)]
+        pos = tp.join_positions(list(range(len(visible)))) if join else {}
+        changed = tb.property("joinedGroup") != join
+        if changed:
+            tb.setProperty("joinedGroup", join)
+        for b in buttons:
+            where = pos.get(visible.index(b), "") if (join and b in visible) else ""
+            if b.property("joinPos") != where or changed:
+                b.setProperty("joinPos", where)
+                b.style().unpolish(b)
+                b.style().polish(b)
+        if changed:
+            tb.style().unpolish(tb)
+            tb.style().polish(tb)
+            for b in tb.findChildren(QToolButton):
+                b.style().unpolish(b)
+                b.style().polish(b)
+            tb.updateGeometry()
 
     def _update_toolbar_icons(self):
-        """Draw the toolbar icons in the current theme's colours (again after a theme switch)."""
+        """Draw the toolbar icons in the current theme's colours (again after a theme switch).
+        The toolbar buttons get a hover picture too (hover=True): under the mouse the tile fills
+        with the theme's primary colour, like the view cube. The slicer button's icon is set in
+        _update_slicer_button: its tile turns white on hover, as the button itself is that colour."""
         if not hasattr(self, "theme_btn"):
             return
-        self.menu_btn.setIcon(theme.tool_icon("menu"))
-        self.act_home.setIcon(theme.tool_icon("home"))
-        self.act_open.setIcon(theme.tool_icon("open"))
-        # Screenshot and theme are drawn in the primary colour (orange tiles in the Ember themes).
-        self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True))
-        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons(), gap=True))
-        self.theme_btn.setIcon(theme.tool_icon("theme", warm=True))
+        self.menu_btn.setIcon(theme.tool_icon("menu", hover=True))
+        self.act_home.setIcon(theme.tool_icon("home", hover=True))
+        self.act_open.setIcon(theme.tool_icon("open", hover=True))
+        # Screenshot, theme and Settings are drawn in the primary colour (orange tiles in the Ember
+        # themes), so the three on the right match.
+        self.act_screenshot.setIcon(theme.tool_icon("screenshot", warm=True, hover=True))
+        self.act_export_stl.setIcon(theme.tool_icon("export", on_accent=theme.filled_view_buttons(), gap=True, hover=True))
+        self.theme_btn.setIcon(theme.tool_icon("theme", warm=True, hover=True))
         self.recent_menu.setIcon(theme.tool_icon("recent"))
-        self.act_settings.setIcon(theme.tool_icon("settings"))
+        self.act_settings.setIcon(theme.tool_icon("settings", warm=True, hover=True))
         self.act_updates.setIcon(theme.tool_icon("updates"))
         self.act_about.setIcon(theme.tool_icon("about"))
         self.act_whats_new.setIcon(theme.tool_icon("whats_new"))
         # Plate, View and Measure; the buttons of the View and Measure sections.
         filled = theme.filled_view_buttons()
-        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled, gap=True))
-        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled, gap=True))
-        self.act_check.setIcon(theme.tool_icon("check", on_accent=filled, gap=True))
-        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled, gap=True))
-        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled, gap=True))
+        gap = not self._icon_only()           # icons beside text keep their gap (theme.ICON_GAP)
+        self.act_bed.setIcon(theme.tool_icon("plate", on_accent=filled, gap=gap, hover=True))
+        self.act_view.setIcon(theme.tool_icon("view", on_accent=filled, gap=gap, hover=True))
+        self.act_check.setIcon(theme.tool_icon("check", on_accent=filled, gap=gap, hover=True))
+        self.act_fit.setIcon(theme.tool_icon("fit", on_accent=filled, gap=gap, hover=True))
+        self.act_measure.setIcon(theme.tool_icon("measure", on_accent=filled, gap=gap, hover=True))
         for kind, a in self.measure_actions.items():
             a.setIcon(theme.tool_icon(kind, gap=True))
         for a, kind in ((self.act_wireframe, "wireframe"), (self.act_xray, "xray"), (self.act_clip, "clip_top"),
                         (self.act_clip_face, "clip_face"), (self.act_reset_view, "reset")):
             a.setIcon(theme.tool_icon(kind, gap=True))
+        for kid, m in getattr(self, "menu_mirrors", {}).items():
+            m.setIcon(theme.tool_icon(kid))
+        self.theme_menu.setIcon(theme.tool_icon("theme", warm=True))
+        self.act_customize_toolbar.setIcon(theme.tool_icon("toolbar"))
+        # The slicer button's hover picture is in the theme's colour too.
+        if hasattr(self, "slicer_btn") and hasattr(self, "current_kind") and hasattr(self, "showing_embedded"):
+            self._update_slicer_button()
 
     def _build_preview_page(self) -> QWidget:
         page = QWidget()
@@ -1824,6 +1958,7 @@ class MainWindow(QMainWindow):
         self._update_slicer_button()
         self._update_layer_label()
         self._update_side_min_width()
+        self._apply_toolbar_labels()        # the view buttons' labels name the keys in this language
 
     def changeEvent(self, e):
         if e.type() in (QEvent.LanguageChange, QEvent.LayoutDirectionChange):
@@ -2972,6 +3107,7 @@ class MainWindow(QMainWindow):
         for act, _, view in self.view_actions:
             if view in self.CUBE_VIEWS:
                 act.setVisible(not cube_on)
+        self._update_join_positions()
 
     # ============================================================ actions
     def set_view(self, view: Optional[str], animate: bool = False):
@@ -3600,7 +3736,8 @@ class MainWindow(QMainWindow):
     def _update_slicer_button(self):
         freecad = self.current_kind == "freecad" and not self.showing_embedded
         # A 3D printer for slicers; the FreeCAD cube when the button opens FreeCAD.
-        self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True))
+        self.slicer_btn.setIcon(theme.tool_icon("freecad" if freecad else "slicer", on_accent=True, gap=True,
+                                                hover=True, on_primary=True))
         if freecad:
             self.slicer_btn.setText(tr("Open in FreeCAD"))
             self.slicer_btn.setToolTip(tr("Open this file in FreeCAD") + ". "
@@ -3915,6 +4052,7 @@ class MainWindow(QMainWindow):
     def _settings_applied(self):
         """Settings saved (OK or Apply): show what changed."""
         self._update_slicer_button()
+        self.apply_toolbar_layout()
         # FreeCAD just chosen: show the open FreeCAD file in 3D now.
         freecad_before = getattr(self, "_freecad_before", self.settings.get("freecad_path", ""))
         self._freecad_before = self.settings.get("freecad_path", "")

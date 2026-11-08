@@ -113,7 +113,8 @@ Draadmodel en röntgen blijven aan als je het volgende model opent; de sneden en
   kleur te geven; rechtsklik zet de kleur uit het bestand terug. Niet opgeslagen.
 - **Getallen op het raster**: **Instellingen → Weergave → Schaalgetallen op het raster tonen**
   schrijft millimeters langs de printplaat, zoveel als passen bij de zoom waarmee je kijkt.
-- **Instellingen** is ook het tandwielpictogram rechts in de werkbalk, naast het themapictogram.
+- **Instellingen** is ook het tandwielpictogram rechts in de werkbalk, naast het themapictogram
+  (tenzij je het verbergt: zie [Knoppen op de werkbalk](#toolbar-buttons)).
 
 Meer, met afbeeldingen: [In je modellen kijken](inspect.md). Gemaakt door [@covrig](https://github.com/covrig).
 
@@ -246,6 +247,28 @@ De 3D-weergave blijft altijd dicht. Het werkt na een herstart: als je op OK klik
 zelf, toont een effen kleur als het venster niet actief is, en zet het uit als *Transparantie-effecten* uit
 staan in Windows Instellingen of in de batterijbesparing. Windows 10 en andere systemen houden het gewone
 uiterlijk.
+
+## Knoppen op de werkbalk {#toolbar-buttons}
+
+**Instellingen → Werkbalk** (ook **☰ → Werkbalk aanpassen…**, of klik met rechts op de werkbalk)
+kiest welke knoppen de werkbalk toont, voor een rustigere werkbalk als je niet alles gebruikt:
+
+- **Kunnen verborgen worden:** Start, Openen, Controleren, Weergave, Meten, Schermafbeelding, Thema
+  en Instellingen.
+- **Altijd zichtbaar:** het **☰**-menu, Openen in slicer, STL exporteren (3MF- en CAD-bestanden),
+  Plaat en Passend.
+- **De volgorde verandert nooit.** Een verborgen knop verdwijnt alleen van de werkbalk; Plaat blijft
+  de eerste van de weergaveknoppen en Passend de laatste.
+- **Er raakt niets kwijt.** Een verborgen knop houdt zijn toets (`C`, `V`, `M`, `Ctrl+W`, …), en het
+  **☰**-menu heeft alles, ook Controleren, Weergave, Meten en het themamenu.
+
+Onder **Uiterlijk** kies je hoe de weergaveknoppen (Plaat, Controleren, Weergave, Meten en Passend)
+eruitzien: **pictogram, naam en toets** (*Plaat (P)*, de standaard), **pictogram en naam** (*Plaat*),
+**pictogram en toets** (*P*) of **alleen pictogram** (de tooltip noemt de naam). **Weergaveknoppen
+samenvoegen tot één groep** tekent ze als één aaneengesloten balk.
+
+Elke wijziging is meteen te zien in het venster en in de afbeelding boven aan de pagina: **OK** houdt
+hem, **Annuleren** gaat terug. **Standaardwaarden herstellen** toont alle knoppen weer.
 
 ## Updates {#updates}
 
