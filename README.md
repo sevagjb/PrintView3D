@@ -57,6 +57,7 @@ without exporting an STL first.
 | **One window** | A file you double-click while PrintView3D is open is shown in that window, instead of opening another one. Prefer a window per file? **Settings → Files → Open each file in a new window**. |
 | **Look inside** | **View** → wireframe, X-ray (see-through), clip from the top with a height slider and a cut that faces you as you turn the view, on their own or both at once, with the cut-away part as a see-through ghost, to check meshes, hidden parts and hollow walls. **Measure** distances, angles and circles. [Details](#view-wireframe-x-ray-and-clip). |
 | **Check before printing** | **Check** → overhangs, thin walls, holes, tangled (non-manifold) edges, inside-out faces and loose parts, coloured on the model with a count for each. [Details](#check-before-printing). |
+| **Start page** | Your recent files, with a preview card for the one under the mouse: the picture saved in a 3MF, G-code (Creality Print too) or FreeCAD file, or the maker's photo in a ZIP, with its name and folder. Can be switched off. [Details](#using-printview3d). |
 | **Your toolbar** | Hide the buttons you don't use, shorten the view buttons to a name, a key or an icon, and join them into one group (**Settings → Toolbar**). Hidden buttons keep their keys and stay in the **☰** menu. [Details](#toolbar-buttons). |
 | **Comfortable to use** | Slicer-style camera, drag & drop, recent files, open a whole folder, screenshots, millimetres or inches, and keyboard shortcuts you can change. |
 
@@ -255,6 +256,8 @@ A ZIP shows the maker's photo or render inside it, or else the picture of its fi
 The card stays in the same place for every file, so you can run down the list and compare. Don't
 want it? Untick **Settings → Viewer → Start page → Show a preview of recent files when the mouse is
 over them**; then the files are not read until you open them.
+
+![The start page: recent files, with the preview card of the one under the mouse](docs/screenshot-start-page.png)
 
 **A whole folder:** **☰ → Open folder…** lists the 3D files of a folder in the side panel; step
 through them with `↑` / `↓` or a click.

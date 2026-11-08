@@ -15,6 +15,8 @@ zodat je de lijst kunt aflopen en vergelijken. Liever niet? Vink **Instellingen 
 Startpagina → Een voorbeeld van recente bestanden tonen als de muis erboven is** uit; dan worden de
 bestanden pas gelezen als je ze opent.
 
+![De startpagina: recente bestanden, met het voorbeeldkaartje van het bestand onder de muis](screenshot-start-page.png)
+
 **Een hele map:** **☰ → Map openen…** zet de 3D-bestanden van een map in het zijpaneel; ga erdoor met
 `↑` / `↓` of een klik.
 
@@ -231,6 +233,8 @@ volgende. Dezelfde keuze staat in **Instellingen → Uiterlijk → Thema**.
 
 Het wisselen gaat meteen; de 3D-achtergrond, de plaat en het raster veranderen mee, terwijl de kleuren van de
 G-code en het model gelijk blijven, zodat ze altijd overeenkomen met je slicer.
+
+![Instellingen → Uiterlijk, met een kaart met afbeelding voor elke themastijl](screenshot-theme-picker.png)
 
 ![Het themamenu in de werkbalk](screenshot-theme-menu.png)
 

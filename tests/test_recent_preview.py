@@ -177,8 +177,10 @@ def test_the_preview_card_can_be_switched_off(app, tmp_path):
         app.processEvents()
         w._recent_hover(str(g))
         assert w.recent_preview.isVisible()
-        w.open_settings("viewer")                                       # as from the menu
-        d = w.findChild(SettingsDialog)
+        # Opened directly with a stand-in GPU name, like the other Settings tests: asking the
+        # graphics driver (open_settings does) crashes on the headless macOS CI machines.
+        d = SettingsDialog(s, w, {}, page="viewer")
+        d.accepted.connect(w._settings_applied)                       # as open_settings connects OK
         titles = [b.title() for b in d.pages.currentWidget().widget().findChildren(type(d.findChild(
             type(d.toolbar_joined_cb.parentWidget()))))]
         assert titles.index("Build plate") < titles.index("Measure, View and Check") \
