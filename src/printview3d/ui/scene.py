@@ -311,11 +311,6 @@ class Scene:
         self._draw_plate_axes()
 
     # --------------------------------------------------------------- X/Y/Z on the plate
-    def set_plate_axes(self, on: bool):
-        """Settings -> Viewer: arrows for X, Y and Z on the plate, next to the model."""
-        self.show_plate_axes = bool(on)
-        self._draw_plate_axes()
-
     def plate_axes_frame(self) -> Optional[tuple]:
         """(origin, length) of the arrows: at the model's back-right corner, a small gap outside
         its footprint so they never touch it, pointing away from it. The usual view looks from the

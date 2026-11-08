@@ -372,11 +372,6 @@ def program_file_filter() -> str:
     return "Applications (*.app);;All files (*)"
 
 
-# Backwards compatible helper (used by older code/tests)
-def find_creality_print(saved_path: str = "") -> Optional[str]:
-    return find_slicer("creality_print", saved_path)
-
-
 # --------------------------------------------------------------------------
 # Settings helpers
 # --------------------------------------------------------------------------

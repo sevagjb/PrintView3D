@@ -40,10 +40,6 @@ def to_display(mm: float) -> float:
     return mm / MM_PER_IN if imperial() else mm
 
 
-def from_display(value: float) -> float:
-    return value * MM_PER_IN if imperial() else value
-
-
 def decimals(mm_decimals: int) -> int:
     """Decimals for a length shown with `mm_decimals` in millimetres: an inch is 25.4 mm, so
     inches need two more (at most three) to say as much: 0.1 mm ~ 0.004 in."""
