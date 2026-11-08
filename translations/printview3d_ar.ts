@@ -2200,7 +2200,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Measure, View and Check</source>
-        <translation type="unfinished">القياس والعرض والفحص</translation>
+        <translation>القياس والعرض والفحص</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2333,17 +2333,17 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Start page</source>
-        <translation type="unfinished">صفحة البداية</translation>
+        <translation>صفحة البداية</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show a preview of recent files when the mouse is over them</source>
-        <translation type="unfinished">عرض معاينة للملفات الأخيرة عند مرور الماوس فوقها</translation>
+        <translation>عرض معاينة للملفات الأخيرة عند مرور الماوس فوقها</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
-        <translation type="unfinished">عند الإيقاف: لا تظهر بطاقة المعاينة، ولا تُقرأ الملفات حتى تفتحها (مفيد مع محرك شبكة بطيء).</translation>
+        <translation>عند الإيقاف: لا تظهر بطاقة المعاينة، ولا تُقرأ الملفات حتى تفتحها (مفيد مع محرك شبكة بطيء).</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>

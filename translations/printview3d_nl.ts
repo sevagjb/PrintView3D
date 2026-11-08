@@ -2200,7 +2200,7 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Measure, View and Check</source>
-        <translation type="unfinished">Meten, weergave en controleren</translation>
+        <translation>Meten, weergave en controleren</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2333,17 +2333,17 @@
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Start page</source>
-        <translation type="unfinished">Startpagina</translation>
+        <translation>Startpagina</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Show a preview of recent files when the mouse is over them</source>
-        <translation type="unfinished">Een voorbeeld van recente bestanden tonen als de muis erboven is</translation>
+        <translation>Een voorbeeld van recente bestanden tonen als de muis erboven is</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
-        <translation type="unfinished">Uit: geen voorbeeldkaart, en de bestanden worden pas gelezen als je ze opent (handig bij een trage netwerkschijf).</translation>
+        <translation>Uit: geen voorbeeldkaart, en de bestanden worden pas gelezen als je ze opent (handig bij een trage netwerkschijf).</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
