@@ -72,27 +72,31 @@ fi
 echo "[5/5] Packing the AppImage ..."
 ARCH="$(uname -m)"
 TOOL="build/appimagetool-$ARCH.AppImage"
-# appimagetool: a fixed version (the same tool on every build), retried a few times; if GitHub can't
-# deliver that file, the "continuous" build instead. (November 2026: GitHub answered 504 for the
-# continuous and 1.9.1 files for hours, while 1.9.0 downloaded fine.)
+# appimagetool: a fixed version (the same tool on every build). GitHub's release downloads sometimes
+# answer "504 Gateway Timeout" for minutes at a time (November 2026, the 0.30.0 release), so this
+# tries for a few minutes, switching between the fixed version and the "continuous" build. In CI
+# the tool is also kept in GitHub's cache (build.yml), so most builds don't download it at all.
 APPIMAGETOOL_VERSION="${APPIMAGETOOL_VERSION:-1.9.0}"
 if [[ ! -x "$TOOL" ]]; then
     mkdir -p build
     BASE="https://github.com/AppImage/appimagetool/releases/download"
     ok=0
-    for tag in "$APPIMAGETOOL_VERSION" continuous; do
-        if curl -fL --retry 4 --retry-delay 10 --retry-all-errors -o "$TOOL.part" \
-                "$BASE/$tag/appimagetool-$ARCH.AppImage"; then
-            mv "$TOOL.part" "$TOOL"
-            ok=1
-            echo "appimagetool: $tag"
-            break
-        fi
-        echo "appimagetool $tag could not be downloaded, trying the next one ..."
+    for round in 1 2 3 4; do
+        for tag in "$APPIMAGETOOL_VERSION" continuous; do
+            if curl -fsSL --retry 3 --retry-delay 15 --retry-all-errors -o "$TOOL.part" \
+                    "$BASE/$tag/appimagetool-$ARCH.AppImage"; then
+                mv "$TOOL.part" "$TOOL"
+                ok=1
+                echo "appimagetool: $tag"
+                break 2
+            fi
+            echo "appimagetool $tag: not available right now (round $round of 4)"
+        done
+        sleep 20
     done
     rm -f "$TOOL.part"
     if [[ $ok != 1 ]]; then
-        echo "Could not download appimagetool (GitHub). Try again later." >&2
+        echo "Could not download appimagetool from GitHub. Try again later." >&2
         exit 1
     fi
     chmod +x "$TOOL"
