@@ -101,7 +101,9 @@ _META_PATTERNS: list[tuple[str, re.Pattern]] = [
     ("_bed",            re.compile(r"^\s*(?:printable_area|bed_shape)\s*=\s*(.+)$", re.I)),
 ]
 
-_THUMB_BEGIN = re.compile(r"^\s*(thumbnail|thumbnail_png|thumbnail_jpg|png|jpg|jpeg)\s+begin\s+(\d+)\s*x\s*(\d+)", re.I)
+# "thumbnail begin 300x300 1234" (PrusaSlicer, OrcaSlicer, ...); Creality Print writes the size as
+# "300*300" (png / jpg blocks for its printers' screens) or "300 300" (thumbnail block).
+_THUMB_BEGIN = re.compile(r"^\s*(thumbnail|thumbnail_png|thumbnail_jpg|png|jpg|jpeg)\s+begin\s+(\d+)\s*(?:[x*]\s*|\s+)(\d+)", re.I)
 
 
 def parse_bed_shape(value) -> Optional[tuple[float, float, float, float]]:
@@ -176,11 +178,19 @@ class GcodeData:
 # --------------------------------------------------------------------------
 # Parser
 # --------------------------------------------------------------------------
-def read_thumbnail(path: str, limit: int = 4 * 1024 * 1024) -> Optional[bytes]:
+THUMBNAIL_HEAD = 4 * 1024 * 1024       # slicers write the pictures at the top: this much is read
+
+
+def read_thumbnail(path: str, limit: int = THUMBNAIL_HEAD) -> Optional[bytes]:
     """The largest preview picture in a G-code file's header, without reading the toolpath.
     Slicers write the pictures at the top, so only the first `limit` bytes are read."""
     with open(path, "rb") as f:
-        head = f.read(limit).decode("utf-8", errors="replace")
+        return thumbnail_from_head(f.read(limit))
+
+
+def thumbnail_from_head(raw_head: bytes) -> Optional[bytes]:
+    """The largest preview picture in the first part of a G-code file (also one inside a ZIP)."""
+    head = raw_head.decode("utf-8", errors="replace")
     best: tuple[int, bytes] | None = None
     word, size, buf = None, 0, []
     for raw in head.splitlines():

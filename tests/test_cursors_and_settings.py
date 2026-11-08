@@ -213,15 +213,16 @@ def test_settings_files_page_has_the_screenshot_folder(window, app):
 
 
 # ------------------------------------------------------------ the Viewer page
-def test_viewer_page_is_build_plate_other_graphics(window):
+def test_viewer_page_is_build_plate_tools_start_page_graphics(window):
     from PySide6.QtWidgets import QGroupBox
     from printview3d.ui.settings_dialog import SettingsDialog
     w = window
     dlg = SettingsDialog(w.settings, w, {}, page="viewer")
     page = dlg.pages.widget(dlg._page_keys.index("viewer")).widget()
     boxes = [b for b in page.findChildren(QGroupBox) if b.parent() is page]
-    assert [b.title() for b in boxes] == ["Build plate", "Other", "Graphics"]
-    plate, other = boxes[0], boxes[1]
+    assert [b.title() for b in boxes] == ["Build plate", "Measure, View and Check", "Start page", "Graphics"]
+    plate, other, start = boxes[0], boxes[1], boxes[2]
+    assert start.isAncestorOf(dlg.recent_preview_cb)
     for cb in (dlg.bed_cb, dlg.plate_axes_cb, dlg.grid_labels_cb, dlg.plate_combo):
         assert plate.isAncestorOf(cb)
     for cb in (dlg.travel_cb, dlg.cube_cb, dlg.line_slider, dlg.ghost_slider, dlg.plane_slider,

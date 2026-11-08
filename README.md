@@ -251,7 +251,10 @@ G-code or ZIP.
 
 On the start page, hold the mouse over a recent file and a card in the bottom right corner shows its preview
 picture (3MF projects, G-code and FreeCAD files that have one), its name and the folder it is in.
-The card stays in the same place for every file, so you can run down the list and compare.
+A ZIP shows the maker's photo or render inside it, or else the picture of its first 3MF or G-code.
+The card stays in the same place for every file, so you can run down the list and compare. Don't
+want it? Untick **Settings → Viewer → Start page → Show a preview of recent files when the mouse is
+over them**; then the files are not read until you open them.
 
 **A whole folder:** **☰ → Open folder…** lists the 3D files of a folder in the side panel; step
 through them with `↑` / `↓` or a click.

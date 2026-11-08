@@ -9,8 +9,11 @@ verschil na een grote G-code of ZIP.
 
 Houd op de startpagina de muis boven een recent bestand en een kaartje rechtsonder toont de
 voorbeeldafbeelding (bij 3MF-projecten, G-code en FreeCAD-bestanden die er een hebben), de naam en de
-map waarin het staat. Het kaartje staat voor elk bestand op dezelfde plek, zodat je de lijst kunt
-aflopen en vergelijken.
+map waarin het staat. Een ZIP toont de foto of render van de maker die erin zit, en anders de
+afbeelding van de eerste 3MF of G-code erin. Het kaartje staat voor elk bestand op dezelfde plek,
+zodat je de lijst kunt aflopen en vergelijken. Liever niet? Vink **Instellingen → Weergave →
+Startpagina → Een voorbeeld van recente bestanden tonen als de muis erboven is** uit; dan worden de
+bestanden pas gelezen als je ze opent.
 
 **Een hele map:** **☰ → Map openen…** zet de 3D-bestanden van een map in het zijpaneel; ga erdoor met
 `↑` / `↓` of een klik.

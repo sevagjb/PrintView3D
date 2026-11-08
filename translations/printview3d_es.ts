@@ -2199,8 +2199,8 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
-        <source>Other</source>
-        <translation type="unfinished">Otros</translation>
+        <source>Measure, View and Check</source>
+        <translation type="unfinished">Medir, vista y comprobar</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2329,6 +2329,21 @@
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Off: the Check colours you pick last until PrintView3D closes.</source>
         <translation type="unfinished">Desactivado: los colores de Comprobar que elijas duran hasta que se cierre PrintView3D.</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Start page</source>
+        <translation type="unfinished">Página de inicio</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Show a preview of recent files when the mouse is over them</source>
+        <translation type="unfinished">Mostrar una vista previa de los archivos recientes al pasar el ratón</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/settings_dialog.py"></location>
+        <source>Off: no preview card, and the files are not read until you open them (handy on a slow network drive).</source>
+        <translation type="unfinished">Desactivado: sin tarjeta de vista previa, y los archivos no se leen hasta que los abres (útil en una unidad de red lenta).</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
@@ -2966,6 +2981,10 @@
         <location filename="../src/printview3d/units.py"></location>
         <source>{v} cm³</source>
         <translation type="unfinished">{v} cm³</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="vanished">Otros</translation>
     </message>
     <message>
         <source>Buttons (left to right)</source>
