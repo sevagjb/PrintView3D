@@ -359,8 +359,19 @@ class SettingsDialog(QDialog):
         # ---------------- Viewer ----------------
         # Three boxes: Build plate (the grid, its numbers and the plate), Other (the rest of the
         # 3D view: travel moves, view cube, Measure, Clip, Check) and Graphics.
+        # Build plate has two columns, so the box stays short and has room for more options:
+        #   left: the plate itself (grid on/off, axes, which plate, its size)
+        #   right: the grid's numbers and lines (numbers on/off, their spacing, the two line spacings)
+        # A window too narrow for both (a small screen, long words in some languages) shows the
+        # right column under the left one instead of cutting it off (_TwoColumns).
         g3 = QGroupBox(tr("Build plate"))
-        l3 = QVBoxLayout(g3)
+        plate_left, plate_right = QWidget(), QWidget()
+        ll, lr = QGridLayout(plate_left), QGridLayout(plate_right)
+        for lay in (ll, lr):
+            lay.setContentsMargins(0, 0, 0, 0)
+        ll.setColumnStretch(2, 1)                   # the left column keeps to the left
+        lr.setColumnStretch(1, 1)                   # spare width goes before the right dropdowns,
+        right = Qt.AlignRight | Qt.AlignVCenter     # which sit at the box's edge (left in Arabic)
         # The settings of the toolbar's Measure, View and Check (named after those buttons).
         g_other = QGroupBox(tr("Measure, View and Check"))
         l_other = QVBoxLayout(g_other)
@@ -372,23 +383,21 @@ class SettingsDialog(QDialog):
         self.cube_cb.setChecked(bool(settings.get("show_view_cube", True)))
         l_other.addWidget(self.travel_cb)
         l_other.addWidget(self.cube_cb)
-        l3.addWidget(self.bed_cb)
+        ll.addWidget(self.bed_cb, 0, 0, 1, 3)
         # X/Y/Z arrows on the plate, beside the model (off by default).
         self.plate_axes_cb = QCheckBox(tr("Also show the X, Y and Z axes on the build plate"))
         self.plate_axes_cb.setChecked(bool(settings.get("show_plate_axes", False)))
         self.plate_axes_cb.setToolTip(tr("Small arrows pointing along X, Y and Z, beside the back-right corner of the "
                                          "model, in addition to the marker in the corner of the view."))
-        l3.addWidget(self.plate_axes_cb)
+        ll.addWidget(self.plate_axes_cb, 1, 0, 1, 3)
         # Numbers in millimetres along the plate's major grid lines (grid_labels.py); off by default.
         self.grid_labels_cb = QCheckBox(tr("Show scale numbers on the grid"))
         self.grid_labels_cb.setChecked(bool(settings.get("show_grid_labels", False)))
         self.grid_labels_cb.setToolTip(tr("Small numbers along the edges of the build plate, on its major "
                                           "grid lines. Hidden while you look from under the plate."))
-        l3.addWidget(self.grid_labels_cb)
+        lr.addWidget(self.grid_labels_cb, 0, 0, 1, 2)
         # How far apart the numbers are: automatic (the grid's major lines, 50 mm on a normal plate)
         # or a spacing of your own, for example 10 mm.
-        # In the same form as Build plate below it, so the two dropdowns line up.
-        plate_form = QFormLayout()
         self.grid_step_row = QWidget()
         step_layout = QHBoxLayout(self.grid_step_row)
         step_layout.setContentsMargins(0, 0, 0, 0)
@@ -405,8 +414,8 @@ class SettingsDialog(QDialog):
                                 for u in units.UNITS}
         self._spacing_unit = settings.get("units", "mm") if settings.get("units", "mm") in units.UNITS else "mm"
         step_layout.addWidget(self.grid_step_combo)
-        step_layout.addStretch(1)
-        plate_form.addRow(self.grid_step_label, self.grid_step_row)
+        lr.addWidget(self.grid_step_label, 1, 0)
+        lr.addWidget(self.grid_step_row, 1, 1, right)
         for wdg in (self.grid_step_label, self.grid_step_row):
             wdg.setEnabled(self.grid_labels_cb.isChecked())
             self.grid_labels_cb.toggled.connect(wdg.setEnabled)
@@ -417,8 +426,10 @@ class SettingsDialog(QDialog):
         kmin.setObjectName("formKey")
         kmaj = QLabel(tr("Main grid lines every"))
         kmaj.setObjectName("formKey")
-        plate_form.addRow(kmin, self.grid_minor_combo)
-        plate_form.addRow(kmaj, self.grid_major_combo)
+        lr.addWidget(kmin, 2, 0)
+        lr.addWidget(self.grid_minor_combo, 2, 1, right)
+        lr.addWidget(kmaj, 3, 0)
+        lr.addWidget(self.grid_major_combo, 3, 1, right)
         self._spacing_combos = {"grid_labels_step": self.grid_step_combo, "grid_minor": self.grid_minor_combo,
                                 "grid_major": self.grid_major_combo}
         self._fill_spacing_combos()
@@ -434,7 +445,8 @@ class SettingsDialog(QDialog):
         self.plate_combo.setCurrentIndex(max(0, self.plate_combo.findData(settings.get("plate_mode", "printer"))))
         kp = QLabel(tr("Plate"))                    # in the Build plate box: "Plate" is enough
         kp.setObjectName("formKey")
-        plate_form.addRow(kp, self.plate_combo)
+        ll.addWidget(kp, 2, 0)
+        ll.addWidget(self.plate_combo, 2, 1)
         size = settings.get("plate_size", [300, 300])
         self.plate_size_row = QWidget()
         size_layout = QHBoxLayout(self.plate_size_row)
@@ -447,17 +459,16 @@ class SettingsDialog(QDialog):
                 spin.set_mm(float(value))
             except (TypeError, ValueError):
                 spin.set_mm(300)
-        size_layout.addWidget(self.plate_w_spin)
+        size_layout.addWidget(self.plate_w_spin, 1)     # the two fields share the row's width,
         size_layout.addWidget(QLabel("×"))
-        size_layout.addWidget(self.plate_d_spin)
-        size_layout.addStretch(1)
+        size_layout.addWidget(self.plate_d_spin, 1)     # which is the Plate dropdown's (see below)
         ks = QLabel(tr("Plate size"))
         ks.setObjectName("formKey")
-        plate_form.addRow(ks, self.plate_size_row)
+        ll.addWidget(ks, 3, 0)
+        ll.addWidget(self.plate_size_row, 3, 1)
         self.plate_combo.currentIndexChanged.connect(
             lambda _=0: self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom"))
         self.plate_size_row.setEnabled(self.plate_combo.currentData() == "custom")
-        l3.addLayout(plate_form)
         other_form = QFormLayout()
         # View -> Clip: how strongly the cut-away part (ghost and outline) and the cutting plane
         # are drawn, each with its own slider (#66). They change the 3D view while you drag;
@@ -500,10 +511,12 @@ class SettingsDialog(QDialog):
         self.check_colors_cb.setChecked(bool(settings.get("check_keep_colors", False)))
         self.check_colors_cb.setToolTip(tr("Off: the Check colours you pick last until PrintView3D closes."))
         l_other.addWidget(self.check_colors_cb)
-        # The labels of both boxes' rows are as wide as the widest, so their dropdowns and sliders
-        # start in one column, as when they were one list.
-        keys_col = [plate_form.labelForField(plate_form.itemAt(i, QFormLayout.FieldRole).widget())
-                    for i in range(plate_form.rowCount()) if plate_form.itemAt(i, QFormLayout.FieldRole)]
+        # The labels of Build plate's left column and of this box's rows are as wide as the widest,
+        # so the Plate dropdown, the plate size and the sliders start in one column.
+        if other_form.horizontalSpacing() >= 0:
+            ll.setHorizontalSpacing(other_form.horizontalSpacing())
+            lr.setHorizontalSpacing(other_form.horizontalSpacing())
+        keys_col = [kp, ks]
         keys_col += [other_form.labelForField(other_form.itemAt(i, QFormLayout.FieldRole).widget())
                      for i in range(other_form.rowCount()) if other_form.itemAt(i, QFormLayout.FieldRole)]
         keys_col = [k for k in keys_col if k is not None]
@@ -511,6 +524,24 @@ class SettingsDialog(QDialog):
             width = max(k.sizeHint().width() for k in keys_col)
             for k in keys_col:
                 k.setMinimumWidth(width)
+        left_keys_width = kp.minimumWidth()
+        right_keys = (self.grid_step_label, kmin, kmaj)
+        right_fields = (self.grid_step_row, self.grid_minor_combo, self.grid_major_combo)
+
+        def plate_columns_changed(stacked: bool):
+            """One under the other: the right column's rows look like the left one's (their names as
+            wide, their dropdowns starting where Plate's does). Side by side: dropdowns at the edge."""
+            both = max([left_keys_width] + [k.sizeHint().width() for k in right_keys])
+            for k in (kp, ks):
+                k.setMinimumWidth(both if stacked else left_keys_width)
+            for k in right_keys:
+                k.setMinimumWidth(both if stacked else 0)
+            for f in right_fields:
+                lr.setAlignment(f, (Qt.AlignLeft if stacked else Qt.AlignRight) | Qt.AlignVCenter)
+
+        self.plate_columns = _TwoColumns(plate_left, plate_right, on_change=plate_columns_changed)
+        l3 = QVBoxLayout(g3)
+        l3.addWidget(self.plate_columns)
 
         # ---------------- Start page ----------------
         g_start = QGroupBox(tr("Start page"))
@@ -580,19 +611,26 @@ class SettingsDialog(QDialog):
             self.settings.set("settings_page", self._page_keys[row])
 
     def _even_combo_widths(self):
-        """The dropdowns of the Viewer page are all as wide as the widest needs to be, so they line
-        up (in every language and unit)."""
+        """The dropdowns of the Build plate box line up in every language and unit: the three of
+        the right column are as wide as the widest of them needs to be, and in the left column the
+        Plate dropdown and the plate size under it are equally wide."""
         combos = [c for c in (getattr(self, "grid_step_combo", None), getattr(self, "grid_minor_combo", None),
-                              getattr(self, "grid_major_combo", None), getattr(self, "plate_combo", None))
-                  if c is not None]
-        if not combos:
-            return
+                              getattr(self, "grid_major_combo", None)) if c is not None]
         for c in combos:
             c.setMinimumWidth(0)
             c.setMaximumWidth(16777215)
-        width = max(c.sizeHint().width() for c in combos)
-        for c in combos:
-            c.setFixedWidth(width)
+        if combos:
+            width = max([150] + [c.sizeHint().width() for c in combos])
+            for c in combos:
+                c.setFixedWidth(width)
+        plate, size = getattr(self, "plate_combo", None), getattr(self, "plate_size_row", None)
+        if plate is not None and size is not None:
+            for w in (plate, size):
+                w.setMinimumWidth(0)
+                w.setMaximumWidth(16777215)
+            width = max(plate.sizeHint().width(), size.sizeHint().width())
+            plate.setFixedWidth(width)
+            size.setFixedWidth(width)
 
     # ---------------------------------------------------------------- pages
     def _add_page(self, key: str, title: str, widgets: list, keep_titles: bool = False):
@@ -627,14 +665,69 @@ class SettingsDialog(QDialog):
         The long list of keys doesn't count: it scrolls instead."""
         screen = (self.parent().screen() if self.parent() is not None else QApplication.primaryScreen())
         avail = screen.availableGeometry() if screen is not None else None
-        tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count())
-                      if self._page_keys[i] not in ("about", "keys"))
         buttons = self.findChild(QDialogButtonBox).sizeHint().height()
         m = self.layout().contentsMargins()
-        w, h = 860, max(580, tallest + buttons + m.top() + m.bottom() + 24)
+        # Wide enough for the widest page too (Viewer, with its two columns, in long languages).
+        widest = max(self.pages.widget(i).widget().sizeHint().width() for i in range(self.pages.count())
+                     if self._page_keys[i] not in ("about", "keys"))
+        beside = self.nav.width() + m.left() + m.right() + 32      # the list of pages and the margins
+        w = max(860, widest + beside)
         if avail is not None:
-            w, h = min(w, int(avail.width() * 0.9)), min(h, int(avail.height() * 0.9))
+            w = min(w, int(avail.width() * 0.9))
+        # As tall as the tallest page is at that width: a page whose columns don't fit side by side
+        # (Viewer on a narrow screen) puts them under each other and is taller than its size hint.
+        page_width = max(200, w - beside)
+
+        def page_height(page) -> int:
+            page.layout().activate()
+            return max(page.sizeHint().height(), page.layout().totalHeightForWidth(page_width))
+
+        tallest = max(page_height(self.pages.widget(i).widget()) for i in range(self.pages.count())
+                      if self._page_keys[i] not in ("about", "keys"))
+        h = max(580, tallest + buttons + m.top() + m.bottom() + 24)
+        if avail is not None:
+            h = min(h, int(avail.height() * 0.9))
         self.resize(w, h)
+
+    def showEvent(self, e):
+        super().showEvent(e)
+        if not getattr(self, "_fitted", False):
+            self._fitted = True
+            self._fit_to_pages()
+
+    def _fit_to_pages(self):
+        """Once, when Settings opens: _initial_size works from sizes estimated before the theme's
+        fonts and paddings are applied, and can come out a little small. Now that the real sizes are
+        known, widen the window until Viewer's two columns fit side by side and make it tall enough
+        for the tallest page, as far as the screen allows. Done before the window is drawn."""
+        from PySide6.QtCore import QEvent
+        screen = self.screen() or QApplication.primaryScreen()
+        if screen is None:
+            return
+        avail = screen.availableGeometry()
+        max_w, max_h = int(avail.width() * 0.9), int(avail.height() * 0.9)
+        cols = getattr(self, "plate_columns", None)
+        for _ in range(4):
+            QApplication.sendPostedEvents(None, QEvent.LayoutRequest)       # lay the pages out now
+            w, h = self.width(), self.height()
+            if cols is not None and cols.width() > 0 and cols.width() < cols.needed_width():
+                w = min(max_w, w + cols.needed_width() - cols.width() + 2)
+            if w == self.width():                    # the width is settled: now the height
+                view = self.pages.currentWidget().viewport()
+                need = 0
+                for i in range(self.pages.count()):
+                    if self._page_keys[i] in ("about", "keys"):
+                        continue
+                    page = self.pages.widget(i).widget()
+                    need = max(need, page.layout().totalHeightForWidth(view.width()),
+                               page.layout().totalMinimumSize().height())
+                if need > view.height():
+                    h = min(max_h, h + need - view.height())
+            if (w, h) == (self.width(), self.height()):
+                break
+            dx, dy = (w - self.width()) // 2, (h - self.height()) // 2
+            self.resize(w, h)
+            self.move(max(avail.left(), self.x() - dx), max(avail.top(), self.y() - dy))    # stays centred
 
     def show_page(self, key: str):
         if key in self._page_keys:
@@ -1416,6 +1509,84 @@ def mouse_rows() -> list[tuple[list[str], str]]:
         ([tr("Click the view cube")], tr("Jump to the view of that face")),
         ([tr("Drag the view cube")], tr("Rotate (its ring: turn without tilting)")),
     ]
+
+
+class _TwoColumns(QWidget):
+    """Two groups of settings side by side while the page is wide enough for both, otherwise one
+    under the other, so nothing is ever cut off at the window's edge. on_change(stacked) is told
+    which of the two it is.
+
+    It places the two itself and tells the page how tall it is at a given width (heightForWidth),
+    so Settings can open tall enough for the arrangement it will really have: on a screen too
+    narrow for two columns that is the taller one."""
+
+    def __init__(self, left: QWidget, right: QWidget, gap: int = 24, on_change=None, parent=None):
+        super().__init__(parent)
+        self._left, self._right, self._gap, self._on_change = left, right, gap, on_change
+        left.setParent(self)
+        right.setParent(self)
+        self._stacked = None
+        policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+        policy.setHeightForWidth(True)
+        self.setSizePolicy(policy)
+        self._set_stacked(False)
+
+    @property
+    def stacked(self) -> bool:
+        return bool(self._stacked)
+
+    def needed_width(self) -> int:
+        """The width both columns need side by side."""
+        return self._left.sizeHint().width() + self._gap + self._right.sizeHint().width()
+
+    def _row_gap(self) -> int:
+        lay = self._left.layout()
+        gap = lay.verticalSpacing() if lay is not None else -1
+        return gap if gap >= 0 else 6
+
+    def _set_stacked(self, stacked: bool):
+        if stacked == self._stacked:
+            return
+        self._stacked = stacked
+        if self._on_change is not None:
+            self._on_change(stacked)
+        self.updateGeometry()
+
+    def hasHeightForWidth(self) -> bool:
+        return True
+
+    def heightForWidth(self, width: int) -> int:
+        hl, hr = self._left.sizeHint().height(), self._right.sizeHint().height()
+        return hl + self._row_gap() + hr if width < self.needed_width() else max(hl, hr)
+
+    def sizeHint(self):
+        return QSize(self.needed_width(), max(self._left.sizeHint().height(), self._right.sizeHint().height()))
+
+    def minimumSizeHint(self):
+        # as narrow as the wider of the two: then they are one under the other
+        width = max(self._left.minimumSizeHint().width(), self._right.minimumSizeHint().width())
+        return QSize(width, self.heightForWidth(max(width, self.width())))
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        self._place()
+
+    def _place(self):
+        w, h = self.width(), self.height()
+        self._set_stacked(w < self.needed_width())
+        hl, hr = self._left.sizeHint().height(), self._right.sizeHint().height()
+        if self._stacked:
+            self._left.setGeometry(0, 0, w, hl)
+            self._right.setGeometry(0, hl + self._row_gap(), w, hr)
+            return
+        wl = self._left.sizeHint().width()
+        wr = max(0, w - wl - self._gap)
+        if self.layoutDirection() == Qt.RightToLeft:      # mirrored: the first column on the right
+            self._left.setGeometry(w - wl, 0, wl, h)
+            self._right.setGeometry(0, 0, wr, h)
+        else:
+            self._left.setGeometry(0, 0, wl, h)
+            self._right.setGeometry(wl + self._gap, 0, wr, h)
 
 
 class Segmented(QFrame):

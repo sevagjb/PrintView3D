@@ -68,9 +68,12 @@ def test_off_by_default_and_in_the_viewer_settings(window):
     assert DEFAULTS["show_grid_labels"] is False and not w.grid_labels.enabled
     dlg = SettingsDialog(w.settings, w, {}, page="viewer")
     assert not dlg.grid_labels_cb.isChecked()
-    # under the "Show build plate grid" checkbox, after the X/Y/Z arrows on the plate
-    layout = dlg.bed_cb.parentWidget().layout()
-    assert layout.indexOf(dlg.grid_labels_cb) == layout.indexOf(dlg.plate_axes_cb) + 1 == layout.indexOf(dlg.bed_cb) + 2
+    # in the Build plate box: on top of its right column, beside the "Show build plate grid"
+    # checkbox that is on top of the left one (with the X/Y/Z arrows under it)
+    left, right = dlg.bed_cb.parentWidget(), dlg.grid_labels_cb.parentWidget()
+    assert left is not right and left.parentWidget() is right.parentWidget() is dlg.plate_columns
+    assert left.layout().indexOf(dlg.plate_axes_cb) == left.layout().indexOf(dlg.bed_cb) + 1
+    assert right.layout().indexOf(dlg.grid_labels_cb) == 0
     dlg.grid_labels_cb.setChecked(True)
     dlg._save()
     assert w.settings.get("show_grid_labels") is True
@@ -199,12 +202,16 @@ def test_the_spacing_choice_is_greyed_out_while_the_numbers_are_off(window):
 def test_viewer_settings_line_up(window, app):
     from printview3d.ui.settings_dialog import SettingsDialog
     dlg = SettingsDialog(window.settings, window, {}, page="viewer")
-    dlg.resize(900, 800)
+    dlg.resize(1100, 800)                        # wide enough for Build plate's two columns
     dlg.show()
     for _ in range(4):
         app.processEvents()
     x = lambda wd: wd.mapTo(dlg, wd.rect().topLeft()).x()
-    assert x(dlg.grid_step_combo) == x(dlg.plate_combo)                     # the two dropdowns
+    # Build plate, two columns: the plate's own dropdown and size on the left, the grid's three
+    # dropdowns on the right, each column starting at one place
+    assert x(dlg.plate_combo) == x(dlg.plate_size_row)
+    assert x(dlg.grid_step_combo) == x(dlg.grid_minor_combo) == x(dlg.grid_major_combo)
+    assert x(dlg.grid_step_combo) > x(dlg.plate_combo) + dlg.plate_combo.width()
     sliders = (dlg.ghost_slider, dlg.plane_slider, dlg.line_slider)
     assert len({x(sl) for sl in sliders}) == 1                              # the sliders start ...
     assert len({x(sl) + sl.width() for sl in sliders}) == 1                 # ... and end together

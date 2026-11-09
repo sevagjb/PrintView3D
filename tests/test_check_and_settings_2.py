@@ -203,9 +203,11 @@ def test_settings_layout(window, app):
         if dlg.height() < limit - 1:
             assert bar == 0, dlg._page_keys[i]
     assert dlg._page_keys[dlg.pages.count() - 1] == "about"
-    # the Viewer page's dropdowns line up: all as wide as the widest
-    widths = {c.width() for c in (dlg.grid_step_combo, dlg.grid_minor_combo, dlg.grid_major_combo, dlg.plate_combo)}
+    # the Build plate box's dropdowns line up: the three of the right column are as wide as the
+    # widest of them, and in the left column Plate is as wide as the plate size under it
+    widths = {c.width() for c in (dlg.grid_step_combo, dlg.grid_minor_combo, dlg.grid_major_combo)}
     assert len(widths) == 1
+    assert dlg.plate_combo.width() == dlg.plate_size_row.width()
     plate_lay = dlg.bed_cb.parentWidget().layout()                 # the Build plate box
     assert plate_lay.indexOf(dlg.plate_axes_cb) == plate_lay.indexOf(dlg.bed_cb) + 1
     assert dlg.plate_axes_cb.text().startswith("Also show")    # in addition to the corner marker

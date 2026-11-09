@@ -193,6 +193,22 @@ def plain_menu_text(text: str) -> str:
     return text.replace("&", "&&")
 
 
+def plain_tip(text: str) -> str:
+    """A tooltip that shows `text` as it is. Qt reads a tooltip that looks like HTML as HTML, so
+    a name from a file such as "<img src=...>" was carried out instead of shown."""
+    if not Qt.mightBeRichText(text):
+        return text
+    return "<qt>" + html.escape(text).replace("\n", "<br>") + "</qt>"
+
+
+def message_box(parent, icon, title: str, text: str) -> None:
+    """A message whose text is shown as it is (plain text): for messages that carry a file name,
+    a path or an error text that came out of a file."""
+    box = QMessageBox(icon, title, text, QMessageBox.Ok, parent)
+    box.setTextFormat(Qt.PlainText)
+    box.exec()
+
+
 def breakable_path(text: str) -> str:
     """A path that a label may wrap after each folder separator (a zero-width space after it)."""
     return text.replace("\\", "\\\u200b").replace("/", "/\u200b")
@@ -510,10 +526,14 @@ class _ElidedLabel(QLabel):
     def __init__(self, text: str, parent=None):
         super().__init__(parent)
         self._full = text
+        self.setTextFormat(Qt.PlainText)             # names from files are never formatting
         self.setToolTip(text)
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
         self.setMinimumWidth(20)
         self.setText(text)
+
+    def setToolTip(self, text: str):
+        super().setToolTip(plain_tip(text))
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
@@ -533,7 +553,9 @@ class _LongValue(QWidget):
         lay = QVBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
         lay.setSpacing(2)
-        self.label = QLabel(text)
+        self.label = QLabel()
+        self.label.setTextFormat(Qt.PlainText)       # a description from a file is never formatting
+        self.label.setText(text)
         self.label.setWordWrap(True)
         self.label.setAlignment(Qt.AlignTop | Qt.AlignLeading)
         self.label.setTextInteractionFlags(Qt.TextSelectableByMouse)
@@ -1227,6 +1249,7 @@ class MainWindow(QMainWindow):
             self.preview_image.hide()
         status = (m.freecad or {}).get("status")
         self.preview_title.setText(tr("Preview picture") if m.thumbnail else tr("No 3D view"))
+        self.preview_text.setTextFormat(Qt.PlainText)
         self.preview_text.setText(self._freecad_status_text(m))
         self.preview_text.setMinimumHeight(self.preview_text.heightForWidth(520))
         no_freecad = status == "no_freecad"
@@ -2079,7 +2102,9 @@ class MainWindow(QMainWindow):
         self.details_body.setVisible(is_open)
 
     def _add_detail(self, key: str, value: str):
-        k = QLabel(key)
+        k = QLabel()
+        k.setTextFormat(Qt.PlainText)
+        k.setText(key)
         k.setObjectName("formKey")
         # Field names may wrap: a long one (Arabic "ملف تعريف الخيط (الفلمنت)") next to a value
         # that can't wrap (BambuStudio-02.03.00.70) made the panel wider than its view, and in
@@ -2089,7 +2114,11 @@ class MainWindow(QMainWindow):
         if len(text) > self.LONG_DETAIL_CHARS or "\n" in text:
             self.details_form.addRow(k, _LongValue(text))
             return
-        v = QLabel(_breakable(text))
+        # Values come out of the file (title, designer, printer, ...): shown as they are, never
+        # read as HTML.
+        v = QLabel()
+        v.setTextFormat(Qt.PlainText)
+        v.setText(_breakable(text))
         v.setWordWrap(True)
         v.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.details_form.addRow(k, v)
@@ -2562,8 +2591,8 @@ class MainWindow(QMainWindow):
         path = os.path.abspath(path)
         self._keep_folder(path, _zip)
         if not os.path.isfile(path):
-            QMessageBox.warning(self, tr("File not found"),
-                                tr("The file no longer exists:") + f"\n{path}")
+            message_box(self, QMessageBox.Warning, tr("File not found"),
+                        tr("The file no longer exists:") + f"\n{path}")
             return
         if za.is_archive(path):
             self._load_archive(path)
@@ -2623,7 +2652,7 @@ class MainWindow(QMainWindow):
         self.progress.hide()
         self.slicer_btn.setEnabled(True)
         self.statusBar().clearMessage()
-        QMessageBox.critical(self, tr("Could not open file"), msg)
+        message_box(self, QMessageBox.Critical, tr("Could not open file"), msg)
 
     def _on_loaded(self, token: int, payload):
         if token != self._load_token:
@@ -2811,7 +2840,7 @@ class MainWindow(QMainWindow):
                 if size_text:
                     tip.append(size_text)
                 tip.append(tr("{n} triangles").format(n=count(part.n_triangles)))
-                row.setToolTip("\n".join(tip))
+                row.setToolTip(plain_tip("\n".join(tip)))
                 name.setToolTip(row.toolTip())
                 self.objects_layout.addWidget(row)
             self.objects_box.setTitle(tr("Objects ({n})").format(n=len(m.parts)) if many else tr("Object"))
@@ -2880,13 +2909,17 @@ class MainWindow(QMainWindow):
         info = m.freecad
         self.embedded_box.setTitle(tr("STEP file") if info.get("source") == "step" else tr("FreeCAD document"))
         if m.parts:                                 # (otherwise the preview page explains it)
-            text = QLabel(self._freecad_status_text(m))
+            text = QLabel()
+            text.setTextFormat(Qt.PlainText)         # may carry FreeCAD's error text
+            text.setText(self._freecad_status_text(m))
             text.setObjectName("muted")
             text.setWordWrap(True)
             self.embedded_layout.addWidget(text)
         shown = info.get("shown") or []
         if shown and not m.parts:
-            names = QLabel(tr("Visible objects: {names}").format(
+            names = QLabel()
+            names.setTextFormat(Qt.PlainText)        # object names from the document
+            names.setText(tr("Visible objects: {names}").format(
                 names=", ".join(o.label for o in shown)))
             names.setWordWrap(True)
             self.embedded_layout.addWidget(names)
@@ -2916,7 +2949,7 @@ class MainWindow(QMainWindow):
         try:
             fc.open_in_freecad(install, self.current_path)
         except OSError as e:
-            QMessageBox.critical(self, tr("Could not start FreeCAD"), str(e))
+            message_box(self, QMessageBox.Critical, tr("Could not start FreeCAD"), str(e))
             return
         self.statusBar().showMessage(tr("Opening {file} in {slicer}…").format(
             file=os.path.basename(self.current_path or ""), slicer="FreeCAD"), 6000)
@@ -3883,7 +3916,7 @@ class MainWindow(QMainWindow):
         try:
             sl.open_in_slicer(exe, file_to_send)
         except OSError as e:
-            QMessageBox.critical(self, tr("Could not start {slicer}").format(slicer=name), str(e))
+            message_box(self, QMessageBox.Critical, tr("Could not start {slicer}").format(slicer=name), str(e))
             return
         if isinstance(file_to_send, list):
             what = tr("{n} models").format(n=len(file_to_send))
@@ -3942,7 +3975,7 @@ class MainWindow(QMainWindow):
         self.act_export_stl.setEnabled(True)
         self.statusBar().clearMessage()
         if path == self.current_path:
-            QMessageBox.critical(self, tr("Could not export STL"), msg)
+            message_box(self, QMessageBox.Critical, tr("Could not export STL"), msg)
 
     def _on_export_read(self, path: str, parts):
         self.act_export_stl.setEnabled(True)
@@ -3986,7 +4019,7 @@ class MainWindow(QMainWindow):
         try:
             write_binary_stl(parts, out)
         except OSError as e:
-            QMessageBox.critical(self, tr("Could not export STL"), str(e))
+            message_box(self, QMessageBox.Critical, tr("Could not export STL"), str(e))
             return
         self.statusBar().showMessage(tr("Saved {path}").format(path=out), 8000)
 
@@ -4011,7 +4044,7 @@ class MainWindow(QMainWindow):
             for part, name in zip(parts, names):
                 write_binary_stl([part], os.path.join(folder, name))
         except OSError as e:
-            QMessageBox.critical(self, tr("Could not export STL"), str(e))
+            message_box(self, QMessageBox.Critical, tr("Could not export STL"), str(e))
             return
         self.statusBar().showMessage(tr("Saved {n} STL files in {folder}").format(
             n=count(len(parts)), folder=folder), 8000)

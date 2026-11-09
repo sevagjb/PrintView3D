@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.30.2
+- **Veiliger met bestanden van internet.** Bij een controle van de code zijn vier manieren gevonden
+  waarop een kwaadaardig gemaakt bestand PrintView3D kon misbruiken; alle vier zijn gedicht:
+  - Een 3MF- of glTF-bestand waarvan de driehoeken naar hoekpunten wijzen die niet bestaan, liet het
+    programma crashen.
+  - Een glTF-bestand kon PrintView3D geheugen laten lezen dat niet bij het bestand hoort.
+  - Sommige 3MF- en glTF-bestanden werden nooit klaar met laden (objecten die zichzelf bevatten, of
+    elkaar eindeloos plaatsen).
+  - Tekst in een bestand (de titel, de beschrijving, namen van objecten) werd als HTML gelezen in
+    plaats van als tekst getoond.
+
+  Zulke bestanden krijgen nu een gewone foutmelding, of hun tekst wordt gewoon getoond zoals die is.
+  Quick Look op macOS heeft dezelfde bescherming tegen 3MF-bestanden die nooit klaar zijn.
+- **3MF-projecten met veel kopieën van één object openen sneller**: een object dat vaak geplaatst is,
+  wordt één keer gelezen in plaats van één keer per kopie.
+- **Instellingen → Weergave**: het vak **Printplaat** heeft nu twee kolommen, links de plaat en rechts
+  de getallen en lijnen van het raster, en is daardoor half zo hoog. In een venster dat te smal is
+  voor beide komt de rechterkolom onder de linker, en Instellingen opent breed genoeg voor de twee
+  kolommen als het scherm dat toelaat.
+
 ## 0.30.1
 - **Opgelost: G-code van Creality Print had geen voorbeeldafbeelding**, op de startpagina en in het
   zijpaneel. Creality Print schrijft de grootte van de afbeelding als `300*300` of `300 300`, en dat

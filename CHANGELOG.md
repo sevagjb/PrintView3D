@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.30.2
+- **Safer with files from the internet.** A review of the code found four ways a file made to harm
+  could misuse PrintView3D; all four are closed:
+  - A 3MF or glTF file whose triangles point at corners that don't exist made the program crash.
+  - A glTF file could make PrintView3D read memory that isn't part of the file.
+  - Some 3MF and glTF files never finished loading (objects that contain themselves, or place each
+    other without end).
+  - Text in a file (its title, description, object names) was read as HTML instead of shown as text.
+
+  Such files now get an ordinary error message, or simply show their text as it is. macOS Quick Look
+  has the same protection against 3MF files that never finish.
+- **3MF projects with many copies of one object open faster**: an object placed many times is read
+  once instead of once per copy.
+- **Settings → Viewer**: the **Build plate** box now has two columns, the plate on the left and the
+  grid's numbers and lines on the right, so it is half as tall. In a window too narrow for both, the
+  right column goes under the left one, and Settings opens wide enough for the two columns when the
+  screen allows.
+
 ## 0.30.1
 - **Fixed: Creality Print G-code had no preview picture**, on the start page and in the side panel.
   Creality Print writes the picture size as `300*300` or `300 300`, which wasn't recognised.
