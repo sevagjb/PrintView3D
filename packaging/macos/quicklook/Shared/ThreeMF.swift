@@ -9,6 +9,9 @@ import simd
 final class ThreeMFReader {
     /// A model file inside the 3MF can be large; at most this much is read.
     static let maxModelBytes: UInt64 = 300 << 20
+    /// Objects placed through components, over the whole file (as in loaders/mesh.py): a crafted
+    /// file can make every object place several others, level after level, which never finishes.
+    static let maxPlacedObjects = 200_000
     static let unitScale: [String: Float] = [
         "micron": 0.001, "millimeter": 1, "centimeter": 10, "inch": 25.4, "foot": 304.8, "meter": 1000,
     ]
@@ -26,6 +29,8 @@ final class ThreeMFReader {
     private var parts = [String: Part]()
     private var out = [Float]()
     private var full = false
+    private var placed = 0
+    private var onPath = Set<String>()   // the objects being placed right now
 
     init(file: MappedFile) {
         self.file = file
@@ -81,7 +86,12 @@ final class ThreeMFReader {
     }
 
     private func collect(path: String, id: String, matrix: simd_float4x4, depth: Int) {
-        guard depth <= 16, !full, let p = part(path), let obj = p.objects[id] else { return }
+        guard depth <= 16, !full else { return }
+        let key = Self.norm(path).lowercased() + "\n" + id
+        guard !onPath.contains(key) else { return }   // an object that contains itself
+        placed += 1
+        guard placed <= Self.maxPlacedObjects else { full = true; return }
+        guard let p = part(path), let obj = p.objects[id] else { return }
         let vcount = obj.vertices.count / 3
         var t = 0
         while t + 2 < obj.triangles.count {
@@ -95,6 +105,8 @@ final class ThreeMFReader {
             }
             if out.count >= MeshLoader.maxTriangles * 9 { full = true; return }
         }
+        onPath.insert(key)
+        defer { onPath.remove(key) }
         for comp in obj.components {
             // 3MF uses row vectors: a component inside a placed object is placed by
             // (component transform) then (the object's placement).

@@ -439,6 +439,9 @@ _UNSUPPORTED_EXT = {
 }
 
 
+_GLTF_DAMAGED = "This glTF file is damaged: it refers to data that is not in the file."
+
+
 def _linear_to_srgb(c: np.ndarray) -> np.ndarray:
     c = np.clip(c, 0.0, 1.0)
     return np.where(c <= 0.0031308, c * 12.92, 1.055 * np.power(c, 1 / 2.4) - 0.055)
@@ -518,12 +521,20 @@ class _Gltf:
         a = self.doc["accessors"][i]
         comps = _GL_SIZES[a["type"]]
         dt = np.dtype("<" + _GL_TYPES[a["componentType"]])
-        count = a["count"]
+        count = int(a["count"])
+        if count < 0:
+            raise ValueError(_GLTF_DAMAGED)
         if "bufferView" in a:
             bv = self.doc["bufferViews"][a["bufferView"]]
             buf = self.buffer(bv["buffer"])
-            start = bv.get("byteOffset", 0) + a.get("byteOffset", 0)
-            stride = bv.get("byteStride") or dt.itemsize * comps
+            start = int(bv.get("byteOffset", 0)) + int(a.get("byteOffset", 0))
+            stride = int(bv.get("byteStride") or dt.itemsize * comps)
+            # Everything that is read must lie inside the buffer. The interleaved case below reads
+            # by address, so without this check a crafted stride or count read whatever followed
+            # the buffer in memory (or crashed).
+            if start < 0 or stride <= 0 or (
+                    count and start + (count - 1) * stride + dt.itemsize * comps > len(buf)):
+                raise ValueError(_GLTF_DAMAGED)
             if stride == dt.itemsize * comps:
                 out = np.frombuffer(buf, dt, count * comps, start).reshape(count, comps)
             else:                                   # interleaved data
@@ -613,9 +624,15 @@ def load_gltf(path: str, progress: Progress = None) -> ModelData:
 
     instances = []                                   # (name, mesh index, world matrix)
 
+    visited: set[int] = set()
+
     def walk(i: int, parent: np.ndarray, depth: int = 0):
-        if depth > 64:
+        # glTF nodes form a tree: every node has one parent at most. A node seen before is
+        # skipped, so a crafted file whose nodes list themselves (or each other) as children,
+        # several times over, ends at once instead of never.
+        if depth > 64 or i in visited:
             return
+        visited.add(i)
         n = nodes[i]
         m = parent @ _node_matrix(n)
         if "mesh" in n:
@@ -646,6 +663,8 @@ def load_gltf(path: str, progress: Progress = None) -> ModelData:
             tris = _primitive_triangles(g, prim, len(pos))
             if tris is None or not len(tris):
                 continue
+            if tris.min() < 0 or tris.max() >= len(pos):
+                raise ValueError("This glTF file refers to vertices that do not exist.")
             world = pos @ mat[:3, :3].T + mat[:3, 3]
             if np.linalg.det(mat[:3, :3]) < 0:         # mirrored: keep the outside facing out
                 tris = tris[:, [0, 2, 1]]

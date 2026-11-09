@@ -212,11 +212,19 @@ def _mesh_arrays(mesh_el) -> tuple[np.ndarray, np.ndarray]:
     ts = mesh_el.find(C + "triangles")
     if vs is None or ts is None:
         return np.zeros((0, 3), np.float32), np.zeros((0, 3), np.int64)
-    verts = np.array([(v.get("x"), v.get("y"), v.get("z")) for v in vs.iter(C + "vertex")], dtype=np.float64)
-    faces = np.array([(t.get("v1"), t.get("v2"), t.get("v3")) for t in ts.iter(C + "triangle")], dtype=np.int64)
+    try:
+        verts = np.array([(v.get("x"), v.get("y"), v.get("z")) for v in vs.iter(C + "vertex")], dtype=np.float64)
+        faces = np.array([(t.get("v1"), t.get("v2"), t.get("v3")) for t in ts.iter(C + "triangle")], dtype=np.int64)
+    except (TypeError, ValueError, OverflowError):
+        raise ValueError("This 3MF file contains a mesh with missing or invalid numbers.") from None
     if verts.size == 0 or faces.size == 0:
         return np.zeros((0, 3), np.float32), np.zeros((0, 3), np.int64)
-    return verts.reshape(-1, 3), faces.reshape(-1, 3)
+    verts, faces = verts.reshape(-1, 3), faces.reshape(-1, 3)
+    # Every triangle must use vertices that exist. The 3D engine does not check this itself: a
+    # triangle pointing outside the vertex list made the whole program crash.
+    if faces.min() < 0 or faces.max() >= len(verts):
+        raise ValueError("This 3MF file refers to vertices that do not exist.")
+    return verts, faces
 
 
 # --------------------------------------------------------------------------
@@ -238,6 +246,10 @@ def _mesh_arrays(mesh_el) -> tuple[np.ndarray, np.ndarray]:
 #   - The 3MF core itself: <object type="support"> or type="other".
 # --------------------------------------------------------------------------
 NON_MODEL_TYPES = ("support", "other")
+# Objects placed through components, counted over the whole file. Real projects place a few
+# thousand at most; a crafted file can make every object place several others, level after
+# level, which is millions of millions and never finishes.
+MAX_PLACED_OBJECTS = 200000
 
 
 @dataclass
@@ -318,9 +330,22 @@ def _read_3mf_objects(z: zipfile.ZipFile, raw: bool = False,
             parts_cache[part_path] = (objects, scale, root)
         return parts_cache[part_path]
 
+    placed = 0
+    on_path: set[tuple[str, Optional[str]]] = set()     # the objects being placed right now
+    meshes: dict[tuple[str, Optional[str]], tuple] = {}  # an object placed many times is read once
+    n_vertices = 0                                      # of the build item being collected
+
     def collect(part_path, obj_id, matrix, out_v, out_f, top_id, depth=0):
+        nonlocal placed, n_vertices
         if depth > 16:
             return
+        key = (_norm(part_path).lower(), obj_id)
+        if key in on_path:                  # an object that contains itself: the spec forbids it
+            return
+        placed += 1
+        if placed > MAX_PLACED_OBJECTS:
+            raise ValueError("This 3MF file places far more objects than a 3D file normally does. "
+                             "It was not opened, to protect your computer.")
         objects, scale, _ = get_part(part_path)
         obj = objects.get(obj_id)
         if obj is None:
@@ -332,7 +357,9 @@ def _read_3mf_objects(z: zipfile.ZipFile, raw: bool = False,
                 return
         mesh = obj.find(C + "mesh")
         if mesh is not None:
-            v, f = _mesh_arrays(mesh)
+            if key not in meshes:
+                meshes[key] = _mesh_arrays(mesh)
+            v, f = meshes[key]
             if raw and depth == 0 and _norm(part_path) == _norm(root_path) and obj_id in slicer.keep_ranges:
                 keep = np.zeros(len(f), bool)
                 for first, last in slicer.keep_ranges[obj_id]:
@@ -342,14 +369,19 @@ def _read_3mf_objects(z: zipfile.ZipFile, raw: bool = False,
                 v = v * scale
                 vh = np.hstack([v, np.ones((len(v), 1))])
                 v = (vh @ matrix)[:, :3]
-                out_f.append(f + sum(len(a) for a in out_v))
+                out_f.append(f + n_vertices)
                 out_v.append(v.astype(np.float32))
+                n_vertices += len(v)
         comps = obj.find(C + "components")
         if comps is not None:
-            for c in comps.iter(C + "component"):
-                sub_path = _path_attr(c) or part_path
-                m = _parse_transform(c.get("transform")) @ matrix
-                collect(sub_path, c.get("objectid"), m, out_v, out_f, top_id, depth + 1)
+            on_path.add(key)
+            try:
+                for c in comps.iter(C + "component"):
+                    sub_path = _path_attr(c) or part_path
+                    m = _parse_transform(c.get("transform")) @ matrix
+                    collect(sub_path, c.get("objectid"), m, out_v, out_f, top_id, depth + 1)
+            finally:
+                on_path.discard(key)
 
     objects, _, root = get_part(root_path)
     build = root.find(C + "build")
@@ -364,6 +396,7 @@ def _read_3mf_objects(z: zipfile.ZipFile, raw: bool = False,
         item_path = _path_attr(item) or root_path
         oid = item.get("objectid")
         out_v, out_f = [], []
+        n_vertices = 0
         collect(item_path, oid, _parse_transform(item.get("transform")), out_v, out_f, oid)
         if not out_v:
             continue
