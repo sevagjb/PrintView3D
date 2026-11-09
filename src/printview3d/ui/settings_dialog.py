@@ -665,19 +665,69 @@ class SettingsDialog(QDialog):
         The long list of keys doesn't count: it scrolls instead."""
         screen = (self.parent().screen() if self.parent() is not None else QApplication.primaryScreen())
         avail = screen.availableGeometry() if screen is not None else None
-        tallest = max(self.pages.widget(i).widget().sizeHint().height() for i in range(self.pages.count())
-                      if self._page_keys[i] not in ("about", "keys"))
         buttons = self.findChild(QDialogButtonBox).sizeHint().height()
         m = self.layout().contentsMargins()
         # Wide enough for the widest page too (Viewer, with its two columns, in long languages).
         widest = max(self.pages.widget(i).widget().sizeHint().width() for i in range(self.pages.count())
                      if self._page_keys[i] not in ("about", "keys"))
-        chrome = self.width() - self.pages.width() if self.pages.width() > 0 else 0
-        w = max(860, widest + self.nav.width() + m.left() + m.right() + 32, widest + chrome + 8)
+        beside = self.nav.width() + m.left() + m.right() + 32      # the list of pages and the margins
+        w = max(860, widest + beside)
+        if avail is not None:
+            w = min(w, int(avail.width() * 0.9))
+        # As tall as the tallest page is at that width: a page whose columns don't fit side by side
+        # (Viewer on a narrow screen) puts them under each other and is taller than its size hint.
+        page_width = max(200, w - beside)
+
+        def page_height(page) -> int:
+            page.layout().activate()
+            return max(page.sizeHint().height(), page.layout().totalHeightForWidth(page_width))
+
+        tallest = max(page_height(self.pages.widget(i).widget()) for i in range(self.pages.count())
+                      if self._page_keys[i] not in ("about", "keys"))
         h = max(580, tallest + buttons + m.top() + m.bottom() + 24)
         if avail is not None:
-            w, h = min(w, int(avail.width() * 0.9)), min(h, int(avail.height() * 0.9))
+            h = min(h, int(avail.height() * 0.9))
         self.resize(w, h)
+
+    def showEvent(self, e):
+        super().showEvent(e)
+        if not getattr(self, "_fitted", False):
+            self._fitted = True
+            self._fit_to_pages()
+
+    def _fit_to_pages(self):
+        """Once, when Settings opens: _initial_size works from sizes estimated before the theme's
+        fonts and paddings are applied, and can come out a little small. Now that the real sizes are
+        known, widen the window until Viewer's two columns fit side by side and make it tall enough
+        for the tallest page, as far as the screen allows. Done before the window is drawn."""
+        from PySide6.QtCore import QEvent
+        screen = self.screen() or QApplication.primaryScreen()
+        if screen is None:
+            return
+        avail = screen.availableGeometry()
+        max_w, max_h = int(avail.width() * 0.9), int(avail.height() * 0.9)
+        cols = getattr(self, "plate_columns", None)
+        for _ in range(4):
+            QApplication.sendPostedEvents(None, QEvent.LayoutRequest)       # lay the pages out now
+            w, h = self.width(), self.height()
+            if cols is not None and cols.width() > 0 and cols.width() < cols.needed_width():
+                w = min(max_w, w + cols.needed_width() - cols.width() + 2)
+            if w == self.width():                    # the width is settled: now the height
+                view = self.pages.currentWidget().viewport()
+                need = 0
+                for i in range(self.pages.count()):
+                    if self._page_keys[i] in ("about", "keys"):
+                        continue
+                    page = self.pages.widget(i).widget()
+                    need = max(need, page.layout().totalHeightForWidth(view.width()),
+                               page.layout().totalMinimumSize().height())
+                if need > view.height():
+                    h = min(max_h, h + need - view.height())
+            if (w, h) == (self.width(), self.height()):
+                break
+            dx, dy = (w - self.width()) // 2, (h - self.height()) // 2
+            self.resize(w, h)
+            self.move(max(avail.left(), self.x() - dx), max(avail.top(), self.y() - dy))    # stays centred
 
     def show_page(self, key: str):
         if key in self._page_keys:
@@ -1464,16 +1514,22 @@ def mouse_rows() -> list[tuple[list[str], str]]:
 class _TwoColumns(QWidget):
     """Two groups of settings side by side while the page is wide enough for both, otherwise one
     under the other, so nothing is ever cut off at the window's edge. on_change(stacked) is told
-    which of the two it is."""
+    which of the two it is.
+
+    It places the two itself and tells the page how tall it is at a given width (heightForWidth),
+    so Settings can open tall enough for the arrangement it will really have: on a screen too
+    narrow for two columns that is the taller one."""
 
     def __init__(self, left: QWidget, right: QWidget, gap: int = 24, on_change=None, parent=None):
         super().__init__(parent)
         self._left, self._right, self._gap, self._on_change = left, right, gap, on_change
+        left.setParent(self)
+        right.setParent(self)
         self._stacked = None
-        self._grid = QGridLayout(self)
-        self._grid.setContentsMargins(0, 0, 0, 0)
-        self._grid.setHorizontalSpacing(gap)
-        self._arrange(False)
+        policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+        policy.setHeightForWidth(True)
+        self.setSizePolicy(policy)
+        self._set_stacked(False)
 
     @property
     def stacked(self) -> bool:
@@ -1483,31 +1539,54 @@ class _TwoColumns(QWidget):
         """The width both columns need side by side."""
         return self._left.sizeHint().width() + self._gap + self._right.sizeHint().width()
 
-    def _arrange(self, stacked: bool):
+    def _row_gap(self) -> int:
+        lay = self._left.layout()
+        gap = lay.verticalSpacing() if lay is not None else -1
+        return gap if gap >= 0 else 6
+
+    def _set_stacked(self, stacked: bool):
         if stacked == self._stacked:
             return
         self._stacked = stacked
         if self._on_change is not None:
             self._on_change(stacked)
-        self._grid.removeWidget(self._left)
-        self._grid.removeWidget(self._right)
-        self._grid.addWidget(self._left, 0, 0)
-        self._grid.addWidget(self._right, 1 if stacked else 0, 0 if stacked else 1)
-        self._grid.setColumnStretch(0, 1 if stacked else 0)
-        self._grid.setColumnStretch(1, 0 if stacked else 1)
         self.updateGeometry()
+
+    def hasHeightForWidth(self) -> bool:
+        return True
+
+    def heightForWidth(self, width: int) -> int:
+        hl, hr = self._left.sizeHint().height(), self._right.sizeHint().height()
+        return hl + self._row_gap() + hr if width < self.needed_width() else max(hl, hr)
 
     def sizeHint(self):
         return QSize(self.needed_width(), max(self._left.sizeHint().height(), self._right.sizeHint().height()))
 
     def minimumSizeHint(self):
-        # as narrow as the wider of the two (then they are stacked), as tall as they are now
-        return QSize(max(self._left.minimumSizeHint().width(), self._right.minimumSizeHint().width()),
-                     self._grid.minimumSize().height())
+        # as narrow as the wider of the two: then they are one under the other
+        width = max(self._left.minimumSizeHint().width(), self._right.minimumSizeHint().width())
+        return QSize(width, self.heightForWidth(max(width, self.width())))
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
-        self._arrange(self.width() < self.needed_width())
+        self._place()
+
+    def _place(self):
+        w, h = self.width(), self.height()
+        self._set_stacked(w < self.needed_width())
+        hl, hr = self._left.sizeHint().height(), self._right.sizeHint().height()
+        if self._stacked:
+            self._left.setGeometry(0, 0, w, hl)
+            self._right.setGeometry(0, hl + self._row_gap(), w, hr)
+            return
+        wl = self._left.sizeHint().width()
+        wr = max(0, w - wl - self._gap)
+        if self.layoutDirection() == Qt.RightToLeft:      # mirrored: the first column on the right
+            self._left.setGeometry(w - wl, 0, wl, h)
+            self._right.setGeometry(0, 0, wr, h)
+        else:
+            self._left.setGeometry(0, 0, wl, h)
+            self._right.setGeometry(wl + self._gap, 0, wr, h)
 
 
 class Segmented(QFrame):
