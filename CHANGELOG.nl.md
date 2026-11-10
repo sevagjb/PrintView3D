@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.30.3
+- **Klik met rechts op een knop op de werkbalk voor zijn instellingen.** Elke knop biedt één item dat
+  Instellingen meteen bij zijn eigen opties opent: Thema → **Uiterlijk**, Schermafbeelding →
+  **Bestanden → Schermafbeeldingen**, Openen in slicer → **Slicer**, STL exporteren → **Bestanden →
+  STL exporteren**, Plaat → **Weergave → Printplaat**, en Controleren, Weergave en Meten →
+  **Weergave → Meten, weergave en controleren**. Het tandwiel van Instellingen, Start, Openen, Passend
+  en een lege plek op de werkbalk bieden **Werkbalk aanpassen…**.
+  [Bekijk de tabel](https://sevagjb.github.io/PrintView3D/nl/use.html#toolbar-buttons).
+- **Opgelost: Instellingen opende in verschillende groottes.** Geopend vanuit Werkbalk aanpassen,
+  Updates of Over was het venster smaller dan vanuit de knop Instellingen, en dan stonden de twee
+  kolommen van het vak **Printplaat** op de pagina Weergave onder elkaar. Het opent nu overal even
+  groot.
+- **Opgelost: de rijen van het vak Printplaat stonden niet op één lijn**: *Plaat* en *Plaatformaat*
+  stonden een paar pixels hoger dan *Rasterlijnen om de* en *Hoofdlijnen om de* ernaast.
+
 ## 0.30.2
 - **Veiliger met bestanden van internet.** Bij een controle van de code zijn vier manieren gevonden
   waarop een kwaadaardig gemaakt bestand PrintView3D kon misbruiken; alle vier zijn gedicht:

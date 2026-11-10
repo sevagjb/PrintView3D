@@ -648,6 +648,36 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Theme settings…</source>
+        <translation type="unfinished">Design-Einstellungen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Screenshot settings…</source>
+        <translation type="unfinished">Einstellungen für Bildschirmfotos…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Slicer settings…</source>
+        <translation type="unfinished">Slicer-Einstellungen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Export STL settings…</source>
+        <translation type="unfinished">Einstellungen für STL-Export…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Build plate settings…</source>
+        <translation type="unfinished">Druckbett-Einstellungen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Measure, View and Check settings…</source>
+        <translation type="unfinished">Einstellungen für Messen, Ansicht und Prüfen…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate</source>
         <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>

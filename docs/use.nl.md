@@ -257,7 +257,8 @@ uiterlijk.
 
 ## Knoppen op de werkbalk {#toolbar-buttons}
 
-**Instellingen → Werkbalk** (ook **☰ → Werkbalk aanpassen…**, of klik met rechts op de werkbalk)
+**Instellingen → Werkbalk** (ook **☰ → Werkbalk aanpassen…**, of klik met rechts op het tandwiel of een lege plek op de
+werkbalk)
 kiest welke knoppen de werkbalk toont, voor een rustigere werkbalk als je niet alles gebruikt:
 
 - **Kunnen verborgen worden:** Start, Openen, Controleren, Weergave, Meten, Schermafbeelding, Thema
@@ -268,6 +269,18 @@ kiest welke knoppen de werkbalk toont, voor een rustigere werkbalk als je niet a
   de eerste van de weergaveknoppen en Passend de laatste.
 - **Er raakt niets kwijt.** Een verborgen knop houdt zijn toets (`C`, `V`, `M`, `Ctrl+W`, …), en het
   **☰**-menu heeft alles, ook Controleren, Weergave, Meten en het themamenu.
+- **Klik met rechts op een knop voor zijn instellingen.** Elke knop biedt één item dat Instellingen
+  opent bij de eigen opties van die knop:
+
+  | Rechtsklik op | Opent |
+  |---|---|
+  | Thema | **Uiterlijk** (de thema's) |
+  | Schermafbeelding | **Bestanden → Schermafbeeldingen** (de map, opslaan zonder te vragen) |
+  | Openen in slicer | **Slicer** (de standaardslicer) |
+  | STL exporteren | **Bestanden → STL exporteren** (wat een klik doet) |
+  | Plaat | **Weergave → Printplaat** |
+  | Controleren, Weergave, Meten | **Weergave → Meten, weergave en controleren** |
+  | Instellingen, Start, Openen, Passend of een lege plek | **Werkbalk aanpassen…** |
 
 Onder **Uiterlijk** kies je hoe de weergaveknoppen (Plaat, Controleren, Weergave, Meten en Passend)
 eruitzien: **pictogram, naam en toets** (*Plaat (P)*, de standaard), **pictogram en naam** (*Plaat*),

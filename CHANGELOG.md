@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.30.3
+- **Right-click a toolbar button for its settings.** Each button offers one item that opens Settings
+  right at its own options: Theme → **Appearance**, Screenshot → **Files → Screenshots**, Open in
+  slicer → **Slicer**, Export STL → **Files → Export STL**, Plate → **Viewer → Build plate**, and
+  Check, View and Measure → **Viewer → Measure, View and Check**. The Settings gear, Home, Open, Fit
+  and an empty spot on the toolbar offer **Customize toolbar…**.
+  [See the table](https://sevagjb.github.io/PrintView3D/use.html#toolbar-buttons).
+- **Fixed: Settings opened at different sizes.** Opened from Customize toolbar, Updates or About it
+  came out narrower than from the Settings button, and the **Build plate** box on the Viewer page
+  then showed its two columns one under the other. It now opens at the same size from everywhere.
+- **Fixed: the rows of the Build plate box didn't line up**: *Plate* and *Plate size* sat a few pixels
+  higher than *Grid lines every* and *Main grid lines every* beside them.
+
 ## 0.30.2
 - **Safer with files from the internet.** A review of the code found four ways a file made to harm
   could misuse PrintView3D; all four are closed:

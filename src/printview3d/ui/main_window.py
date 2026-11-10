@@ -820,7 +820,9 @@ class MainWindow(QMainWindow):
         # Settings -> Toolbar: the toolbar's place of every button that can be hidden (its
         # QAction in the toolbar, so hiding it leaves the menus and keys alone).
         self.toolbar_slots: dict[str, QAction] = {}
-        # Right-click on the toolbar: Customize toolbar... (instead of Qt's hide-the-toolbar menu).
+        # Right-click on the toolbar (instead of Qt's hide-the-toolbar menu): one item. On a button
+        # with settings of its own, those settings; on the Settings gear, Home, Open, Fit and the
+        # empty part of the toolbar, Customize toolbar...
         tb.setContextMenuPolicy(Qt.CustomContextMenu)
         tb.customContextMenuRequested.connect(self._toolbar_context_menu)
 
@@ -1081,10 +1083,35 @@ class MainWindow(QMainWindow):
         m.setEnabled(act.isEnabled())
         return m
 
+    def _toolbar_button_settings(self, w) -> Optional[tuple[str, str, str]]:
+        """The Settings a toolbar button's right-click offers: (menu text, page, section). None for
+        the Settings gear (a click already opens Settings), buttons without settings of their own
+        (Home, Open, Fit) and the empty part of the toolbar: they offer Customize toolbar..."""
+        buttons = {
+            self.theme_btn: (tr("Theme settings…"), "appearance", ""),
+            self.screenshot_btn: (tr("Screenshot settings…"), "", "screenshots"),
+            self.slicer_btn: (tr("Slicer settings…"), "slicer", ""),
+            self.export_btn: (tr("Export STL settings…"), "", "export"),
+            self.plate_btn: (tr("Build plate settings…"), "", "plate"),
+        }
+        for b in (self.check_btn, self.view_btn, self.measure_btn):
+            buttons[b] = (tr("Measure, View and Check settings…"), "", "measure")
+        while w is not None and w is not self.toolbar:            # the icon or label inside a button
+            if w in buttons:
+                return buttons[w]
+            w = w.parentWidget()
+        return None
+
     def _toolbar_context_menu(self, pos):
         menu = QMenu(self)
-        menu.addAction(self.act_customize_toolbar)
+        own = self._toolbar_button_settings(self.toolbar.childAt(pos))
+        if own is not None:                         # one item: the button's own settings
+            text, page, section = own
+            menu.addAction(text, lambda p=page, s=section: self.open_settings(p, s))
+        else:
+            menu.addAction(self.act_customize_toolbar)
         menu.exec(self.toolbar.mapToGlobal(pos))
+        menu.deleteLater()                          # a new menu each right-click: don't keep them
 
     def apply_toolbar_layout(self, hide: Optional[set] = None, labels: Optional[str] = None,
                              join: Optional[bool] = None):
@@ -4087,19 +4114,20 @@ class MainWindow(QMainWindow):
             n += 1
         return path
 
-    def open_settings(self, page: str = ""):
+    def open_settings(self, page: str = "", section: str = ""):
         """Settings, not modal: the main window keeps working while it is open. Opened again
-        (key, menu) while it is open, the same window comes to the front, on the page asked for."""
+        (key, menu) while it is open, the same window comes to the front, on the page asked for.
+        A section (a toolbar button's right-click) is a box on a page, scrolled into view."""
         dlg = getattr(self, "settings_dialog", None)
         if dlg is not None:
-            if page:
-                dlg.show_page(page)
+            if page or section:
+                dlg.show_page(page, section)
             dlg.showNormal()
             dlg.raise_()
             dlg.activateWindow()
             return
         self._freecad_before = self.settings.get("freecad_path", "")
-        dlg = SettingsDialog(self.settings, self, renderer_info(self.plotter), page=page)
+        dlg = SettingsDialog(self.settings, self, renderer_info(self.plotter), page=page, section=section)
         dlg.setModal(False)
         dlg.setAttribute(Qt.WA_DeleteOnClose)
         dlg.applied.connect(self._settings_applied)          # Apply: shown now, the dialog stays

@@ -648,6 +648,36 @@
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Theme settings…</source>
+        <translation type="unfinished">Setări temă…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Screenshot settings…</source>
+        <translation type="unfinished">Setări capturi de ecran…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Slicer settings…</source>
+        <translation type="unfinished">Setări slicer…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Export STL settings…</source>
+        <translation type="unfinished">Setări export STL…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Build plate settings…</source>
+        <translation type="unfinished">Setări placă de imprimare…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
+        <source>Measure, View and Check settings…</source>
+        <translation type="unfinished">Setări pentru măsurare, vizualizare și verificare…</translation>
+    </message>
+    <message>
+        <location filename="../src/printview3d/ui/main_window.py"></location>
         <location filename="../src/printview3d/ui/settings_dialog.py"></location>
         <source>Plate</source>
         <extracomment>Toolbar toggle: show or hide the printer&apos;s build plate / bed grid.</extracomment>
