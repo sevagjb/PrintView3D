@@ -820,8 +820,9 @@ class MainWindow(QMainWindow):
         # Settings -> Toolbar: the toolbar's place of every button that can be hidden (its
         # QAction in the toolbar, so hiding it leaves the menus and keys alone).
         self.toolbar_slots: dict[str, QAction] = {}
-        # Right-click on the toolbar (instead of Qt's hide-the-toolbar menu): on a button, the
-        # Settings for that button, then Customize toolbar...; elsewhere Customize toolbar... only.
+        # Right-click on the toolbar (instead of Qt's hide-the-toolbar menu): one item. On a button
+        # with settings of its own, those settings; on the Settings gear, Home, Open, Fit and the
+        # empty part of the toolbar, Customize toolbar...
         tb.setContextMenuPolicy(Qt.CustomContextMenu)
         tb.customContextMenuRequested.connect(self._toolbar_context_menu)
 
@@ -1084,9 +1085,9 @@ class MainWindow(QMainWindow):
 
     def _toolbar_button_settings(self, w) -> Optional[tuple[str, str, str]]:
         """The Settings a toolbar button's right-click offers: (menu text, page, section). None for
-        buttons without settings of their own (Home, Open, Fit) and the empty part of the toolbar."""
+        the Settings gear (a click already opens Settings), buttons without settings of their own
+        (Home, Open, Fit) and the empty part of the toolbar: they offer Customize toolbar..."""
         buttons = {
-            self.settings_btn: (tr("Settings"), "", ""),             # the page last used
             self.theme_btn: (tr("Theme settings…"), "appearance", ""),
             self.screenshot_btn: (tr("Screenshot settings…"), "", "screenshots"),
             self.slicer_btn: (tr("Slicer settings…"), "slicer", ""),
@@ -1104,10 +1105,11 @@ class MainWindow(QMainWindow):
     def _toolbar_context_menu(self, pos):
         menu = QMenu(self)
         own = self._toolbar_button_settings(self.toolbar.childAt(pos))
-        if own is not None:
+        if own is not None:                         # one item: the button's own settings
             text, page, section = own
             menu.addAction(text, lambda p=page, s=section: self.open_settings(p, s))
-        menu.addAction(self.act_customize_toolbar)
+        else:
+            menu.addAction(self.act_customize_toolbar)
         menu.exec(self.toolbar.mapToGlobal(pos))
         menu.deleteLater()                          # a new menu each right-click: don't keep them
 

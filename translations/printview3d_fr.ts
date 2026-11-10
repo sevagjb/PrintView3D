@@ -654,7 +654,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot settings…</source>
-        <translation type="unfinished">Paramètres des captures d'écran…</translation>
+        <translation type="unfinished">Paramètres des captures d&apos;écran…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
@@ -664,7 +664,7 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Export STL settings…</source>
-        <translation type="unfinished">Paramètres d'export STL…</translation>
+        <translation type="unfinished">Paramètres d&apos;export STL…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>

@@ -105,7 +105,6 @@ def test_section_opens_its_page_with_the_box_in_view(app, tmp_path, section, pag
 def test_each_toolbar_button_offers_its_own_settings(window):
     w = window
     expect = {
-        w.settings_btn: ("", ""),
         w.theme_btn: ("appearance", ""),
         w.screenshot_btn: ("", "screenshots"),
         w.slicer_btn: ("slicer", ""),
@@ -119,7 +118,8 @@ def test_each_toolbar_button_offers_its_own_settings(window):
         got = w._toolbar_button_settings(b)
         assert got is not None and got[1:] == where, (b.objectName(), got)
         assert got[0]                                           # a menu text
-    for b in (w.home_btn, w.open_btn, w.toolbar.widgetForAction(w.act_fit), w.toolbar_spacer, None):
+    for b in (w.settings_btn, w.home_btn, w.open_btn, w.toolbar.widgetForAction(w.act_fit), w.toolbar_spacer,
+              None):
         assert w._toolbar_button_settings(b) is None
 
 
@@ -132,7 +132,9 @@ def test_right_click_finds_the_button_under_the_mouse(window):
         assert w._toolbar_button_settings(under) == w._toolbar_button_settings(b)
 
 
-def test_right_click_menu_has_the_buttons_settings_then_customize(window, monkeypatch):
+def test_right_click_menu_has_one_item(window, monkeypatch):
+    """A button with settings of its own offers only those; the Settings gear, Home and the rest
+    offer only Customize toolbar..."""
     from PySide6.QtWidgets import QMenu
     from printview3d.ui import main_window as mw
     w, tb = window, window.toolbar
@@ -147,8 +149,9 @@ def test_right_click_menu_has_the_buttons_settings_then_customize(window, monkey
     monkeypatch.setattr(w, "open_settings", lambda page="", section="": opened.append((page, section)))
     w._toolbar_context_menu(w.theme_btn.mapTo(tb, w.theme_btn.rect().center()))
     acts = shown[-1]
-    assert len(acts) == 2 and acts[1] is w.act_customize_toolbar
+    assert len(acts) == 1 and acts[0] is not w.act_customize_toolbar
     acts[0].trigger()
     assert opened == [("appearance", "")]
-    w._toolbar_context_menu(w.home_btn.mapTo(tb, w.home_btn.rect().center()))
-    assert shown[-1] == [w.act_customize_toolbar]
+    for b in (w.settings_btn, w.home_btn):
+        w._toolbar_context_menu(b.mapTo(tb, b.rect().center()))
+        assert shown[-1] == [w.act_customize_toolbar]

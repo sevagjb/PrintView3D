@@ -255,7 +255,7 @@ keep the normal look.
 
 ## Toolbar buttons
 
-**Settings → Toolbar** (also **☰ → Customize toolbar…**, or right-click the toolbar) chooses which
+**Settings → Toolbar** (also **☰ → Customize toolbar…**, or right-click the gear or an empty spot on the toolbar) chooses which
 buttons the toolbar shows, for a calmer toolbar if you don't use every feature:
 
 - **Can be hidden:** Home, Open, Check, View, Measure, Screenshot, Theme and Settings.
@@ -264,10 +264,18 @@ buttons the toolbar shows, for a calmer toolbar if you don't use every feature:
   view buttons and Fit the last.
 - **Nothing gets lost.** A hidden button keeps its key (`C`, `V`, `M`, `Ctrl+W`, …), and the **☰**
   menu has everything, including Check, View, Measure and the Theme menu.
-- **Right-click a button for its settings.** Theme opens Appearance, Screenshot the screenshot
-  folder, Open in slicer the Slicer page, Export STL its export choices, Plate the Build plate box,
-  and Check, View and Measure their box on the Viewer page. Settings opens Settings. Every right-click
-  menu also has **Customize toolbar…**.
+- **Right-click a button for its settings.** Each button offers one item that opens Settings at
+  that button's own options:
+
+  | Right-click on | Opens |
+  |---|---|
+  | Theme | **Appearance** (the themes) |
+  | Screenshot | **Files → Screenshots** (the folder, save without asking) |
+  | Open in slicer | **Slicer** (the default slicer) |
+  | Export STL | **Files → Export STL** (what a click does) |
+  | Plate | **Viewer → Build plate** |
+  | Check, View, Measure | **Viewer → Measure, View and Check** |
+  | Settings, Home, Open, Fit or an empty spot | **Customize toolbar…** |
 
 Under **Look** you choose how the view buttons (Plate, Check, View, Measure and Fit) are labelled:
 **icon, name and key** (*Plate (P)*, the default), **icon and name** (*Plate*), **icon and key**
