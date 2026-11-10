@@ -649,32 +649,32 @@
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Theme settings…</source>
-        <translation type="unfinished">Thema-instellingen…</translation>
+        <translation>Thema-instellingen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Screenshot settings…</source>
-        <translation type="unfinished">Instellingen voor schermafbeeldingen…</translation>
+        <translation>Instellingen voor schermafbeeldingen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Slicer settings…</source>
-        <translation type="unfinished">Slicer-instellingen…</translation>
+        <translation>Slicer-instellingen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Export STL settings…</source>
-        <translation type="unfinished">Instellingen voor STL exporteren…</translation>
+        <translation>Instellingen voor STL exporteren…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Build plate settings…</source>
-        <translation type="unfinished">Printplaatinstellingen…</translation>
+        <translation>Printplaatinstellingen…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
         <source>Measure, View and Check settings…</source>
-        <translation type="unfinished">Instellingen voor meten, weergave en controleren…</translation>
+        <translation>Instellingen voor meten, weergave en controleren…</translation>
     </message>
     <message>
         <location filename="../src/printview3d/ui/main_window.py"></location>
