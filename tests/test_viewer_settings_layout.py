@@ -28,7 +28,7 @@ def test_build_plate_box_has_two_columns(app, tmp_path):
         left = [dlg.bed_cb, dlg.plate_axes_cb, dlg.plate_combo, dlg.plate_size_row]
         right = [dlg.grid_labels_cb, dlg.grid_step_combo, dlg.grid_minor_combo, dlg.grid_major_combo]
         for a, b in zip(left, right):                     # row by row, side by side
-            assert abs(pos(a).y() + a.height() / 2 - pos(b).y() - b.height() / 2) <= 3
+            assert abs(pos(a).y() + a.height() / 2 - pos(b).y() - b.height() / 2) <= 1
             assert pos(b).x() > pos(a).x() + a.width()
         tops = [pos(w).y() for w in left]
         assert tops == sorted(tops) and len(set(tops)) == 4

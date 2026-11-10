@@ -1586,7 +1586,31 @@ class _TwoColumns(QWidget):
         self._stacked = stacked
         if self._on_change is not None:
             self._on_change(stacked)
+        self._align_rows()
         self.updateGeometry()
+
+    def _align_rows(self):
+        """Side by side, row n of the left column is as tall as row n of the right one, so the rows
+        line up across the box. Without it a short row on one side (a tick box) beside a taller one
+        (a dropdown) moved every row under it up by the difference: 3 px here, 4 px on Windows with
+        its own fonts, which was visible and failed the test there. Under each other: own heights."""
+        ll, lr = self._left.layout(), self._right.layout()
+        if not isinstance(ll, QGridLayout) or not isinstance(lr, QGridLayout):
+            return
+
+        def row_height(lay, row: int) -> int:
+            h = 0
+            for col in range(lay.columnCount()):
+                item = lay.itemAtPosition(row, col)
+                if item is not None and not item.isEmpty():
+                    h = max(h, item.sizeHint().height())
+            return h
+
+        rows = min(ll.rowCount(), lr.rowCount())
+        for row in range(rows):
+            h = 0 if self._stacked else max(row_height(ll, row), row_height(lr, row))
+            ll.setRowMinimumHeight(row, h)
+            lr.setRowMinimumHeight(row, h)
 
     def hasHeightForWidth(self) -> bool:
         return True
@@ -1610,6 +1634,7 @@ class _TwoColumns(QWidget):
     def _place(self):
         w, h = self.width(), self.height()
         self._set_stacked(w < self.needed_width())
+        self._align_rows()                  # again: fonts and paddings may have changed since
         hl, hr = self._left.sizeHint().height(), self._right.sizeHint().height()
         if self._stacked:
             self._left.setGeometry(0, 0, w, hl)
