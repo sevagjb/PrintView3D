@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 import sys
 
-from PySide6.QtCore import QDateTime, QLocale, QSize, Qt, QTimer, Signal
+from PySide6.QtCore import QDateTime, QEvent, QLocale, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QIcon, QKeySequence, QPainter, QPixmap
 from PySide6.QtWidgets import (
     QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
@@ -33,7 +33,7 @@ PAGES = ["language", "appearance", "slicer", "freecad", "files", "viewer", "keys
 class SettingsDialog(QDialog):
     applied = Signal()                      # Apply: saved; the main window shows the new settings now
 
-    def __init__(self, settings, parent=None, gpu_info=None, page: str = ""):
+    def __init__(self, settings, parent=None, gpu_info=None, page: str = "", section: str = ""):
         super().__init__(parent)
         self.settings = settings
         self.restart_now = False            # OK chose "Restart now" (MainWindow.open_settings restarts)
@@ -54,6 +54,8 @@ class SettingsDialog(QDialog):
         body.addWidget(self.pages, 1)
         self.nav.currentRowChanged.connect(self.pages.setCurrentIndex)
         self._page_keys: list[str] = []
+        # Boxes a toolbar button's right-click opens Settings at: section name -> (page, box).
+        self._sections: dict[str, tuple[str, QWidget]] = {}
 
         # ---------------- Language ----------------
         g0 = QGroupBox(tr("Language"))
@@ -268,6 +270,7 @@ class SettingsDialog(QDialog):
 
         # ---------------- Export STL ----------------
         ge = QGroupBox(tr("Export STL"))
+        self._sections["export"] = ("files", ge)
         le = QFormLayout(ge)
         self.export_combo = QComboBox()
         for label, mode in ((tr("Show the list of objects"), "dialog"),
@@ -291,6 +294,7 @@ class SettingsDialog(QDialog):
         # Normally Screenshot asks where to save each picture; ticked, it saves straight into
         # this folder, named after the file and the time.
         gs = QGroupBox(tr("Screenshots"))
+        self._sections["screenshots"] = ("files", gs)
         ls = QVBoxLayout(gs)
         self.shot_auto_cb = QCheckBox(tr("Save screenshots straight to this folder, without asking"))
         self.shot_auto_cb.setChecked(bool(settings.get("screenshot_auto", False)))
@@ -365,6 +369,7 @@ class SettingsDialog(QDialog):
         # A window too narrow for both (a small screen, long words in some languages) shows the
         # right column under the left one instead of cutting it off (_TwoColumns).
         g3 = QGroupBox(tr("Build plate"))
+        self._sections["plate"] = ("viewer", g3)
         plate_left, plate_right = QWidget(), QWidget()
         ll, lr = QGridLayout(plate_left), QGridLayout(plate_right)
         for lay in (ll, lr):
@@ -374,6 +379,7 @@ class SettingsDialog(QDialog):
         right = Qt.AlignRight | Qt.AlignVCenter     # which sit at the box's edge (left in Arabic)
         # The settings of the toolbar's Measure, View and Check (named after those buttons).
         g_other = QGroupBox(tr("Measure, View and Check"))
+        self._sections["measure"] = ("viewer", g_other)
         l_other = QVBoxLayout(g_other)
         self.travel_cb = QCheckBox(tr("Show travel moves when opening G-code"))
         self.travel_cb.setChecked(bool(settings.get("show_travel")))
@@ -599,12 +605,16 @@ class SettingsDialog(QDialog):
         self._update_assoc_status()
         self._refresh_updates()
         self._even_combo_widths()
-        # The page asked for, or the one open when Settings was last closed.
+        # The page asked for (or the page of the box asked for), or the one open when Settings
+        # was last closed.
+        if section in self._sections:
+            page = self._sections[section][0]
         if page not in self._page_keys:
             page = settings.get("settings_page", "")
         self.nav.setCurrentRow(self._page_keys.index(page) if page in self._page_keys else 0)
         self.nav.currentRowChanged.connect(self._remember_page)
         self._initial_size()
+        self._section_at_open = section           # scrolled to once the window is laid out (showEvent)
 
     def _remember_page(self, row: int):
         if 0 <= row < len(self._page_keys):
@@ -694,19 +704,35 @@ class SettingsDialog(QDialog):
         if not getattr(self, "_fitted", False):
             self._fitted = True
             self._fit_to_pages()
+            if self._section_at_open:
+                self.show_page("", self._section_at_open)
 
     def _fit_to_pages(self):
         """Once, when Settings opens: _initial_size works from sizes estimated before the theme's
         fonts and paddings are applied, and can come out a little small. Now that the real sizes are
         known, widen the window until Viewer's two columns fit side by side and make it tall enough
-        for the tallest page, as far as the screen allows. Done before the window is drawn."""
-        from PySide6.QtCore import QEvent
+        for the tallest page, as far as the screen allows. Done before the window is drawn.
+
+        Measured with the Viewer page showing, whatever page Settings opens on: Qt only lays out
+        the page that is showing, and a hidden Viewer page still has the width it had before the
+        window was sized, so its two columns looked as if they fit. Settings then opened narrower
+        from Customize toolbar, Updates or About than from the Settings button, and Viewer's
+        Build plate box went one under the other there. Now it opens at one size from everywhere."""
         screen = self.screen() or QApplication.primaryScreen()
         if screen is None:
             return
         avail = screen.availableGeometry()
         max_w, max_h = int(avail.width() * 0.9), int(avail.height() * 0.9)
         cols = getattr(self, "plate_columns", None)
+        shown = self.pages.currentIndex()
+        if "viewer" in self._page_keys:
+            self.pages.setCurrentIndex(self._page_keys.index("viewer"))    # not drawn: only measured
+        try:
+            self._fit_loop(avail, max_w, max_h, cols)
+        finally:
+            self.pages.setCurrentIndex(shown)
+
+    def _fit_loop(self, avail, max_w: int, max_h: int, cols):
         for _ in range(4):
             QApplication.sendPostedEvents(None, QEvent.LayoutRequest)       # lay the pages out now
             w, h = self.width(), self.height()
@@ -729,9 +755,19 @@ class SettingsDialog(QDialog):
             self.resize(w, h)
             self.move(max(avail.left(), self.x() - dx), max(avail.top(), self.y() - dy))    # stays centred
 
-    def show_page(self, key: str):
+    def show_page(self, key: str, section: str = ""):
+        """Show a page; with a section (a toolbar button's right-click), its page with that box
+        scrolled into view, for when the screen is too small for the whole page."""
+        if section in self._sections:
+            key, box = self._sections[section]
+        else:
+            box = None
         if key in self._page_keys:
             self.nav.setCurrentRow(self._page_keys.index(key))
+        if box is not None:
+            scroll = self.pages.currentWidget()
+            QApplication.sendPostedEvents(None, QEvent.LayoutRequest)
+            scroll.verticalScrollBar().setValue(box.mapTo(scroll.widget(), box.rect().topLeft()).y() - 8)
 
     # -------------------------------------------------------------- toolbar
     def _build_toolbar_page(self, settings) -> list:
